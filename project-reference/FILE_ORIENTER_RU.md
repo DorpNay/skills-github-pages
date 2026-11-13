@@ -4,12 +4,12 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main `6a366125720453193c82a7385f8c088224a5928e`; PR #181 merged. Main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 PASS exact SHA.
-- **Snapshot marker:** open PRs (7): #175, #176, #178, #179, #180, #182, #184; open issues (1): #111. Current PR #185 is intentionally excluded from the freshness snapshot.
-- PR exact-head visible state: #181 merged; PR #185 pre-state-refresh HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a passed Quality/Chromium, Gateway Py3.12/13/14, Graphify, Freshness, License/Provenance and Dead Code. This handoff refresh changes HEAD; re-fetch and rerun exact-head checks before action. #184 remains open; earlier failures remain on #175/#179/#180/#182.
-- Dependencies: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based Functions/Notebook workbench, #184 Browser Local recovery guard, #178 landing content, #176 workspace audit, #185 model artifact pack.
-- Owner priority: LANDING-V2-2026-001, section K in the addendum. Target complete local-first workstation, not marketing-only Pages. Required: full owner UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real agents/live status; mandatory local coding workspace; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; document/book/web/OCR parsers and converters; mode matrix; lean conditional model routing; cache/observability/N₂O in main; detailed tested VPS runbook.
-- Stack reality: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M is source-pinned as the owner-preferred primary candidate, not production-verified; main weights are excluded for owner upload. Auxiliary manifest pins 5.645 GB but downloads are blocked by outbound DNS. Whisper/Piper paths still require installed artifacts; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama and real device/connector runtime are unverified.
+- Main checkpoint parent `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; current main advances by one atomic state-refresh commit directly after it. Fetch the live SHA on resume.
+- **Snapshot marker:** open PRs (0): ; open issues (1): #111.
+- PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`; PR #176 research ported into main at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. #175/#178/#179/#180/#182 closed with dispositions; branches retained.
+- Model artifacts verified: external run #43417527347 (6,054,440,341 bytes); Ollama run #43417305393 (7,728,830,475 bytes); combined 13,783,270,816 bytes. Artifacts expire 2026-12-13. The primary uncensored main checkpoint is owner-supplied and excluded.
+- Artifacts are not installed on the target host. Confirm OS/architecture, disk, RAM/VRAM, CPU/GPU and service constraints before installing Linux AMD64 runtime packages.
+- Browser Local Coder workspace is implemented in main; sandboxed CLI/native companion are not. Main priority remains `LANDING-V2-2026-001`, section K; use the existing register and OLEDUE checkpoint, not a new backlog.
 
 ## 1. Быстрый маршрут
 

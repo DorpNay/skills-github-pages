@@ -11,13 +11,14 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
 ## Live checkpoint (2026-11-13)
-- Verified main: `6a366125720453193c82a7385f8c088224a5928e`; PR #181 is merged. Current live queue: #175, #176, #178, #179, #180, #182, #184, #185 (8 open PRs); issue #111 remains the only open issue.
-- Main Quality #43387599840, Pages deployment #43387599298 and Graphify #43387599792 passed on exact main SHA. Recheck Freshness against the current queue.
-- Exact-head visible state: #181 merged. PR #185 last verified HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a passed Quality (including Chromium), Gateway tests on Python 3.12/13/14, Graphify, Freshness, License/Provenance and Dead Code. The final state refresh changes HEAD, so re-fetch and rerun exact-head checks before integration. #184 remains open; older failures remain on #175/#179/#180/#182.
-- PR relationships: #175 is main-based UI/Notebook workbench; #179 and #182 are stacked from older #175 bases; #180 is stacked from older #179 state. #184 is Browser Local recovery; #178 landing content; #176 audit; #185 model artifact pack.
-- Owner's 2026-11-13 primary task is LANDING-V2-2026-001, section K of the single addendum. Required end-state: full owner UI; separate Deep Research / Agents / Skills / Connectors panels; real agent runtime and live run-state UI; mandatory local-file Coder; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; documents/books/web OCR/parsers/converters; mode-combination gates; conditional efficient model routing; cache/observability/N₂O in main; tested VPS runbook.
-- Primary candidate is source-pinned, not production-verified: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M. Main weights are owner-supplied and excluded from repository downloads; auxiliary manifest pins 5.645 GB but actual downloads are blocked by outbound DNS. Whisper/Piper paths still require installed binaries/weights; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama, actual hardware, voice devices and connectors remain unverified.
-- Do not merge stacked/failed/draft work wholesale. Reconcile all PRs to main with exact-head gates; target main plus at most one active product PR. Issue #111 stays open until owner/environment gates are evidenced.
+
+- **Main checkpoint parent:** `8c684b113faa71a6ecf053da736ccc7a07ef2d62`; an atomic state-refresh commit follows it on main. Fetch the actual current HEAD on resume.
+- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
+- PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`. PR #176 research ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`; #175/#178/#179/#180/#182 closed as stale/stacked with branches retained.
+- Model acquisition verified: external cache run #43417527347 (artifact 6,054,440,341 bytes) and Ollama run #43417305393 (four packages + lock, 7,728,830,475 bytes). Combined 13,783,270,816 bytes; expires 2026-12-13. The owner-supplied primary checkpoint is excluded.
+- Artifacts are in GitHub Actions, not installed on VPS. Target host OS/architecture, disk, RAM/VRAM, Ollama service, model template, API wiring and RU/EN/TH eval remain unverified.
+- Browser Local Coder workspace is in main via #184; no arbitrary shell/CLI or execution sandbox is enabled.
+- Primary task remains `LANDING-V2-2026-001`, section K. Resume at the last OLEDUE checkpoint and continue directly on main; do not default to stale PRs or rescan unrelated files.
 
 ## Resume and orient
 - `oledue`: read root `OLEDUE.md` first and execute its handoff.
@@ -52,7 +53,8 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Model artifact/runtime checkpoint — 2026-11-13
 
-- PR #185 pins a candidate stack and an external-cache downloader; the primary uncensored Qwen Q4_K_M remains owner-supplied and excluded.
-- Runtime lock: models/runtime-stack.lock.json; owner installation sequence: models/runtime-install.md; exact artifacts: models/artifacts.manifest.json.
-- Platform-specific Ollama and Piper runtime artifacts are pinned for provisional Linux x86_64 only. Verify the actual server OS/architecture before installation.
-- Keep all model/voice/OCR helpers conditional; ordinary chat remains one direct main-model request.
+- PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; exact-head Quality/Gateway/Graphify/Freshness/Provenance/Dead Code all passed.
+- External acquisition run #43417527347: 6,054,440,341-byte verified artifact. Ollama run #43417305393: four verified model artifacts plus lock, 7,728,830,475 bytes. Total 13,783,270,816 bytes; 30-day expiry 2026-12-13.
+- Owner-supplied uncensored Qwen3.5-4B primary checkpoint remains excluded. No model binary is committed to Git.
+- Downloaded artifacts are not installed. Verify target OS/architecture and resources before installing; see `models/runtime-install.md`.
+- Ordinary chat remains one direct main-model request; helpers remain conditional.
