@@ -46,3 +46,19 @@ def test_safe_relative_path_rejects_traversal() -> None:
 def test_destination_stays_inside_package_root(tmp_path: Path) -> None:
     target = MODULE.destination(tmp_path, "qwen3_embedding_06b", "model.safetensors")
     assert target == (tmp_path / "qwen3_embedding_06b" / "model.safetensors").resolve()
+
+
+def test_manifest_pins_downloadable_artifacts_and_excludes_primary_model() -> None:
+    manifest = MODULE.load_manifest()
+    packages = manifest["packages"]
+    ids = [package["id"] for package in packages]
+    assert len(ids) == len(set(ids))
+    main = next(package for package in packages if package["id"] == "qwen35_uncensored_main")
+    assert main["download"] is False
+    downloadable = [package for package in packages if package.get("download")]
+    total = sum(item.get("size_bytes", 0) for package in downloadable for item in package.get("files", []))
+    assert total == manifest["expected_download_bytes"]
+    for package in downloadable:
+        for item in package.get("files", []):
+            assert item.get("size_bytes", 0) > 0
+            assert item.get("sha256") or item.get("git_blob_sha1")
