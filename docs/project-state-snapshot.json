@@ -264,11 +264,12 @@
     "main_freshness_status": "No Freshness run verified on exact main SHA. PR #185 Freshness passed on an earlier head, but later model/runtime and state commits require a new exact-head run.",
     "main_provenance_run": null,
     "main_provenance_status": "No separate provenance run verified on exact main SHA; PR #185 provenance runs are exact-head-specific and must be rechecked.",
-    "owner_priority_summary": "LANDING-V2-2026-001 / Section K remains the owner programme. Model stack now has a pinned uncensored Qwen3.5-4B primary candidate, official Qwen3.5 base comparator, Ollama Q8_0 embedding, Qwen reranker, Whisper/Qwen ASR, Piper RU/EN, Silero VAD and Tesseract RU/EN/TH. Production selection and integration still require downloads, exact-host evals, permissions and runtime proof."
+    "owner_priority_summary": "LANDING-V2-2026-001 / Section K remains the owner programme. Model stack now has a pinned uncensored Qwen3.5-4B primary candidate, official Qwen3.5 base comparator, Ollama Q8_0 embedding, Qwen reranker, Whisper/Qwen ASR, Piper RU/EN, Silero VAD and Tesseract RU/EN/TH. Production selection and integration still require downloads, exact-host evals, permissions and runtime proof.",
+    "pr185_status": "All required checks passed on pre-state-refresh HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a; the handoff/state refresh changes HEAD, so rerun exact-head checks before merge."
   },
   "last_volley": "V-2026-11-13-MODEL-STACK-ARTIFACT-PACK-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
-    "status": "SPECIFIED_PINNED_NOT_DOWNLOADED",
+    "status": "SPECIFIED_PINNED_CI_VERIFIED_PRE_STATE_REFRESH_NOT_MERGED",
     "pr": 185,
     "branch": "feat/model-stack-artifact-pack-20261113",
     "primary_candidate": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; main weights excluded for owner upload",
@@ -289,6 +290,16 @@
     "ollama_reference_estimate_bytes": 3939000000,
     "total_with_ollama_reference_estimate_bytes": 9972970026,
     "runtime_lock": "models/runtime-stack.lock.json",
-    "install_guide": "models/runtime-install.md"
+    "install_guide": "models/runtime-install.md",
+    "last_verified_implementation_head_sha": "90b6810b772a4f41450ee2f71f1fea78610ae70a",
+    "last_verified_runs": {
+      "quality": 43395243981,
+      "gateway": 43395244038,
+      "graphify": 43395244095,
+      "freshness": 43395244006,
+      "license": 43395244067,
+      "dead_code": 43395243959
+    },
+    "final_state_refresh_requires_exact_head_rerun": true
   }
 }
