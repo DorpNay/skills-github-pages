@@ -273,6 +273,7 @@ test('Browser Local recovers a partially written batch when automatic rollback a
   expect(result.finalContents).toEqual(['before-a', 'before-b']);
 });
 
+
 test('Browser Local bounds directory depth and total entries', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.addScriptTag({ url: '/assets/js/browser-local-provider.js' });
@@ -286,17 +287,140 @@ test('Browser Local bounds directory depth and total entries', async ({ page }) 
       kind: 'directory',
       async *entries() { yield ['note.txt', file]; }
     };
-    const root = {
+    const deepRoot = {
       kind: 'directory',
       async queryPermission() { return 'granted'; },
       async *entries() { yield ['nested', nested]; }
     };
-    const provider = new BrowserLocalProvider({ maxFiles: 40, maxEntries: 10, maxDepth: 0 });
-    provider.rootHandle = root;
-    let message = '';
-    try { await provider.listFiles(); } catch (error) { message = error.message; }
-    return message;
+    const depthProvider = new BrowserLocalProvider({ maxDepth: 0 });
+    depthProvider.rootHandle = deepRoot;
+    let depthMessage = '';
+    try { await depthProvider.listFiles(); } catch (error) { depthMessage = error.message; }
+
+    const entryRoot = {
+      kind: 'directory',
+      async queryPermission() { return 'granted'; },
+      async *entries() { yield ['a.txt', file]; yield ['b.txt', file]; }
+    };
+    const entryProvider = new BrowserLocalProvider({ maxEntries: 1 });
+    entryProvider.rootHandle = entryRoot;
+    let entriesMessage = '';
+    try { await entryProvider.listFiles(); } catch (error) { entriesMessage = error.message; }
+    return { depthMessage, entriesMessage };
   });
 
-  expect(result).toContain('maximum depth');
+  expect(result.depthMessage).toContain('maximum depth');
+  expect(result.entriesMessage).toContain('more than 1 entries');
+});
+
+test('Browser Local refuses a restore if a file changes while the confirmation dialog is open', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.addScriptTag({ url: '/assets/js/browser-local-provider.js' });
+
+  const result = await page.evaluate(async () => {
+    const { BrowserLocalProvider } = window.AlandiBrowserLocalProvider;
+    const file = {
+      kind: 'file', name: 'note.txt', content: 'before',
+      async queryPermission() { return 'granted'; },
+      async getFile() { return new File([this.content], this.name, { type: 'text/plain' }); },
+      async createWritable() {
+        let staged = '';
+        return {
+          write: async value => { staged = String(value); },
+          close: async () => { this.content = staged; },
+          abort: async () => {}
+        };
+      }
+    };
+    const root = {
+      kind: 'directory', name: 'workspace',
+      async queryPermission() { return 'granted'; },
+      async getFileHandle() { return file; }
+    };
+    const provider = new BrowserLocalProvider();
+    provider.rootHandle = root;
+    const prepared = await provider.prepareBatch([{ path: 'note.txt', handle: file, content: 'after' }]);
+    const committed = await provider.commitBatch(prepared.id, {
+      createRecoverySnapshot: true,
+      confirm: async () => true
+    });
+    let message = '';
+    try {
+      await provider.restoreBatch(committed.snapshotId, {
+        rootHandle: root,
+        confirm: async () => {
+          file.content = 'changed while confirming';
+          return true;
+        }
+      });
+    } catch (error) { message = error.message; }
+    return { message, content: file.content };
+  });
+
+  expect(result.message).toContain('changed after restore preview');
+  expect(result.content).toBe('changed while confirming');
+});
+
+test('Browser Local restores legacy recovery snapshots without beforeHash metadata', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.addScriptTag({ url: '/assets/js/browser-local-provider.js' });
+
+  const result = await page.evaluate(async () => {
+    const { BrowserLocalProvider } = window.AlandiBrowserLocalProvider;
+    const file = {
+      kind: 'file', name: 'legacy.txt', content: 'original',
+      async queryPermission() { return 'granted'; },
+      async getFile() { return new File([this.content], this.name, { type: 'text/plain' }); },
+      async createWritable() {
+        let staged = '';
+        return {
+          write: async value => { staged = String(value); },
+          close: async () => { this.content = staged; },
+          abort: async () => {}
+        };
+      }
+    };
+    const root = {
+      kind: 'directory', name: 'workspace',
+      async queryPermission() { return 'granted'; },
+      async getFileHandle() { return file; }
+    };
+    const provider = new BrowserLocalProvider();
+    provider.rootHandle = root;
+    const prepared = await provider.prepareBatch([{ path: 'legacy.txt', handle: file, content: 'updated' }]);
+    const committed = await provider.commitBatch(prepared.id, {
+      createRecoverySnapshot: true,
+      confirm: async () => true
+    });
+
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('alandi-browser-local-recovery-v1', 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction('snapshots', 'readwrite');
+      const store = tx.objectStore('snapshots');
+      const request = store.get(committed.snapshotId);
+      request.onsuccess = () => {
+        const snapshot = request.result;
+        delete snapshot.files[0].beforeHash;
+        store.put(snapshot);
+      };
+      request.onerror = () => reject(request.error);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+    db.close();
+
+    const restored = await provider.restoreBatch(committed.snapshotId, {
+      rootHandle: root,
+      confirm: async preview => preview.files.length === 1
+    });
+    return { restored, content: file.content };
+  });
+
+  expect(result.restored.filesRestored).toBe(1);
+  expect(result.content).toBe('original');
 });
