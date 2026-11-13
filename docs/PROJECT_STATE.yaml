@@ -555,7 +555,9 @@ model_stack_artifact_checkpoint_2026_11_13:
   last_ci_head_sha: "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f"
   base_main: "6a366125720453193c82a7385f8c088224a5928e"
   primary_candidate: "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; 2707513696 bytes; SHA-256 pinned; main weights excluded from repo downloader for owner upload."
-  auxiliary_payload_bytes: 5645657360
+  auxiliary_payload_bytes: 4454070944
+  ollama_reference_estimate_bytes: 3939000000
+  total_with_ollama_reference_estimate_bytes: 8393070944
   ollama_reference_estimate_bytes: 3300000000
   total_with_ollama_reference_estimate_bytes: 8945657360
   artifact_manifest: "models/artifacts.manifest.json"
