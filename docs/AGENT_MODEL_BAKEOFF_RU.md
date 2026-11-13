@@ -206,3 +206,17 @@ On the reference 8-GB VPS, do not keep the embedding, reranker, ASR, OCR and TTS
 5. Compare Whisper and Qwen3-ASR on identical labelled audio; evaluate WER/CER, RTF, p50/p95, peak RSS and cancellation.
 6. Evaluate Tesseract RU/EN/TH on scanned and born-digital fixtures; report CER, exact fields/tables, reading order and latency.
 7. Keep all new model flags off until exact-host evidence and owner release approval.
+
+
+### Matched base-model reference
+
+For an apples-to-apples comparison, acquire the official Ollama Qwen3.5-4B Q4_K_M reference in addition to the owner-supplied uncensored checkpoint:
+
+- Tag: qwen3.5:4b
+- Registry digest prefix: d8b0f5e9760c
+- Displayed package size: about 3.3 GB (model plus vision projector)
+- License: Apache-2.0
+- Acquisition: the artifact downloader runs ollama pull qwen3.5:4b and verifies the digest prefix from ollama list.
+- Residency: keep the official and uncensored variants in the Ollama model store, but load/evaluate them sequentially on the 8-GB profile.
+
+This reference is a benchmark comparator, not the production default. The uncensored model remains the owner-preferred primary candidate pending same-prompt RU/EN/TH evaluation.
