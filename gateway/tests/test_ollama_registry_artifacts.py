@@ -63,9 +63,11 @@ def test_acquire_model_records_registry_manifest_and_all_layer_hashes(tmp_path, 
         "source_url": "https://ollama.com/library/qwen3.5:4b",
         "license": "Apache-2.0",
     }
+    raw_sha = hashlib.sha256(raw_manifest).hexdigest()
+    model["manifest_sha256"] = raw_sha
     monkeypatch.setattr(
         registry, "fetch_manifest",
-        lambda _model, _timeout: (raw_manifest, manifest, "a" * 64),
+        lambda _model, _timeout: (raw_manifest, manifest, raw_sha),
     )
 
     def fake_download(_namespace, _model, digest, _size, target, _timeout):
@@ -150,3 +152,48 @@ def test_offline_installer_rejects_tampered_model_blob(tmp_path):
     package, _, _, _ = make_fixture_package(tmp_path, tamper_model=True)
     with pytest.raises(installer.InstallError, match="SHA-256 or size verification"):
         installer.install(package, tmp_path / "ollama-models")
+
+
+def test_fetch_manifest_checks_raw_sha256_and_registry_url(monkeypatch):
+    raw = json.dumps({
+        "schemaVersion": 2,
+        "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+        "config": {"mediaType": "application/vnd.docker.container.image.v1+json", "digest": "sha256:" + "1" * 64, "size": 1},
+        "layers": [],
+    }, separators=(",", ":")).encode()
+    expected = hashlib.sha256(raw).hexdigest()
+
+    class FakeResponse:
+        headers = {"Content-Length": str(len(raw))}
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def geturl(self): return "https://registry.ollama.ai/v2/library/qwen3.5/manifests/4b"
+        def read(self, _limit): return raw
+
+    class FakeOpener:
+        def open(self, _request, timeout): return FakeResponse()
+
+    monkeypatch.setattr(registry, "opener", lambda: FakeOpener())
+    model = {
+        "id": "fixture_qwen",
+        "namespace": "library",
+        "model": "qwen3.5",
+        "tag": "4b",
+        "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3.5/manifests/4b",
+        "manifest_sha256": expected,
+    }
+    _, parsed, digest = registry.fetch_manifest(model, 10)
+    assert parsed["schemaVersion"] == 2
+    assert digest == expected
+
+    model["manifest_sha256"] = "0" * 64
+    with pytest.raises(registry.DownloadError, match="manifest SHA-256 mismatch"):
+        registry.fetch_manifest(model, 10)
+
+
+def test_download_and_verification_shell_helper_has_valid_bash_syntax():
+    import subprocess
+
+    root = Path(__file__).resolve().parents[2]
+    script = root / "scripts" / "download_model_artifacts_from_github.sh"
+    subprocess.run(["bash", "-n", str(script)], check=True)
