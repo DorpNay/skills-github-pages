@@ -351,14 +351,25 @@ Append-only owner intake; enrich existing orientation/UI/source lanes and preser
 
 ### K.2 Required model / runtime / storage decision pack
 
-Before pinning or downloading production artifacts, create one evidence-backed inventory containing: role (main/helper/ASR/TTS/embedding/reranker/OCR), exact model/repository and immutable revision, quantization, format, context/token limits, weight and auxiliary-file sizes, total disk footprint, expected RAM/VRAM/PSS, serving runtime/API, concurrency, license for code/weights/voice/tokenizer/data separately, provenance, SHA-256, install command, update path, rollback, and benchmark results on the intended target hardware.
+Before promoting production artifacts, maintain one evidence-backed inventory containing: role (main/helper/ASR/TTS/embedding/reranker/OCR), exact model/repository and immutable revision, quantization, format, context/token limits, weight and auxiliary-file sizes, total disk footprint, expected RAM/VRAM/PSS, serving runtime/API, concurrency, license for code/weights/voice/tokenizer/data separately, provenance, SHA-256, install command, update path, rollback, and benchmark results on the intended target hardware.
 
 - Compare the main local model with at least two credible current alternatives, including a model whose refusal behavior is suitable for the owner's intended legitimate use. Record uncensored/open-weight claims precisely: do not promise “zero refusals”; do not add an undisclosed application-level refusal layer. Preserve security checks for permissions, tool execution, privacy and external side effects.
 - Evaluate a small helper-model lane against main-only baseline. Keep it off unless a task-class-specific eval proves better quality/latency/resource/cost; no helper may authorize actions or approve its own output.
 - Inventory every external API/provider and every local API/endpoint, quotas, key custody, privacy and price. Inventory databases/storage by purpose (browser localStorage/IndexedDB, gateway SQLite/cache/RAG/AgentRun, and alternatives such as PostgreSQL/pgvector or a dedicated vector store only if measured need justifies them). State which databases are actually installed, which are optional, and exact volume/backup/restore requirements.
 - Record the total model + speech + OCR + retrieval artifacts that the owner must download, with per-artifact and aggregate sizes. Never put large weights in the GitHub Pages source tree or Git LFS; use a governed model/artifact store with license and checksum checks.
 
-**Current fact boundary:** qwen3.5:4b is an example in the existing VPS guide, not yet an owner-approved final model selection. The current repo has whisper.cpp/Piper code paths that depend on separately installed binaries and model/voice artifacts; feature flags are off by default. models/vosk/ contains a 46,236,750-byte Vosk Small Russian reference archive (ship=false), not an activated voice runtime. Current RAG is SQLite FTS5 + lexical concept graph, not full hybrid vector RAG. The local exact-response cache and browser cache exist; full operational observability and AgentRun runtime are not yet proven live. No VPS/Tunnel/Ollama host is currently verified.
+**Current fact boundary:** Qwen3.5-4B Uncensored Aggressive is the preferred bake-off candidate, not a production-approved final model selection. The current repo has whisper.cpp/Piper code paths that depend on separately installed binaries and model/voice artifacts; feature flags are off by default. models/vosk/ contains a 46,236,750-byte Vosk Small Russian reference archive (ship=false), not an activated voice runtime. Current RAG is SQLite FTS5 + lexical concept graph, not full hybrid vector RAG. The local exact-response cache and browser cache exist; full operational observability and AgentRun runtime are not yet proven live. No VPS/Tunnel/Ollama host is currently verified.
+
+
+**Acquisition progress 2026-11-13 — IMPLEMENTED / ARTIFACTS VERIFIED, PRODUCTION NOT APPROVED**
+
+- Main-model candidate pinned: HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M, 2,707,513,696 bytes. It is explicitly owner-server-only; no primary model weight was downloaded into Git or Actions artifacts.
+- Main/helper acquisition run 43393099472 succeeded and staged 6,453,112,704 bytes: Qwen3 Embedding 0.6B, Qwen3 Reranker 0.6B, Qwen3-ASR BF16, sherpa-onnx Qwen3-ASR INT8, Silero VAD, Whisper large-v3-turbo Q5_0, Piper Russian voice/config/card and Qwen vision projector.
+- Thai TTS run 43393859216 succeeded and staged 728,750,351 bytes: F5-TTS-THAI V1 500k FP16, vocabulary, model card, MIT code license and Vocos 24 kHz vocoder. Weight card says CC-BY-4.0, but underlying Porjai data rights are unclear; keep evaluation-only.
+- Every acquired file has SHA-256/SHA-1, exact byte length and a provenance sidecar in its lock artifact. Git tree remains weight-free; Actions artifacts retain for 30 days.
+- Embedding and reranker are candidates for FTS5 + vector + RRF; reranker only runs on a bounded top-k when measured benefit justifies it. ASR INT8 is the CPU challenger; no runtime adapter exists yet.
+- No weights are installed or loaded on a VPS. No WER/CER, retrieval, TTS, latency or RAM result is claimed. Main model selection and serving runtime remain subject to exact-host evaluation.
+- Detailed source groups, APIs, artifact links and commands: docs/MODEL_ARTIFACT_ACQUISITION_RU.md; manifests: models/manifest.json and models/manifest-thai-tts.json.
 
 ### K.3 Priority and execution order
 
