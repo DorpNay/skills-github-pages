@@ -176,3 +176,6 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 | EV-MODEL-HW-001 | 8-GB target profile | Main model plus OS/gateway, KV-cache growth, helper load/unload, no swap storms, cold/warm p95 and restart/recovery | UNMEASURED; target host not verified |
 
 All model evaluations use the same input fixtures, tool schemas, prompts, runtime version and hardware. Vendor/model-card scores are not aLandi results. No helper is promoted unless it beats the main-only baseline for one bounded role and can be disabled cleanly.
+
+
+| EV-RUNTIME-001 | Pinned runtime/API compatibility | Ollama v0.40.16 Qwen3.5 GGUF load/tool-call/vision; /api/embed Qwen3 embedding; whisper.cpp v1.9.5 CLI; Piper 1.8.0 voices; Tesseract 5.5.4 language data; Qwen-ASR 0.0.6 Transformers backend; exact host and hashes | SPECIFIED; no runtime installed |
