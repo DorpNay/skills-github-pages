@@ -19,3 +19,9 @@ Model weights are deliberately excluded from the Git tree and Git LFS. This dire
 ## Promotion rule
 
 Downloaded does not mean installed, loaded, evaluated or production-approved. Promotion requires artifact-specific license review, immutable provenance, actual target-host memory/latency measurements, RU/EN/TH quality tests, and a recorded EVALS result. A model's weights license does not automatically cover its training data, code, voice, or dependencies.
+
+
+- `manifest-ollama-registry.json`: official Ollama Qwen3.5-4B base comparison and Qwen3.5-2B Q4_K_M conditional helper packages.
+- `manifest-ocr.json`: planned GLM-OCR Q8_0 document OCR candidate (when acquired).
+- Offline Ollama import: `scripts/install_ollama_registry_model.py` verifies and copies content-addressed blobs into an explicit OLLAMA_MODELS directory; it never restarts the service or executes inference.
+- Qwen registry artifact run: 43395625203. Main uncensored Qwen weights remain owner-server-only.
