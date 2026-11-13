@@ -1,0 +1,60 @@
+name: Acquire official Ollama Qwen base and helper models
+
+on:
+  push:
+    branches:
+      - "feat/model-artifact-acquisition-*"
+    paths:
+      - "models/manifest-ollama-registry.json"
+      - ".github/workflows/acquire-ollama-registry-models.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ollama-qwen-artifacts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acquire:
+    name: Download and verify official Ollama registry packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Download pinned Ollama registry packages outside Git
+        run: |
+          python scripts/download_ollama_registry_models.py \
+            --manifest models/manifest-ollama-registry.json \
+            --output-dir "$RUNNER_TEMP/alandi-ollama-models" \
+            --timeout 900
+      - name: Upload official Qwen3.5 4B base model and projector
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-qwen35-base-4b-ollama-package-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-models/qwen35_base_4b/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload official Qwen3.5 2B Q4_K_M helper model and projector
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-qwen35-helper-2b-q4km-ollama-package-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-models/qwen35_helper_2b_q4km/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload registry package lock
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-ollama-qwen-artifacts-lock-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-models/artifacts-lock.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
