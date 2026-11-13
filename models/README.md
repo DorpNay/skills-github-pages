@@ -9,6 +9,8 @@ Model binaries are not stored in this GitHub Pages source repository or Git LFS.
     python scripts/download_model_artifacts.py
     python scripts/download_model_artifacts.py --verify-only
 
+The default run also pulls the official Qwen3.5-4B base reference (about 3.3 GB) into the configured Ollama model store and verifies its registry digest prefix. Use --skip-ollama only when Ollama is not installed on this host; run the pull on the same host used for the base-vs-uncensored evaluation.
+
 Use --root /path/to/cache to choose another location or --package PACKAGE_ID to acquire one package. The primary uncensored Qwen3.5-4B Q4_K_M checkpoint is intentionally download:false: the owner supplies that file directly to the server. Its vision projector and all selected auxiliary artifacts are separate downloads.
 
 The downloader pins immutable upstream revisions, verifies exact file sizes and SHA-256 for Hugging Face LFS objects, and verifies Git blob SHA-1 + size for raw GitHub artifacts. It does not execute downloaded files. Keep the accompanying model cards and voice provenance metadata.
