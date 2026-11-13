@@ -7,7 +7,6 @@ import json
 import os
 import re
 import shutil
-import stat
 import tempfile
 from pathlib import Path, PurePosixPath
 
