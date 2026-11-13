@@ -150,3 +150,61 @@ gh run download 43393859216 --repo DorpNay/skills-github-pages --dir /srv/alandi
 ~~~
 
 Use the Thai manifest lock to verify files. The main 674 MB checkpoint is in the artifact named alandi-f5-tts-thai-v1-500k-fp16-43393859216.
+
+
+## Official Ollama Qwen packages — run 43395625203
+
+https://github.com/DorpNay/skills-github-pages/actions/runs/43395625203
+
+**Result:** succeeded. Official Ollama registry blobs were downloaded, individually SHA-256 checked, packaged outside Git and retained for 30 days.
+
+| Package | Model bytes | Model SHA-256 | Vision projector bytes | Projector SHA-256 |
+|---|---:|---|---:|---|
+| Official Qwen3.5-4B base Q4_K_M | 2,648,593,216 | a9d0a3e1d8c91732a3812becd31f8d4a8ff57414903f226306069f0437e2ac50 | 675,569,120 | e56a899b1540860385465756dd308c84417410b94dbc1c380adffd20a921ca60 |
+| Official Qwen3.5-2B helper Q4_K_M | 1,274,396,992 | 20cb277f0967ace47b0b5d5658e5e494a88937f7378b74b5a266496400938f4c | 671,372,768 | 5ddf560e34046fd958b2576324f2a9b57d70f297afe6526958d60a23f3bfc20b |
+
+Both packages also include the official config, template, params and Apache-2.0 license layer. Exact per-file records are in artifact lock 43395625203.
+
+Raw registry manifest SHA-256:
+- Qwen3.5-4B base: d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04.
+- Qwen3.5-2B helper: 1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7.
+
+The 4B package is an official base-model comparison baseline; it is not the chosen uncensored main checkpoint. The 2B package is a candidate for one conditional helper. On the planned 8 GB host, do not keep the main model and helper loaded concurrently until measured memory proves it safe.
+
+### Import the pinned package into Ollama without re-downloading
+
+Download the artifact run and verify it first:
+
+~~~bash
+RUN_ID=43395625203
+DEST="/srv/alandi/models/imports/$RUN_ID"
+gh run download "$RUN_ID" --repo DorpNay/skills-github-pages --dir "$DEST"
+python3 scripts/verify_model_artifacts.py --root "$DEST"
+~~~
+
+Find the exact Ollama model store from the service environment before installation. Do not guess its location:
+
+~~~bash
+systemctl show ollama --property=Environment
+systemctl show ollama --property=User
+ps -eo user,args | grep '[o]llama serve'
+~~~
+
+The package import helper copies verified content-addressed blobs and writes the exact registry manifest. It does not restart Ollama, change systemd, or execute inference. Make the downloaded package readable by the Ollama service account (model weights are public artifacts), then run the helper as that service account:
+
+~~~bash
+sudo chgrp -R ollama "$DEST"
+sudo chmod -R g+rX "$DEST"
+sudo -u ollama python3 scripts/install_ollama_registry_model.py \
+  --package-dir "$DEST/alandi-qwen35-base-4b-ollama-package-$RUN_ID" \
+  --models-dir "$OLLAMA_MODELS"
+sudo -u ollama python3 scripts/install_ollama_registry_model.py \
+  --package-dir "$DEST/alandi-qwen35-helper-2b-q4km-ollama-package-$RUN_ID" \
+  --models-dir "$OLLAMA_MODELS"
+~~~
+
+After installation, verify tags with ollama show qwen3.5:4b and ollama show qwen3.5:2b-q4_K_M. Do not load both simultaneously on the 8 GB host. Preserve the previous model and config until a read-only smoke test passes.
+
+### Main uncensored model remains owner-server-only
+
+The preferred main candidate is still the HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M HF checkpoint (2,707,513,696 bytes) plus its separately pinned projector. It is not in the repository or Actions artifact set. A third-party Ollama mirror exists for evaluation, but its package-to-HF byte mapping is not verified. Do not silently substitute it for the pinned HF source.
