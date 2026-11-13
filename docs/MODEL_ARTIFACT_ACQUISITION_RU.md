@@ -114,3 +114,39 @@ For a transparent direct-HF path, test a current pinned llama.cpp server with th
 ### Current maturity boundary
 
 **DOWNLOADED / HASH-VERIFIED:** non-primary artifact batch above. **NOT INSTALLED:** no gateway or VPS model runtime has been changed. **NOT BENCHMARKED:** no latency, RSS/PSS, WER/CER, retrieval or output-quality claim is made. **NOT PRODUCTION-SELECTED:** all checkpoints remain evaluation candidates until the matching EVALS gates pass.
+
+
+## Thai TTS evaluation package — GitHub Actions run 43393859216
+
+https://github.com/DorpNay/skills-github-pages/actions/runs/43393859216
+
+**Result:** workflow succeeded on commit 9dd71ee6908ecf9dc34a963b23b103b4a4180dcf. Three model/support artifacts plus the acquisition lock were uploaded (30-day retention). Total acquired bytes: 728,750,351 (~0.68 GiB).
+
+| Artifact | Exact file bytes | SHA-256 | License/status |
+|---|---:|---|---|
+| F5-TTS-THAI V1 500k FP16 checkpoint | 674,367,818 | e66bca8f0380775089969250fb5b3b2cda197a4fc6ada355fed6f5c44edd1e47 | CC-BY-4.0 model card; dataset rights unresolved; evaluation-only |
+| V1 vocabulary | 11,419 | 88200c1e2121226fb9b7a12f5d8bab399b856bb7538b1e6b39a220ee9475187c | MIT code repository |
+| V1 model card | 3,573 | e6edaca84487e25af594f267904ae10094819f5e711075d20108b174366caf0b | Provenance |
+| F5-TTS code LICENSE | 1,089 | 58c79c37e6cf013d7560ac857db3ae242e493ccf03b8a3c83cc1f1ce2d546dd5 | MIT |
+| Vocos 24 kHz vocoder | 54,365,991 | 97ec976ad1fd67a33ab2682d29c0ac7df85234fae875aefcc5fb215681a91b2a | MIT |
+| Vocos config | 461 | da9033922f969a47f0c160010226919e59f27761fd5066f3828d46de6650b0fc | MIT |
+
+The V1 checkpoint is the smaller 500k-step FP16 artifact (not the 5.39 GB default 1M-step checkpoint). The pinned VYNCX source code revision uses torch.load(..., weights_only=True). The model is not installed and no audio has been generated yet.
+
+### Why this is evaluation-only
+
+The model card declares CC-BY-4.0 and lists Common Voice-derived data plus a Porjai Thai dataset. The processed-voice-th-169k dataset page has no clear license declaration; a second Porjai source referenced by the card could not be verified. Therefore the weight license alone is insufficient to approve redistribution or commercial use. Keep ship=false until data provenance is resolved. The newer V2 repository has no license tag in its model API metadata and was not downloaded. Thonburian TTS is excluded from production because its weights are CC-BY-NC-SA 4.0; Facebook MMS Thai TTS is excluded because its weights are CC-BY-NC 4.0.
+
+### Isolated runtime API
+
+The pinned VYNCX F5-TTS code exposes F5TTS(model="F5TTS_Base", ckpt_file=..., vocab_file=..., vocoder_local_path=..., device="cpu"). Its infer() method accepts ref_file, ref_text, gen_text, nfe_step, cfg_strength, speed and related controls, returning waveform, sample rate and spectrogram. Supply ref_text explicitly to avoid loading the package's optional ASR pipeline. Use the local Vocos directory and the custom Thai vocabulary. The model config targets 24 kHz audio.
+
+Keep this runtime in a dedicated virtual environment/sidecar: the Thai F5-TTS dependency set pins older NumPy/Pydantic constraints and includes PyTorch/Torchaudio. Do not install it into the gateway's main environment. CPU latency and peak RSS must be measured on the real VPS; unload the main LLM before testing if memory is tight. Reference-voice cloning must remain explicit and user-authorized.
+
+### Owner download
+
+~~~bash
+gh run download 43393859216 --repo DorpNay/skills-github-pages --dir /srv/alandi/models/imports/43393859216
+~~~
+
+Use the Thai manifest lock to verify files. The main 674 MB checkpoint is in the artifact named alandi-f5-tts-thai-v1-500k-fp16-43393859216.
