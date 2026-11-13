@@ -5,6 +5,7 @@ on:
     branches:
       - "main"
     paths:
+      - "models/manifest-ollama-registry.json"
       - "scripts/download_ollama_registry_models.py"
       - ".github/workflows/acquire-ollama-helper-models.yml"
   workflow_dispatch:

@@ -7,6 +7,8 @@ on:
     paths:
       - "models/artifacts.manifest.json"
       - "models/requirements-model-download.txt"
+      - "models/requirements-qwen-asr.txt"
+      - "models/runtime-stack.lock.json"
       - "scripts/download_model_artifacts.py"
       - ".github/workflows/acquire-external-model-cache.yml"
   workflow_dispatch:
