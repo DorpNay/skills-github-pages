@@ -348,7 +348,9 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  await expect(page.locator('#functionsMenuSummary')).toBeVisible();
+  await expect(page.locator('#functionPanelModal')).toBeHidden();
+  await expect(page.locator('#functionsDrawerNav [data-function]')).toHaveCount(4);
   const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
     element.classList.remove('hidden');
     const color = getComputedStyle(element).backgroundColor;
@@ -2552,119 +2554,200 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 });
 
-test('Functions menu exposes truthful Agents, Deep Research and Skills panels with blurred backdrop', async ({ page }) => {
+test('Functions drawer exposes truthful sections, keyboard navigation and responsive layout', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const menu = page.locator('#functionsMenu');
-  const summary = page.locator('#functionsMenuSummary');
-  await expect(menu).toBeVisible();
-  // This is a native details/summary disclosure, not an ARIA menu widget.
-  await expect(summary).toHaveAccessibleName(/Функции/);
-  await summary.focus();
-  await page.keyboard.press('Enter');
-  await expect(menu).toHaveAttribute('open', '');
-  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
-  await expect(menu.locator('[data-function="agents"]')).toBeVisible();
-  await expect(menu.locator('[data-function="agents"]')).toContainText('Агенты');
-  await expect(menu.locator('[data-function="agents"]')).toContainText('4 этапа на одной модели');
-  await expect(menu.locator('[data-function="research"]')).toBeVisible();
-  await expect(menu.locator('[data-function="research"]')).toContainText('Исследования');
-  await expect(menu.locator('[data-function="research"]')).toContainText('веб-поиск отдельно');
-  await expect(menu.locator('[data-function="skills"]')).toBeVisible();
-  await expect(menu.locator('[data-function="skills"]')).toContainText('Скиллы');
-  await expect(menu.locator('[data-function="skills"]')).toContainText('только для этого чата');
+  const trigger=page.locator('#functionsMenuSummary'),drawer=page.locator('#functionPanelModal');
+  await expect(trigger).toHaveAccessibleName(/Функции/);
+  const triggerBox=await trigger.boundingBox();
+  expect(triggerBox?.height||0,'Functions drawer launcher must have a 44px touch target').toBeGreaterThanOrEqual(44);
+  await trigger.focus();await page.keyboard.press('Enter');
+  await expect(drawer).toBeVisible();
+  await expect(drawer).toHaveRole('dialog');
+  await expect(drawer).toHaveAttribute('aria-modal','true');
+  await expect(drawer.locator('#functionsDrawerNav [data-function]')).toHaveCount(4);
+  for(const [kind,label] of [['agents','Агенты'],['research','Исследования'],['notebook','Notebook'],['skills','Скиллы']]){
+    const tab=drawer.locator('#functionsDrawerNav [data-function="'+kind+'"]');
+    await expect(tab).toBeVisible();
+    await expect(tab).toContainText(label);
+  }
+  await expect(drawer.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
+  await expect.poll(()=>drawer.evaluate(el=>getComputedStyle(el).backdropFilter)).toBe('blur(4px)');
+  const close=drawer.locator('[data-action="close-function-panel"]').first();
+  await expect(close).toBeFocused();
+  const focusables=drawer.locator('button:visible,input:visible,select:visible,textarea:visible');
+  const first=focusables.first(),last=focusables.last();
+  await page.keyboard.press('Shift+Tab');await expect(last).toBeFocused();
+  await page.keyboard.press('Tab');await expect(first).toBeFocused();
+  await page.keyboard.press('Escape');await expect(drawer).toBeHidden();await expect(trigger).toBeFocused();
 
-  await page.setViewportSize({ width: 320, height: 740 });
-  for (const option of await menu.locator('.toolbar-menu-option').all()) {
-    const box = await option.boundingBox();
-    expect(box?.height || 0, 'Functions menu option should have a 44px mobile hit target').toBeGreaterThanOrEqual(44);
+  await trigger.click();
+  await drawer.locator('#functionsDrawerNav [data-function="research"]').click();
+  await expect(drawer.locator('#researchFunctionSettings')).toBeVisible();
+  await drawer.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed','true');
+  await drawer.locator('[data-action="open-search-mode-settings"]').click();
+  await expect(drawer).toBeHidden();
+  await expect(page.locator('#searchModeMenu')).toHaveAttribute('open','');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#searchModeMenu')).not.toHaveAttribute('open','');
+
+  await trigger.click();
+  await drawer.locator('#functionsDrawerNav [data-function="skills"]').click();
+  await expect(drawer.locator('#skillFunctionSettings')).toBeVisible();
+  await drawer.locator('[data-action="close-function-panel"]').first().click();
+  await expect(drawer).toBeHidden();
+
+  await page.setViewportSize({ width:320,height:740 });
+  await trigger.click();
+  await expect(drawer).toBeVisible();
+  const drawerBox=await drawer.locator('.functions-drawer-surface').boundingBox();
+  expect(drawerBox?.width||0).toBeLessThanOrEqual(320);
+  expect(drawerBox?.x||0).toBeGreaterThanOrEqual(0);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+  for(const tab of await drawer.locator('#functionsDrawerNav button').all()){
+    const box=await tab.boundingBox();expect(box?.height||0,'Drawer tab must have a 44px hit target').toBeGreaterThanOrEqual(44);
   }
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  const functionsPanelBox = await menu.locator('.toolbar-menu-panel').boundingBox();
-  expect(functionsPanelBox).not.toBeNull();
-  expect(functionsPanelBox.x).toBeGreaterThanOrEqual(0);
-  expect(functionsPanelBox.x + functionsPanelBox.width).toBeLessThanOrEqual(320);
-  await expect(page.locator('#stopBtn')).toBeHidden();
-  const composerInputBox = await page.locator('#userInput').boundingBox();
-  expect(composerInputBox?.width || 0, 'Composer input should remain usable at 320px').toBeGreaterThanOrEqual(44);
-  await page.setViewportSize({ width: 390, height: 844 });
+  await drawer.locator('#functionsDrawerNav [data-function="notebook"]').click();
+  await expect(drawer.locator('#notebookFunctionSettings')).toBeVisible();
+  await expect(drawer.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
+});
 
-  await menu.locator('[data-function="agents"]').focus();
-  await page.keyboard.press('Enter');
-  const modal = page.locator('#functionPanelModal');
-  await expect(modal).toBeVisible();
-  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
-  await expect(modal).toHaveRole('dialog');
-  await expect(modal).toHaveAttribute('aria-modal', 'true');
-  const closePanel = modal.locator('[data-action="close-function-panel"]').first();
-  await expect(closePanel).toHaveAccessibleName('Закрыть');
-  await expect(closePanel).toBeFocused();
-  const visibleFocusables = modal.locator('a[href]:visible, button:visible, input:visible, select:visible, textarea:visible, [tabindex]:visible');
-  const firstFocusable = visibleFocusables.first();
-  const lastFocusable = visibleFocusables.last();
-  await page.keyboard.press('Shift+Tab');
-  await expect(lastFocusable).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(firstFocusable).toBeFocused();
-  await page.keyboard.press('Escape');
-  await expect(modal).toBeHidden();
-  await expect(summary).toBeFocused();
-
-  await summary.press('Enter');
-  await expect(menu).toHaveAttribute('open', '');
-  await page.keyboard.press('Escape');
-  await expect(menu).not.toHaveAttribute('open', '');
-  await expect(summary).toBeFocused();
-
-  await summary.click();
-  await menu.locator('[data-function="research"]').click();
-  await expect(modal).toBeVisible();
-  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
-  const researchPanel = page.locator('#researchFunctionSettings');
-  await expect(researchPanel).toBeVisible();
-  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Quick|Быстро/);
-  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: standard|Веб: обычный/);
-  await expect(researchPanel.locator('#researchWorkflowSummary')).toContainText(/Direct|Прямой/);
-
-  await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
-  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
-  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Thorough|Тщательно/);
-
-  await researchPanel.locator('[data-action="open-search-mode-settings"]').click();
-  await expect(modal).toBeHidden();
-  const searchMenu = page.locator('#searchModeMenu');
-  await expect(searchMenu).toHaveAttribute('open', '');
-  await expect(page.locator('#searchModeSummary')).toBeFocused();
-  await page.locator('#searchModeSummary').click();
-  await expect(searchMenu).not.toHaveAttribute('open', '');
-
+test('Notebook persists local notes and sources, supports import/export and creates inert Skill/Agent drafts', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(async()=> (await indexedDB.databases()).some(db=>db.name==='AI_Agent_DB_v87'&&db.version===3));
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-function="research"]').click();
-  await expect(modal).toBeVisible();
-  await modal.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  await expect(page.locator('#agentFunctionSettings')).toBeVisible();
-  await expect(page.locator('#researchFunctionSettings')).toBeHidden();
-  await modal.locator('[data-action="close-function-panel"]').first().click();
-  await expect(modal).toBeHidden();
+  const drawer=page.locator('#functionPanelModal');
+  await drawer.locator('#functionsDrawerNav [data-function="notebook"]').click();
+  await page.locator('#notebookNewTitle').fill('Local research');
+  await page.locator('[data-action="create-notebook"]').click();
+  await expect(page.locator('#notebookWorkspace')).toBeVisible();
 
-  await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-function="skills"]').click();
-  await expect(modal).toBeVisible();
-  await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
-  await expect(page.locator('#skillFunctionSettings')).toBeVisible();
-  await modal.locator('[data-action="close-function-panel"]').first().click();
-  await expect(modal).toBeHidden();
+  await page.locator('#notebookNoteTitle').fill('Key finding');
+  await page.locator('#notebookNoteBody').fill('# Evidence\nA useful finding to verify.');
+  await page.locator('[data-action="save-notebook-note"]').click();
+  await expect(page.locator('#notebookEntries')).toContainText('Key finding');
 
-  await selectLanguage(page, 'en');
-  await expect(summary).toHaveAccessibleName(/Functions/);
-  await summary.click();
-  await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Structured analysis/);
-  await menu.locator('[data-function="agents"]').click();
-  await expect(closePanel).toHaveAccessibleName('Close');
-  await closePanel.click();
-  await expect(modal).toBeHidden();
+  await page.locator('#notebookSourceTitle').fill('Reference');
+  await page.locator('#notebookSourceUrl').fill('https://example.org/research');
+  await page.locator('[data-action="save-notebook-source"]').click();
+  await expect(page.locator('#notebookEntries')).toContainText('example.org/research');
+
+  await page.locator('#notebookSearch').fill('Key finding');
+  await expect(page.locator('#notebookEntries')).toContainText('Key finding');
+  await expect(page.locator('#notebookEntries')).not.toContainText('example.org/research');
+  await page.locator('#notebookSearch').fill('');
+
+  await page.locator('#notebookRightsConsent').check();
+  await page.locator('#notebookTextFile').setInputFiles({name:'spoofed-notes.md',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.7')});
+  await expect(page.locator('#notebookStatus')).toContainText('Разрешены только TXT/Markdown');
+  await expect(page.locator('#notebookEntries')).not.toContainText('spoofed-notes.md');
+  await page.locator('#notebookTextFile').setInputFiles({name:'invalid-utf8.md',mimeType:'text/markdown',buffer:Buffer.from([0xc3,0x28])});
+  await expect(page.locator('#notebookStatus')).toContainText('UTF-8');
+  await expect(page.locator('#notebookEntries')).not.toContainText('invalid-utf8.md');
+  const sourceBytes=Buffer.from('# Chapter One\nVerified source procedure.\n');
+  await page.locator('#notebookTextFile').setInputFiles({name:'licensed-notes.md',mimeType:'text/markdown',buffer:sourceBytes});
+  await expect(page.locator('#notebookEntries')).toContainText('licensed-notes.md');
+  const expectedSourceHash=await page.evaluate(async()=>{
+    const bytes=new TextEncoder().encode('# Chapter One\nVerified source procedure.\n');
+    const digest=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  });
+  const storedSourceHash=await page.evaluate(async()=>{
+    const database=await new Promise((resolve,reject)=>{const request=indexedDB.open('AI_Agent_DB_v87');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const entries=await new Promise((resolve,reject)=>{const request=database.transaction('notebookEntries','readonly').objectStore('notebookEntries').getAll();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    database.close();return entries.find(entry=>entry.title==='licensed-notes.md')?.sourceHash||null;
+  });
+  expect(storedSourceHash).toBe(expectedSourceHash);
+
+  const skillDownload=page.waitForEvent('download');
+  await page.locator('#notebookEntries [data-action="export-skill-draft"]').last().click();
+  const skill=await skillDownload;
+  expect(skill.suggestedFilename()).toContain('SKILL-DRAFT.md');
+  const blueprintDownload=page.waitForEvent('download');
+  await page.locator('#notebookEntries [data-action="export-agent-blueprint"]').last().click();
+  expect((await blueprintDownload).suggestedFilename()).toContain('AGENT-BLUEPRINT.json');
+
+  const bundleDownload=page.waitForEvent('download');
+  await page.locator('[data-action="export-notebook"]').click();
+  expect((await bundleDownload).suggestedFilename()).toContain('local-research.json');
+
+  const stores=await page.evaluate(async()=>{
+    const database=await new Promise((resolve,reject)=>{const request=indexedDB.open('AI_Agent_DB_v87');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const names=Array.from(database.objectStoreNames);
+    const count=name=>new Promise((resolve,reject)=>{const request=database.transaction(name,'readonly').objectStore(name).count();request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+    const result={names,notebooks:await count('notebooks'),entries:await count('notebookEntries'),privateMemory:await count('memory'),sharedMemory:await count('sharedMemory')};
+    database.close();return result;
+  });
+  expect(stores.names).toContain('notebooks');
+  expect(stores.names).toContain('notebookEntries');
+  expect(stores.notebooks).toBe(1);
+  expect(stores.entries).toBe(3);
+  expect(stores.privateMemory).toBe(0);
+  expect(stores.sharedMemory).toBe(0);
+
+  page.on('dialog',dialog=>dialog.accept());
+  await page.locator('[data-action="delete-notebook"]').click();
+  await expect(page.locator('#notebookWorkspace')).toBeHidden();
+});
+test('project notebooks stay isolated by active project while personal notebooks remain visible', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:Date.now(),updatedAt:Date.now()});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('alpha-project','Alpha'),project('beta-project','Beta')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('personal-chat','Personal',null),chat('alpha-chat','Alpha chat','alpha-project'),chat('beta-chat','Beta chat','beta-project')]));
+    localStorage.setItem('ai_current_chat_v87','alpha-chat');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.waitForFunction(async()=> (await indexedDB.databases()).some(db=>db.name==='AI_Agent_DB_v87'&&db.version===3));
+  const openNotebook=async()=>{
+    await page.locator('#functionsMenuSummary').click();
+    await page.locator('#functionsDrawerNav [data-function="notebook"]').click();
+    await expect(page.locator('#notebookFunctionSettings')).toBeVisible();
+  };
+  const createNotebook=async(title,scope)=>{
+    await page.locator('#notebookNewTitle').fill(title);
+    await page.locator('#notebookNewScope').selectOption(scope);
+    await page.locator('[data-action="create-notebook"]').click();
+    await expect(page.locator('#notebookSelect')).toContainText(title);
+  };
+  await openNotebook();
+  await createNotebook('Alpha private research','project');
+  await createNotebook('Personal library','personal');
+  let titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research · проект');
+  expect(titles).toContain('Personal library · личная');
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
+  const navigation=page.locator('#projectNavigationList');
+  if(await navigation.evaluate(el=>el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
+  await page.locator('[data-action="switch-chat"][data-chat-id="personal-chat"]').click();
+  await expect(page.locator('#activeChatTitle')).toHaveText('Personal');
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Personal library · личная');
+  expect(titles).not.toContain('Alpha private research · проект');
+  await expect(page.locator('#notebookNewScope option[value="project"]')).toBeDisabled();
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
+  const switchToProjectChat=async(projectId,chatId,title)=>{
+    const navigation=page.locator('#projectNavigationList');
+    if(await navigation.evaluate(el=>el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
+    const group=page.locator('details.project-nav-item[data-project-id="'+projectId+'"]');
+    if(!(await group.evaluate(el=>el.open))) await group.locator('summary').click();
+    await group.locator('[data-action="switch-chat"][data-chat-id="'+chatId+'"]').click();
+    await expect(page.locator('#activeChatTitle')).toHaveText(title);
+  };
+  await switchToProjectChat('beta-project','beta-chat','Beta chat');
+  await openNotebook();
+  await createNotebook('Beta private research','project');
+  await page.locator('#functionPanelModal footer [data-action="close-function-panel"]').click();
+  await switchToProjectChat('alpha-project','alpha-chat','Alpha chat');
+  await openNotebook();
+  titles=await page.locator('#notebookSelect option').allTextContents();
+  expect(titles).toContain('Alpha private research · проект');
+  expect(titles).toContain('Personal library · личная');
+  expect(titles).not.toContain('Beta private research · проект');
 });
 
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
@@ -3305,7 +3388,7 @@ test('settings and function panels close on backdrop click without leaving a sta
 
   const summary = page.locator('#functionsMenuSummary');
   await summary.click();
-  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#functionPanelModal #functionsDrawerNav [data-function="agents"]').click();
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   await modal.click({ position: { x: 4, y: 4 } });
