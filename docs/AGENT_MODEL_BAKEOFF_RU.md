@@ -166,7 +166,7 @@ The model author reports zero refusals on 465 cases. This is an author claim, no
 
 | Role | Pinned artifact | Size | License | Activation policy |
 |---|---|---:|---|---|
-| Embeddings | Qwen3-Embedding-0.6B, revision 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 | 1,191,586,416 bytes | Apache-2.0 | RAG ingest/query only |
+| Embeddings | Official Ollama qwen3-embedding:0.6b-q8_0, digest prefix ac6da0dfba84 | about 639 MB | Apache-2.0 | RAG ingest/query only |
 | Reranker | Qwen3-Reranker-0.6B, revision e61197ed45024b0ed8a2d74b80b4d909f1255473 | 1,191,588,280 bytes | Apache-2.0 | After first-stage retrieval only, if eval improves |
 | ASR baseline | whisper.cpp large-v3-turbo Q5_0, revision 98aa99a0a9db05ae2342309f5096248665f7cba3 | 574,041,195 bytes | MIT conversion/runtime; retain upstream model notices | Existing whisper.cpp gateway path |
 | ASR challenger | Qwen3-ASR-0.6B, revision 5eb144179a02acc5e5ba31e748d22b0cf3e303b0 | 1,876,091,704 bytes | Apache-2.0 | Separate RU/TH/EN eval; not wired into gateway yet |
@@ -191,7 +191,7 @@ Piper v1.8.0 adds a Thai phonemizer using TLTK, but the current official Piper v
 
 ### Acquisition and memory budget
 
-The manifest at models/artifacts.manifest.json pins 5,645,657,360 bytes of primary auxiliary payloads (includes the vision projector, excludes the main Q4 model; tokenizer/config files add overhead). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
+The manifest at models/artifacts.manifest.json pins 4,454,070,944 exact bytes for external-cache artifacts (includes the vision projector, excludes the main Q4 model; tokenizer/config files add overhead) plus approximately 3,939,000,000 bytes for the two Ollama model-store references (Qwen3.5 base and Qwen3 embedding). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
 
 The current engineering container could not resolve external DNS; actual downloads did not complete. The downloader is implemented and verifies SHA-256 or upstream Git blob SHA-1 plus size. Run it from a network-enabled workstation/server, then record downloaded hashes and installation status. Do not claim downloaded or installed yet.
 
@@ -207,6 +207,8 @@ On the reference 8-GB VPS, do not keep the embedding, reranker, ASR, OCR and TTS
 6. Evaluate Tesseract RU/EN/TH on scanned and born-digital fixtures; report CER, exact fields/tables, reading order and latency.
 7. Keep all new model flags off until exact-host evidence and owner release approval.
 
+
+The full Hugging Face Qwen3-Embedding-0.6B safetensors file (1,191,586,416 bytes) remains pinned for provenance but is not downloaded; the Ollama Q8_0 artifact avoids duplicate full weights and uses the native /api/embed route.
 
 ### Matched base-model reference
 
