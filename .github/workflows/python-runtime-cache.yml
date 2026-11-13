@@ -1,0 +1,114 @@
+name: Pinned Python Runtime Cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/python-runtime-cache.yml"
+      - "models/runtime-install.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-runtime-cache-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-cache:
+    name: Offline runtime cache (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned uv
+        run: |
+          python -m pip install --disable-pip-version-check uv==0.13.6
+          uv --version
+          uv lock --check
+      - name: Populate cache and verify a clean offline sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          export UV_CACHE_DIR="$RUNNER_TEMP/alandi-uv-cache"
+          export UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/alandi-online-venv"
+          uv sync --locked --no-dev --no-install-project
+          uv cache dir
+          export UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/alandi-offline-venv"
+          uv sync --locked --no-dev --no-install-project --offline
+          uv pip check --python "$UV_PROJECT_ENVIRONMENT/bin/python"
+      - name: Package cache, bootstrap wheel and integrity manifest
+        shell: bash
+        env:
+          OUT: ${{ runner.temp }}/alandi-python-runtime-cache
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUT/uv-bootstrap"
+          python -m pip download --disable-pip-version-check --only-binary=:all: --no-deps --dest "$OUT/uv-bootstrap" "uv==0.13.6"
+          cp pyproject.toml uv.lock "$OUT/"
+          tar -czf "$OUT/uv-cache.tar.gz" -C "$RUNNER_TEMP" alandi-uv-cache
+          OUT="$OUT" python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import platform
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          out = Path(os.environ["OUT"])
+
+          def digest(path: Path) -> str:
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          archive = out / "uv-cache.tar.gz"
+          wheels = sorted((out / "uv-bootstrap").glob("*.whl"))
+          manifest = {
+              "schema_version": 1,
+              "commit_sha": os.environ["GITHUB_SHA"],
+              "python_version": platform.python_version(),
+              "python_implementation": platform.python_implementation(),
+              "python_abi": f"cp{sys.version_info.major}{sys.version_info.minor}",
+              "platform": platform.platform(),
+              "machine": platform.machine(),
+              "libc": list(platform.libc_ver()),
+              "uv_version": subprocess.check_output(["uv", "--version"], text=True).strip(),
+              "dependency_scope": "locked default runtime dependencies only; excludes dev group and project source",
+              "offline_sync_verified": True,
+              "uv_lock_sha256": digest(Path("uv.lock")),
+              "pyproject_sha256": digest(Path("pyproject.toml")),
+              "cache_archive": {
+                  "file": archive.name,
+                  "bytes": archive.stat().st_size,
+                  "sha256": digest(archive),
+              },
+              "uv_bootstrap_wheels": [
+                  {"file": wheel.name, "bytes": wheel.stat().st_size, "sha256": digest(wheel)}
+                  for wheel in wheels
+              ],
+          }
+          (out / "cache-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+          PY
+          (
+            cd "$OUT"
+            sha256sum uv-cache.tar.gz pyproject.toml uv.lock cache-manifest.json uv-bootstrap/*.whl > SHA256SUMS
+          )
+      - name: Upload verified offline runtime cache
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-python-runtime-cache-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}-${{ github.sha }}
+          path: ${{ runner.temp }}/alandi-python-runtime-cache
+          if-no-files-found: error
+          retention-days: 30

@@ -112,3 +112,25 @@ The gateway dependency source of truth is the root `pyproject.toml` + `uv.lock` 
     uv sync --locked --no-dev --no-install-project
 
 This installs from the lock; it is not an offline wheelhouse. If the target host has no outbound package access, stage a platform-matched uv cache/wheelhouse separately before installation. Optional Qwen-ASR/PyTorch and OS packages are not part of the gateway lock.
+
+
+## Offline Python gateway dependency cache
+
+The repository now builds a platform- and Python-minor-specific cache from the committed `uv.lock`. Workflow: `.github/workflows/python-runtime-cache.yml`. It builds on Ubuntu 24.04 x86_64 for CPython 3.12, 3.13 and 3.14; performs an online locked sync, then proves a clean second environment can sync with `--offline`; and uploads the uv cache plus the pinned uv bootstrap wheel, lockfile, manifest and SHA256SUMS. It intentionally contains **runtime dependencies only** (no dev group, model weights or OS packages).
+
+On an internet-connected admin workstation with GitHub CLI authenticated:
+
+    gh run list --workflow python-runtime-cache.yml --branch main --limit 10
+    gh run download <RUN_ID> --name alandi-python-runtime-cache-Linux-X64-py3.12-<COMMIT_SHA>
+    sha256sum -c SHA256SUMS
+
+Choose the artifact matching the target's CPython minor version. The current artifact target is Ubuntu 24.04 x86_64; do not install it on another OS/architecture without a compatibility check. From the repository root on the target host (replace `3.12` with the selected minor version):
+
+    python3.12 -m ensurepip --upgrade
+    python3.12 -m pip install --no-index --find-links uv-bootstrap uv==0.13.6
+    sudo mkdir -p /opt/alandi
+    sudo tar -xzf uv-cache.tar.gz -C /opt/alandi
+    UV_CACHE_DIR=/opt/alandi/alandi-uv-cache UV_PROJECT_ENVIRONMENT=/opt/alandi/venv uv sync --locked --no-dev --no-install-project --offline
+    /opt/alandi/venv/bin/python -m pip check
+
+The offline sync is deliberately network-disabled and fails closed if the artifact does not match the lock/platform or lacks a required distribution. Keep the extracted cache until the service is installed and smoke-tested. This cache does not install Ollama, Piper, Whisper, Tesseract binaries, GPU drivers, system packages or optional Qwen-ASR/PyTorch dependencies; those remain separate, host-specific installation steps. Artifacts expire after 30 days; rerun the workflow if needed.
