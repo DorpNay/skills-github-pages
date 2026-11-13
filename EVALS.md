@@ -159,3 +159,56 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixture:** offline unit tests in `gateway/tests/test_agent_run_store.py` cover idempotency/conflict, scope validation, versioned transitions, task claim/lease expiry/fencing, retry budgets, cancellation, event journal, bounded typed metadata, prompt/secret/free-text rejection, SQLite constraints, concurrency, migration and file permissions.
 - **Acceptance:** deterministic exact-head Gateway tests; no unbounded free text or raw prompts/secrets in event metadata; scope fails closed; expired lease cannot complete with stale fencing token; terminal state cannot reopen; SQLite file mode 0600; operational limitations are explicit.
 - **Status:** PROTOTYPE in PR #169 candidate, exact-head Gateway CI pending. No API route or worker runtime is wired to the store. Do not mark Agent Workforce implemented from this prototype alone.
+
+
+## EV-MODEL-001 — main local model and uncensored behavior bake-off
+
+- **Scope:** HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M against the official Qwen3.5-4B base and at least two credible current alternatives.
+- **Fixture:** fixed RU/EN/TH conversational, coding, extraction, JSON-schema, tool-call and multimodal cases; identical prompts, context, temperature and runtime.
+- **Acceptance:** no false claims from author-reported refusal tests; measure task success, factuality, JSON validity, tool-call exactness, latency/TTFT, RSS/PSS, context memory and cold load. No unauthorized tool execution; zero model self-authorization. Compare main-only before any helper cascade.
+- **Status:** candidate acquired as owner-server-only metadata; no main weights installed or benchmarked.
+
+## EV-RAG-EMBED-001 — Qwen3 multilingual embedding
+
+- **Scope:** Qwen3-Embedding-0.6B versus current SQLite FTS5/lexical retrieval and a deterministic hybrid/RRF candidate.
+- **Fixture:** at least 50 owner-approved RU/EN/TH golden queries with expected documents, source offsets and project scopes.
+- **Acceptance:** Recall@5, MRR, nDCG@10, citation correctness, cross-language retrieval, scope isolation, p50/p95 latency, RSS/PSS and disk footprint. Ingestion and query instruction templates must be versioned.
+- **Status:** weights downloaded and hash-verified; adapter and golden-set eval not implemented.
+
+## EV-RAG-RERANK-001 — conditional Qwen3 reranking
+
+- **Scope:** Qwen3-Reranker-0.6B on a bounded candidate set after lexical/vector retrieval.
+- **Acceptance:** improve MRR/nDCG and source correctness over hybrid retrieval without unacceptable p95/RSS cost; raw logits must not be treated as calibrated probabilities. No reranker call on requests without retrieval.
+- **Status:** weights downloaded and hash-verified; runtime adapter/eval not implemented.
+
+## EV-ASR-002 — multilingual speech recognition bake-off
+
+- **Scope:** Qwen3-ASR BF16, sherpa-onnx Qwen3-ASR INT8, whisper.cpp large-v3-turbo Q5_0 and the existing Vosk Russian reference.
+- **Fixture:** >=100 labelled utterances per RU/EN/TH language initially; clean/noisy, near/far microphone, punctuation and code-switching cases.
+- **Acceptance:** WER/CER by language, real-time factor, TTFT, endpoint delay, p50/p95, peak RSS/PSS, CPU utilization and failure rate. Compare identical PCM and sample-rate normalization; report streaming and offline separately.
+- **Status:** model artifacts acquired; no inference runtime installed or audio benchmark run.
+
+## EV-VAD-001 — Silero VAD segmentation
+
+- **Scope:** Silero VAD ONNX against labelled speech/silence intervals and the existing browser voice path.
+- **Acceptance:** false start/stop rates, speech onset/end delay, clipped first/last phonemes, noise robustness and CPU/RSS; tune thresholds on held-out data.
+- **Status:** ONNX acquired and hash-verified; no runtime integration.
+
+## EV-TTS-002 — Russian and Thai local speech synthesis
+
+- **Scope:** Piper Russian voice and F5-TTS Thai V1 500k FP16 + Vocos.
+- **Acceptance:** native-speaker intelligibility/pronunciation, MOS or pairwise preference, duration, RTF, p50/p95, peak RSS/PSS, deterministic seed and reference-audio consent. Test Thai script normalization and proper nouns separately.
+- **License gate:** F5-TTS model card is CC-BY-4.0, but training dataset provenance is incomplete. No distribution/commercial use until rights are cleared.
+- **Status:** model and vocoder artifacts acquired; no TTS runtime installed or audio benchmark run.
+
+## EV-MODEL-API-001 — main model serving compatibility
+
+- **Scope:** Ollama single-GGUF import, third-party Ollama mirror and direct llama.cpp server with Qwen3.5 main + mmproj.
+- **Acceptance:** exact model/template compatibility, streaming, JSON schema, tools, vision input, OpenAI-compatible gateway contract, cancellation, context memory and security review. Preserve the currently working provider until a candidate passes.
+- **Status:** API documentation and registry metadata reviewed; no target-host runtime test.
+
+## EV-ARTIFACT-001 — model acquisition provenance
+
+- **Scope:** pinned manifest, bounded HTTPS downloader, archive safety, SHA-256/SHA-1 sidecars, Actions artifact packaging and server-side verification.
+- **Acceptance:** all acquired artifacts match their lock, no weights in Git/Git LFS, owner-server-only main weight is skipped, archives reject traversal/link/device entries, exact artifact run and retention are recorded.
+- **Status:** main acquisition run 43393099472 and Thai TTS run 43393859216 passed; server-side import/verification remains pending.
