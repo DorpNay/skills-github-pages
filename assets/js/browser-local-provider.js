@@ -139,7 +139,7 @@
           assert(visitedEntries <= this.limits.maxEntries,
             'Folder contains more than ' + this.limits.maxEntries + ' entries.');
           const name = String(pair[0]), handle = pair[1];
-          assert(name && name !== '.' && name !== '..' && !name.includes('/') && !name.includes('\\\\'),
+          assert(name && name !== '.' && name !== '..' && !name.includes('/') && !name.includes('\\'),
             'Folder contains an invalid entry name.');
           const path = prefix ? prefix + '/' + name : name;
           if (handle.kind === 'directory') await visit(handle, path, depth + 1);
