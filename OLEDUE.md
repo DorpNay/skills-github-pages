@@ -72,3 +72,13 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 **Current live orientation (2026-11-13):** main 9033c6ad708a993cba5d1b27442f53651ad71c0f; open PRs #175–#182; issue #111 remains open. Main scheduled Freshness #43247857963 fails because the live PR queue differs from saved state. #181 has passing visible checks; #176/#177/#178 have passing visible Chromium/Jekyll/security/integrity/context checks; #175 Chromium fails; #179 Chromium and Freshness fail; #182 Chromium fails; #180 Integrity fails and Chromium was cancelled. Re-fetch queue, diffs and exact-head checks before every integration decision.
 
 **Next routing:** work from LANDING-V2-2026-001 and section K; first reconcile the eight-PR queue and main/state freshness, then finish owner UI/four-panel surface, freeze the evidence-backed model/runtime/database plan, and deliver bounded runtime capabilities in the priority order recorded in section K. Keep issue #111 open until real owner/environment release gates are evidenced.
+
+
+## Current owner execution checkpoint — 2026-11-13
+
+- Live main at start of model work: 6a366125720453193c82a7385f8c088224a5928e; main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 passed exact SHA.
+- Current live PR queue snapshot: #175, #176, #178, #179, #180, #182, #184, #185; issue #111 remains open. Re-fetch before any merge/integration.
+- The latest explicit owner request drives the active task: continue large-step implementation and source/model acquisition while preserving aLandi N₂O principles, one main-model path by default, conditional helper calls, explicit tool permissions and reproducible state records. Do not default to any PR.
+- Model candidate pinned in PR #185: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M; main checkpoint is excluded from repository downloads for owner upload. Auxiliary manifest is models/artifacts.manifest.json (5,645,657,360 primary payload bytes).
+- Actual downloads did not complete because outbound DNS is unavailable in this engineering container. Do not call the artifacts downloaded or installed. The downloader is ready for a network-enabled machine.
+- Next: repair and pass Freshness on exact PR #185 HEAD, complete remaining exact-head checks, then run the pinned acquisition from a network-enabled environment. Keep PR open until review and checks pass.
