@@ -1009,7 +1009,23 @@ function downloadProjectRecoveryBackup() {
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного облака aLandi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
         privateMemoryHelpSummary:'О личной памяти',sharedMemoryHelpSummary:'Об общей памяти',readabilityTitle:'Читаемость текста',readabilityReset:'Сбросить',readabilityScaleLabel:'Размер текста',readabilityContrastLabel:'Контраст текста',readabilityContrastNormal:'Стандартный',readabilityContrastHigh:'Повышенный',readabilityPreview:'Пример текста — так будут выглядеть сообщения.',memoryPanelTitle:'Настройки памяти',memoryPanelSummary:'Личная и общая память',privateMemoryTitle:'Личная память',privateMemoryHelp:'Хранится локально в IndexedDB этого браузера. По умолчанию заметки не передаются в запросы; разрешение можно включить ниже.',sharedMemoryTitle:'Общая память',sharedMemoryHelp:'Общие факты могут попасть внешнему провайдеру только при отдельном разрешении и если это допускает область памяти проекта.',privateMemoryContextLabel:'Разрешить использовать заметки личной памяти в контексте запросов.',globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'Проекты',currentProjectLabel:'Проект текущего чата',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'Создать проект',saveProject:'Сохранить изменения',projectContextHandoffTitle:'Передать контекст в чат',projectContextHandoffLabel:'Существующий чат',projectContextHandoffButton:'Передать для следующего запроса',projectSourcesTitle:'Источники проекта',projectSourcesUnavailable:'Управление источниками пока не подключено: gateway умеет индексировать, удалять и искать документы в рамках scope, но не предоставляет API списка источников. Вложения чата не считаются сохранёнными источниками проекта.',projectSourcesRoadmap:'1ИV3ИT10И · Управление источниками проекта — в разработке',projectSourcesRoadmapNote:'Раздел и его место в проекте уже предусмотрены; управление списком станет доступно после появления API источников. Пока никаких действий с источниками не имитируется.',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты'
 ,
-        functionAgentsHelp:'Структурированный разбор · 4 этапа на одной модели',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',researchWorkflowStatusLabel:'Структурированный pipeline',researchWorkflowStatusHelp:'Четыре последовательных этапа используют выбранную модель. Сохранённый team blueprint не запускает независимых workers.',researchOpenAgentSettings:'Настроить Agents / structured analysis',research2RoadmapLabel:'Deep Research 2.0 — в разработке',research2RoadmapHelp:'Планируемые: возобновляемые runs, коллекции источников, evidence ledger, проверка claim-to-citation и анализ противоречий. Это не активный runtime.',roadmapDetailsClose:'Закрыть',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
+helperMemoryNoProject:'Сначала выбери проект.',
+        helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',
+        helperMemoryTitle:'Помощник памяти проекта',
+        helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',
+        helperMemorySuggest:'Предложить компактные факты',
+        helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',
+        helperMemoryLoading:'Модель-помощник готовит предложения…',
+        helperMemoryEmpty:'Помощник не нашёл новых фактов.',
+        helperMemoryAdd:'Добавить в проект',
+        helperMemoryAdded:'Факт добавлен в локальную память проекта.',
+        helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',
+        helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',
+        helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',
+        helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',
+        helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',
+        helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.',
+                functionAgentsHelp:'Структурированный разбор · 4 этапа на одной модели',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',researchWorkflowStatusLabel:'Структурированный pipeline',researchWorkflowStatusHelp:'Четыре последовательных этапа используют выбранную модель. Сохранённый team blueprint не запускает независимых workers.',researchOpenAgentSettings:'Настроить Agents / structured analysis',research2RoadmapLabel:'Deep Research 2.0 — в разработке',research2RoadmapHelp:'Планируемые: возобновляемые runs, коллекции источников, evidence ledger, проверка claim-to-citation и анализ противоречий. Это не активный runtime.',roadmapDetailsClose:'Закрыть',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
         functionNotebook:'📓 Notebook',functionNotebookHelp:'Локальные тетради и источники',functionsDrawerNavLabel:'Разделы функций',notebookScopeAria:'Область тетради',notebookSelectAria:'Выбранная тетрадь',notebookSortAria:'Сортировка записей',functionPanelClose:'Закрыть',functionNotebookTitle:'Notebook',functionNotebookDescription:'Локальные исследовательские тетради с личной и проектной областью.',notebookTitle:'Исследовательская тетрадь',notebookLocal:'Локально в браузере',notebookPrivacy:'Тетрадь хранится отдельно от памяти чата. Данные не отправляются модели без отдельного выбора.',notebookNew:'Новая тетрадь',notebookNamePlaceholder:'Название тетради',notebookPersonal:'Личная · этот браузер',notebookProject:'Текущий проект',notebookCreate:'＋ Создать тетрадь',notebookExport:'Экспорт',notebookDelete:'Удалить',notebookSearch:'Поиск по заметкам и источникам',notebookSortUpdated:'Сначала обновлённые',notebookSortTitle:'По названию',notebookSortCreated:'Сначала старые',notebookNote:'Новая заметка',notebookSave:'Сохранить заметку',notebookSource:'Ссылка на источник',notebookAddLink:'Добавить ссылку',notebookRights:'У меня есть права на импорт и анализ этого текста.',notebookImport:'Импорт TXT / Markdown',notebookLimits:'TXT/Markdown до 2 МБ. URL сохраняются как ссылки, не загружаются. PDF/EPUB/Office требуют защищённого парсера.',notebookEntries:'Заметки и источники',notebookEmpty:'Создай личную тетрадь или тетрадь текущего проекта.',notebookLocalOnly:'Хранится локально. Не является памятью чата.'
       },
       en:{
@@ -1031,7 +1047,23 @@ function downloadProjectRecoveryBackup() {
         projectCreateTitle:'Create project',projectCreateHelp:'Creating a project does not move the current chat. You can create a new chat separately from the project row.',projectCreateNameLabel:'Project name',projectCreateInstructionsLabel:'Short instructions (optional)',cancel:'Cancel',
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
         privateMemoryHelpSummary:'About private memory',sharedMemoryHelpSummary:'About shared memory',readabilityTitle:'Text readability',readabilityReset:'Reset',readabilityScaleLabel:'Text size',readabilityContrastLabel:'Text contrast',readabilityContrastNormal:'Standard',readabilityContrastHigh:'Higher',readabilityPreview:'Preview text — this is how messages will look.',memoryPanelTitle:'Memory settings',memoryPanelSummary:'Private and shared memory',privateMemoryTitle:'Private memory',privateMemoryHelp:'Stored locally in this browser’s IndexedDB. Notes are not sent with requests by default; you can opt in below.',sharedMemoryTitle:'Shared memory',sharedMemoryHelp:'Shared facts may be sent to an external provider only with separate consent and when the project memory scope allows it.',privateMemoryContextLabel:'Allow private-memory notes to be included in request context.',globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'Projects',currentProjectLabel:'Project for this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'Create project',saveProject:'Save changes',projectContextHandoffTitle:'Hand off context to a chat',projectContextHandoffLabel:'Existing chat',projectContextHandoffButton:'Queue for next request',projectSourcesTitle:'Project sources',projectSourcesUnavailable:'Source management is not connected yet: the gateway can ingest, delete and retrieve documents by scope, but it has no source-list API. Chat attachments are not treated as saved project sources.',projectSourcesRoadmap:'1ИV3ИT10И · Project source management is in development',projectSourcesRoadmapNote:'The section and its place in the project are already defined; source management will become available when a source-list API exists. No source actions are simulated in the meantime.',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',
-        functionAgentsHelp:'Structured analysis · four stages, one model',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkillsHelp:'Task profile · instructions for this chat only',researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',researchWorkflowStatusLabel:'Structured pipeline',researchWorkflowStatusHelp:'Four sequential stages use the selected model. A saved team blueprint does not launch independent workers.',researchOpenAgentSettings:'Configure Agents / structured analysis',research2RoadmapLabel:'Deep Research 2.0 — in development',research2RoadmapHelp:'Planned: resumable runs, source collections, an evidence ledger, claim-to-citation validation and contradiction analysis. This is not active runtime.',roadmapDetailsClose:'Close',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
+helperMemoryNoProject:'Select or create a project first.',
+        helperMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',
+        helperMemoryTitle:'Project memory helper',
+        helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',
+        helperMemorySuggest:'Suggest compact facts',
+        helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',
+        helperMemoryLoading:'The helper model is preparing suggestions…',
+        helperMemoryEmpty:'The helper found no new facts.',
+        helperMemoryAdd:'Add to project',
+        helperMemoryAdded:'Fact added to local project memory.',
+        helperMemoryNoFacts:'Add facts to the selected project memory first.',
+        helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',
+        helperMemoryTimeout:'The helper timed out; memory was not changed.',
+        helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',
+        helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',
+        helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.',
+                functionAgentsHelp:'Structured analysis · four stages, one model',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkillsHelp:'Task profile · instructions for this chat only',researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',researchWorkflowStatusLabel:'Structured pipeline',researchWorkflowStatusHelp:'Four sequential stages use the selected model. A saved team blueprint does not launch independent workers.',researchOpenAgentSettings:'Configure Agents / structured analysis',research2RoadmapLabel:'Deep Research 2.0 — in development',research2RoadmapHelp:'Planned: resumable runs, source collections, an evidence ledger, claim-to-citation validation and contradiction analysis. This is not active runtime.',roadmapDetailsClose:'Close',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
         functionNotebook:'📓 Notebook',functionNotebookHelp:'Local notebooks and sources',functionsDrawerNavLabel:'Function sections',notebookScopeAria:'Notebook scope',notebookSelectAria:'Selected notebook',notebookSortAria:'Sort notebook entries',functionPanelClose:'Close',functionNotebookTitle:'Notebook',functionNotebookDescription:'Local research notebooks with personal and project scopes.',notebookTitle:'Research notebook',notebookLocal:'Stored locally',notebookPrivacy:'Notebooks are separate from chat memory. Content is not sent to a model unless explicitly selected.',notebookNew:'New notebook',notebookNamePlaceholder:'Notebook name',notebookPersonal:'Personal · this browser',notebookProject:'Current project',notebookCreate:'＋ Create notebook',notebookExport:'Export',notebookDelete:'Delete',notebookSearch:'Search notes and sources',notebookSortUpdated:'Recently updated',notebookSortTitle:'Title',notebookSortCreated:'Oldest first',notebookNote:'New note',notebookSave:'Save note',notebookSource:'Source link',notebookAddLink:'Add link',notebookRights:'I have the right to import and analyse this text.',notebookImport:'Import TXT / Markdown',notebookLimits:'TXT/Markdown up to 2 MB. URLs are references only, not fetched. PDF/EPUB/Office require a secure parser.',notebookEntries:'Notes and sources',notebookEmpty:'Create a personal notebook or one for the current project.',notebookLocalOnly:'Stored locally. Not chat memory.'
       }
     };
@@ -1639,6 +1671,89 @@ function preserveUnreadableProjects(rawText) {
       return chat?.projectId ? projects.find(project=>project.id===chat.projectId)||null : null;
     }
     function projectIdNew(){return globalThis.crypto?.randomUUID?.()||('p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));}
+    let helperMemorySuggestions=[];
+    let helperMemorySuggestionsProjectId=null;
+    let helperMemoryBusy=false;
+    function memoryUiText(key){return UI_TEXT[getUiLanguage()]?.[key]||UI_TEXT.ru[key]||key;}
+    function getAlandiGatewayConfig(){
+      const raw=String(safeGet('ai_alandi_cloud_base_url')||$('cloudBaseUrl')?.value||(safeGet(STORAGE.provider)==='alandi'?safeGet(STORAGE.baseUrl):'')||'').trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,'');
+      const key=String(getProviderRequestKey('alandi')||$('cloudApiKey')?.value||'').trim();
+      if(!raw||!key)throw new Error(memoryUiText('helperMemoryNoConfig'));
+      let parsed;try{parsed=new URL(raw);}catch(_){throw new Error(memoryUiText('helperMemoryNoConfig'));}
+      if(parsed.username||parsed.password||parsed.search||parsed.hash||!/\/v1\/?$/i.test(parsed.pathname)||(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)))throw new Error(memoryUiText('helperMemoryNoConfig'));
+      return {baseUrl:parsed.origin+parsed.pathname.replace(/\/+$/,''),key};
+    }
+    async function localHelperMemoryRequest(facts){
+      const config=getAlandiGatewayConfig(),controller=new AbortController();let timedOut=false;
+      const timer=setTimeout(()=>{timedOut=true;controller.abort();},190000);
+      try{
+        const response=await fetch(config.baseUrl+'/helpers/project-memory-suggestions',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json',Authorization:'Bearer '+config.key},body:JSON.stringify({facts}),cache:'no-store',credentials:'omit',signal:controller.signal});
+        let payload=null;try{payload=await response.json();}catch(_){}
+        if(!response.ok)throw new Error(String(payload?.detail||payload?.error?.message||('HTTP '+response.status)).slice(0,220));
+        if(!payload||!Array.isArray(payload.candidates))throw new Error('Gateway returned an invalid helper response.');
+        return payload;
+      }catch(error){if(timedOut)throw new Error(memoryUiText('helperMemoryTimeout'));throw error;}
+      finally{clearTimeout(timer);}
+    }
+    function setHelperMemoryStatus(text){const node=$('helperMemoryStatus');if(node)node.textContent=text;}
+    function renderHelperMemorySuggestions(){
+      const box=$('helperMemorySuggestionsBox');if(!box)return;box.replaceChildren();
+      helperMemorySuggestions.slice(0,12).forEach((candidate,index)=>{
+        const row=document.createElement('div');row.className='rounded-lg border border-gray-800 p-2 flex items-start gap-2';
+        const text=document.createElement('p');text.className='min-w-0 flex-1 break-words';text.textContent=candidate;
+        const add=document.createElement('button');add.type='button';add.dataset.action='add-helper-memory-suggestion';add.dataset.suggestionIndex=String(index);add.className='shrink-0 rounded border border-gray-700 px-2 py-1 text-[10px]';add.textContent=memoryUiText('helperMemoryAdd');
+        row.append(text,add);box.appendChild(row);
+      });
+      if(!helperMemorySuggestions.length){const empty=document.createElement('p');empty.className='text-gray-500';empty.textContent=memoryUiText('helperMemoryEmpty');box.appendChild(empty);}
+    }
+    function looksSensitiveMemoryFact(value){
+      return /(?:api[_ -]?key|access[_ -]?token|refresh[_ -]?token|password|secret)\s*[:=]\s*\S{8,}|\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16})\b|\bauthorization\s*:\s*bearer\s+\S{16,}/i.test(value);
+    }
+    async function suggestProjectMemoryWithHelper(){
+      const project=getProjectForChat();
+      if(!project){setHelperMemoryStatus(memoryUiText('helperMemoryNoProject'));return;}
+      if(!Array.isArray(project.memory)||!project.memory.length){setHelperMemoryStatus(memoryUiText('helperMemoryNoFacts'));return;}
+      const facts=[];let chars=0,skippedSensitive=0;
+      for(const item of project.memory){
+        const text=String(item?.text||'').trim().slice(0,600);if(!text)continue;
+        if(looksSensitiveMemoryFact(text)){skippedSensitive++;continue;}
+        if(facts.length>=80||chars+text.length>6000)break;
+        facts.push(text);chars+=text.length;
+      }
+      if(!facts.length){setHelperMemoryStatus(skippedSensitive?memoryUiText('helperMemoryOnlySensitive'):memoryUiText('helperMemoryNoFacts'));return;}
+      const button=document.querySelector('[data-action="suggest-helper-memory"]');
+      helperMemoryBusy=true;if(button)button.disabled=true;
+      helperMemorySuggestions=[];helperMemorySuggestionsProjectId=project.id;renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryLoading'));
+      try{
+        const payload=await localHelperMemoryRequest(facts);
+        if(getProjectForChat()?.id!==project.id)return;
+        helperMemorySuggestions=(Array.isArray(payload.candidates)?payload.candidates:[]).filter(value=>typeof value==='string').map(value=>value.trim().replace(/\s+/g,' ')).filter(value=>value&&value.length<=240).slice(0,12);
+        helperMemorySuggestionsProjectId=project.id;renderHelperMemorySuggestions();
+        const sensitiveNote=skippedSensitive?memoryUiText('helperMemorySkippedSensitive')+' '+skippedSensitive+'. ':'';
+        setHelperMemoryStatus(sensitiveNote+(helperMemorySuggestions.length
+          ? (getUiLanguage()==='en'?'Suggestions: '+helperMemorySuggestions.length+'. Choose individually; nothing was saved automatically.':'Предложено: '+helperMemorySuggestions.length+'. Выбери нужные факты; автоматически ничего не сохранено.')
+          : memoryUiText('helperMemoryEmpty')));
+      }catch(error){
+        const message=String(error?.message||error);
+        setHelperMemoryStatus(/ALANDI_HELPER_MODEL|not configured/i.test(message)?memoryUiText('helperMemoryNotConfigured'):/timed out|время/i.test(message)?memoryUiText('helperMemoryTimeout'):message.slice(0,220)||memoryUiText('helperMemoryFailed'));
+        showToast(memoryUiText('helperMemoryFailed'),'error');
+      }finally{helperMemoryBusy=false;if(button)button.disabled=!getProjectForChat();}
+    }
+    function addHelperMemorySuggestion(index){
+      const project=getProjectForChat(),candidate=helperMemorySuggestions[index];
+      if(!project||project.id!==helperMemorySuggestionsProjectId||typeof candidate!=='string')return;
+      if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      const normalized=candidate.toLocaleLowerCase().replace(/\s+/g,' ').trim();
+      if(project.memory.some(item=>String(item?.text||'').toLocaleLowerCase().replace(/\s+/g,' ').trim()===normalized)){
+        helperMemorySuggestions.splice(index,1);renderHelperMemorySuggestions();
+        setHelperMemoryStatus(getUiLanguage()==='en'?'That fact already exists in this project.':'Такой факт уже есть в проекте.');return;
+      }
+      const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
+      project.memory.push({id:projectIdNew(),text:candidate,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
+      helperMemorySuggestions.splice(index,1);
+      if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;helperMemorySuggestions.splice(index,0,candidate);renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(getUiLanguage()==='en'?'The fact was not saved.':'Факт не сохранён.');return;}
+      renderProjectUI();renderHelperMemorySuggestions();setHelperMemoryStatus(memoryUiText('helperMemoryAdded'));
+    }
     function syncComposerStateForCurrentChat() {
       restoreRequestProjectContextByChat();
       const activeId=currentChatId;
@@ -5325,6 +5440,8 @@ function preserveUnreadableProjects(rawText) {
           case 'delete-project': deleteCurrentProject();break;
           case 'add-project-memory': addProjectMemory();break;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
+          case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
+          case 'add-helper-memory-suggestion': addHelperMemorySuggestion(Number(control.dataset.suggestionIndex));break;
            case 'export-project': exportProjectBundle();break;
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': await startVoiceConversation(); break;
