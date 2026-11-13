@@ -159,3 +159,20 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Fixture:** offline unit tests in `gateway/tests/test_agent_run_store.py` cover idempotency/conflict, scope validation, versioned transitions, task claim/lease expiry/fencing, retry budgets, cancellation, event journal, bounded typed metadata, prompt/secret/free-text rejection, SQLite constraints, concurrency, migration and file permissions.
 - **Acceptance:** deterministic exact-head Gateway tests; no unbounded free text or raw prompts/secrets in event metadata; scope fails closed; expired lease cannot complete with stale fencing token; terminal state cannot reopen; SQLite file mode 0600; operational limitations are explicit.
 - **Status:** PROTOTYPE in PR #169 candidate, exact-head Gateway CI pending. No API route or worker runtime is wired to the store. Do not mark Agent Workforce implemented from this prototype alone.
+
+
+## 2026-11-13 — model, retrieval, OCR and voice acceptance gates
+
+| Eval ID | Scope | Required evidence | Status |
+|---|---|---|---|
+| EV-MODEL-001 | Qwen3.5-4B base vs uncensored Q4_K_M | Exact revisions/hashes; RU/EN/TH golden set; task success, factuality, abstention/refusal quality, tool-call exactness, JSON schema validity, p50/p95, TTFT, peak RSS/PSS, 4K/8K KV cache | SPECIFIED; target host unavailable |
+| EV-MODEL-SEC-001 | GGUF chat-template supply chain | Extract template, compare with official Qwen3.5 base, scan for Jinja sandbox escape patterns, test trusted override on pinned runtime; no untrusted template execution | SPECIFIED |
+| EV-RAG-EMB-001 | Qwen3-Embedding-0.6B | Recall@5/10/20, MRR/nDCG, language slices RU/EN/TH, mixed-language, exact citation/source retrieval, embed latency and RSS | SPECIFIED |
+| EV-RAG-RERANK-001 | Qwen3-Reranker-0.6B | Compare first-stage vs reranked top-k; nDCG/MRR uplift, false promotion of unsupported chunks, p95 and peak RSS | SPECIFIED |
+| EV-ASR-001 | Whisper large-v3-turbo vs Qwen3-ASR-0.6B | Same labelled RU/EN/TH corpus; WER/CER, normalization, RTF, p50/p95, peak RSS, cold start, cancellation and silence/no-speech false positives | SPECIFIED |
+| EV-TTS-001 | Piper RU/EN voices | Pronunciation/phoneme coverage, intelligibility, MOS/CMOS blind ratings, generation RTF, first-audio latency, CPU/RSS, interruption; exact voice card/license chain | SPECIFIED |
+| EV-TTS-TH-001 | Thai local TTS | A production-compatible Thai voice with full base/dataset license chain, tone/segmentation golden set, intelligibility and latency | DEFERRED; no approved voice pinned |
+| EV-OCR-001 | Tesseract fast RU/EN/TH | CER, exact field/date/number accuracy, table cell accuracy, reading order, rotated/noisy/scanned PDFs, p50/p95 and RSS | SPECIFIED |
+| EV-MODEL-HW-001 | 8-GB target profile | Main model plus OS/gateway, KV-cache growth, helper load/unload, no swap storms, cold/warm p95 and restart/recovery | UNMEASURED; target host not verified |
+
+All model evaluations use the same input fixtures, tool schemas, prompts, runtime version and hardware. Vendor/model-card scores are not aLandi results. No helper is promoted unless it beats the main-only baseline for one bounded role and can be disabled cleanly.
