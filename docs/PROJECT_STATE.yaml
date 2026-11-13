@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-13"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f; PR #174 merged. Pages #42430269181, main Quality #42430269155 and Provenance #42430269144 PASS exact SHA; Graphify #42629163792 PASS. Eight open PRs #175–#182 require reconciliation; scheduled Freshness #43247857963 failed on stale queue snapshot. Owner priority is now complete local-first workstation delivery under LANDING-V2-2026-001; see addendum section K."
+    status: "Main 6a366125720453193c82a7385f8c088224a5928e; PR #174 merged. Pages #42430269181, main Quality #42430269155 and Provenance #42430269144 PASS exact SHA; Graphify #42629163792 PASS. Eight open PRs #175–#182 require reconciliation; scheduled Freshness #43247857963 failed on stale queue snapshot. Owner priority is now complete local-first workstation delivery under LANDING-V2-2026-001; see addendum section K."
     owner_policy: "main is the only durable product baseline. Reconcile every PR against exact base/head/diff/dependencies/checks; promote only compatible green slices. Target main plus at most one active product/landing PR. Do not wholesale-merge stacked, failed, draft or future work."
     sequence:
       - "PR #173 merged at bf039f887e29137b627b06fc2bb107c2793d6b69; repair the false-negative published UI contract sentinel in a separate bounded PR"
@@ -541,8 +541,23 @@ owner_priority_2026_11_13:
   functions_panels: ["Deep Research", "Agents", "Skills", "Connectors"]
   required: "Owner UI; real Deep Research; real AgentRun and live states; Skill lifecycle; real connectors; local-file Coder sandbox; full evaluated RAG; document/book/web parsers, OCR and converters; installed Whisper/ASR, TTS/VAD and target-device voice; tested mode combinations; conditional helper-model routing; cache, observability and N2O in main; end-to-end owner runbook."
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
-  stack_status: "Main model is not frozen; qwen3.5:4b is only a runbook example. RAG remains FTS5/lexical baseline; AgentRunStore is storage-only prototype; voice code paths require separately installed binaries/weights; VPS runtime unverified."
+  stack_status: "Preferred main candidate is Qwen3.5-4B Uncensored Aggressive Q4_K_M, not production-selected. Non-primary models are staged as verified GitHub Actions artifacts; no model runtime is installed. RAG remains FTS5/lexical baseline pending embedding/RRF eval; AgentRunStore is storage-only prototype; VPS runtime unverified."
   live_main: "9033c6ad708a993cba5d1b27442f53651ad71c0f"
-  open_prs: [175, 176, 177, 178, 179, 180, 181, 182]
+  open_prs: [175, 176, 178, 179, 180, 182, 184]
   open_issues: [111]
   target_pr_hygiene: "main plus at most one active product/landing PR; resolve all other PRs after selective preservation."
+
+
+model_artifact_acquisition_2026_11_13:
+  branch: "feat/model-artifact-acquisition-20261113"
+  base_main: "6a366125720453193c82a7385f8c088224a5928e"
+  main_artifact_run: 43393099472
+  thai_tts_artifact_run: 43393859216
+  main_non_primary_bytes: 6453112704
+  thai_tts_eval_bytes: 728750351
+  primary_model: "HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M; owner-server-only"
+  primary_model_size_bytes: 2707513696
+  weights_in_git: false
+  status: "IMPLEMENTED / artifact downloads and SHA verification passed; runtime install and host eval pending"
+  limitations: "No model installed, loaded or production-selected. Thai F5-TTS model is evaluation-only until training dataset rights are cleared. Main model runtime/mmproj compatibility remains unverified."
+  next: "Finish Thai artifact run verification, test downloader/server import helper, integrate model adapters only after exact-host eval, then update operator runbook."
