@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import shutil
+import subprocess
 import sys
 import urllib.request
 from pathlib import Path
@@ -113,6 +114,29 @@ def download_url(url: str, target: Path, expected_size: int | None) -> None:
     partial.replace(target)
 
 
+def ollama_digest_matches(output: str, package: dict[str, Any]) -> tuple[bool, str]:
+    expected_name = package["model_tag"]
+    expected_digest = package["expected_digest_prefix"].lower()
+    for line in output.splitlines()[1:]:
+        columns = line.split()
+        if len(columns) >= 2 and columns[0] == expected_name:
+            actual = columns[1].lower()
+            if actual.startswith(expected_digest):
+                return True, f"tag={expected_name} digest={actual}"
+            return False, f"tag={expected_name} digest mismatch: expected prefix {expected_digest}, got {actual}"
+    return False, f"model tag {expected_name} not present in ollama list"
+
+
+def verify_ollama_package(package: dict[str, Any]) -> tuple[bool, str]:
+    try:
+        result = subprocess.run(["ollama", "list"], check=True, capture_output=True, text=True)
+    except FileNotFoundError:
+        return False, "Ollama CLI not found"
+    except subprocess.CalledProcessError as exc:
+        return False, f"ollama list failed with exit code {exc.returncode}"
+    return ollama_digest_matches(result.stdout, package)
+
+
 def verify_package(root: Path, package: dict[str, Any]) -> list[str]:
     problems: list[str] = []
     for item in package.get("files", []):
@@ -130,57 +154,102 @@ def main() -> int:
     parser.add_argument("--package", action="append", default=[], help="Package ID to process; may be repeated")
     parser.add_argument("--dry-run", action="store_true", help="List planned downloads and expected binary bytes")
     parser.add_argument("--verify-only", action="store_true", help="Verify already downloaded files without network access")
+    parser.add_argument("--skip-ollama", action="store_true", help="Skip the official Ollama reference model pull")
     args = parser.parse_args()
 
     manifest = load_manifest()
-    packages = [p for p in manifest["packages"] if p.get("download")]
+    packages = [package for package in manifest["packages"] if package.get("download")]
+    if args.skip_ollama:
+        packages = [package for package in packages if package["source"] != "ollama_cli"]
     if args.package:
         selected = set(args.package)
-        all_packages = {p["id"]: p for p in manifest["packages"]}
+        all_packages = {package["id"]: package for package in manifest["packages"]}
         unknown = selected - set(all_packages)
         if unknown:
             parser.error(f"Unknown package IDs: {', '.join(sorted(unknown))}")
         disabled = [package_id for package_id in selected if not all_packages[package_id].get("download")]
         if disabled:
             parser.error(f"These packages are intentionally not downloadable: {', '.join(sorted(disabled))}")
-        packages = [p for p in packages if p["id"] in selected]
+        if args.skip_ollama and any(all_packages[package_id]["source"] == "ollama_cli" for package_id in selected):
+            parser.error("--skip-ollama conflicts with the selected Ollama package")
+        packages = [package for package in packages if package["id"] in selected]
 
     try:
         cache_root = resolve_cache_root(args.root)
     except ValueError as exc:
         parser.error(str(exc))
 
-    expected = sum(item.get("size_bytes", 0) for package in packages for item in package.get("files", []))
-    print(f"Packages: {len(packages)}; primary binary bytes: {expected}; cache: {cache_root}")
+    exact_cache_bytes = sum(
+        item.get("size_bytes", 0)
+        for package in packages if package["source"] != "ollama_cli"
+        for item in package.get("files", [])
+    )
+    ollama_estimate = sum(
+        package.get("estimated_size_bytes", 0)
+        for package in packages if package["source"] == "ollama_cli"
+    )
+    print(
+        f"Packages: {len(packages)}; exact external-cache payload bytes: {exact_cache_bytes}; "
+        f"additional Ollama model estimate: {ollama_estimate}; cache: {cache_root}"
+    )
     if args.dry_run:
         for package in packages:
             print(f"- {package['id']} [{package['source']}]")
         return 0
 
     cache_root.mkdir(parents=True, exist_ok=True)
-    if not args.verify_only:
-        safety_margin = max(64 * 1024 * 1024, expected // 20)
-        required = expected + safety_margin
+    if not args.verify_only and exact_cache_bytes:
+        safety_margin = max(64 * 1024 * 1024, exact_cache_bytes // 20)
+        required = exact_cache_bytes + safety_margin
         free = shutil.disk_usage(cache_root).free
         if free < required:
-            print(f"Insufficient free disk: need at least {required} bytes including safety margin; available {free}. Choose a larger external cache with --root.", file=sys.stderr)
+            print(
+                f"Insufficient free disk for external-cache artifacts: need at least {required} bytes "
+                f"including safety margin; available {free}. Choose a larger external cache with --root.",
+                file=sys.stderr,
+            )
             return 2
+    if ollama_estimate and not args.verify_only:
+        print(
+            f"NOTE: ensure the Ollama server's model store has at least "
+            f"{ollama_estimate + 256 * 1024 * 1024} free bytes; ollama pull stores outside --root."
+        )
+
     failures: list[str] = []
     for package in packages:
+        source = package["source"]
+        if source == "ollama_cli":
+            if args.verify_only:
+                ok, detail = verify_ollama_package(package)
+            else:
+                try:
+                    subprocess.run(["ollama", "pull", package["model_tag"]], check=True)
+                    ok, detail = verify_ollama_package(package)
+                except FileNotFoundError:
+                    ok, detail = False, "Ollama CLI not found; install Ollama or use --skip-ollama"
+                except subprocess.CalledProcessError as exc:
+                    ok, detail = False, f"ollama pull failed with exit code {exc.returncode}"
+            print(f"{'OK' if ok else 'MISSING/INVALID'} {package['id']}: {detail}")
+            if not ok:
+                failures.append(f"{package['id']}: {detail}")
+            continue
+
         if args.verify_only:
             package_problems = verify_package(cache_root, package)
-        failures.extend(package_problems)
-        if not package_problems:
-            sums = write_sha256sums(package_root)
-            print(f"SHA-256 inventory written: {sums}")
+            failures.extend(package_problems)
+            if not package_problems:
+                write_sha256sums(cache_root / package["id"])
             continue
+
         package_root = cache_root / package["id"]
-        source = package["source"]
         if source == "huggingface":
             try:
                 from huggingface_hub import snapshot_download
             except ImportError:
-                print("Install downloader dependency first: python -m pip install 'huggingface_hub>=0.34,<2'", file=sys.stderr)
+                print(
+                    "Install downloader dependency first: python -m pip install 'huggingface_hub>=0.34,<2'",
+                    file=sys.stderr,
+                )
                 return 2
             try:
                 snapshot_download(
@@ -188,9 +257,9 @@ def main() -> int:
                     revision=package["revision"],
                     local_dir=str(package_root),
                     allow_patterns=package.get("allow_patterns", []),
-                    max_workers=4,
+                    max_workers=2,
                 )
-            except Exception as exc:  # upstream/network errors are surfaced, never silently skipped
+            except Exception as exc:
                 failures.append(f"{package['id']}: Hugging Face download failed: {exc}")
                 print(f"FAIL {failures[-1]}", file=sys.stderr)
                 continue
@@ -208,7 +277,12 @@ def main() -> int:
         else:
             failures.append(f"{package['id']}: unsupported source {source!r}")
             continue
-        failures.extend(verify_package(args.root, package))
+
+        package_problems = verify_package(cache_root, package)
+        failures.extend(package_problems)
+        if not package_problems:
+            sums = write_sha256sums(package_root)
+            print(f"SHA-256 inventory written: {sums}")
 
     if failures:
         print("\nArtifact acquisition incomplete:", file=sys.stderr)
@@ -217,7 +291,6 @@ def main() -> int:
         return 1
     print("All selected artifacts verified.")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
