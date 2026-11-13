@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-13",
   "checkpoint": {
-    "main_sha": "9033c6ad708a993cba5d1b27442f53651ad71c0f",
-    "main_commit_subject": "fix(ci/ui): align Pages contract and modal backdrop dismissal (#174)",
-    "main_commit_date": "2026-11-08",
+    "main_sha": "6a366125720453193c82a7385f8c088224a5928e",
+    "main_commit_subject": "fix(security): detect block-scalar action references (#181)",
+    "main_commit_date": "2026-11-13",
     "last_functional_checkpoint_sha": "9033c6ad708a993cba5d1b27442f53651ad71c0f",
-    "last_functional_milestone": "PR #174 merged at main 9033c6ad708a993cba5d1b27442f53651ad71c0f. Main Quality #42430269155, Pages #42430269181 and Provenance #42430269144 passed exact SHA; Graphify #42629163792 passed. Freshness #43247857963 failed because stored queue is stale; live queue is PRs #175–#182.",
-    "main_quality_run": 42430269155,
-    "main_pages_deployment_run": 42430269181,
+    "last_functional_milestone": "Main advanced to 6a366125720453193c82a7385f8c088224a5928e after PR #181; Quality #43387599840, Pages #43387599298 and Graphify #43387599792 passed on exact main SHA. New model artifact pack PR #185 is open on exact base; model weights remain not downloaded because outbound DNS is unavailable.",
+    "main_quality_run": 43387599840,
+    "main_pages_deployment_run": 43387599298,
     "functional_parent_gateway_run": null,
     "functional_parent_quality_run": null,
     "functional_parent_graphify_run": null,
@@ -17,12 +17,12 @@
     "open_pull_requests": [
       175,
       176,
-      177,
       178,
       179,
       180,
-      181,
-      182
+      182,
+      184,
+      185
     ],
     "open_issues": [
       111
@@ -255,5 +255,16 @@
     "pr_check_policy": "Current PR #174 is the bounded follow-up and is intentionally excluded from the expected main-checkpoint queue snapshot; live queue is one PR (#174), with no other open PRs.",
     "note": "Main #174 includes UI and contract changes; Pages PASS is not proof of VPS/Tunnel/Ollama or installed local model/voice artifacts."
   },
-  "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005"
+  "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005",
+  "model_stack_artifact_checkpoint_2026_11_13": {
+    "status": "SPECIFIED_PINNED_NOT_DOWNLOADED",
+    "pr": 185,
+    "branch": "feat/model-stack-artifact-pack-20261113",
+    "head_sha": "ce693569ad109fbfd900fbebb85ce0feaa73af4e",
+    "primary_candidate": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; main weights excluded for owner upload",
+    "auxiliary_payload_bytes": 5645657360,
+    "manifest": "models/artifacts.manifest.json",
+    "download_state": "blocked by outbound DNS in engineering container",
+    "thai_tts": "deferred pending permissive voice/base license"
+  }
 }
