@@ -9,6 +9,7 @@ import os
 import sys
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlsplit
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -76,8 +77,11 @@ def download_url(url: str, target: Path, expected_size: int | None) -> None:
     request = urllib.request.Request(url, headers={"User-Agent": "aLandi-model-artifact-fetcher/1.0"})
     with urllib.request.urlopen(request, timeout=90) as response, partial.open("wb") as output:
         final_url = response.geturl()
-        if not final_url.startswith("https://"):
+        final = urlsplit(final_url)
+        if final.scheme != "https" or not final.hostname:
             raise ValueError("Artifact redirect downgraded transport")
+        if final.hostname != "raw.githubusercontent.com" and not final.hostname.endswith(".githubusercontent.com"):
+            raise ValueError(f"Unexpected GitHub artifact redirect host: {final.hostname}")
         while True:
             block = response.read(1024 * 1024)
             if not block:
