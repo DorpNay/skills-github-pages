@@ -22,7 +22,7 @@ project_state:
     open_prs_at_checkpoint: 7
     open_issues_at_checkpoint: 1
     merged_changes: "PR #169 owner-directed UI/aServi and §8.12 retirement merged at 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2; PR #173 aServi probe/E2E repair merged at bf039f887e29137b627b06fc2bb107c2793d6b69. Pages #42410162803 success; public root/landing verified. Earlier PR #167/#166/#161/#158/#157/#156 and main safeguards remain preserved."
-    exact_head_checks: "Main 6a366125720453193c82a7385f8c088224a5928e: Quality #43387599840 PASS; Pages #43387599298 PASS; Graphify #43387599792 PASS. PR #185 prior CI HEAD cc107f0fec1f02ec6b8f9b1489cc689235f13a5f: provenance #43392835507 PASS and dead-code #43392835499 PASS; Freshness #43392835506 FAIL because FILE_ORIENTER/current_checkpoint markers were not refreshed. Quality/Gateway/Graphify were in progress. Later handoff refresh changed the PR head; rerun all exact-head gates before merge."
+    exact_head_checks: "Main 6a366125720453193c82a7385f8c088224a5928e: Quality #43387599840 PASS; Pages #43387599298 PASS; Graphify #43387599792 PASS. PR #185 pre-state-refresh HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a: Quality #43395243981 PASS (Chromium/Jekyll/Security/Integrity/Context/Ruff); Gateway #43395244038 PASS on Python 3.12/13/14; Graphify #43395244095 PASS; Freshness #43395244006 PASS; License #43395244067 PASS; Dead Code #43395243959 PASS. The state-refresh commit changes HEAD; fetch and rerun exact-head checks before merge."
     runtime_boundary: "GitHub Pages published on exact main 6a366125720453193c82a7385f8c088224a5928e; VPS/Tunnel/Ollama, installed models/voices, target hardware and native devices remain UNVERIFIED. Current RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype; whisper.cpp/Piper need separately installed artifacts. PR #185 pins auxiliary model artifacts but downloads are blocked by outbound DNS in the engineering container."
     next: "Verify PR #185 exact-head Quality/Gateway/Graphify/Freshness; run the pinned artifact downloader from a network-enabled environment and record hashes. Continue reconciling PRs #175/#176/#178/#179/#180/#182/#184, then implement real agents, full RAG, connectors, OCR/voice and mode matrix. Keep issue #111 open until real owner/environment evidence."
     source_triage:
@@ -549,10 +549,10 @@ owner_priority_2026_11_13:
 
 
 model_stack_artifact_checkpoint_2026_11_13:
-  status: "SPECIFIED / PINNED in PR #185; exact-head CI running; not merged."
+  status: "SPECIFIED / PINNED in PR #185; all gates passed on pre-state-refresh HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a; final state-refresh HEAD requires recheck; not merged."
   branch: "feat/model-stack-artifact-pack-20261113"
   pr: 185
-  last_ci_head_sha: "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f"
+  last_verified_implementation_head_sha: "90b6810b772a4f41450ee2f71f1fea78610ae70a"
   base_main: "6a366125720453193c82a7385f8c088224a5928e"
   primary_candidate: "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; 2707513696 bytes; SHA-256 pinned; main weights excluded from repo downloader for owner upload."
   auxiliary_payload_bytes: 6033970026
