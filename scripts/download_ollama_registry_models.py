@@ -217,7 +217,7 @@ def acquire_model(model: dict[str, Any], output_root: Path, timeout: int) -> lis
         "application/vnd.docker.distribution.manifest.v2+json",
     )]
 
-    files = {}
+    files = {"registry_manifest": str(manifest_file.relative_to(package_dir))}
     for layer_name, expected in descriptors:
         if layer_name == "config":
             filename = config_expected["filename"]
