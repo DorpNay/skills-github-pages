@@ -255,13 +255,12 @@
           }
         }
         this.prepared.delete(preparedId);
-        if (rollbackErrors.length) {
-          const failure = new Error('Write failed and automatic rollback was incomplete. Recovery snapshot: ' + snapshot.id);
-          failure.recoverySnapshotId = snapshot.id;
-          failure.rollbackErrors = rollbackErrors;
-          throw failure;
-        }
-        throw new Error('Write failed; attempted files were restored. Recovery snapshot: ' + snapshot.id);
+        const failure = new Error(rollbackErrors.length
+          ? 'Write failed and automatic rollback was incomplete. Recovery snapshot: ' + snapshot.id
+          : 'Write failed; attempted files were restored. Recovery snapshot: ' + snapshot.id);
+        failure.recoverySnapshotId = snapshot.id;
+        if (rollbackErrors.length) failure.rollbackErrors = rollbackErrors;
+        throw failure;
       }
       this.prepared.delete(preparedId);
       return { snapshotId: snapshot.id, filesWritten: attempted.length, createdAt: snapshot.createdAt };
