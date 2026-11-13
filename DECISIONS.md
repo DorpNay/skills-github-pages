@@ -277,3 +277,12 @@
 - **Решение:** Qwen3-Embedding-0.6B creates embeddings on ingestion/query; fuse vector and current FTS5 lexical results deterministically; call Qwen3-Reranker-0.6B only on a bounded top-k candidate set if measured retrieval gains justify latency/RAM.
 - **Rejected:** embedding or reranker on every chat request, a permanent extra resident model by default, or replacing FTS5 before a golden set shows a measurable gain.
 - **Rollback:** disable vector retrieval and reranking flags; retain FTS5 index and citations.
+
+
+## D-028 — official Qwen3.5 4B base and 2B helper artifacts
+
+- **Статус:** Artifacts acquired and hash-verified; runtime not installed.
+- **Решение:** retain the official Ollama qwen3.5:4b Q4_K_M package as the comparison baseline for the uncensored main candidate. Retain qwen3.5:2b-q4_K_M as the only small-model helper candidate for bounded extraction/classification/compression tests.
+- **Efficiency:** never keep the 2B helper resident alongside the main 4B model on the 8 GB VPS unless measured PSS and cold/warm latency justify it. Prefer deterministic code for cheap exact tasks.
+- **Source:** official Ollama registry package layers, with exact model/projector/config/template/license digests recorded in the lock for run 43395625203.
+- **Rollback:** no runtime change has been made. Existing Ollama tag/config remains untouched.
