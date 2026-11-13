@@ -43,6 +43,13 @@ def destination(root: Path, package_id: str, relative: str) -> Path:
     return target
 
 
+def required_free_bytes(payload_bytes: int) -> int:
+    """Return payload size plus a bounded disk-safety margin."""
+    if payload_bytes <= 0:
+        return 0
+    return payload_bytes + max(64 * 1024 * 1024, payload_bytes // 20)
+
+
 def resolve_cache_root(value: Path) -> Path:
     root = value.expanduser().resolve()
     repository = REPO_ROOT.resolve()
@@ -209,8 +216,7 @@ def main() -> int:
 
     cache_root.mkdir(parents=True, exist_ok=True)
     if not args.verify_only and exact_cache_bytes:
-        safety_margin = max(64 * 1024 * 1024, exact_cache_bytes // 20)
-        required = exact_cache_bytes + safety_margin
+        required = required_free_bytes(exact_cache_bytes)
         free = shutil.disk_usage(cache_root).free
         if free < required:
             print(
