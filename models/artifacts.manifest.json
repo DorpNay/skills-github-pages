@@ -7,7 +7,7 @@
     "default_cache": "~/.cache/alandi/models",
     "primary_model_owner_supplied": true
   },
-  "expected_download_bytes": 5645657360,
+  "expected_download_bytes": 4454070944,
   "packages": [
     {
       "id": "qwen35_uncensored_main",
@@ -39,6 +39,17 @@
       "notes": "Official Ollama Qwen3.5-4B Q4_K_M baseline (4.21B parameters, model plus vision projector, approx 3.3GB). Pull into the Ollama model store on the server/workstation; compare sequentially against the owner-supplied uncensored checkpoint. The registry tag digest prefix is pinned; the CLI verifies the locally listed digest after pull."
     },
     {
+      "id": "qwen3_embedding_06b_ollama",
+      "role": "rag_embedding_runtime",
+      "source": "ollama_cli",
+      "model_tag": "qwen3-embedding:0.6b-q8_0",
+      "expected_digest_prefix": "ac6da0dfba84",
+      "estimated_size_bytes": 639000000,
+      "license": "Apache-2.0",
+      "download": true,
+      "notes": "Official Ollama library Q8_0 quantization of Qwen3-Embedding-0.6B; approx 639 MB, 32K context, text embeddings. Use native POST /api/embed only for RAG ingest/query; unload after batch if memory is tight."
+    },
+    {
       "id": "qwen35_vision_projector",
       "role": "primary_model_vision_companion",
       "source": "huggingface",
@@ -65,7 +76,7 @@
       "repo_id": "Qwen/Qwen3-Embedding-0.6B",
       "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
       "license": "Apache-2.0",
-      "download": true,
+      "download": false,
       "allow_patterns": [
         "*.json",
         "*.txt",
@@ -80,7 +91,7 @@
           "sha256": "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
         }
       ],
-      "notes": "100+ language family; use only during RAG ingest/query. Do not load on every normal chat request."
+      "notes": "Full Hugging Face safetensors reference retained for provenance only (1,191,586,416 bytes). The selected runtime artifact is the official Ollama Q8_0 quantization below, avoiding duplicate full-weight download."
     },
     {
       "id": "qwen3_reranker_06b",
@@ -251,6 +262,6 @@
       "notes": "DEFERRED: derivative checkpoint licensing is unresolved because upstream F5 base weights are non-commercial. Do not ship or use in a commercial deployment without written rights clarification."
     }
   ],
-  "expected_ollama_reference_bytes_estimate": 3300000000,
-  "expected_total_with_ollama_reference_estimate": 8945657360
+  "expected_ollama_reference_bytes_estimate": 3939000000,
+  "expected_total_with_ollama_reference_estimate": 8393070944
 }
