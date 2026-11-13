@@ -283,9 +283,10 @@
       const targets = [];
       for (const item of snapshot.files) {
         assert(item && typeof item.before === 'string'
-          && /^[a-f0-9]{64}$/i.test(item.beforeHash || '')
+          && (item.beforeHash === undefined || /^[a-f0-9]{64}$/i.test(item.beforeHash))
           && /^[a-f0-9]{64}$/i.test(item.afterHash || ''),
           'Recovery snapshot contains invalid file metadata.');
+        const beforeHash = item.beforeHash || await hashText(item.before);
         const beforeBytes = new TextEncoder().encode(item.before).byteLength;
         snapshotBytes += beforeBytes;
         assert(beforeBytes <= this.limits.maxFileBytes && snapshotBytes <= this.limits.maxBatchBytes,
@@ -306,7 +307,7 @@
         assert(file.size <= this.limits.maxFileBytes, 'File exceeds the size limit: ' + path);
         const current = decodeText(new Uint8Array(await file.arrayBuffer()));
         const currentHash = await hashText(current);
-        const conflict = currentHash !== item.afterHash && currentHash !== item.beforeHash;
+        const conflict = currentHash !== item.afterHash && currentHash !== beforeHash;
         targets.push({
           path, handle, current, currentHash, before: item.before, conflict,
           diff: diffText(current, item.before, 'current/' + path, 'restored/' + path, this.limits.maxDiffCells)
