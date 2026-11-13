@@ -94,8 +94,8 @@
       "revision": "066409f3d9db45a30d21dfcbf9147826ffdd7052",
       "filename": "silero_vad.onnx",
       "source_url": "https://raw.githubusercontent.com/snakers4/silero-vad/066409f3d9db45a30d21dfcbf9147826/src/silero_vad/data/silero_vad.onnx",
-      "size_bytes": 4086805,
-      "max_bytes": 6000000,
+      "size_bytes": 2327524,
+      "max_bytes": 3000000,
       "sha256": null,
       "format": "ONNX",
       "license": "MIT",
@@ -115,7 +115,8 @@
       "format": "GGML Q5_0",
       "license": "MIT per upstream model repository",
       "runtime": "whisper.cpp whisper-cli",
-      "notes": "Upstream card says approximately 547 MiB and publishes SHA-1. Downloader verifies SHA-1 and records SHA-256. Pin by recorded content hashes after first acquisition."
+      "notes": "Upstream card says approximately 547 MiB and publishes SHA-1. Downloader verifies SHA-1 and records SHA-256. Pin by recorded content hashes after first acquisition.",
+      "size_bytes": 574041195
     },
     {
       "id": "piper_ru_dmitri_medium",
@@ -130,7 +131,8 @@
       "format": "ONNX voice",
       "license": "MIT voice repository card; training dataset CC0 per voice card",
       "runtime": "Piper 1.x; engine GPL-3.0-or-later",
-      "notes": "Russian medium voice; no Thai voice in this pinned collection."
+      "notes": "Russian medium voice; no Thai voice in this pinned collection.",
+      "size_bytes": 63201294
     },
     {
       "id": "piper_ru_dmitri_medium_config",
@@ -142,7 +144,8 @@
       "source_url": "https://huggingface.co/rhasspy/piper-voices/resolve/375a0fe641dea077c2a47b4e9a056d6da521eed3/ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx.json",
       "max_bytes": 100000,
       "format": "JSON voice config",
-      "license": "MIT voice repository card"
+      "license": "MIT voice repository card",
+      "size_bytes": 4824
     },
     {
       "id": "piper_ru_dmitri_medium_card",
@@ -154,7 +157,8 @@
       "source_url": "https://huggingface.co/rhasspy/piper-voices/resolve/375a0fe641dea077c2a47b4e9a056d6da521eed3/ru/ru_RU/dmitri/medium/MODEL_CARD",
       "max_bytes": 20000,
       "format": "Model card",
-      "license": "MIT voice repository card"
+      "license": "MIT voice repository card",
+      "size_bytes": 276
     }
   ]
 }
