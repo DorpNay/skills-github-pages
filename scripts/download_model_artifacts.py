@@ -11,8 +11,8 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
-from urllib.parse import urlsplit
 from typing import Any
+from urllib.parse import urlsplit
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = REPO_ROOT / "models" / "artifacts.manifest.json"
@@ -54,7 +54,11 @@ def resolve_cache_root(value: Path) -> Path:
 def write_sha256sums(package_root: Path) -> Path:
     lines: list[str] = []
     for path in sorted(package_root.rglob("*")):
-        if not path.is_file() or ".cache" in path.relative_to(package_root).parts or path.name == "SHA256SUMS.local":
+        if (
+            not path.is_file()
+            or ".cache" in path.relative_to(package_root).parts
+            or path.name == "SHA256SUMS.local"
+        ):
             continue
         sha256, _ = hashes(path, path.stat().st_size)
         lines.append(f"{sha256}  {path.relative_to(package_root).as_posix()}")
@@ -65,7 +69,7 @@ def write_sha256sums(package_root: Path) -> Path:
 
 def hashes(path: Path, size: int) -> tuple[str, str]:
     sha256 = hashlib.sha256()
-    git_sha1 = hashlib.sha1()
+    git_sha1 = hashlib.sha1(usedforsecurity=False)
     git_sha1.update(f"blob {size}\0".encode("ascii"))
     with path.open("rb") as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
