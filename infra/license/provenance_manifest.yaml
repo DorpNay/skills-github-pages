@@ -296,3 +296,46 @@ artifacts:
     sha256: "97ec976ad1fd67a33ab2682d29c0ac7df85234fae875aefcc5fb215681a91b2a"
     ship: false
     status: "downloaded_for_eval_not_installed"
+
+
+  - id: qwen35-official-base-4b-q4km-model
+    kind: main_model_comparison_weights
+    upstream: "https://ollama.com/library/qwen3.5:4b"
+    source_version: "official registry tag 4b; Q4_K_M; 2648593216 bytes; manifest SHA-256 d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_eval"
+    sha256: "a9d0a3e1d8c91732a3812becd31f8d4a8ff57414903f226306069f0437e2ac50"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "Official base comparison; not the uncensored main checkpoint."
+
+  - id: qwen35-official-base-4b-q4km-projector
+    kind: multimodal_projector_weights
+    upstream: "https://ollama.com/library/qwen3.5:4b"
+    source_version: "official registry tag 4b; BF16 projector; 675569120 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_eval"
+    sha256: "e56a899b1540860385465756dd308c84417410b94dbc1c380adffd20a921ca60"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+
+  - id: qwen35-official-helper-2b-q4km-model
+    kind: helper_model_weights
+    upstream: "https://ollama.com/library/qwen3.5:2b-q4_K_M"
+    source_version: "official registry tag 2b-q4_K_M; Q4_K_M; 1274396992 bytes; manifest SHA-256 1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_helper_eval"
+    sha256: "20cb277f0967ace47b0b5d5658e5e494a88937f7378b74b5a266496400938f4c"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "Only conditional helper candidate; never auto-call on ordinary chat."
+
+  - id: qwen35-official-helper-2b-q4km-projector
+    kind: multimodal_projector_weights
+    upstream: "https://ollama.com/library/qwen3.5:2b-q4_K_M"
+    source_version: "official registry tag 2b-q4_K_M; projector; 671372768 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_helper_eval"
+    sha256: "5ddf560e34046fd958b2576324f2a9b57d70f297afe6526958d60a23f3bfc20b"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
