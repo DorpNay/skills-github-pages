@@ -306,11 +306,22 @@ test('Browser Local bounds directory depth and total entries', async ({ page }) 
     entryProvider.rootHandle = entryRoot;
     let entriesMessage = '';
     try { await entryProvider.listFiles(); } catch (error) { entriesMessage = error.message; }
-    return { depthMessage, entriesMessage };
+
+    const invalidRoot = {
+      kind: 'directory',
+      async queryPermission() { return 'granted'; },
+      async *entries() { yield ['bad\\name.txt', file]; }
+    };
+    const invalidProvider = new BrowserLocalProvider();
+    invalidProvider.rootHandle = invalidRoot;
+    let invalidMessage = '';
+    try { await invalidProvider.listFiles(); } catch (error) { invalidMessage = error.message; }
+    return { depthMessage, entriesMessage, invalidMessage };
   });
 
   expect(result.depthMessage).toContain('maximum depth');
   expect(result.entriesMessage).toContain('more than 1 entries');
+  expect(result.invalidMessage).toContain('invalid entry name');
 });
 
 test('Browser Local refuses a restore if a file changes while the confirmation dialog is open', async ({ page }) => {
