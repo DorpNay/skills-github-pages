@@ -1,5 +1,5 @@
 schema_version: 1
-updated_on: "2026-11-05"
+updated_on: "2026-11-13"
 policy:
   no_model_downloads_in_git: true
   require_artifact_sha256_before_shipping: true
@@ -156,3 +156,153 @@ artifacts:
     ship: false
     status: "archived_selected_source_snapshot; 18_source_files_and_LICENSE_exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
     notes: "Selected 18 source files including parser.py, plus exact MIT LICENSE; not a complete checkout. MinerU, LightRAG, OCR/ASR/VLM model, dataset and transitive dependency terms are separate; no runtime or optional dependency installed."
+
+  - id: qwen35-4b-uncensored-hauhaucs-q4km
+    kind: primary_llm_model_weights
+    upstream: "https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive"
+    source_version: "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e; Q4_K_M; 2707513696 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_notice_subject_to_base_model_and_template_review"
+    sha256: "79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741"
+    ship: false
+    status: "candidate_pinned_not_downloaded_template_review_required"
+    notes: "Primary owner-selected uncensored Qwen candidate. Model author claims 0 refusals on 465 tests; this is not independent evidence. Palo Alto PAIT-GGUF-100 is informational: GGUF contains a Jinja chat template, with no known sandbox-escape patterns detected. Review template against official Qwen3.5 base and use a trusted override if required. Main weights are owner-supplied to server, not committed to Git."
+
+  - id: qwen35-4b-uncensored-vision-projector
+    kind: multimodal_projector_weights
+    upstream: "https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive"
+    source_version: "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e; BF16 mmproj; 675568768 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_notice_subject_to_model_lineage_review"
+    sha256: "a1e32e86ea99aa7a56f3dcfe7e63c1d0be9439d31fd07087099f15bc0fda0f22"
+    ship: false
+    status: "pinned_not_downloaded"
+
+  - id: qwen3-embedding-0.6b
+    kind: rag_embedding_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B"
+    source_version: "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3; model.safetensors; 1191586416 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "Conditional RAG-only helper; not part of the ordinary chat hot path."
+
+  - id: qwen3-reranker-0.6b
+    kind: rag_reranker_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-Reranker-0.6B"
+    source_version: "e61197ed45024b0ed8a2d74b80b4d909f1255473; model.safetensors; 1191588280 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "Load only for reranking after first-stage retrieval and only if measured retrieval metrics improve."
+
+  - id: qwen3-asr-0.6b
+    kind: asr_model_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-ASR-0.6B"
+    source_version: "5eb144179a02acc5e5ba31e748d22b0cf3e303b0; model.safetensors; 1876091704 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: "79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "RU/TH/EN evaluation challenger; not yet integrated into the existing whisper.cpp gateway adapter."
+
+  - id: whisper-large-v3-turbo-q5-0
+    kind: asr_model_weights
+    upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+    source_version: "98aa99a0a9db05ae2342309f5096248665f7cba3; ggml-large-v3-turbo-q5_0.bin; 574041195 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "Required whisper.cpp baseline. The CLI binary, ffmpeg and ffprobe remain separate runtime installs."
+
+  - id: silero-vad-16k-op15
+    kind: vad_model_weights
+    upstream: "https://github.com/snakers4/silero-vad"
+    source_version: "066409f3d9db45a30d21dfcbf9147826ffdd7052; silero_vad_16k_op15.onnx; 1289603 bytes; Git blob SHA-1 625ad8909b1abdba2292f3a9a10db6864fd5d561"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "pinned_not_downloaded_sha256_pending"
+    notes: "Downloader verifies upstream Git blob SHA-1 and size, then records SHA-256 after acquisition."
+
+  - id: piper-engine-1.8.0
+    kind: tts_runtime_code
+    upstream: "https://github.com/OHF-Voice/piper1-gpl"
+    source_version: "v1.8.0; release commit 639388b"
+    license_spdx: "GPL-3.0-or-later"
+    commercial_use: "private_server_use_subject_to_compliance_review; redistribution_requires_GPL_compliance"
+    sha256: null
+    ship: false
+    status: "version_selected_not_installed"
+    notes: "v1.8.0 adds a Thai phonemizer using TLTK, but does not itself provide an official Thai voice. Keep engine license separate from every voice's dataset chain."
+
+  - id: piper-ru-dmitri-medium-retrained
+    kind: tts_voice_weights
+    upstream: "https://huggingface.co/rhasspy/piper-voices"
+    source_version: "2f358b6a560e3a913ebf509b2f3344f20b367f94; ru/ru_RU/dmitri/medium; 63221984 bytes"
+    license_spdx: "CC0-1.0 AND CC-BY-4.0"
+    commercial_use: "candidate_allowed_with_CC-BY_attribution_and_voice_lineage_notice"
+    sha256: "9ed9941bac7373f2ec1be36627e0e71a349a59ca5522d4363fd50701db05193a"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "Current retrained card: direct voice dataset CC0; fine-tuned from hifi_tts_92 base (CC-BY-4.0). Do not use the older Lessac-derived dmitri artifact."
+
+  - id: piper-en-joe-medium
+    kind: tts_voice_weights
+    upstream: "https://huggingface.co/rhasspy/piper-voices"
+    source_version: "2f358b6a560e3a913ebf509b2f3344f20b367f94; en/en_US/joe/medium; 63221984 bytes"
+    license_spdx: "CC0-1.0"
+    commercial_use: "candidate_allowed_with_CC0_voice_dataset_and_base"
+    sha256: "abf4b998e34045cbd00eaf050de2de620f81ded6eb8b85a24b022a1c2b3f08d2"
+    ship: false
+    status: "pinned_not_downloaded"
+    notes: "Current voice card: direct dataset CC0; fine-tuned from rdh base (CC0). Preserve MODEL_CARD."
+
+  - id: tesseract-fast-eng-traineddata
+    kind: ocr_language_weights
+    upstream: "https://github.com/tesseract-ocr/tessdata_fast"
+    source_version: "87416418657359cb625c412a48b6e1d6d41c29bd; eng.traineddata; 4113088 bytes; Git blob SHA-1 bbef4675053b5b468cdb477053e28b1c698ba08e"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "pinned_not_downloaded_sha256_pending"
+
+  - id: tesseract-fast-rus-traineddata
+    kind: ocr_language_weights
+    upstream: "https://github.com/tesseract-ocr/tessdata_fast"
+    source_version: "87416418657359cb625c412a48b6e1d6d41c29bd; rus.traineddata; 3861738 bytes; Git blob SHA-1 b146cb2263acbc6383f8e92ea0ce759537687bb8"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "pinned_not_downloaded_sha256_pending"
+
+  - id: tesseract-fast-tha-traineddata
+    kind: ocr_language_weights
+    upstream: "https://github.com/tesseract-ocr/tessdata_fast"
+    source_version: "87416418657359cb625c412a48b6e1d6d41c29bd; tha.traineddata; 1072600 bytes; Git blob SHA-1 ea28de3985668cac00d261c5b91f023ea66e19cd"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "pinned_not_downloaded_sha256_pending"
+
+  - id: f5-tts-thai-community-candidate
+    kind: tts_voice_model_weights
+    upstream: "https://huggingface.co/VIZINTZOR/F5-TTS-THAI"
+    source_version: "af023c707f4208e5fc1fce59c1fd1501cfc3fc22; model card CC-BY-4.0 metadata; base SWivid/F5-TTS CC-BY-NC-4.0"
+    license_spdx: "CC-BY-4.0 AND CC-BY-NC-4.0"
+    commercial_use: "noncommercial_base_checkpoint_and_derivative_rights_unresolved"
+    sha256: null
+    ship: false
+    status: "deferred_license_review"
+    notes: "Do not download for production or redistribute. Piper 1.8.0 now has Thai phonemization support, but no official Thai voice is published in the current Piper voice catalog."
