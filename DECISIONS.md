@@ -237,3 +237,43 @@
 - **Boundaries:** Keep the Quick/Thorough selector and web-search scope selector independently visible and authoritative. Deep Research must not silently change web-search scope, provider, permissions or data scope. Skills do not grant tools/data permissions. The agent-team size/scenario fields are a saved blueprint, not an independent-agent runtime. Integrations/connectors remain absent until actual registered capabilities, status and permissions are available. Research Studio remains retired; this menu is not its replacement modal.
 - **Acceptance:** RU/EN labels; exact selectors for the three menu items; selecting Deep Research sets Thorough and closes menu without sending a user request; Agents and Skills open their existing configuration panels; no Integrations placeholder; mobile layout remains overflow-free. Exact-head Quality/Chromium required before merge.
 - **Rollback:** remove the Functions menu entry points and their focused E2E tests without altering the underlying per-chat workflow/profile state.
+
+
+## D-023 — Qwen3.5-4B Uncensored as the preferred main-model candidate
+
+- **Статус:** Candidate selected for target-host bake-off; production model and runtime are not frozen.
+- **Решение:** use HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M as the first main candidate because it matches the owner's uncensored-Qwen preference while retaining the 4B tool/vision/thinking model class. Keep the official Qwen3.5-4B base as a required baseline and compare at least two credible alternatives.
+- **License/provenance:** derivative repository declares Apache-2.0; verify base lineage, derivative changes and exact model card before redistribution. Author-reported 0/465 refusals is not independent evidence.
+- **Efficiency:** ordinary chat goes directly to the main model. Embedding, reranking, ASR, OCR and agent helpers are invoked only for requests that need them and only after their own evals.
+- **Security:** no hidden refusal layer is added. Model outputs never grant permissions; tool execution still requires capability scope, schema validation, approvals, budgets and audit.
+- **Storage:** main GGUF is owner-server-only; no model weights are committed to Git or Git LFS.
+- **Runtime caveat:** Ollama official docs show single-GGUF import but no documented separate mmproj directive. Test a pinned llama.cpp server with the projector as the direct-HF fallback; do not replace the working runtime before API/tool/vision/security checks pass.
+- **Rollback:** keep the previous Ollama model/config and point the gateway back to it; remove the candidate model only after a successful rollback smoke test.
+
+## D-024 — model artifact acquisition outside Git
+
+- **Статус:** Implemented in feature branch; acquisition workflows verified.
+- **Решение:** pin model files in JSON manifests, download through bounded HTTPS with exact sizes and published checksums, record local SHA-256/SHA-1 and provenance, upload to separately named GitHub Actions artifacts for 30 days, then copy to a private model store. Never add large weights to the Git tree or LFS.
+- **Evidence:** main artifact run 43393099472 and Thai TTS run 43393859216 succeeded; every included artifact has a lock record and sidecar. No model is installed.
+- **Rollback:** expire/delete staging artifacts through normal retention and keep the source manifests/scripts; no source-tree binary removal is required.
+
+## D-025 — ASR deployment candidate: sherpa-onnx Qwen3-ASR INT8
+
+- **Статус:** Acquired for evaluation; not integrated.
+- **Решение:** compare the 878,702,423-byte sherpa-onnx INT8 archive with the raw 0.6B BF16 Qwen3-ASR and whisper.cpp large-v3-turbo Q5_0. Prefer the INT8 path for CPU if RU/EN/TH accuracy passes; retain Silero VAD as a separate segmentation stage.
+- **Efficiency:** never keep multiple ASR checkpoints resident by default. Load the selected ASR only for voice tasks and evict it when the main model needs memory.
+- **Rollback:** retain current whisper.cpp endpoint and feature flag until exact-host WER/CER/latency is proven.
+
+## D-026 — Thai TTS remains evaluation-only
+
+- **Статус:** F5-TTS-THAI V1 500k FP16 + Vocos acquired; production blocked.
+- **Решение:** evaluate F5-TTS V1 with the 24 kHz Vocos vocoder in an isolated environment. Its model card declares CC-BY-4.0 and code is MIT, but the training dataset rights are not sufficiently clear. V2 has no license metadata; Thonburian and MMS Thai models are non-commercial and are not production candidates.
+- **Efficiency:** use the smaller 500k FP16 checkpoint rather than the 5.39 GB default checkpoint; supply reference text to avoid loading an extra ASR model.
+- **Rollback:** retain Piper for Russian and leave Thai TTS disabled until data rights and target-host quality/memory pass.
+
+## D-027 — hybrid RAG model lane
+
+- **Статус:** models acquired; integration deferred until eval.
+- **Решение:** Qwen3-Embedding-0.6B creates embeddings on ingestion/query; fuse vector and current FTS5 lexical results deterministically; call Qwen3-Reranker-0.6B only on a bounded top-k candidate set if measured retrieval gains justify latency/RAM.
+- **Rejected:** embedding or reranker on every chat request, a permanent extra resident model by default, or replacing FTS5 before a golden set shows a measurable gain.
+- **Rollback:** disable vector retrieval and reranking flags; retain FTS5 index and citations.
