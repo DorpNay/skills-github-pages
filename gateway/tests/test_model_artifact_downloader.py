@@ -143,3 +143,64 @@ def test_tar_archive_validation_rejects_traversal_and_links(tmp_path):
         archive.addfile(info, io.BytesIO(b"x"))
     with pytest.raises(acquirer.DownloadError, match="unsafe archive path"):
         acquirer.validate_archive(unsafe_path, "unsafe")
+
+
+def test_verifier_accepts_exact_artifact_lock_and_sidecar(tmp_path):
+    from scripts import verify_model_artifacts as verifier
+
+    payload = b"verified model fixture"
+    sha256 = hashlib.sha256(payload).hexdigest()
+    sha1 = hashlib.sha1(payload).hexdigest()
+    artifact_dir = tmp_path / "artifact-123" / "fixture_model"
+    artifact_dir.mkdir(parents=True)
+    (artifact_dir / "weights.bin").write_bytes(payload)
+    sidecar = {
+        "id": "fixture_model",
+        "filename": "weights.bin",
+        "size_bytes": len(payload),
+        "sha256": sha256,
+        "sha1": sha1,
+    }
+    (artifact_dir / "artifact-metadata.json").write_text(json.dumps(sidecar), encoding="utf-8")
+    lock_path = tmp_path / "artifact-123" / "artifacts-lock.json"
+    lock_path.write_text(json.dumps({
+        "schema_version": 1,
+        "results": [{
+            "id": "fixture_model",
+            "status": "downloaded-and-verified",
+            "size_bytes": len(payload),
+            "sha256": sha256,
+            "sha1": sha1,
+        }],
+    }), encoding="utf-8")
+
+    assert verifier.verify(tmp_path, lock_path)[0].startswith("fixture_model: ")
+
+
+def test_verifier_rejects_checksum_mismatch(tmp_path):
+    from scripts import verify_model_artifacts as verifier
+
+    artifact_dir = tmp_path / "artifact-123" / "fixture_model"
+    artifact_dir.mkdir(parents=True)
+    (artifact_dir / "weights.bin").write_bytes(b"tampered")
+    (artifact_dir / "artifact-metadata.json").write_text(json.dumps({
+        "id": "fixture_model",
+        "filename": "weights.bin",
+        "size_bytes": 8,
+        "sha256": "0" * 64,
+        "sha1": "0" * 40,
+    }), encoding="utf-8")
+    lock_path = tmp_path / "artifact-123" / "artifacts-lock.json"
+    lock_path.write_text(json.dumps({
+        "schema_version": 1,
+        "results": [{
+            "id": "fixture_model",
+            "status": "downloaded-and-verified",
+            "size_bytes": 8,
+            "sha256": "0" * 64,
+            "sha1": "0" * 40,
+        }],
+    }), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="SHA-256 mismatch"):
+        verifier.verify(tmp_path, lock_path)
