@@ -140,3 +140,95 @@ Do not select helper models by parameter count or leaderboard rank. Evaluate one
 | Skill synthesis | executable instruction validity, injection resistance, held-out task success |
 
 Record exact model ID, immutable digest, code and weight licenses, quantization, context length, runtime version, prompt/schema version, RU/EN/TH scores, p50/p95 latency, TTFT, RAM/PSS, VRAM, cold load, concurrency and failure rate. No helper is promoted until it improves one role without degrading the main model or exhausting the target device. Keep only one optional helper resident unless measurements justify otherwise.
+
+
+## 2026-11-13 — owner-directed primary model and artifact pinning
+
+**Decision status: SPECIFIED candidate, not production VERIFIED.** The owner's preference for an uncensored Qwen main model is reflected in the primary candidate. This does not bypass artifact review, model evaluation, or the independent permission/approval layer.
+
+### Primary chat model candidate
+
+| Field | Pinned value |
+|---|---|
+| Model | HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive |
+| Revision | c09cdbcdb1fefad6d335809d445621b5f5ba0c6e |
+| File | Qwen3.5-4B-Uncensored-HauhauCS-Aggressive-Q4_K_M.gguf |
+| Size | 2,707,513,696 bytes |
+| SHA-256 | 79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741 |
+| License | Apache-2.0 metadata; base Qwen3.5-4B is Apache-2.0 |
+| Runtime target | Ollama first; llama.cpp comparison only if compatibility or measured performance requires it |
+
+The main Q4_K_M checkpoint is deliberately excluded from the repository downloader: the owner will upload this primary model directly to the server. The separate BF16 vision projector is pinned at 675,568,768 bytes with SHA-256 a1e32e86ea99aa7a56f3dcfe7e63c1d0be9439d31fd07087099f15bc0fda0f22 and is included in the auxiliary artifact acquisition pack.
+
+The model author reports zero refusals on 465 cases. This is an author claim, not an independent aLandi result. Treat this as a less-refusal candidate, not as proof of broad quality or a reason to remove application permissions. The GGUF scanner reports PAIT-GGUF-100: an informational finding that the file contains a Jinja chat template; it did not report known sandbox-escape patterns. Review the template against the official Qwen3.5 base template and use a trusted, reviewed template override if required before loading it. Keep Ollama/llama.cpp current and never let a model template execute arbitrary host code.
+
+### Selected conditional helper and modality artifacts
+
+| Role | Pinned artifact | Size | License | Activation policy |
+|---|---|---:|---|---|
+| Embeddings | Official Ollama qwen3-embedding:0.6b-q8_0, digest prefix ac6da0dfba84 | about 639 MB | Apache-2.0 | RAG ingest/query only |
+| Reranker | Qwen3-Reranker-0.6B, revision e61197ed45024b0ed8a2d74b80b4d909f1255473 | 1,191,588,280 bytes | Apache-2.0 | After first-stage retrieval only, if eval improves |
+| ASR baseline | whisper.cpp large-v3-turbo Q5_0, revision 98aa99a0a9db05ae2342309f5096248665f7cba3 | 574,041,195 bytes | MIT conversion/runtime; retain upstream model notices | Existing whisper.cpp gateway path |
+| ASR challenger | Qwen3-ASR-0.6B, revision 5eb144179a02acc5e5ba31e748d22b0cf3e303b0 | 1,876,091,704 bytes | Apache-2.0 | Separate RU/TH/EN eval; not wired into gateway yet |
+| VAD | Silero VAD 16k OP15 ONNX, commit 066409f3d9db45a30d21dfcbf9147826ffdd7052 | 1,289,603 bytes | MIT | Voice sessions only |
+| TTS RU | Piper dmitri medium, retrained voice revision 2f358b6a560e3a913ebf509b2f3344f20b367f94 | 63,221,984 bytes | CC0 dataset + CC-BY-4.0 hifi_tts_92 base | Piper 1.8.0 engine |
+| TTS EN | Piper joe medium, same voice revision | 63,221,984 bytes | CC0 dataset + CC0 rdh base | Piper 1.8.0 engine |
+| OCR RU/EN/TH | Tesseract tessdata_fast at commit 87416418657359cb625c412a48b6e1d6d41c29bd | 9,047,426 bytes total | Apache-2.0 | CPU OCR fallback, LSTM OEM 1 |
+
+Piper engine is GPL-3.0-or-later and must be reviewed separately from voice licenses. The old 2023 dmitri model was Lessac-derived and research-only; the pinned current dmitri voice is retrained from hifi_tts_92. The current English joe voice is retrained from the rdh base. Preserve each MODEL_CARD.
+
+Piper v1.8.0 adds a Thai phonemizer using TLTK, but the current official Piper voice catalog does not publish a Thai voice. F5-TTS-THAI's card metadata says CC-BY-4.0, while its upstream F5 base checkpoints are CC-BY-NC-4.0; derivative rights remain unresolved. Therefore Thai TTS is DEFERRED, not silently treated as production-ready.
+
+### API and routing contract
+
+- Main chat: existing FastAPI gateway /v1/chat/completions → loopback Ollama /v1/chat/completions. Ordinary chat must remain a direct single-model call.
+- ASR: existing POST /v1/audio/transcriptions → local whisper.cpp CLI, with bounded input/timeouts. Qwen3-ASR is an alternative adapter proposal, not current implementation.
+- TTS: existing POST /v1/audio/speech → local Piper CLI and explicitly allowlisted voice IDs.
+- VAD: internal voice-session component; no separate public endpoint required.
+- RAG: existing /v1/rag/ingest and /v1/rag/retrieve. Embedding and reranker workers are proposed internal adapters; /v1/embeddings and /v1/rerank are not currently implemented.
+- OCR: extend the bounded document pipeline or add an internal OCR worker. No new public OCR endpoint is claimed implemented.
+- Existing /v1/documents/extract remains basic text extraction; Tesseract language data alone does not make scanned-PDF OCR or book scanning implemented.
+
+### Acquisition and memory budget
+
+The manifest at models/artifacts.manifest.json pins 6,033,970,026 exact bytes for external-cache artifacts (includes the vision projector, Ollama runtime archive and Piper wheel; excludes the main Q4 model; tokenizer/config files add overhead) plus approximately 3,939,000,000 bytes for the two Ollama model-store references (Qwen3.5 base and Qwen3 embedding). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
+
+The current engineering container could not resolve external DNS; actual downloads did not complete. The downloader is implemented and verifies SHA-256 or upstream Git blob SHA-1 plus size. Run it from a network-enabled workstation/server, then record downloaded hashes and installation status. Do not claim downloaded or installed yet.
+
+On the reference 8-GB VPS, do not keep the embedding, reranker, ASR, OCR and TTS models resident alongside the main model by assumption. Queue heavy work and load/evict sequentially; start at 4K context and concurrency 1. Promote a different residency/concurrency policy only after peak RSS/PSS, KV-cache growth, cold start, p50/p95 and task quality are measured on the exact host.
+
+### Next model gate
+
+1. Acquire and verify the pinned artifacts outside Git.
+2. Review the uncensored GGUF chat template and base-model lineage.
+3. Run the same RU/EN/TH golden sets for base Qwen3.5-4B vs uncensored Qwen3.5-4B; measure useful compliance, factuality, refusal/abstention, tool-call exactness, JSON validity, latency and memory.
+4. Evaluate embedding Recall@k, MRR/nDCG and citation support; evaluate reranker only after first-stage retrieval.
+5. Compare Whisper and Qwen3-ASR on identical labelled audio; evaluate WER/CER, RTF, p50/p95, peak RSS and cancellation.
+6. Evaluate Tesseract RU/EN/TH on scanned and born-digital fixtures; report CER, exact fields/tables, reading order and latency.
+7. Keep all new model flags off until exact-host evidence and owner release approval.
+
+
+The full Hugging Face Qwen3-Embedding-0.6B safetensors file (1,191,586,416 bytes) remains pinned for provenance but is not downloaded; the Ollama Q8_0 artifact avoids duplicate full weights and uses the native /api/embed route.
+
+### Matched base-model reference
+
+For an apples-to-apples comparison, acquire the official Ollama Qwen3.5-4B Q4_K_M reference in addition to the owner-supplied uncensored checkpoint:
+
+- Tag: qwen3.5:4b
+- Registry digest prefix: d8b0f5e9760c
+- Displayed package size: about 3.3 GB (model plus vision projector)
+- License: Apache-2.0
+- Acquisition: the artifact downloader runs ollama pull qwen3.5:4b and verifies the digest prefix from ollama list.
+- Residency: keep the official and uncensored variants in the Ollama model store, but load/evaluate them sequentially on the 8-GB profile.
+
+This reference is a benchmark comparator, not the production default. The uncensored model remains the owner-preferred primary candidate pending same-prompt RU/EN/TH evaluation.
+
+
+### Runtime version pins
+
+- Ollama v0.40.16, commit d63b702609c4300a2ca07be2bdb0adb9834725e5; Linux AMD64 archive SHA-256 in the artifact manifest.
+- whisper.cpp v1.9.5, commit d1be6fde11ac6e0407606b4e42fe72d34add8037; build whisper-cli from source.
+- Piper 1.8.0, commit 639388b6317fc4731e91d53da42aea68fd4166ff; GPL-3.0-or-later Linux x86_64 wheel pinned.
+- Qwen ASR Python package qwen-asr==0.0.6; official dependencies pin Transformers 4.57.6, Accelerate 1.12.0, Nagisa 0.2.11 and SoyNLP 0.0.493; optional vLLM 0.14.0 is GPU-only and excluded from the CPU-first baseline.
+- Tesseract 5.5.4, commit 7e548e6eff172f38f97664afe7f7ce40db36c8d6; release fixes 17 security advisories.
+- Exact API boundaries, runtime install status and current SQLite/IndexedDB storage policy are recorded in models/runtime-stack.lock.json.

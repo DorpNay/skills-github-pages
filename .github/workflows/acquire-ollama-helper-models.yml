@@ -1,0 +1,62 @@
+name: Acquire Qwen embedding and GLM-OCR Ollama packages
+
+on:
+  push:
+    branches:
+      - "feat/model-stack-artifact-pack-20261113"
+    paths:
+      - "scripts/download_ollama_registry_models.py"
+      - ".github/workflows/acquire-ollama-helper-models.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ollama-helper-models-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acquire:
+    name: Download and verify Qwen embedding and GLM-OCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Download pinned official Ollama registry packages
+        run: |
+          python scripts/download_ollama_registry_models.py \
+            --manifest models/manifest-ollama-registry.json \
+            --output-dir "$RUNNER_TEMP/alandi-ollama-helpers" \
+            --timeout 900 \
+            --only qwen3_embedding_06b_q8_0 \
+            --only glm_ocr_q8_0
+      - name: Upload Qwen3 Embedding 0.6B Q8_0 package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-qwen3-embedding-06b-q8-0-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-helpers/qwen3_embedding_06b_q8_0/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload GLM-OCR Q8_0 package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-glm-ocr-q8-0-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-helpers/glm_ocr_q8_0/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload verified registry lock
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-ollama-helper-lock-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-ollama-helpers/artifacts-lock.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6

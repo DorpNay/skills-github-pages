@@ -11,12 +11,12 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
 ## Live checkpoint (2026-11-13)
-- Verified main: `9033c6ad708a993cba5d1b27442f53651ad71c0f`; PR #174 is merged. Current live queue: #175–#182 (8 open PRs); issue #111 remains the only open issue.
-- Main Quality #42430269155, Pages deployment #42430269181 and Provenance #42430269144 passed on exact main SHA. Graphify #42629163792 passed. Scheduled Freshness #43247857963 failed because saved queue state predates the eight open PRs.
-- Exact-head visible state: #181 visible required checks pass; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context checks pass; #175 Chromium fails; #179 Chromium and Freshness fail; #182 Chromium fails; #180 Integrity fails and Chromium was cancelled. Refetch before integration.
-- PR relationships: #175 is main-based UI/Notebook workbench; #179 and #182 are stacked from older #175 bases; #180 is stacked from older #179 state. #177 Browser Local, #178 landing content, #176 audit and #181 supply-chain fix are main-based independent candidates.
+- Verified main: `6a366125720453193c82a7385f8c088224a5928e`; PR #181 is merged. Current live queue: #175, #176, #178, #179, #180, #182, #184, #185 (8 open PRs); issue #111 remains the only open issue.
+- Main Quality #43387599840, Pages deployment #43387599298 and Graphify #43387599792 passed on exact main SHA. Recheck Freshness against the current queue.
+- Exact-head visible state: #181 merged. PR #185 last verified HEAD 90b6810b772a4f41450ee2f71f1fea78610ae70a passed Quality (including Chromium), Gateway tests on Python 3.12/13/14, Graphify, Freshness, License/Provenance and Dead Code. The final state refresh changes HEAD, so re-fetch and rerun exact-head checks before integration. #184 remains open; older failures remain on #175/#179/#180/#182.
+- PR relationships: #175 is main-based UI/Notebook workbench; #179 and #182 are stacked from older #175 bases; #180 is stacked from older #179 state. #184 is Browser Local recovery; #178 landing content; #176 audit; #185 model artifact pack.
 - Owner's 2026-11-13 primary task is LANDING-V2-2026-001, section K of the single addendum. Required end-state: full owner UI; separate Deep Research / Agents / Skills / Connectors panels; real agent runtime and live run-state UI; mandatory local-file Coder; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; documents/books/web OCR/parsers/converters; mode-combination gates; conditional efficient model routing; cache/observability/N₂O in main; tested VPS runbook.
-- Current stack candidates are not final model selections: qwen3.5:4b is an example in the runbook; Whisper/Piper code paths require separately installed binaries and weights; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama, actual hardware, voice devices and connectors remain unverified.
+- Primary candidate is source-pinned, not production-verified: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M. Main weights are owner-supplied and excluded from repository downloads; auxiliary manifest pins 5.645 GB but actual downloads are blocked by outbound DNS. Whisper/Piper paths still require installed binaries/weights; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama, actual hardware, voice devices and connectors remain unverified.
 - Do not merge stacked/failed/draft work wholesale. Reconcile all PRs to main with exact-head gates; target main plus at most one active product PR. Issue #111 stays open until owner/environment gates are evidenced.
 
 ## Resume and orient
@@ -48,3 +48,11 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Canonical navigation
 `OLEDUE.md` (handoff/authority) · `ORIENTER.md` (checkpoint) · `PROJECT_ORCHESTRATOR_RU.md` (index) · `docs/ALANDI_N2O_CORE_RU.md` (principles) · `LOOP.md` (method) · `docs/ALANDI_SYSTEMS_MAP_RU.md` (systems) · `docs/IMPLEMENTATION_ROADMAP_RU.md` (sequence) · `docs/MASTER_TASK_REGISTRY_RU.md` + addendum (single backlog) · `docs/PROJECT_STATE.yaml` / snapshot / `docs/VOLLEY_LOG.md` (state/evidence).
+
+
+## Model artifact/runtime checkpoint — 2026-11-13
+
+- PR #185 pins a candidate stack and an external-cache downloader; the primary uncensored Qwen Q4_K_M remains owner-supplied and excluded.
+- Runtime lock: models/runtime-stack.lock.json; owner installation sequence: models/runtime-install.md; exact artifacts: models/artifacts.manifest.json.
+- Platform-specific Ollama and Piper runtime artifacts are pinned for provisional Linux x86_64 only. Verify the actual server OS/architecture before installation.
+- Keep all model/voice/OCR helpers conditional; ordinary chat remains one direct main-model request.

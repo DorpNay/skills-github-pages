@@ -1,0 +1,67 @@
+name: Acquire pinned external model and runtime cache
+
+on:
+  push:
+    branches:
+      - "feat/model-stack-artifact-pack-20261113"
+    paths:
+      - "models/artifacts.manifest.json"
+      - "models/requirements-model-download.txt"
+      - "scripts/download_model_artifacts.py"
+      - ".github/workflows/acquire-external-model-cache.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: external-model-cache-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acquire:
+    name: Download and verify all non-Ollama model/runtime artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Install pinned download client
+        run: python -m pip install --disable-pip-version-check -r models/requirements-model-download.txt
+      - name: Plan exact external-cache acquisition
+        run: python scripts/download_model_artifacts.py --root "$RUNNER_TEMP/alandi-model-cache" --skip-ollama --dry-run
+      - name: Download all enabled non-Ollama artifacts outside Git
+        run: |
+          python scripts/download_model_artifacts.py \
+            --root "$RUNNER_TEMP/alandi-model-cache" \
+            --skip-ollama
+      - name: Verify every downloaded artifact against pinned manifest
+        run: |
+          python scripts/download_model_artifacts.py \
+            --root "$RUNNER_TEMP/alandi-model-cache" \
+            --skip-ollama \
+            --verify-only
+      - name: Preserve manifest and runtime lock with the cache
+        run: |
+          mkdir -p "$RUNNER_TEMP/alandi-model-cache/_aLandi-manifests"
+          cp models/artifacts.manifest.json models/runtime-stack.lock.json \
+            models/requirements-qwen-asr.txt models/requirements-model-download.txt \
+            "$RUNNER_TEMP/alandi-model-cache/_aLandi-manifests/"
+          printf '{"run_id":"%s","head_sha":"%s","status":"downloaded_and_verified"}\n' \
+            "$GITHUB_RUN_ID" "$GITHUB_SHA" \
+            > "$RUNNER_TEMP/alandi-model-cache/_aLandi-manifests/acquisition-run.json"
+      - name: Upload verified external model/runtime cache
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-external-model-cache-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/alandi-model-cache/**
+            !${{ runner.temp }}/alandi-model-cache/**/.cache/**
+            !${{ runner.temp }}/alandi-model-cache/**/*.partial
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0

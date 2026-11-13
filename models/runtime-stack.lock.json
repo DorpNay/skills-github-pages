@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-11-13",
+  "status": "SPECIFIED_NOT_INSTALLED",
+  "target_profile": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "architecture_status": "PROVISIONAL_NOT_VERIFIED",
+    "ram_gb": 8,
+    "ram_status": "REFERENCE_PROFILE_ONLY",
+    "disk_free_recommended_gb": 20,
+    "gpu": "unknown; CPU-first baseline",
+    "notes": "Do not install platform-specific Ollama/Piper binaries until the actual VPS OS/architecture and available disk/RAM are verified."
+  },
+  "runtimes": {
+    "ollama": {
+      "version": "0.40.16",
+      "commit": "d63b702609c4300a2ca07be2bdb0adb9834725e5",
+      "license": "MIT",
+      "artifact": "models/artifacts.manifest.json#ollama_runtime_linux_amd64_v04016",
+      "linux_amd64_archive_sha256": "87bfafb2acbc89b2e6a1be0a9043de6aa75fb450696f86bc426e65fc448f788d",
+      "install_state": "NOT_DOWNLOADED_NOT_INSTALLED",
+      "api": {
+        "chat": "POST /v1/chat/completions (OpenAI-compatible) or POST /api/chat",
+        "embeddings": "POST /api/embed",
+        "tags": "GET /api/tags",
+        "model_info": "POST /api/show"
+      },
+      "model_tags": {
+        "base_reference": {
+          "tag": "qwen3.5:4b",
+          "digest_prefix": "d8b0f5e9760c",
+          "size_estimate_bytes": 3300000000
+        },
+        "rag_embedding": {
+          "tag": "qwen3-embedding:0.6b-q8_0",
+          "digest_prefix": "ac6da0dfba84",
+          "size_estimate_bytes": 639000000
+        }
+      },
+      "policy": "One main model on ordinary chat. Embedding model only on RAG paths. Keep base reference and uncensored candidate unloaded sequentially on 8-GB hardware."
+    },
+    "whisper_cpp": {
+      "version": "1.9.5",
+      "commit": "d1be6fde11ac6e0407606b4e42fe72d34add8037",
+      "license": "MIT",
+      "build": "CMake release build from the pinned source commit",
+      "binary": "whisper-cli",
+      "dependencies": [
+        "CMake",
+        "C/C++ toolchain",
+        "FFmpeg",
+        "ffprobe"
+      ],
+      "model_artifact": "whisper_large_v3_turbo_q5_0",
+      "install_state": "NOT_BUILT_NOT_INSTALLED"
+    },
+    "piper": {
+      "version": "1.8.0",
+      "commit": "639388b6317fc4731e91d53da42aea68fd4166ff",
+      "package": "piper-tts==1.8.0",
+      "license": "GPL-3.0-or-later",
+      "linux_x86_64_wheel_sha256": "25b4d3f31ff70c8fa7151908e00aaa5650cbdf16bca8fcf21299f3941b89a7d3",
+      "install_state": "NOT_DOWNLOADED_NOT_INSTALLED",
+      "voices": {
+        "ru": "ru/ru_RU/dmitri/medium at rhasspy/piper-voices@2f358b6a560e3a913ebf509b2f3344f20b367f94",
+        "en": "en/en_US/joe/medium at rhasspy/piper-voices@2f358b6a560e3a913ebf509b2f3344f20b367f94",
+        "th": "NO_APPROVED_OFFICIAL_VOICE"
+      }
+    },
+    "qwen_asr": {
+      "package": "qwen-asr==0.0.6",
+      "license": "Apache-2.0",
+      "official_dependencies": {
+        "transformers": "4.57.6",
+        "nagisa": "0.2.11",
+        "soynlp": "0.0.493",
+        "accelerate": "1.12.0",
+        "vllm_optional_gpu_only": "0.14.0"
+      },
+      "additional_dependencies": [
+        "qwen-omni-utils",
+        "librosa",
+        "soundfile",
+        "sox",
+        "gradio",
+        "flask",
+        "pytz"
+      ],
+      "backend": "Transformers for CPU-first evaluation; vLLM optional only with suitable GPU",
+      "model": "Qwen/Qwen3-ASR-0.6B at 5eb144179a02acc5e5ba31e748d22b0cf3e303b0",
+      "languages": "52 languages/dialects; includes Russian and Thai",
+      "install_state": "NOT_INSTALLED"
+    },
+    "qwen_reranker": {
+      "model": "Qwen/Qwen3-Reranker-0.6B at e61197ed45024b0ed8a2d74b80b4d909f1255473",
+      "license": "Apache-2.0",
+      "runtime_candidate": "Transformers 4.57.6 + CPU PyTorch in an isolated worker environment",
+      "install_state": "NOT_INSTALLED",
+      "activation": "Only after first-stage FTS5/vector retrieval and only if measured nDCG/MRR improves."
+    },
+    "tesseract": {
+      "version": "5.5.4",
+      "commit": "7e548e6eff172f38f97664afe7f7ce40db36c8d6",
+      "license": "Apache-2.0",
+      "language_data_repo": "tesseract-ocr/tessdata_fast@87416418657359cb625c412a48b6e1d6d41c29bd",
+      "languages": [
+        "eng",
+        "rus",
+        "tha"
+      ],
+      "mode": "LSTM OEM 1",
+      "install_state": "NOT_INSTALLED",
+      "note": "5.5.4 release fixes 17 security advisories. Install from the target OS package source or build this exact source; verify tesseract --version before use."
+    },
+    "silero_vad": {
+      "model": "silero_vad_16k_op15.onnx",
+      "commit": "066409f3d9db45a30d21dfcbf9147826ffdd7052",
+      "license": "MIT",
+      "runtime": "ONNX Runtime CPU; pin exact onnxruntime wheel after target architecture confirmation",
+      "install_state": "NOT_INSTALLED"
+    }
+  },
+  "gateway_api": {
+    "implemented": {
+      "chat": "POST /v1/chat/completions",
+      "rag_ingest": "POST /v1/rag/ingest",
+      "rag_retrieve": "POST /v1/rag/retrieve",
+      "documents": "POST /v1/documents/extract",
+      "asr": "POST /v1/audio/transcriptions",
+      "tts": "POST /v1/audio/speech",
+      "health": [
+        "GET /livez",
+        "GET /readyz",
+        "GET /healthz"
+      ],
+      "model_metadata": [
+        "GET /v1/models",
+        "GET /v1/capabilities"
+      ]
+    },
+    "proposed_not_implemented": {
+      "embeddings": "Internal adapter to Ollama POST /api/embed; invoke only during RAG ingest/query.",
+      "rerank": "Internal worker around Qwen3-Reranker-0.6B; not a public API until permissions and timeouts are defined.",
+      "ocr": "Internal Tesseract worker; extend /v1/documents/extract only after scanned-PDF tests.",
+      "qwen_asr": "Optional local worker adapter; retain Whisper as baseline until WER/RTF eval passes."
+    }
+  },
+  "storage": {
+    "current": [
+      "SQLite (FTS5 lexical retrieval, response cache, AgentRunStore prototype)",
+      "Browser IndexedDB",
+      "Browser localStorage"
+    ],
+    "decision": "Do not add PostgreSQL, Redis or Qdrant until dataset scale, concurrency and latency benchmarks show SQLite/FTS5 plus measured vector storage is insufficient."
+  },
+  "request_path_policy": {
+    "ordinary_chat": "Browser -> FastAPI gateway -> Ollama main model, one model call by default.",
+    "rag": "Only when user enables/requests RAG: FTS5 candidate retrieval -> Ollama /api/embed; optional reranker after first-stage retrieval if eval passes.",
+    "voice": "Only when voice mode is used: VAD -> ASR; TTS only when speech output is requested.",
+    "documents": "Only when a document is uploaded: native parser first, OCR only for pages without usable text.",
+    "agents": "No full agent runtime is claimed by this lock; AgentRunStore is storage prototype. Tool execution remains behind approval/permission gates."
+  }
+}
