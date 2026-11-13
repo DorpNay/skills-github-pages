@@ -19,7 +19,7 @@ project_state:
     status: "Main 6a366125720453193c82a7385f8c088224a5928e; eight open PRs #175, #176, #178, #179, #180, #182, #184, #185; issue #111 remains open. Main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 passed exact SHA. Recheck Freshness against current queue. Owner priority: LANDING-V2-2026-001, full local-first workstation acceptance in addendum section K."
     branch: "main"
     base_main: "6a366125720453193c82a7385f8c088224a5928e"
-    open_prs_at_checkpoint: 8
+    open_prs_at_checkpoint: 7
     open_issues_at_checkpoint: 1
     merged_changes: "PR #169 owner-directed UI/aServi and §8.12 retirement merged at 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2; PR #173 aServi probe/E2E repair merged at bf039f887e29137b627b06fc2bb107c2793d6b69. Pages #42410162803 success; public root/landing verified. Earlier PR #167/#166/#161/#158/#157/#156 and main safeguards remain preserved."
     exact_head_checks: "Main 6a366125720453193c82a7385f8c088224a5928e: Quality #43387599840 PASS; Pages #43387599298 PASS; Graphify #43387599792 PASS. PR #185 prior CI HEAD cc107f0fec1f02ec6b8f9b1489cc689235f13a5f: provenance #43392835507 PASS and dead-code #43392835499 PASS; Freshness #43392835506 FAIL because FILE_ORIENTER/current_checkpoint markers were not refreshed. Quality/Gateway/Graphify were in progress. Later handoff refresh changed the PR head; rerun all exact-head gates before merge."
@@ -561,7 +561,7 @@ model_stack_artifact_checkpoint_2026_11_13:
   download_state: "NOT_DOWNLOADED: outbound DNS unavailable in engineering container. No server or runtime changed."
   runtime_selection: "Candidate only. Production requires template review, license/provenance review, same-host RU/EN/TH eval and memory/latency measurements."
   voice_state: "Piper 1.8.0 pinned; RU dmitri and EN joe voice chains reviewed. Thai phonemizer exists but no official Thai voice; F5-TTS-THAI deferred due non-commercial base checkpoint."
-  open_prs_at_checkpoint: [175, 176, 178, 179, 180, 182, 184, 185]
+  open_prs_at_checkpoint: [175, 176, 178, 179, 180, 182, 184]
   open_issues_at_checkpoint: [111]
   main_quality_run: 43387599840
   main_pages_run: 43387599298
