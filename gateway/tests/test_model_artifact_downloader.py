@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import subprocess
+import sys
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "download_model_artifacts.py"
@@ -62,3 +64,15 @@ def test_manifest_pins_downloadable_artifacts_and_excludes_primary_model() -> No
         for item in package.get("files", []):
             assert item.get("size_bytes", 0) > 0
             assert item.get("sha256") or item.get("git_blob_sha1")
+
+
+def test_download_cli_dry_run_is_offline_and_succeeds() -> None:
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--dry-run"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "5645657360" in result.stdout
+    assert "qwen35_uncensored_main" not in result.stdout
