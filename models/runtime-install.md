@@ -12,12 +12,12 @@ The reference profile is 8 GB RAM, one resident LLM, 4K context and concurrency 
 
 Run on a workstation or the target host with GitHub CLI authenticated (`gh auth login`). These commands download the ZIP artifacts from the completed runs; they do not install anything:
 
-    gh run download 43417527347 -R DorpNay/skills-github-pages -n alandi-external-model-cache-43417527347
-    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen35-base-4b-43417305393
-    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen35-helper-2b-43417305393
-    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen3-embedding-06b-q8-0-43417305393
-    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-glm-ocr-q8-0-43417305393
-    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-ollama-helper-lock-43417305393
+    gh run download 43420046411 -R DorpNay/skills-github-pages -n alandi-external-model-cache-43420046411
+    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen35-base-4b-43418126506
+    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen35-helper-2b-43418126506
+    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen3-embedding-06b-q8-0-43418126506
+    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-glm-ocr-q8-0-43418126506
+    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-ollama-helper-lock-43418126506
 
 Keep the downloaded directories and their checksum/lock files intact. The external artifact contains the 10 non-Ollama packages; the four registry artifacts each contain one verified Ollama package. The artifacts expire on 2026-12-13.
 
@@ -102,3 +102,13 @@ Ordinary chat must remain one direct main-model call. No embedding, reranker, AS
 Keep SQLite FTS5 as the current retrieval baseline and browser IndexedDB/localStorage for client state. Do not add PostgreSQL, Redis or Qdrant until scale/concurrency measurements justify them. Keep the original FTS5 retrieval path as a feature-flagged fallback when vector embedding or reranking is disabled. Store model revisions, local checksums, runtime versions, peak memory and eval reports with the release record.
 
 No server installation, systemd change, tunnel, API key, model flag or public deployment is performed by this PR.
+
+
+## Pinned gateway API dependencies
+
+The gateway dependency source of truth is the root `pyproject.toml` + `uv.lock` (resolved transitive versions and hashes). On the target host, after confirming CPython 3.12+ and Linux architecture, install pinned runtime dependencies with the repository's pinned uv version:
+
+    python3.12 -m pip install uv==0.13.6
+    uv sync --locked --no-dev --no-install-project
+
+This installs from the lock; it is not an offline wheelhouse. If the target host has no outbound package access, stage a platform-matched uv cache/wheelhouse separately before installation. Optional Qwen-ASR/PyTorch and OS packages are not part of the gateway lock.
