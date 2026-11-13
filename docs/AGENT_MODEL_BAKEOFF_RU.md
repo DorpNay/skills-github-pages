@@ -1,5 +1,5 @@
 > **Historical research/spec snapshot — PR #125; imported 2026-11-08.** Main baseline is `c4f23e03f563d03213eb87002863da630fc8b833`. Preserve source context; no runtime implementation is inferred. Canonical active task register: `docs/MASTER_TASK_REGISTRY_RU.md` plus addendum; source review status in `INTEL.md`.
-> **Current boundary:** Historical model shortlist/evaluation plan. Benchmark figures are upstream claims or prior research, not aLandi measurements. No model weights downloaded/installed; current source/license/hash and hardware/storage fit remain required.
+> **Current boundary:** Historical model shortlist/evaluation plan. Benchmark figures are upstream claims or prior research, not aLandi measurements. Auxiliary model/runtime weights were downloaded and hash-verified in GitHub Actions on 2026-11-13 (runs #43417527347 and #43417305393); they are not installed on the target host. The owner-supplied primary checkpoint remains excluded. Source/license/hash and hardware/storage fit still require target-host review.
 
 ---
 
