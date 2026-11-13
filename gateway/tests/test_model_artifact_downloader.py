@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
+import tarfile
 from pathlib import Path
 
 import pytest
@@ -124,3 +126,20 @@ def test_existing_artifact_is_rehashed_before_reuse(tmp_path, monkeypatch):
 
     assert result["status"] == "reused-verified"
     assert result["sha256"] == digest
+
+
+def test_tar_archive_validation_rejects_traversal_and_links(tmp_path):
+    safe_path = tmp_path / "safe.tar.bz2"
+    with tarfile.open(safe_path, "w:bz2") as archive:
+        info = tarfile.TarInfo("model/encoder.onnx")
+        info.size = 3
+        archive.addfile(info, io.BytesIO(b"onn"))
+    acquirer.validate_archive(safe_path, "safe")
+
+    unsafe_path = tmp_path / "unsafe.tar.bz2"
+    with tarfile.open(unsafe_path, "w:bz2") as archive:
+        info = tarfile.TarInfo("../escape.txt")
+        info.size = 1
+        archive.addfile(info, io.BytesIO(b"x"))
+    with pytest.raises(acquirer.DownloadError, match="unsafe archive path"):
+        acquirer.validate_archive(unsafe_path, "unsafe")
