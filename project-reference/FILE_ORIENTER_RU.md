@@ -5,7 +5,7 @@
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
 - Main `6a366125720453193c82a7385f8c088224a5928e`; PR #181 merged. Main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 PASS exact SHA.
-- **Snapshot marker:** open PRs (8): #175, #176, #178, #179, #180, #182, #184, #185; open issues (1): #111.
+- **Snapshot marker:** open PRs (7): #175, #176, #178, #179, #180, #182, #184; open issues (1): #111. Current PR #185 is intentionally excluded from the freshness snapshot.
 - PR exact-head visible state: #181 merged; #185 provenance/dead-code passed, Quality/Gateway/Graphify in progress, Freshness failed on missing FILE_ORIENTER/current_checkpoint refresh and is being repaired; #184 remains open. Earlier failures remain on #175/#179/#180/#182. Re-fetch all heads/checks before action.
 - Dependencies: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based Functions/Notebook workbench, #184 Browser Local recovery guard, #178 landing content, #176 workspace audit, #185 model artifact pack.
 - Owner priority: LANDING-V2-2026-001, section K in the addendum. Target complete local-first workstation, not marketing-only Pages. Required: full owner UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real agents/live status; mandatory local coding workspace; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; document/book/web/OCR parsers and converters; mode matrix; lean conditional model routing; cache/observability/N₂O in main; detailed tested VPS runbook.
