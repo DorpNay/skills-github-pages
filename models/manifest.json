@@ -35,11 +35,11 @@
           "thinking"
         ],
         "total_bytes": 3376218165,
-        "manifest_sha256": "dd3be4e31ad3f0f",
         "model_layer_sha256": "464c1dda6a052d909b11d20c31bcb21060e969e334716ba8ed7abf64ca1be10f",
         "model_layer_bytes": 3376217632,
         "observed_updated_at": "2026-06-20T12:35:00Z",
-        "caveat": "Third-party Ollama registry mirror. Exact relationship to the pinned Hugging Face Q4_K_M + mmproj files is not independently byte-verified; verify model card, layer digest and inference behavior before production use."
+        "caveat": "Third-party Ollama registry mirror. Exact relationship to the pinned Hugging Face Q4_K_M + mmproj files is not independently byte-verified; verify model card, layer digest and inference behavior before production use.",
+        "manifest_digest_prefix": "dd3be4e31ad3"
       }
     },
     {
