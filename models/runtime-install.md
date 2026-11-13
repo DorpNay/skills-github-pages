@@ -4,7 +4,7 @@ Status: SPECIFIED, not installed. This guide assumes a provisional Linux x86_64 
 
 ## 0. Resource preflight
 
-Recommended starting disk headroom is at least 20 GB. The pinned external-cache artifacts total 6,033,970,026 bytes, plus about 3,939,000,000 bytes for Ollama's official Qwen3.5 base and Qwen3 embedding models. Add the owner-supplied uncensored main checkpoint (2,707,513,696 bytes), tokenizer/config overhead, Ollama blobs, build dependencies and logs. Do not run downloads if the host lacks free space.
+Recommended starting disk headroom is at least 20 GB. The pinned external-cache artifacts total 6,033,970,026 bytes, plus about 3,939,000,000 bytes for Ollama's official Qwen3.5 base and Qwen3 embedding models. Total is about 9.973 GB before tokenizer/config overhead, excluding the owner-supplied main checkpoint. Add the owner-supplied uncensored main checkpoint (2,707,513,696 bytes), tokenizer/config overhead, Ollama blobs, build dependencies and logs. Do not run downloads if the host lacks free space.
 
 The reference profile is 8 GB RAM, one resident LLM, 4K context and concurrency 1. This is a starting hypothesis, not a benchmark. Do not keep ASR, reranker, embeddings and TTS resident simultaneously without exact-host RSS/PSS measurements.
 
@@ -17,7 +17,7 @@ From a network-enabled workstation/server:
     python scripts/download_model_artifacts.py --skip-ollama
     python scripts/download_model_artifacts.py --verify-only --skip-ollama
 
-This downloads the Ollama runtime archive, Piper wheel, Qwen vision projector, Qwen reranker and ASR weights, Whisper model, VAD, Piper RU/EN voices and Tesseract RU/EN/TH data. The main uncensored Qwen Q4_K_M checkpoint is deliberately excluded for owner upload. The full HF Qwen3 embedding checkpoint is provenance-only; the smaller official Ollama Q8_0 model is selected instead.
+This downloads the Ollama runtime archive, Piper wheel, Qwen vision projector, Qwen reranker and ASR weights, Whisper model, VAD, Piper RU/EN voices and Tesseract RU/EN/TH data. The full HF Qwen3 embedding weights are not downloaded; the official Ollama Q8_0 model is the runtime selection. The main uncensored Qwen Q4_K_M checkpoint is deliberately excluded for owner upload. The full HF Qwen3 embedding checkpoint is provenance-only; the smaller official Ollama Q8_0 model is selected instead.
 
 All cache files remain outside Git. SHA256SUMS.local is generated for every downloaded package; the pinned primary files are checked against SHA-256 or upstream Git blob SHA-1 plus exact size.
 
@@ -25,7 +25,7 @@ All cache files remain outside Git. SHA256SUMS.local is generated for every down
 
 Pinned runtime: Ollama v0.40.16, commit d63b702609c4300a2ca07be2bdb0adb9834725e5. Linux AMD64 archive SHA-256 is recorded in models/artifacts.manifest.json. Verify architecture and the archive checksum before extracting it according to the official Ollama installation instructions. The acquisition script does not extract, install, enable a service or change systemd.
 
-After Ollama is installed and the local service is reachable, pull the matched base model and embedding model:
+After Ollama is installed and the local service is reachable, run the downloader without --skip-ollama (or use the direct commands below) to pull and verify the matched base model and embedding model:
 
     ollama pull qwen3.5:4b
     ollama pull qwen3-embedding:0.6b-q8_0
