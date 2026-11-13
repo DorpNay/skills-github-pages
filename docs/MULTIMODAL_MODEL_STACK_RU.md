@@ -138,3 +138,8 @@ The current container has no outbound DNS/network route, so pinned downloads wer
 ### Matched main-model baseline
 
 The official Ollama qwen3.5:4b Q4_K_M reference is also acquired for comparison (registry digest prefix d8b0f5e9760c; about 3.3 GB; Apache-2.0). The downloader uses Ollama CLI and verifies the installed tag before reporting success. Keep it unloaded while evaluating the uncensored candidate; no concurrent residency is assumed.
+
+
+### Runtime pins and installation boundary
+
+The runtime lock is models/runtime-stack.lock.json; the owner sequence is models/runtime-install.md. Current pins: Ollama v0.40.16 (Linux AMD64 archive), whisper.cpp v1.9.5 (whisper-cli built from pinned source), Piper 1.8.0 (GPL wheel), Qwen ASR package qwen-asr 0.0.6, and Tesseract 5.5.4. Platform-specific Ollama/Piper artifacts are provisional Linux x86_64 downloads; do not install until the target host architecture is verified. None is installed in this environment.
