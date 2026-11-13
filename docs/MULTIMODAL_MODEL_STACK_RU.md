@@ -92,3 +92,42 @@ WER/CER считать отдельно по каждому языку; отде
 - Canary 180M: https://huggingface.co/nvidia/canary-180m-flash
 - Qwen3-ASR: https://github.com/QwenLM/Qwen3-ASR
 - Nemotron Streaming ASR: https://build.nvidia.com/nvidia/nemotron-asr-streaming/modelcard
+
+
+## 2026-11-13 — pinned CPU-first OCR / ASR / TTS artifact set
+
+**Status: SPECIFIED and source-pinned; downloads and target-host runtime remain unverified.** The full inventory and checksums are in models/artifacts.manifest.json; the downloader writes to an external cache, never to the Pages source tree.
+
+### OCR baseline for RU / EN / TH
+
+Use Tesseract 5 with the official tessdata_fast LSTM language files:
+
+- eng.traineddata — 4,113,088 bytes
+- rus.traineddata — 3,861,738 bytes
+- tha.traineddata — 1,072,600 bytes
+
+Pinned upstream commit: tesseract-ocr/tessdata_fast@87416418657359cb625c412a48b6e1d6d41c29bd; Apache-2.0. Use LSTM OEM 1. This is a CPU OCR fallback, not a layout-aware document understanding system. Test tables, page order, columns, handwriting, scans, Thai segmentation and mixed-language pages separately. Upgrade to tessdata_best only if measured accuracy justifies its larger/slower weights.
+
+### ASR
+
+- Required existing-path baseline: whisper.cpp large-v3-turbo Q5_0, 574,041,195 bytes, SHA-256 394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2. Runtime and model remain separate installations.
+- Challenger: Qwen3-ASR-0.6B, 1,876,091,704 bytes, Apache-2.0, upstream card lists 52 languages/dialects including Russian and Thai. Benchmark it against Whisper; it is not currently connected to the gateway.
+- Silero VAD 16k OP15 ONNX, 1,289,603 bytes, MIT, is the small voice-activity component. It does not replace ASR.
+
+Do not run both ASR checkpoints concurrently on the 8-GB reference profile without a measured memory budget.
+
+### TTS
+
+Pin Piper engine v1.8.0 (GPL-3.0-or-later). Its voice licensing guide requires following each voice's training chain:
+
+- RU dmitri medium at voice repo revision 2f358b6a560e3a913ebf509b2f3344f20b367f94: direct voice dataset CC0, fine-tuned from hifi_tts_92 (CC-BY-4.0). Keep attribution and MODEL_CARD.
+- EN joe medium at the same revision: direct dataset CC0, fine-tuned from rdh base (CC0).
+- Do not substitute the old 2023 Lessac-derived dmitri artifact: its Lessac corpus license is research-only.
+- Piper 1.8.0 adds Thai phonemization through TLTK; this is phonemizer support, not a Thai voice model. No Thai voice in the current official catalog was confirmed.
+- F5-TTS-THAI is deferred: its own card says CC-BY-4.0, but its base checkpoint SWivid/F5-TTS is CC-BY-NC-4.0. Do not ship or use commercially without written rights clarification.
+
+### API boundary
+
+Existing gateway routes are /v1/audio/transcriptions (whisper.cpp CLI), /v1/audio/speech (Piper CLI), and /v1/documents/extract (bounded text extraction). /v1/rag/ingest and /v1/rag/retrieve already exist. Embedding/reranking and scanned-page OCR workers are not yet implemented; the proposed internal /v1/embeddings, /v1/rerank and OCR adapter must remain conditional and must not add model calls to ordinary chat.
+
+The current container has no outbound DNS/network route, so pinned downloads were not acquired in this pass. The downloader and manifest are ready for a network-enabled host. Downloaded ≠ installed ≠ integrated ≠ verified.
