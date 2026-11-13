@@ -4,7 +4,7 @@ Status: SPECIFIED, not installed. This guide assumes a provisional Linux x86_64 
 
 ## 0. Resource preflight
 
-Recommended starting disk headroom is at least 20 GB. The pinned external-cache artifacts total 6,033,970,026 bytes, plus about 3,939,000,000 bytes for Ollama's official Qwen3.5 base and Qwen3 embedding models. Total is about 9.973 GB before tokenizer/config overhead, excluding the owner-supplied main checkpoint. Add the owner-supplied uncensored main checkpoint (2,707,513,696 bytes), tokenizer/config overhead, Ollama blobs, build dependencies and logs. Do not run downloads if the host lacks free space.
+Recommended starting disk headroom is at least 30 GB. The complete auxiliary acquisition set totals 6,033,970,026 bytes of external-cache artifacts plus 7,728,793,651 bytes across four official Ollama registry packages (about 13.76 GB before tokenizer/config overhead). The owner-supplied uncensored primary checkpoint adds 2,707,513,696 bytes. Reserve additional room for unpacking, Ollama metadata, build dependencies and logs; do not run downloads if the host lacks free space.
 
 The reference profile is 8 GB RAM, one resident LLM, 4K context and concurrency 1. This is a starting hypothesis, not a benchmark. Do not keep ASR, reranker, embeddings and TTS resident simultaneously without exact-host RSS/PSS measurements.
 
@@ -19,19 +19,25 @@ From a network-enabled workstation/server:
 
 This downloads the Ollama runtime archive, Piper wheel, Qwen vision projector, Qwen reranker and ASR weights, Whisper model, VAD, Piper RU/EN voices and Tesseract RU/EN/TH data. The full HF Qwen3 embedding weights are not downloaded; the official Ollama Q8_0 model is the runtime selection. The main uncensored Qwen Q4_K_M checkpoint is deliberately excluded for owner upload. The full HF Qwen3 embedding checkpoint is provenance-only; the smaller official Ollama Q8_0 model is selected instead.
 
-All cache files remain outside Git. SHA256SUMS.local is generated for every downloaded package; the pinned primary files are checked against SHA-256 or upstream Git blob SHA-1 plus exact size.
+All cache files remain outside Git. SHA256SUMS.local is generated for every downloaded package; the pinned primary files are checked against SHA-256 or upstream Git blob SHA-1 plus exact size. Main-branch Actions also stage the same acquisition set as temporary downloadable artifacts (30-day retention); verify run completion and artifact SHA manifests before copying to the target host.
 
 ## 2. Install Ollama only after host verification
 
 Pinned runtime: Ollama v0.40.16, commit d63b702609c4300a2ca07be2bdb0adb9834725e5. Linux AMD64 archive SHA-256 is recorded in models/artifacts.manifest.json. Verify architecture and the archive checksum before extracting it according to the official Ollama installation instructions. The acquisition script does not extract, install, enable a service or change systemd.
 
-After Ollama is installed and the local service is reachable, run the downloader without --skip-ollama (or use the direct commands below) to pull and verify the matched base model and embedding model:
+After Ollama is installed and the local service is reachable, extract the four verified Ollama registry packages from the Actions artifact (or acquire them with `scripts/download_ollama_registry_models.py`). Install the exact package directories into the configured Ollama model store using the offline installer:
 
-    ollama pull qwen3.5:4b
-    ollama pull qwen3-embedding:0.6b-q8_0
-    ollama list
+    export OLLAMA_MODELS="${OLLAMA_MODELS:-$HOME/.ollama/models}"
+    python scripts/install_ollama_registry_model.py --package-dir ~/.cache/alandi/ollama-packages/qwen35_base_4b --models-dir "$OLLAMA_MODELS"
+    python scripts/install_ollama_registry_model.py --package-dir ~/.cache/alandi/ollama-packages/qwen35_helper_2b_q4km --models-dir "$OLLAMA_MODELS"
+    python scripts/install_ollama_registry_model.py --package-dir ~/.cache/alandi/ollama-packages/qwen3_embedding_06b_q8_0 --models-dir "$OLLAMA_MODELS"
+    python scripts/install_ollama_registry_model.py --package-dir ~/.cache/alandi/ollama-packages/glm_ocr_q8_0 --models-dir "$OLLAMA_MODELS"
+    ollama show qwen3.5:4b
+    ollama show qwen3.5:2b-q4_K_M
+    ollama show qwen3-embedding:0.6b-q8_0
+    ollama show glm-ocr:q8_0
 
-The downloader verifies digest prefixes d8b0f5e9760c and ac6da0dfba84. Keep the official base reference and uncensored candidate unloaded sequentially during evaluation.
+The installer verifies the raw registry manifest, each blob SHA-256 and exact size, refuses symlinks and conflicting existing tags, and does not restart the service. The official Qwen3.5-4B base reference, 2B helper, embedding and GLM-OCR are auxiliary evaluation packages. Keep model loading sequentially on the 8-GB reference profile.
 
 The owner supplies the uncensored Qwen3.5-4B Q4_K_M checkpoint directly to the server. Review its embedded chat template against the official Qwen3.5 template before creating an Ollama model tag. Do not import it with an unreviewed template.
 
