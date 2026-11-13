@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-13T08:45Z",
+  "updated": "2026-11-13T08:49Z",
   "policy": {
     "storage": "Ollama registry blobs are acquired to GitHub Actions artifacts, never committed to Git or Git LFS.",
     "verification": "Pin the official registry manifest digest prefix, exact config/layer SHA-256 and byte sizes. The downloader verifies the raw manifest prefix and every blob.",
@@ -63,9 +63,9 @@
           "filename": "params.json"
         }
       ],
-      "notes": "Official base checkpoint for the main-model bake-off. Keep as baseline; do not replace the uncensored candidate by assumption. Official registry package includes the vision projector. The Ollama model-page short digest is not the raw registry manifest SHA-256; all config/layer descriptors are pinned individually and the raw manifest hash is recorded during acquisition.",
+      "notes": "Official base checkpoint for the main-model bake-off. Keep as baseline; do not replace the uncensored candidate by assumption. Official registry package includes the vision projector. The Ollama model-page short digest is not the raw registry manifest SHA-256; all config/layer descriptors are pinned individually and the raw manifest hash is recorded during acquisition. Raw registry manifest SHA-256 was recorded from successful run 43395625203.",
       "model_page_short_digest": "7f3251fa6878",
-      "manifest_sha256": null
+      "manifest_sha256": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04"
     },
     {
       "id": "qwen35_helper_2b_q4km",
