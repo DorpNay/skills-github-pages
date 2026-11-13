@@ -165,7 +165,7 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 
 | Eval ID | Scope | Required evidence | Status |
 |---|---|---|---|
-| EV-MODEL-001 | Qwen3.5-4B base vs uncensored Q4_K_M | Exact revisions/hashes; RU/EN/TH golden set; task success, factuality, abstention/refusal quality, tool-call exactness, JSON schema validity, p50/p95, TTFT, peak RSS/PSS, 4K/8K KV cache | SPECIFIED; target host unavailable |
+| EV-MODEL-001 | Official Ollama qwen3.5:4b Q4_K_M vs uncensored Qwen3.5-4B Q4_K_M | Exact revisions/hashes; RU/EN/TH golden set; task success, factuality, abstention/refusal quality, tool-call exactness, JSON schema validity, p50/p95, TTFT, peak RSS/PSS, 4K/8K KV cache | SPECIFIED; target host unavailable |
 | EV-MODEL-SEC-001 | GGUF chat-template supply chain | Extract template, compare with official Qwen3.5 base, scan for Jinja sandbox escape patterns, test trusted override on pinned runtime; no untrusted template execution | SPECIFIED |
 | EV-RAG-EMB-001 | Qwen3-Embedding-0.6B | Recall@5/10/20, MRR/nDCG, language slices RU/EN/TH, mixed-language, exact citation/source retrieval, embed latency and RSS | SPECIFIED |
 | EV-RAG-RERANK-001 | Qwen3-Reranker-0.6B | Compare first-stage vs reranked top-k; nDCG/MRR uplift, false promotion of unsupported chunks, p95 and peak RSS | SPECIFIED |
