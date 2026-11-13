@@ -92,8 +92,9 @@ def fetch_manifest(model: dict[str, Any], timeout: int) -> tuple[bytes, dict[str
         if len(raw) > MAX_MANIFEST_BYTES:
             raise DownloadError("registry manifest exceeds 2 MiB")
     digest = hashlib.sha256(raw).hexdigest()
-    if not digest.startswith(model["manifest_digest_prefix"]):
-        raise DownloadError("registry manifest digest prefix mismatch for " + model["id"])
+    expected_manifest_sha256 = model.get("manifest_sha256")
+    if expected_manifest_sha256 and digest != expected_manifest_sha256:
+        raise DownloadError("registry manifest SHA-256 mismatch for " + model["id"])
     manifest = json.loads(raw)
     if manifest.get("schemaVersion") != 2:
         raise DownloadError("unsupported Ollama registry manifest schema")
@@ -245,7 +246,7 @@ def acquire_model(model: dict[str, Any], output_root: Path, timeout: int) -> lis
         "source_url": model["source_url"],
         "registry_manifest_url": model["registry_manifest_url"],
         "registry_manifest_digest": "sha256:" + manifest_sha,
-        "registry_manifest_digest_prefix": model["manifest_digest_prefix"],
+        "registry_manifest_digest_prefix": model.get("model_page_short_digest"),
         "architecture": model.get("architecture"),
         "parameters": model.get("parameters"),
         "quantization": model.get("quantization"),
