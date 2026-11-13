@@ -75,6 +75,9 @@ def safe_component(value: str, label: str) -> str:
 
 def fetch_manifest(model: dict[str, Any], timeout: int) -> tuple[bytes, dict[str, Any], str]:
     url = model["registry_manifest_url"]
+    expected_url = "https://registry.ollama.ai/v2/" + model["namespace"] + "/" + model["model"] + "/manifests/" + model["tag"]
+    if url != expected_url:
+        raise DownloadError("registry manifest URL does not match the pinned namespace/model/tag")
     validate_url(url)
     request = urllib.request.Request(url, headers={
         "User-Agent": "aLandi-ollama-registry-acquirer/1.0",
