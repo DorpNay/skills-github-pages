@@ -186,8 +186,8 @@ artifacts:
     commercial_use: "candidate_allowed_with_license_notice"
     sha256: "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
     ship: false
-    status: "pinned_not_downloaded"
-    notes: "Conditional RAG-only helper; not part of the ordinary chat hot path."
+    status: "full_hf_reference_not_downloaded_ollama_q8_selected"
+    notes: "Full HF safetensors reference retained for provenance; runtime acquisition uses the official Ollama Q8_0 tag below to avoid duplicate weights."
 
   - id: qwen3-reranker-0.6b
     kind: rag_reranker_weights
@@ -318,3 +318,15 @@ artifacts:
     ship: false
     status: "tag_digest_prefix_pinned_not_pulled"
     notes: "Benchmark comparator only. Ollama CLI pull verifies the locally listed digest prefix; full registry manifest digest was not retrievable in this network-restricted environment."
+
+
+  - id: qwen3-embedding-0.6b-ollama-q8-0
+    kind: rag_embedding_runtime_weights
+    upstream: "https://ollama.com/library/qwen3-embedding:0.6b-q8_0"
+    source_version: "qwen3-embedding:0.6b-q8_0; registry digest prefix ac6da0dfba84; approx 639 MB"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "tag_digest_prefix_pinned_not_pulled"
+    notes: "Selected runtime quantization for local Ollama /api/embed RAG calls; verify local digest after pull. Full HF weights are not downloaded to avoid duplication."
