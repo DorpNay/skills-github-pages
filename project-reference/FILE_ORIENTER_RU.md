@@ -260,7 +260,7 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 
 ## Model artifact checkpoint — 2026-11-13
 
-- PR #185 pins the main uncensored Qwen candidate and auxiliary model/voice/OCR artifacts. Current branch head is tracked in ORIENTER.md and docs/PROJECT_STATE.yaml.
-- Main Q4_K_M weights are not downloaded by the repository tool; owner supplies them to the server. Auxiliary payload is 5,645,657,360 bytes before tokenizer/config overhead.
+- PR #185 pins the main uncensored Qwen candidate and auxiliary model/voice/OCR artifacts. Always re-fetch the live PR #185 HEAD before reporting checks; the branch is still changing during this implementation.
+- Main Q4_K_M weights are not downloaded by the repository tool; owner supplies them to the server. External-cache payload is 6,033,970,026 exact bytes before tokenizer/config overhead; Ollama model store adds about 3,939,000,000 bytes for the base Qwen and embedding reference models. Runtime lock and install guide are models/runtime-stack.lock.json and models/runtime-install.md.
 - The downloader is models/../scripts/download_model_artifacts.py; it verifies SHA-256 or upstream Git blob SHA-1 and stages outside Git. Current environment DNS prevented actual acquisition.
 - Thai TTS remains deferred: Piper 1.8.0 includes Thai phonemization but no official Thai voice; F5-TTS-THAI base-model license is non-commercial.
