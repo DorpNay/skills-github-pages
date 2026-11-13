@@ -2,29 +2,35 @@
 
 **Live GitHub is mutable truth.** Re-fetch main, PR queue, exact HEAD/checks and deployment before acting.
 
-## Verified baseline — 2026-11-08
+## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `bf039f887e29137b627b06fc2bb107c2793d6b69` (`fix(ui): stabilize explicit aServi connection probes (#173)`).
-- PR #173 is squash-merged. **Open PR queue:** #174 (this bounded follow-up only); no other open PRs. The only open issue is #111 (owner/environment release gates).
-- Pages deployment #42410162803 completed SUCCESS on the exact main SHA.
-- Main Quality run #42410163178: build, Context, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium passed built-app tests, live root revision verification, canonical landing content verification and landing Chromium (8/8).
-- The separate **Published GitHub Pages release contract** job #128517290166 failed only because its forbidden-marker list still rejected `id="functionsMenu"`. The owner-approved menu must remain: Agents, Deep Research, Skills. This is a stale CI assertion, not a reason to remove the menu.
-- Public root and `/landing/` served the exact merge revision; published landing content and its 8 Chromium checks passed. Correct the sentinel to require the approved menu while continuing to forbid retired Research Studio/provider/sidebar elements.
-- PRs #125/#131/#152/#154/#155/#168/#171/#172 remain closed non-merged; preserve their still-open goals and selected research in the canonical registry. Issue #111 remains owner-controlled.
-- VPS/Tunnel/Ollama, target-host hardware, native iPhone Safari/VoiceOver and live provider credentials remain unverified.
+- **Current main SHA:** `9033c6ad708a993cba5d1b27442f53651ad71c0f` — fix(ci/ui): align Pages contract and modal backdrop dismissal (#174), committed 2026-11-08.
+- **Open PR queue:** 8 — #175, #176, #177, #178, #179, #180, #181, #182. **Open issue:** #111 (owner/environment release gates).
+- Main Quality run #42430269155 and Pages deployment #42430269181 passed on the exact main SHA; Provenance #42430269144 passed. Graphify #42629163792 passed. Scheduled Freshness #43247857963 failed because its stored queue snapshot is stale (live PRs #175–#182).
+- Exact-head PR evidence: #181 visible checks passed; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context checks passed; #175 Chromium failed on Notebook/project isolation timeout; #179 Chromium and Freshness failed on project-scope timeout and stale snapshot; #182 Chromium failed on personal/project selection; #180 Integrity failed and Chromium was cancelled. Re-fetch all checks before any integration decision.
+- The eight PRs are not eight independent main-ready changes: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based UI/Notebook workbench; #177 is a main-based Browser Local workspace candidate; #178 is landing content; #176 is a docs audit; #181 is action-pinning security.
+- Public Pages is current on main SHA above. VPS/Tunnel/Ollama, installed model weights, target-host hardware, native iPhone/VoiceOver, real connector credentials and voice-device quality remain unverified.
 
-## Active bounded work
+## Current owner priority
 
-- Branch: `fix/pages-functions-contract-and-state-20261108`, based on exact main `bf039f887e29137b627b06fc2bb107c2793d6b69`.
-- Scope: correct the published UI contract sentinel; isolate the delayed provider auto-connect probe in E2E; complete the Functions keyboard/focus trap, localized accessible name, 320px hit-target coverage and Settings/Functions backdrop dismissal; normalize all stable IDs/cross-links in both registries; audit browser asset trust boundaries and system maturity; synchronize orientation/state/checkpoint records.
-- Acceptance: Quality/Freshness/Provenance/Graphify on the exact PR head; post-merge Quality must verify exact public root + `/landing/` SHA and approved Functions menu without restoring Research Studio. Native VoiceOver/iPhone Safari remains a manual acceptance item, not a CI claim.
-- The owner explicitly instructed on 2026-11-08 to merge all currently open PRs into `main` after their final exact-head required checks pass; PR #174 is covered once green. This does not authorize wholesale merging of closed/stale/HOLD PRs or deployment.
+- Primary programme: `LANDING-V2-2026-001`, canonical scope in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` section K.
+- This 2026-11-13 owner directive supersedes the older “post-landing / deferred” status for full agents, connectors, local coding, voice, full RAG, parsers/converters and observability.
+- Required Functions panels: **Deep Research, Agents, Skills, Connectors** — each must open independently and contain only real, tested capabilities.
+- Mandatory outcomes also include a secure local-file coding workspace, actual agent runtime with live states, installed Whisper/ASR + TTS/VAD, full RAG, document/book/web scanners and converters, tested mode combinations, lean conditional helper-model routing, cache/observability/N₂O in main, and a detailed owner runbook.
+- Do not call a model “selected” until the exact model/revision, quantization, license, weight size, RAM/VRAM, serving API, alternatives and target-hardware benchmark are recorded. `qwen3.5:4b` is currently an example in the runbook, not a final owner decision.
 
-## Canonical navigation and next steps
+## Next execution order
+
+1. Reconcile the eight open PRs against exact base/head/diff/dependencies/checks. Keep main as the only durable baseline; target main plus at most one active landing/product PR. Merge only compatible exact-head green slices; close other PRs only after preserving useful work and recording a disposition.
+2. Finish the owner-designed UI and four-panel Functions surface, folding compatible #175/#177/#178 work into one coherent tested slice.
+3. Research/freeze the actual model, helper, speech, OCR/parser, retrieval, API, database and download/size plan against the 8-GB reference profile and actual target hardware.
+4. Build the real AgentRun/tool/sandbox layer and mandatory local coding workspace; then complete full RAG, ingestion/converters, connectors and installed voice pipeline in bounded, evaluated slices.
+5. Finish mode/feature compatibility, efficiency, cache, observability and N₂O; merge to main and verify exact-SHA Pages and private runtime separately.
+6. Deliver the tested owner setup manual from account/server registration to successful server-backed use. Keep issue #111 open until owner/environment evidence exists.
+
+## Canonical navigation
 
 - Handoff: `OLEDUE.md`; executor contract: `AGENTS.md`; orchestrator: `PROJECT_ORCHESTRATOR_RU.md`.
 - Task order: `docs/MASTER_TASK_REGISTRY_RU.md` + append-only `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`.
-- Systems: `docs/ALANDI_SYSTEMS_MAP_RU.md` (18 systems); detailed code map: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
-- One release gate remains owner-controlled: issue #111 (ruleset/settings, private VPS/Tunnel/Ollama, permissioned RAG corpus, real-device voice, sandbox and deletion/OAuth evidence).
-- Continue independent read-only checklist/system/source audits while exact-head CI runs; do not let one pending job block unrelated work.
-- Preserve main-side security, cancellation, data recovery and provider isolation. Do not merge, deploy, delete branches or alter owner-only infrastructure without fresh scope-specific authorization.
+- Systems: `docs/ALANDI_SYSTEMS_MAP_RU.md`; detailed code map: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- Release gates: issue #111. VPS/Tunnel/Ollama and actual provider/device/credential conditions are not proven by Pages CI.
