@@ -5,7 +5,7 @@
 ## Verified baseline — 2026-11-13
 
 - **Current main SHA:** `9033c6ad708a993cba5d1b27442f53651ad71c0f` — fix(ci/ui): align Pages contract and modal backdrop dismissal (#174), committed 2026-11-08.
-- **Open PR queue (8):** #175, #176, #177, #178, #179, #180, #181, #182. **Open issue:** #111 (owner/environment release gates).
+- **Open PR queue:** 8 — #175, #176, #177, #178, #179, #180, #181, #182. **Open issue:** #111 (owner/environment release gates).
 - Main Quality run #42430269155 and Pages deployment #42430269181 passed on the exact main SHA; Provenance #42430269144 passed. Graphify #42629163792 passed. Scheduled Freshness #43247857963 failed because its stored queue snapshot is stale (live PRs #175–#182).
 - Exact-head PR evidence: #181 visible checks passed; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context checks passed; #175 Chromium failed on Notebook/project isolation timeout; #179 Chromium and Freshness failed on project-scope timeout and stale snapshot; #182 Chromium failed on personal/project selection; #180 Integrity failed and Chromium was cancelled. Re-fetch all checks before any integration decision.
 - The eight PRs are not eight independent main-ready changes: #179/#182 are stacked on older #175 state; #180 is stacked on older #179 state. #175 is the main-based UI/Notebook workbench; #177 is a main-based Browser Local workspace candidate; #178 is landing content; #176 is a docs audit; #181 is action-pinning security.
