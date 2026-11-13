@@ -712,3 +712,6 @@ The following 103 distinct URL references were absent from the existing INTEL re
 - Actual downloads did **not** complete in this engineering container: outbound DNS returned Temporary failure in name resolution. The downloader is prepared for a network-enabled workstation/server. No artifact is marked installed or runtime-verified.
 - Keep all weights outside the GitHub Pages source repository and Git LFS. Preserve code, manifest, licenses, model cards, hashes and acquisition script in Git. This follows the existing model/binary acquisition policy; no bulk model corpus in the repository.
 - Existing runtime boundary remains: Ollama is the intended main inference server; gateway ASR/TTS routes exist but require separate binaries/weights; RAG is still FTS5/lexical baseline; embedding/reranker/OCR adapters are not yet implemented; target VPS/Tunnel/Ollama remain UNVERIFIED.
+
+
+- [Official Ollama Qwen3.5-4B reference](https://ollama.com/library/qwen3.5:4b): Q4_K_M, about 3.3 GB, registry digest prefix d8b0f5e9760c. This is the matched base comparator for the owner-preferred uncensored Qwen3.5-4B candidate; acquire through ollama pull and verify the local digest prefix.
