@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "updated": "2026-11-13",
+  "purpose": "Thai TTS evaluation-only acquisition set; no model is production-approved.",
+  "policy": {
+    "no_weights_in_git": true,
+    "model_license": "F5-TTS-THAI V1 declares CC-BY-4.0. This is distinct from runtime code (MIT) and training dataset licenses.",
+    "dataset_rights": "The model card lists Common Voice and a Porjai Thai dataset; the Porjai dataset page was unavailable during review. Dataset rights are not verified. Keep ship=false and do not redistribute or use commercially until the full data provenance is cleared.",
+    "runtime_isolation": "F5-TTS dependencies include torch/torchaudio and legacy numpy/pydantic constraints. Run in a dedicated Python environment or sidecar, never install into the main gateway environment."
+  },
+  "artifacts": [
+    {
+      "id": "f5_tts_thai_v1_500k_fp16",
+      "role": "thai-tts-evaluation",
+      "acquisition": "artifact",
+      "repository": "VIZINTZOR/F5-TTS-THAI",
+      "revision": "906b3376c719c72cefbc6aca33a5527a5c53a8c3",
+      "filename": "model_500000_FP16.pt",
+      "source_url": "https://huggingface.co/VIZINTZOR/F5-TTS-THAI/resolve/906b3376c719c72cefbc6aca33a5527a5c53a8c3/old_small_model/model_500000_FP16.pt",
+      "size_bytes": 674367818,
+      "max_bytes": 700000000,
+      "sha256": "e66bca8f0380775089969250fb5b3b2cda197a4fc6ada355fed6f5c44edd1e47",
+      "format": "PyTorch checkpoint FP16",
+      "license": "CC-BY-4.0 (model card); underlying dataset provenance requires separate review",
+      "languages": [
+        "Thai"
+      ],
+      "runtime": "VYNCX/F5-TTS-THAI code, MIT; use custom checkpoint path to avoid default 5.39 GB V1 checkpoint",
+      "notes": "500k-step smaller checkpoint. Evaluation-only until dataset licensing is resolved. The upstream loader uses torch.load(weights_only=True) in the pinned code revision."
+    },
+    {
+      "id": "f5_tts_thai_v1_vocab",
+      "role": "thai-tts-vocabulary",
+      "acquisition": "artifact",
+      "repository": "VYNCX/F5-TTS-THAI",
+      "revision": "7b0989f5f67378cdea12a117e140c11ac0a9f57d",
+      "filename": "vocab.txt",
+      "source_url": "https://raw.githubusercontent.com/VYNCX/F5-TTS-THAI/7b0989f5f67378cdea12a117e140c11ac0a9f57d/vocab/vocab.txt",
+      "size_bytes": 11419,
+      "max_bytes": 20000,
+      "format": "UTF-8 vocabulary",
+      "license": "MIT (code repository)",
+      "notes": "V1 character vocabulary required alongside the V1 checkpoint."
+    },
+    {
+      "id": "f5_tts_thai_v1_model_card",
+      "role": "thai-tts-provenance",
+      "acquisition": "artifact",
+      "repository": "VIZINTZOR/F5-TTS-THAI",
+      "revision": "af023c707f4208e5fc1fce59c1fd1501cfc3fc22",
+      "filename": "README.md",
+      "source_url": "https://huggingface.co/VIZINTZOR/F5-TTS-THAI/resolve/af023c707f4208e5fc1fce59c1fd1501cfc3fc22/README.md",
+      "size_bytes": 3573,
+      "max_bytes": 10000,
+      "format": "Markdown model card",
+      "license": "CC-BY-4.0 (model card metadata)"
+    },
+    {
+      "id": "f5_tts_thai_code_license",
+      "role": "thai-tts-code-provenance",
+      "acquisition": "artifact",
+      "repository": "VYNCX/F5-TTS-THAI",
+      "revision": "7b0989f5f67378cdea12a117e140c11ac0a9f57d",
+      "filename": "LICENSE",
+      "source_url": "https://raw.githubusercontent.com/VYNCX/F5-TTS-THAI/7b0989f5f67378cdea12a117e140c11ac0a9f57d/LICENSE",
+      "size_bytes": 1089,
+      "max_bytes": 5000,
+      "format": "MIT license text",
+      "license": "MIT"
+    },
+    {
+      "id": "f5_tts_vocos_vocoder",
+      "role": "thai-tts-vocoder",
+      "acquisition": "artifact",
+      "repository": "charactr/vocos-mel-24khz",
+      "revision": "a91e656a21df4e98ed0640ece71211deadd67933",
+      "filename": "pytorch_model.bin",
+      "source_url": "https://huggingface.co/charactr/vocos-mel-24khz/resolve/a91e656a21df4e98ed0640ece71211deadd67933/pytorch_model.bin",
+      "size_bytes": 54365991,
+      "max_bytes": 60000000,
+      "sha256": "97ec976ad1fd67a33ab2682d29c0ac7df85234fae875aefcc5fb215681a91b2a",
+      "format": "PyTorch vocoder checkpoint",
+      "license": "MIT (model card)"
+    },
+    {
+      "id": "f5_tts_vocos_config",
+      "role": "thai-tts-vocoder-config",
+      "acquisition": "artifact",
+      "repository": "charactr/vocos-mel-24khz",
+      "revision": "e7e2fcf1f10089bbedc1e6f658685c26498c20c7",
+      "filename": "config.yaml",
+      "source_url": "https://huggingface.co/charactr/vocos-mel-24khz/resolve/e7e2fcf1f10089bbedc1e6f658685c26498c20c7/config.yaml",
+      "size_bytes": 461,
+      "max_bytes": 5000,
+      "format": "YAML model configuration",
+      "license": "MIT (model card)"
+    }
+  ]
+}
