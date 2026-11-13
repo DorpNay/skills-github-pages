@@ -92,3 +92,13 @@ WER/CER считать отдельно по каждому языку; отде
 - Canary 180M: https://huggingface.co/nvidia/canary-180m-flash
 - Qwen3-ASR: https://github.com/QwenLM/Qwen3-ASR
 - Nemotron Streaming ASR: https://build.nvidia.com/nvidia/nemotron-asr-streaming/modelcard
+
+
+## 2026-11-13 — voice/model artifact acquisition update
+
+- Qwen3-ASR-0.6B BF16 and sherpa-onnx Qwen3-ASR-0.6B INT8 are acquired as evaluation artifacts; the INT8 archive is the first CPU deployment challenger. Whisper large-v3-turbo Q5_0 remains the comparison baseline. None is installed or benchmarked.
+- Silero VAD ONNX is acquired; VAD remains a separate segmentation component. The existing Vosk Russian archive remains a compact RU-only reference.
+- Piper ru_RU-dmitri-medium voice and config are acquired. Piper engine GPL-3.0-or-later and voice-model license are tracked separately; the voice repository declares MIT and the voice card lists CC0 training data.
+- Thai F5-TTS V1 500k FP16 plus Vocos 24 kHz vocoder is acquired for private evaluation only. Model card declares CC-BY-4.0, but training dataset provenance is incomplete. Do not ship, distribute or use commercially until data rights are cleared. V2 has no declared license metadata; Thonburian and MMS Thai TTS are non-commercial and excluded from production.
+- Artifact run 43393099472: 6,453,112,704 bytes. Thai TTS run 43393859216: 728,750,351 bytes. Exact hashes and manifests are in models/ and docs/MODEL_ARTIFACT_ACQUISITION_RU.md.
+- No voice binary, model runtime or endpoint was installed. Target-host memory, streaming latency, WER/CER, MOS and mobile-device quality remain unverified.
