@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import stat
 import tempfile
@@ -40,12 +41,18 @@ def safe_relative(root: Path, relative: str) -> Path:
 def copy_blob(source: Path, target: Path, expected_digest: str, expected_size: int) -> None:
     if not expected_digest.startswith("sha256:"):
         raise InstallError("unsupported blob digest")
+    if not re.fullmatch(r"sha256:[0-9a-f]{64}", expected_digest):
+        raise InstallError("invalid SHA-256 digest")
     expected_hash = expected_digest.split(":", 1)[1]
     actual_hash, actual_size = sha256_file(source)
     if actual_hash != expected_hash or actual_size != expected_size:
         raise InstallError("source blob failed SHA-256 or size verification: " + source.name)
     target.parent.mkdir(parents=True, exist_ok=True, mode=0o750)
+    if target.is_symlink():
+        raise InstallError("existing Ollama blob path is a symlink: " + target.name)
     if target.exists():
+        if not target.is_file():
+            raise InstallError("existing Ollama blob path is not a file: " + target.name)
         existing_hash, existing_size = sha256_file(target)
         if existing_hash != expected_hash or existing_size != expected_size:
             raise InstallError("existing Ollama blob conflicts with expected digest: " + target.name)
@@ -131,7 +138,11 @@ def install(package_dir: Path, models_dir: Path) -> str:
 
     manifest_target = models_dir / "manifests" / "registry.ollama.ai" / namespace / model / tag
     manifest_target.parent.mkdir(parents=True, exist_ok=True, mode=0o750)
+    if manifest_target.is_symlink():
+        raise InstallError("existing Ollama manifest path is a symlink")
     if manifest_target.exists():
+        if not manifest_target.is_file():
+            raise InstallError("existing Ollama manifest path is not a file")
         existing = manifest_target.read_bytes()
         if hashlib.sha256(existing).hexdigest() != manifest_hash:
             raise InstallError("existing Ollama tag points to a different manifest; refusing to overwrite")
