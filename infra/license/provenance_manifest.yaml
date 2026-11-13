@@ -330,3 +330,55 @@ artifacts:
     ship: false
     status: "tag_digest_prefix_pinned_not_pulled"
     notes: "Selected runtime quantization for local Ollama /api/embed RAG calls; verify local digest after pull. Full HF weights are not downloaded to avoid duplication."
+
+
+  - id: ollama-runtime-linux-amd64-v0-40-16
+    kind: inference_runtime_binary
+    upstream: "https://github.com/ollama/ollama/releases/tag/v0.40.16"
+    source_version: "v0.40.16; commit d63b702609c4300a2ca07be2bdb0adb9834725e5; linux-amd64 tar.zst; 1545767640 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: "87bfafb2acbc89b2e6a1be0a9043de6aa75fb450696f86bc426e65fc448f788d"
+    ship: false
+    status: "pinned_not_downloaded_platform_architecture_unverified"
+
+  - id: piper-runtime-linux-x86-64-v1-8-0
+    kind: tts_runtime_wheel
+    upstream: "https://github.com/OHF-Voice/piper1-gpl/releases/tag/v1.8.0"
+    source_version: "v1.8.0; commit 639388b6317fc4731e91d53da42aea68fd4166ff; manylinux x86_64 wheel; 34131442 bytes"
+    license_spdx: "GPL-3.0-or-later"
+    commercial_use: "private_server_use_subject_to_GPL_compliance_review; redistribution_requires_GPL_compliance"
+    sha256: "25b4d3f31ff70c8fa7151908e00aaa5650cbdf16bca8fcf21299f3941b89a7d3"
+    ship: false
+    status: "pinned_not_downloaded_platform_architecture_unverified"
+
+  - id: whisper-cpp-runtime-v1-9-5
+    kind: asr_runtime_source
+    upstream: "https://github.com/ggml-org/whisper.cpp/releases/tag/v1.9.5"
+    source_version: "v1.9.5; commit d1be6fde11ac6e0407606b4e42fe72d34add8037; build whisper-cli from source"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "source_pinned_not_built"
+
+  - id: tesseract-runtime-v5-5-4
+    kind: ocr_runtime_source
+    upstream: "https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4"
+    source_version: "5.5.4; commit 7e548e6eff172f38f97664afe7f7ce40db36c8d6"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "source_pinned_not_installed"
+    notes: "Release fixes 17 security advisories; verify the target OS package version or build this exact source."
+
+  - id: qwen-asr-runtime-0-0-6
+    kind: asr_python_runtime
+    upstream: "https://github.com/QwenLM/Qwen3-ASR"
+    source_version: "qwen-asr==0.0.6; transformers==4.57.6; accelerate==1.12.0; nagisa==0.2.11; soynlp==0.0.493"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice"
+    sha256: null
+    ship: false
+    status: "version_pinned_not_installed"
