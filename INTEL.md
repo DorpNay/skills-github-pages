@@ -674,3 +674,41 @@ The following 103 distinct URL references were absent from the existing INTEL re
 | `https://stability.ai/license` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://web.dev/articles/storage-for-the-web` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://www.libreoffice.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+
+
+## 2026-11-13 — model, voice and OCR artifact group recheck
+
+**Source groups revisited for this workstream:** local inference/model cards; embeddings and rerankers; ASR/VAD/TTS and per-voice license lineage; CPU OCR language data; model-format security and GitHub artifact storage limits. Canonical grouped intake remains INTEL.md plus the targeted inventories in docs/AGENT_MODEL_BAKEOFF_RU.md, docs/MULTIMODAL_MODEL_STACK_RU.md, docs/VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md and docs/ALANDI_N2O_CHATGPT_SOURCES_RU.md.
+
+### Main model and security
+
+- [HauhauCS Qwen3.5-4B Uncensored](https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive), revision c09cdbcdb1fefad6d335809d445621b5f5ba0c6e: Q4_K_M is 2,707,513,696 bytes; HF LFS SHA-256 79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741; model card metadata says Apache-2.0. This is the current owner-preferred primary candidate; owner supplies the main checkpoint to the server, so the repository downloader excludes it. The 675,568,768-byte BF16 vision projector is separately pinned.
+- The author's 465-case / zero-refusal statement is an author-reported result, not independent evidence or an aLandi evaluation.
+- [Palo Alto PAIT-GGUF-100 definition](https://insights-db.paloaltonetworks.com/knowledge-base/deserialization-threats/PAIT-GGUF-100): informational detection that a GGUF includes a Jinja chat template; the documented check did not find known sandbox-escape patterns. This is distinct from PAIT-GGUF-101, which flags arbitrary code execution patterns. Review the template against official Qwen3.5 base and use a trusted override where required. Do not mislabel PAIT-GGUF-100 as proof of malware or as a clean bill of health.
+
+### Conditional RAG models
+
+- [Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B), revision 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3: Apache-2.0; model.safetensors 1,191,586,416 bytes; SHA-256 0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd.
+- [Qwen3-Reranker-0.6B](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B), revision e61197ed45024b0ed8a2d74b80b4d909f1255473: Apache-2.0; model.safetensors 1,191,588,280 bytes; SHA-256 27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b.
+- **Decision:** both are conditional RAG workers only. Do not route ordinary chat through either model. Embedding and reranking are separate eval gates; one resident helper at a time on the 8-GB profile.
+
+### ASR, VAD and TTS
+
+- [Qwen3-ASR-0.6B](https://huggingface.co/Qwen/Qwen3-ASR-0.6B), revision 5eb144179a02acc5e5ba31e748d22b0cf3e303b0: Apache-2.0; 1,876,091,704-byte weights; SHA-256 79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea; upstream lists 52 languages/dialects including Russian and Thai. Keep as an ASR challenger; existing gateway adapter is whisper.cpp.
+- [Whisper large-v3-turbo Q5_0](https://huggingface.co/ggerganov/whisper.cpp/blob/98aa99a0a9db05ae2342309f5096248665f7cba3/ggml-large-v3-turbo-q5_0.bin): 574,041,195 bytes; SHA-256 394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2. This is the pinned baseline for the existing CLI integration.
+- [Silero VAD](https://github.com/snakers4/silero-vad/tree/066409f3d9db45a30d21dfcbf9147826ffdd7052): 16k OP15 ONNX 1,289,603 bytes; MIT; exact upstream Git blob SHA-1 pinned in the manifest.
+- [Piper v1.8.0](https://github.com/OHF-Voice/piper1-gpl/releases/tag/v1.8.0) is GPL-3.0-or-later. Release adds Thai phonemization via TLTK, not a Thai voice checkpoint.
+- [Piper voice licensing guide](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/LICENSING.md) requires walking each voice's dataset and fine-tune base chain. Current dmitri medium (voice repo revision 2f358b6a560e3a913ebf509b2f3344f20b367f94) uses CC0 direct data and hifi_tts_92 CC-BY-4.0 base. Current joe medium uses CC0 direct data and rdh CC0 base. The old 2023 Lessac-derived dmitri/lessac chain is research-only; do not substitute.
+- [F5-TTS-THAI](https://huggingface.co/VIZINTZOR/F5-TTS-THAI) has CC-BY-4.0 card metadata, but its [F5 base checkpoint](https://huggingface.co/SWivid/F5-TTS) is CC-BY-NC-4.0. **Decision:** defer Thai voice download/production pending derivative-rights clarification. The existence of Piper's Thai phonemizer does not establish a licensed Thai voice.
+
+### OCR and document intake
+
+- [Tesseract tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast/tree/87416418657359cb625c412a48b6e1d6d41c29bd): Apache-2.0; CPU-first integer LSTM language data at exact pinned commit: English 4,113,088 bytes, Russian 3,861,738 bytes, Thai 1,072,600 bytes. Use LSTM OEM 1. This is an OCR fallback, not layout/table/document understanding.
+- Retain the existing Docling / GLM-OCR / PaddleOCR-VL comparison plan for complex documents; do not install a large VLM on the 8-GB VPS without same-host RAM/latency measurements and exact weight licensing.
+
+### Acquisition outcome and policy
+
+- models/artifacts.manifest.json and scripts/download_model_artifacts.py now pin selected revisions, artifact sizes and SHA-256/Git blob SHA-1. Expected primary auxiliary payload is 5,645,657,360 bytes, excluding the owner-supplied main Q4 checkpoint and excluding tokenizer/config overhead.
+- Actual downloads did **not** complete in this engineering container: outbound DNS returned Temporary failure in name resolution. The downloader is prepared for a network-enabled workstation/server. No artifact is marked installed or runtime-verified.
+- Keep all weights outside the GitHub Pages source repository and Git LFS. Preserve code, manifest, licenses, model cards, hashes and acquisition script in Git. This follows the existing model/binary acquisition policy; no bulk model corpus in the repository.
+- Existing runtime boundary remains: Ollama is the intended main inference server; gateway ASR/TTS routes exist but require separate binaries/weights; RAG is still FTS5/lexical baseline; embedding/reranker/OCR adapters are not yet implemented; target VPS/Tunnel/Ollama remain UNVERIFIED.
