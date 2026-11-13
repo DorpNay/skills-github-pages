@@ -260,11 +260,11 @@
     "status": "SPECIFIED_PINNED_NOT_DOWNLOADED",
     "pr": 185,
     "branch": "feat/model-stack-artifact-pack-20261113",
-    "head_sha": "2ad5dc8d25b0f0f1028c0c7582efdae0d3a4b372",
     "primary_candidate": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; main weights excluded for owner upload",
     "auxiliary_payload_bytes": 5645657360,
     "manifest": "models/artifacts.manifest.json",
     "download_state": "blocked by outbound DNS in engineering container",
-    "thai_tts": "deferred pending permissive voice/base license"
+    "thai_tts": "deferred pending permissive voice/base license",
+    "last_ci_head_sha": "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f"
   }
 }
