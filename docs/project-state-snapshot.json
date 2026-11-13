@@ -21,8 +21,7 @@
       179,
       180,
       182,
-      184,
-      185
+      184
     ],
     "open_issues": [
       111
@@ -265,6 +264,15 @@
     "manifest": "models/artifacts.manifest.json",
     "download_state": "blocked by outbound DNS in engineering container",
     "thai_tts": "deferred pending permissive voice/base license",
-    "last_ci_head_sha": "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f"
+    "last_ci_head_sha": "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f",
+    "open_prs_at_checkpoint": [
+      175,
+      176,
+      178,
+      179,
+      180,
+      182,
+      184
+    ]
   }
 }
