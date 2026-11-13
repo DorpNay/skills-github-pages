@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: model-artifact-acquisition-\${{ github.ref }}
+  group: model-artifact-acquisition-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -39,16 +39,16 @@ jobs:
       - name: Upload embedding model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-qwen3-embedding-0.6b-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/qwen3_embedding_06b/
+          name: alandi-qwen3-embedding-0.6b-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/qwen3_embedding_06b/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload reranker model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-qwen3-reranker-0.6b-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/qwen3_reranker_06b/
+          name: alandi-qwen3-reranker-0.6b-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/qwen3_reranker_06b/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
@@ -63,48 +63,48 @@ jobs:
       - name: Upload ASR model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-qwen3-asr-0.6b-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/qwen3_asr_06b/
+          name: alandi-qwen3-asr-0.6b-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/qwen3_asr_06b/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload VAD model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-silero-vad-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/silero_vad/
+          name: alandi-silero-vad-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/silero_vad/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload Whisper comparison model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-whisper-large-v3-turbo-q5_0-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/whisper_large_v3_turbo_q5_0/
+          name: alandi-whisper-large-v3-turbo-q5_0-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/whisper_large_v3_turbo_q5_0/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload Russian Piper voice and metadata
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-piper-ru-dmitri-medium-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/piper_ru_dmitri_medium*/
+          name: alandi-piper-ru-dmitri-medium-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/piper_ru_dmitri_medium*/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload Qwen vision companion
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-qwen35-vision-projector-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/qwen35_mmproj/
+          name: alandi-qwen35-vision-projector-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/qwen35_mmproj/
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
       - name: Upload complete acquisition lock
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: alandi-model-artifacts-lock-\${{ github.run_id }}
-          path: \${{ runner.temp }}/alandi-model-artifacts/artifacts-lock.json
+          name: alandi-model-artifacts-lock-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/artifacts-lock.json
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
