@@ -7,7 +7,7 @@
     "default_cache": "~/.cache/alandi/models",
     "primary_model_owner_supplied": true
   },
-  "expected_download_bytes": 4454070944,
+  "expected_download_bytes": 6033970026,
   "packages": [
     {
       "id": "qwen35_uncensored_main",
@@ -290,8 +290,44 @@
       "license": "Model card metadata CC-BY-4.0; upstream base SWivid/F5-TTS checkpoints CC-BY-NC-4.0",
       "download": false,
       "notes": "DEFERRED: derivative checkpoint licensing is unresolved because upstream F5 base weights are non-commercial. Do not ship or use in a commercial deployment without written rights clarification."
+    },
+    {
+      "id": "ollama_runtime_linux_amd64_v04016",
+      "role": "main_inference_runtime_binary",
+      "source": "github_raw",
+      "revision": "d63b702609c4300a2ca07be2bdb0adb9834725e5",
+      "license": "MIT",
+      "download": true,
+      "target_platform": "linux-x86_64",
+      "files": [
+        {
+          "path": "ollama-linux-amd64.tar.zst",
+          "url": "https://github.com/ollama/ollama/releases/download/v0.40.16/ollama-linux-amd64.tar.zst",
+          "size_bytes": 1545767640,
+          "sha256": "87bfafb2acbc89b2e6a1be0a9043de6aa75fb450696f86bc426e65fc448f788d"
+        }
+      ],
+      "notes": "Ollama v0.40.16 official Linux AMD64 release archive. Platform is provisional until target architecture is verified. Download only; do not extract/install automatically."
+    },
+    {
+      "id": "piper_runtime_linux_x86_64_v180",
+      "role": "tts_runtime_wheel",
+      "source": "github_raw",
+      "revision": "639388b6317fc4731e91d53da42aea68fd4166ff",
+      "license": "GPL-3.0-or-later",
+      "download": true,
+      "target_platform": "linux-x86_64",
+      "files": [
+        {
+          "path": "piper_tts-1.8.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl",
+          "url": "https://github.com/OHF-Voice/piper1-gpl/releases/download/v1.8.0/piper_tts-1.8.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl",
+          "size_bytes": 34131442,
+          "sha256": "25b4d3f31ff70c8fa7151908e00aaa5650cbdf16bca8fcf21299f3941b89a7d3"
+        }
+      ],
+      "notes": "Official Piper 1.8.0 wheel for Linux x86_64; install only after target architecture/ABI confirmation and GPL distribution review."
     }
   ],
   "expected_ollama_reference_bytes_estimate": 3939000000,
-  "expected_total_with_ollama_reference_estimate": 8393070944
+  "expected_total_with_ollama_reference_estimate": 9972970026
 }
