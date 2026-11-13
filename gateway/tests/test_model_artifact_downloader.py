@@ -105,3 +105,14 @@ def test_disabled_primary_package_is_not_in_download_plan() -> None:
     )
     assert result.returncode == 2
     assert "intentionally not downloadable" in result.stderr
+
+
+def test_ollama_reference_digest_prefix_is_checked() -> None:
+    package = {
+        "model_tag": "qwen3.5:4b",
+        "expected_digest_prefix": "d8b0f5e9760c",
+    }
+    output = "NAME ID SIZE MODIFIED\nqwen3.5:4b d8b0f5e9760c 3.3 GB 2 weeks ago\n"
+    assert MODULE.ollama_digest_matches(output, package)[0] is True
+    bad = "NAME ID SIZE MODIFIED\nqwen3.5:4b 000000000000 3.3 GB 2 weeks ago\n"
+    assert MODULE.ollama_digest_matches(bad, package)[0] is False
