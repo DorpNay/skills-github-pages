@@ -40,7 +40,8 @@
       "max_bytes": 20000,
       "format": "UTF-8 vocabulary",
       "license": "MIT (code repository)",
-      "notes": "V1 character vocabulary required alongside the V1 checkpoint."
+      "notes": "V1 character vocabulary required alongside the V1 checkpoint.",
+      "sha256": "88200c1e2121226fb9b7a12f5d8bab399b856bb7538b1e6b39a220ee9475187c"
     },
     {
       "id": "f5_tts_thai_v1_model_card",
@@ -53,7 +54,8 @@
       "size_bytes": 3573,
       "max_bytes": 10000,
       "format": "Markdown model card",
-      "license": "CC-BY-4.0 (model card metadata)"
+      "license": "CC-BY-4.0 (model card metadata)",
+      "sha256": "e6edaca84487e25af594f267904ae10094819f5e711075d20108b174366caf0b"
     },
     {
       "id": "f5_tts_thai_code_license",
@@ -66,7 +68,8 @@
       "size_bytes": 1089,
       "max_bytes": 5000,
       "format": "MIT license text",
-      "license": "MIT"
+      "license": "MIT",
+      "sha256": "58c79c37e6cf013d7560ac857db3ae242e493ccf03b8a3c83cc1f1ce2d546dd5"
     },
     {
       "id": "f5_tts_vocos_vocoder",
@@ -93,7 +96,8 @@
       "size_bytes": 461,
       "max_bytes": 5000,
       "format": "YAML model configuration",
-      "license": "MIT (model card)"
+      "license": "MIT (model card)",
+      "sha256": "da9033922f969a47f0c160010226919e59f27761fd5066f3828d46de6650b0fc"
     }
   ]
 }
