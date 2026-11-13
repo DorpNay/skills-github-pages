@@ -541,7 +541,7 @@ owner_priority_2026_11_13:
   functions_panels: ["Deep Research", "Agents", "Skills", "Connectors"]
   required: "Owner UI; real Deep Research; real AgentRun and live states; Skill lifecycle; real connectors; local-file Coder sandbox; full evaluated RAG; document/book/web parsers, OCR and converters; installed Whisper/ASR, TTS/VAD and target-device voice; tested mode combinations; conditional helper-model routing; cache, observability and N2O in main; end-to-end owner runbook."
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
-  stack_status: "Primary candidate source-pinned: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M; main checkpoint owner-supplied and excluded from downloader. Auxiliary artifact manifest pins 5,645,657,360 bytes; actual downloads blocked by outbound DNS. Production selection awaits template/license review and same-host RU/EN/TH eval. RAG remains FTS5/lexical baseline; embedding/reranker/OCR adapters not yet implemented; VPS runtime unverified."
+  stack_status: "Primary candidate source-pinned: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M; main checkpoint owner-supplied and excluded from downloader. Auxiliary artifact manifest pins 6,033,970,026 bytes; actual downloads blocked by outbound DNS. Production selection awaits template/license review and same-host RU/EN/TH eval. RAG remains FTS5/lexical baseline; embedding/reranker/OCR adapters not yet implemented; VPS runtime unverified."
   live_main: "6a366125720453193c82a7385f8c088224a5928e"
   open_prs: [175, 176, 178, 179, 180, 182, 184, 185]
   open_issues: [111]
@@ -555,9 +555,9 @@ model_stack_artifact_checkpoint_2026_11_13:
   last_ci_head_sha: "cc107f0fec1f02ec6b8f9b1489cc689235f13a5f"
   base_main: "6a366125720453193c82a7385f8c088224a5928e"
   primary_candidate: "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; 2707513696 bytes; SHA-256 pinned; main weights excluded from repo downloader for owner upload."
-  auxiliary_payload_bytes: 4454070944
+  auxiliary_payload_bytes: 6033970026
   ollama_reference_estimate_bytes: 3939000000
-  total_with_ollama_reference_estimate_bytes: 8393070944
+  total_with_ollama_reference_estimate_bytes: 9972970026
   ollama_reference_estimate_bytes: 3300000000
   total_with_ollama_reference_estimate_bytes: 8945657360
   artifact_manifest: "models/artifacts.manifest.json"
