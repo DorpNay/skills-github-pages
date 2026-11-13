@@ -76,3 +76,32 @@ def test_download_cli_dry_run_is_offline_and_succeeds() -> None:
     assert result.returncode == 0, result.stderr
     assert "5645657360" in result.stdout
     assert "qwen35_uncensored_main" not in result.stdout
+
+
+def test_cache_root_rejects_repository_paths(tmp_path: Path) -> None:
+    try:
+        MODULE.resolve_cache_root(MODULE.REPO_ROOT / "models" / "cache")
+    except ValueError as exc:
+        assert "outside the Git repository" in str(exc)
+    else:
+        raise AssertionError("Repository-local model cache was accepted")
+
+
+def test_sha256_inventory_covers_downloaded_files(tmp_path: Path) -> None:
+    package = tmp_path / "package"
+    package.mkdir()
+    payload = b"model sidecar fixture"
+    (package / "weights.bin").write_bytes(payload)
+    sums = MODULE.write_sha256sums(package)
+    assert sums.read_text(encoding="utf-8") == f"{hashlib.sha256(payload).hexdigest()}  weights.bin\n"
+
+
+def test_disabled_primary_package_is_not_in_download_plan() -> None:
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--dry-run", "--package", "qwen35_uncensored_main"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 2
+    assert "intentionally not downloadable" in result.stderr
