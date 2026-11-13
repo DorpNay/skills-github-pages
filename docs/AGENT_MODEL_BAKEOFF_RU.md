@@ -191,7 +191,7 @@ Piper v1.8.0 adds a Thai phonemizer using TLTK, but the current official Piper v
 
 ### Acquisition and memory budget
 
-The manifest at models/artifacts.manifest.json pins 4,454,070,944 exact bytes for external-cache artifacts (includes the vision projector, excludes the main Q4 model; tokenizer/config files add overhead) plus approximately 3,939,000,000 bytes for the two Ollama model-store references (Qwen3.5 base and Qwen3 embedding). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
+The manifest at models/artifacts.manifest.json pins 6,033,970,026 exact bytes for external-cache artifacts (includes the vision projector, Ollama runtime archive and Piper wheel; excludes the main Q4 model; tokenizer/config files add overhead) plus approximately 3,939,000,000 bytes for the two Ollama model-store references (Qwen3.5 base and Qwen3 embedding). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
 
 The current engineering container could not resolve external DNS; actual downloads did not complete. The downloader is implemented and verifies SHA-256 or upstream Git blob SHA-1 plus size. Run it from a network-enabled workstation/server, then record downloaded hashes and installation status. Do not claim downloaded or installed yet.
 
