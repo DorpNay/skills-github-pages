@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import tempfile
+import tarfile
 import time
 import urllib.error
 import urllib.parse
@@ -17,7 +18,7 @@ from pathlib import Path, PurePosixPath
 
 MAX_MANIFEST_BYTES = 2_000_000
 READ_CHUNK = 1024 * 1024
-ALLOWED_INITIAL_HOSTS = {"huggingface.co", "raw.githubusercontent.com"}
+ALLOWED_INITIAL_HOSTS = {"huggingface.co", "raw.githubusercontent.com", "github.com"}
 ALLOWED_REDIRECT_SUFFIXES = (".huggingface.co", ".hf.co", ".githubusercontent.com")
 
 
@@ -51,6 +52,36 @@ def digest_file(path: Path) -> tuple[str, str, int]:
             sha256.update(chunk)
             sha1.update(chunk)
     return sha256.hexdigest(), sha1.hexdigest(), size
+
+
+def validate_archive(path: Path, artifact_id: str) -> None:
+    """Inspect tar member metadata without extracting untrusted archive contents."""
+    if not path.name.endswith(".tar.bz2"):
+        return
+    try:
+        with tarfile.open(path, mode="r:bz2") as archive:
+            members = archive.getmembers()
+            if not members or len(members) > 20_000:
+                raise DownloadError(f"{artifact_id}: archive member count is outside the accepted bound")
+            seen: set[str] = set()
+            total = 0
+            for member in members:
+                name = member.name
+                member_path = PurePosixPath(name)
+                if not name or member_path.is_absolute() or ".." in member_path.parts or "\\\\" in name:
+                    raise DownloadError(f"{artifact_id}: unsafe archive path {name!r}")
+                if name in seen:
+                    raise DownloadError(f"{artifact_id}: duplicate archive path {name!r}")
+                seen.add(name)
+                if not (member.isfile() or member.isdir()):
+                    raise DownloadError(f"{artifact_id}: archive links/devices are not allowed: {name!r}")
+                if member.size < 0 or member.size > 2 * 1024**3:
+                    raise DownloadError(f"{artifact_id}: archive member size exceeds safety bound")
+                total += member.size
+                if total > 4 * 1024**3:
+                    raise DownloadError(f"{artifact_id}: expanded archive exceeds 4 GiB safety bound")
+    except (tarfile.TarError, OSError) as exc:
+        raise DownloadError(f"{artifact_id}: invalid tar archive: {type(exc).__name__}") from None
 
 
 def safe_id(value: str) -> str:
@@ -140,6 +171,7 @@ def download_one(item, output_root, timeout):
             raise DownloadError(f"{artifact_id}: SHA-256 mismatch")
         if item.get("expected_sha1") and sha1.lower() != item["expected_sha1"].lower():
             raise DownloadError(f"{artifact_id}: SHA-1 mismatch")
+        validate_archive(temp_path, artifact_id)
         os.replace(temp_path, target)
         return write_sidecar(item, target_dir, target, sha256, sha1, size, "downloaded-and-verified")
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
