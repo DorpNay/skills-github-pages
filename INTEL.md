@@ -716,3 +716,12 @@ This pass revisited sources by the active workstream rather than doing an undire
 - Thai TTS batch: run 43393859216 succeeded; 728,750,351 bytes across four artifacts/lock.
 - Large weights are Actions artifacts with 30-day retention, not committed to Git or Git LFS. Main Qwen weights remain owner-server-only.
 - No model is installed, loaded, or production-approved. No target-host RAM, p95 latency, WER/CER, TTS MOS, or retrieval metric has been measured.
+
+
+### Official Ollama Qwen base/helper acquisition
+
+- Official base package: https://ollama.com/library/qwen3.5:4b — 4.21B parameters, Q4_K_M, vision/tools/thinking; model layer 2,648,593,216 bytes SHA-256 a9d0a3e1d8c91732a3812becd31f8d4a8ff57414903f226306069f0437e2ac50; projector 675,569,120 bytes SHA-256 e56a899b1540860385465756dd308c84417410b94dbc1c380adffd20a921ca60.
+- Official helper candidate: https://ollama.com/library/qwen3.5:2b-q4_K_M — 1.88B parameters, Q4_K_M, vision/tools/thinking; model layer 1,274,396,992 bytes SHA-256 20cb277f0967ace47b0b5d5658e5e494a88937f7378b74b5a266496400938f4c; projector 671,372,768 bytes SHA-256 5ddf560e34046fd958b2576324f2a9b57d70f297afe6526958d60a23f3bfc20b.
+- Official registry model manifests and all blobs were downloaded and verified in Actions run 43395625203. The 4B raw manifest SHA-256 is d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04; 2B raw manifest SHA-256 is 1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7.
+- These packages are the official Apache-2.0 base and helper comparison artifacts. They are not the uncensored main model. On the 8 GB host, the 2B helper is conditional and should be loaded only after evicting the main model unless measured PSS proves concurrent residency safe.
+- The owner-server-only uncensored Ollama mirror is https://ollama.com/dzgg/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b. It is third-party; verify model template, license and model blob hash after pull. The mirror is not byte-identical by evidence to the pinned HF derivative + mmproj.
