@@ -3,7 +3,7 @@ name: Acquire pinned external model and runtime cache
 on:
   push:
     branches:
-      - "feat/model-stack-artifact-pack-20261113"
+      - "main"
     paths:
       - "models/artifacts.manifest.json"
       - "models/requirements-model-download.txt"
