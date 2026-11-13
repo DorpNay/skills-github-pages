@@ -76,6 +76,7 @@ def test_download_cli_dry_run_is_offline_and_succeeds() -> None:
     assert result.returncode == 0, result.stderr
     assert "5645657360" in result.stdout
     assert "qwen35_uncensored_main" not in result.stdout
+    assert "qwen35_4b_base_reference" in result.stdout
 
 
 def test_cache_root_rejects_repository_paths(tmp_path: Path) -> None:
