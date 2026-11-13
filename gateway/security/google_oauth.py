@@ -72,7 +72,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
         authorize(config, authorization)
         _vault(request)
         _oauth_client_config(config)
-        transaction = request.app.state.oauth_vault.begin_pkce()
+        transaction = request.app.state.oauth_vault.begin_pkce(provider="google_drive")
         params = {
             "client_id": config.google_oauth_client_id,
             "redirect_uri": config.google_oauth_redirect_uri,
@@ -96,7 +96,7 @@ def build_google_oauth_router(config: Any, authorize) -> APIRouter:
         if not state:
             return _result_redirect(config, "error")
         try:
-            verifier = vault.consume_pkce(state)
+            verifier = vault.consume_pkce(state, provider="google_drive")
         except ValueError:
             return _result_redirect(config, "error")
         # Consume state even when the user declines consent; the transaction must not be replayable.

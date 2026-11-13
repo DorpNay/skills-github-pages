@@ -52,7 +52,7 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 | 20 | **AgentRun state store** | `gateway/agent_runtime/store.py`, `gateway/tests/test_agent_run_store.py` | SQLite run/task state, events, leases/fencing and cancellation primitives; no scheduler, model calls, capability grant or API runtime | PROTOTYPE |
 | 21 | **Model/runtime artifact acquisition** | `models/artifacts.manifest.json`, `models/manifest-ollama-registry.json`, acquisition workflows | 10 external-cache packages + four Ollama model packages acquired and verified in Actions (13.78 GB); owner main checkpoint excluded; 30-day retention | VERIFIED DOWNLOADED / NOT INSTALLED |
 | 22 | **API/provider and dependency inventory** | `index.md`, `gateway/app.py`, `pyproject.toml`, `uv.lock`, `models/runtime-stack.lock.json` | OpenAI-compatible provider registry, 19 authenticated gateway routes, pinned Python/runtime libraries and explicit optional adapters; no speculative installs | IMPLEMENTED inventory / integrations conditional |
-| 23 | **Connector registry and actions** | Functions Connectors surface / OAuth routes | Google OAuth endpoints exist but Drive Picker/action connector is not integrated; no real external connector is registered or connected; show truthful empty state | SPECIFIED / NOT IMPLEMENTED |
+| 23 | **Connector registry and actions** | Functions Connectors surface / OAuth routes | OAuthVault encrypts provider tokens and binds single-use PKCE state to the provider; Google Drive OAuth remains groundwork without Picker/actions; GitHub App repository connector is not implemented or registered; keep truthful empty state | SECURITY FOUNDATION IMPLEMENTED / CONNECTOR NOT IMPLEMENTED |
 
 ## 2. Non-negotiable boundaries
 

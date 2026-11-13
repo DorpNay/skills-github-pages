@@ -9,6 +9,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import secrets
 import sqlite3
 import time
@@ -54,6 +55,7 @@ class OAuthVault:
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS oauth_states (
                     state_hash TEXT PRIMARY KEY,
+                    provider TEXT NOT NULL DEFAULT 'google_drive',
                     encrypted_code_verifier TEXT NOT NULL,
                     created_at INTEGER NOT NULL,
                     expires_at INTEGER NOT NULL,
@@ -69,15 +71,27 @@ class OAuthVault:
                     updated_at INTEGER NOT NULL
                 );
             """)
+            # Preserve in-flight Google OAuth transactions on existing installations.
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(oauth_states)")}
+            if "provider" not in columns:
+                db.execute("ALTER TABLE oauth_states ADD COLUMN provider TEXT NOT NULL DEFAULT 'google_drive'")
+            db.execute("CREATE INDEX IF NOT EXISTS idx_oauth_state_provider_expiry ON oauth_states(provider, expires_at)")
             db.commit()
         if self.path != ":memory:":
             os.chmod(self.path, 0o600)
 
     @staticmethod
+    def _validate_provider(provider: str) -> str:
+        if not isinstance(provider, str) or not re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", provider):
+            raise OAuthVaultError("Invalid provider")
+        return provider
+
+    @staticmethod
     def _hash_state(state: str) -> str:
         return hashlib.sha256(state.encode("utf-8")).hexdigest()
 
-    def begin_pkce(self) -> dict[str, str]:
+    def begin_pkce(self, provider: str = "google_drive") -> dict[str, str]:
+        provider = self._validate_provider(provider)
         state = secrets.token_urlsafe(32)
         verifier = secrets.token_urlsafe(48)
         challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).decode("ascii").rstrip("=")
@@ -85,14 +99,15 @@ class OAuthVault:
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
             db.execute("DELETE FROM oauth_states WHERE expires_at < ? OR consumed_at IS NOT NULL", (now,))
-            db.execute("""INSERT INTO oauth_states(state_hash, encrypted_code_verifier, created_at, expires_at)
-                          VALUES (?, ?, ?, ?)""",
-                       (self._hash_state(state), self._cipher.encrypt(verifier.encode()).decode(), now,
+            db.execute("""INSERT INTO oauth_states(state_hash, provider, encrypted_code_verifier, created_at, expires_at)
+                          VALUES (?, ?, ?, ?, ?)""",
+                       (self._hash_state(state), provider, self._cipher.encrypt(verifier.encode()).decode(), now,
                         now + self.state_ttl_seconds))
             db.commit()
         return {"state": state, "code_challenge": challenge, "code_challenge_method": "S256"}
 
-    def consume_pkce(self, state: str) -> str:
+    def consume_pkce(self, state: str, provider: str = "google_drive") -> str:
+        provider = self._validate_provider(provider)
         if not isinstance(state, str) or len(state) < 32 or len(state) > 256:
             raise OAuthVaultError("Invalid or expired OAuth state")
         now = int(time.time())
@@ -100,12 +115,17 @@ class OAuthVault:
         with closing(self._connect()) as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("""SELECT encrypted_code_verifier, expires_at, consumed_at
-                                FROM oauth_states WHERE state_hash=?""", (digest,)).fetchone()
+                                FROM oauth_states WHERE state_hash=? AND provider=?""",
+                             (digest, provider)).fetchone()
             if row is None or row["consumed_at"] is not None or int(row["expires_at"]) < now:
                 db.rollback()
                 raise OAuthVaultError("Invalid or expired OAuth state")
-            db.execute("UPDATE oauth_states SET consumed_at=? WHERE state_hash=? AND consumed_at IS NULL",
-                       (now, digest))
+            updated = db.execute("""UPDATE oauth_states SET consumed_at=?
+                                    WHERE state_hash=? AND provider=? AND consumed_at IS NULL""",
+                                 (now, digest, provider))
+            if updated.rowcount != 1:
+                db.rollback()
+                raise OAuthVaultError("Invalid or expired OAuth state")
             db.commit()
         try:
             return self._cipher.decrypt(row["encrypted_code_verifier"].encode()).decode("ascii")
@@ -114,8 +134,7 @@ class OAuthVault:
 
     def save_tokens(self, provider: str, *, access_token: str, refresh_token: str | None,
                     expires_in: int | None, scopes: list[str]) -> None:
-        if not isinstance(provider, str) or not provider or len(provider) > 64:
-            raise OAuthVaultError("Invalid provider")
+        provider = self._validate_provider(provider)
         if not isinstance(access_token, str) or not access_token or len(access_token) > 16384:
             raise OAuthVaultError("Invalid access token")
         if refresh_token is not None and (not isinstance(refresh_token, str) or len(refresh_token) > 16384):
@@ -138,6 +157,7 @@ class OAuthVault:
             db.commit()
 
     def load_tokens(self, provider: str) -> dict[str, Any] | None:
+        provider = self._validate_provider(provider)
         with closing(self._connect()) as db:
             row = db.execute("SELECT * FROM oauth_tokens WHERE provider=?", (provider,)).fetchone()
         if row is None:
@@ -152,6 +172,7 @@ class OAuthVault:
                 "expires_at": row["expires_at"], "scopes": scopes, "updated_at": row["updated_at"]}
 
     def delete_tokens(self, provider: str) -> None:
+        provider = self._validate_provider(provider)
         with closing(self._connect()) as db:
             db.execute("DELETE FROM oauth_tokens WHERE provider=?", (provider,))
             db.commit()
