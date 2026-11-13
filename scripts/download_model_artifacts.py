@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import sys
 import urllib.request
 from pathlib import Path
@@ -39,6 +40,26 @@ def destination(root: Path, package_id: str, relative: str) -> Path:
     if not target.is_relative_to(base):
         raise ValueError(f"Artifact path escapes package directory: {relative!r}")
     return target
+
+
+def resolve_cache_root(value: Path) -> Path:
+    root = value.expanduser().resolve()
+    repository = REPO_ROOT.resolve()
+    if root == repository or repository in root.parents:
+        raise ValueError("Model artifacts must stay outside the Git repository")
+    return root
+
+
+def write_sha256sums(package_root: Path) -> Path:
+    lines: list[str] = []
+    for path in sorted(package_root.rglob("*")):
+        if not path.is_file() or ".cache" in path.relative_to(package_root).parts or path.name == "SHA256SUMS.local":
+            continue
+        sha256, _ = hashes(path, path.stat().st_size)
+        lines.append(f"{sha256}  {path.relative_to(package_root).as_posix()}")
+    sums = package_root / "SHA256SUMS.local"
+    sums.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    return sums
 
 
 def hashes(path: Path, size: int) -> tuple[str, str]:
@@ -115,25 +136,45 @@ def main() -> int:
     packages = [p for p in manifest["packages"] if p.get("download")]
     if args.package:
         selected = set(args.package)
-        unknown = selected - {p["id"] for p in manifest["packages"]}
+        all_packages = {p["id"]: p for p in manifest["packages"]}
+        unknown = selected - set(all_packages)
         if unknown:
             parser.error(f"Unknown package IDs: {', '.join(sorted(unknown))}")
+        disabled = [package_id for package_id in selected if not all_packages[package_id].get("download")]
+        if disabled:
+            parser.error(f"These packages are intentionally not downloadable: {', '.join(sorted(disabled))}")
         packages = [p for p in packages if p["id"] in selected]
 
+    try:
+        cache_root = resolve_cache_root(args.root)
+    except ValueError as exc:
+        parser.error(str(exc))
+
     expected = sum(item.get("size_bytes", 0) for package in packages for item in package.get("files", []))
-    print(f"Packages: {len(packages)}; primary binary bytes: {expected}; cache: {args.root}")
+    print(f"Packages: {len(packages)}; primary binary bytes: {expected}; cache: {cache_root}")
     if args.dry_run:
         for package in packages:
             print(f"- {package['id']} [{package['source']}]")
         return 0
 
-    args.root.mkdir(parents=True, exist_ok=True)
+    cache_root.mkdir(parents=True, exist_ok=True)
+    if not args.verify_only:
+        safety_margin = max(64 * 1024 * 1024, expected // 20)
+        required = expected + safety_margin
+        free = shutil.disk_usage(cache_root).free
+        if free < required:
+            print(f"Insufficient free disk: need at least {required} bytes including safety margin; available {free}. Choose a larger external cache with --root.", file=sys.stderr)
+            return 2
     failures: list[str] = []
     for package in packages:
         if args.verify_only:
-            failures.extend(verify_package(args.root, package))
+            package_problems = verify_package(cache_root, package)
+        failures.extend(package_problems)
+        if not package_problems:
+            sums = write_sha256sums(package_root)
+            print(f"SHA-256 inventory written: {sums}")
             continue
-        package_root = args.root / package["id"]
+        package_root = cache_root / package["id"]
         source = package["source"]
         if source == "huggingface":
             try:
@@ -155,7 +196,7 @@ def main() -> int:
                 continue
         elif source == "github_raw":
             for item in package.get("files", []):
-                target = destination(args.root, package["id"], item["path"])
+                target = destination(cache_root, package["id"], item["path"])
                 ok, _ = verify_file(target, item)
                 if ok:
                     continue
