@@ -553,8 +553,11 @@ model_artifact_acquisition_2026_11_13:
   base_main: "6a366125720453193c82a7385f8c088224a5928e"
   main_artifact_run: 43393099472
   thai_tts_artifact_run: 43393859216
+  official_ollama_qwen_run: 43395625203
   main_non_primary_bytes: 6453112704
   thai_tts_eval_bytes: 728750351
+  official_qwen_base_bytes: 3324173934
+  official_qwen_helper_bytes: 1945781358
   primary_model: "HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M; owner-server-only"
   primary_model_size_bytes: 2707513696
   weights_in_git: false
