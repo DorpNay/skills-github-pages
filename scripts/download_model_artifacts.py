@@ -102,6 +102,21 @@ def verify_file(path: Path, item: dict[str, Any]) -> tuple[bool, str]:
     return True, f"verified size={actual_size} sha256={sha256}"
 
 
+class GitHubRedirectHandler(urllib.request.HTTPRedirectHandler):
+    allowed_hosts = {
+        "github.com",
+        "raw.githubusercontent.com",
+        "release-assets.githubusercontent.com",
+        "objects.githubusercontent.com",
+    }
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        target = urlsplit(newurl)
+        if target.scheme != "https" or target.hostname not in self.allowed_hosts:
+            raise ValueError(f"Unexpected GitHub artifact redirect target: {newurl!r}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
 def download_url(url: str, target: Path, expected_size: int | None) -> None:
     initial = urlsplit(url)
     if initial.scheme != "https" or initial.hostname not in {"github.com", "raw.githubusercontent.com"}:
@@ -110,7 +125,8 @@ def download_url(url: str, target: Path, expected_size: int | None) -> None:
     partial = target.with_name(target.name + ".partial")
     request = urllib.request.Request(url, headers={"User-Agent": "aLandi-model-artifact-fetcher/1.0"})
     try:
-        with urllib.request.urlopen(request, timeout=90) as response, partial.open("wb") as output:
+        opener = urllib.request.build_opener(GitHubRedirectHandler())
+        with opener.open(request, timeout=90) as response, partial.open("wb") as output:
             final = urlsplit(response.geturl())
             allowed_final_hosts = {
                 "github.com",
