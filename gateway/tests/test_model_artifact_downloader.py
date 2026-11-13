@@ -74,7 +74,7 @@ def test_download_cli_dry_run_is_offline_and_succeeds() -> None:
         text=True,
     )
     assert result.returncode == 0, result.stderr
-    assert "4454070944" in result.stdout
+    assert "6033970026" in result.stdout
     assert "qwen35_uncensored_main" not in result.stdout
     assert "qwen35_4b_base_reference" in result.stdout
     assert "qwen3_embedding_06b_ollama" in result.stdout
