@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-13"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f; PR #174 merged. Pages #42430269181, main Quality #42430269155 and Provenance #42430269144 PASS exact SHA; Graphify #42629163792 PASS. Eight open PRs #175–#182 require reconciliation; scheduled Freshness #43247857963 failed on stale queue snapshot. Owner priority is now complete local-first workstation delivery under LANDING-V2-2026-001; see addendum section K."
+    status: "Main 6a366125720453193c82a7385f8c088224a5928e after PR #181; Quality #43387599840, Pages #43387599298 and Graphify #43387599792 PASS exact SHA. Live open queue is #175, #176, #178, #179, #180, #182, #184, #185; issue #111 remains open. Model artifact PR #185 is SPECIFIED/PINNED, not downloaded or installed."
     owner_policy: "main is the only durable product baseline. Reconcile every PR against exact base/head/diff/dependencies/checks; promote only compatible green slices. Target main plus at most one active product/landing PR. Do not wholesale-merge stacked, failed, draft or future work."
     sequence:
       - "PR #173 merged at bf039f887e29137b627b06fc2bb107c2793d6b69; repair the false-negative published UI contract sentinel in a separate bounded PR"
@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f; eight open PRs #175–#182; issue #111 remains open. Main Quality/Pages/Provenance and Graphify passed exact SHA; scheduled Freshness failed because the queue snapshot is stale. Owner priority: LANDING-V2-2026-001, full local-first workstation acceptance in addendum section K."
+    status: "Main 6a366125720453193c82a7385f8c088224a5928e; eight open PRs #175, #176, #178, #179, #180, #182, #184, #185; issue #111 remains open. Main Quality #43387599840, Pages #43387599298 and Graphify #43387599792 passed exact SHA. Recheck Freshness against current queue. Owner priority: LANDING-V2-2026-001, full local-first workstation acceptance in addendum section K."
     branch: "main"
-    base_main: "9033c6ad708a993cba5d1b27442f53651ad71c0f"
+    base_main: "6a366125720453193c82a7385f8c088224a5928e"
     open_prs_at_checkpoint: 8
     open_issues_at_checkpoint: 1
     merged_changes: "PR #169 owner-directed UI/aServi and §8.12 retirement merged at 72bcd1a4e9b31bbd7c1076d3f3204e488437dbc2; PR #173 aServi probe/E2E repair merged at bf039f887e29137b627b06fc2bb107c2793d6b69. Pages #42410162803 success; public root/landing verified. Earlier PR #167/#166/#161/#158/#157/#156 and main safeguards remain preserved."
-    exact_head_checks: "Main 9033c6ad708a993cba5d1b27442f53651ad71c0f: Quality #42430269155 PASS; Pages #42430269181 PASS; Provenance #42430269144 PASS; Graphify #42629163792 PASS; scheduled Freshness #43247857963 FAIL because saved queue differs from live PRs #175–#182. PR #181 visible checks pass; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context pass; #175 Chromium fail; #179 Chromium+Freshness fail; #182 Chromium fail; #180 Integrity fail and Chromium cancelled."
-    runtime_boundary: "GitHub Pages published on exact main 9033c6ad708a993cba5d1b27442f53651ad71c0f; VPS/Tunnel/Ollama, installed models/voices, target hardware and native devices remain UNVERIFIED. Current RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype; whisper.cpp/Piper need separately installed artifacts."
-    next: "Execute LANDING-V2-2026-001 per addendum section K. First reconcile PRs #175–#182 and freshness; consolidate UI/four Functions panels into one coherent slice; research exact model/API/database/weight inventory; then implement real agents+sandbox+local Coder, full RAG/document ingestion, connectors and installed voice; finish mode matrix, cache/observability/N2O and tested owner runbook. Keep issue #111 open until real owner/environment evidence."
+    exact_head_checks: "Main 6a366125720453193c82a7385f8c088224a5928e: Quality #43387599840 PASS; Pages #43387599298 PASS; Graphify #43387599792 PASS. PR #185 exact HEAD 2ad5dc8d25b0f0f1028c0c7582efdae0d3a4b372: provenance run #43392589836 PASS; remaining Quality/Gateway/Graphify/Freshness checks running or pending. Re-fetch all exact-head checks before merge."
+    runtime_boundary: "GitHub Pages published on exact main 6a366125720453193c82a7385f8c088224a5928e; VPS/Tunnel/Ollama, installed models/voices, target hardware and native devices remain UNVERIFIED. Current RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype; whisper.cpp/Piper need separately installed artifacts. PR #185 pins auxiliary model artifacts but downloads are blocked by outbound DNS in the engineering container."
+    next: "Verify PR #185 exact-head Quality/Gateway/Graphify/Freshness; run the pinned artifact downloader from a network-enabled environment and record hashes. Continue reconciling PRs #175/#176/#178/#179/#180/#182/#184, then implement real agents, full RAG, connectors, OCR/voice and mode matrix. Keep issue #111 open until real owner/environment evidence."
     source_triage:
     status: "Main bf039f887e29137b627b06fc2bb107c2793d6b69 is live; PR #173 merged and PR #174 is the only open follow-up. Pages root/landing verified exact SHA. Current release-contract failure is a stale Functions-menu prohibition. Source archives remain reference-only; VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -43,7 +43,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-13-OWNER-WORKSTATION-SCOPE-001"
+  last_volley: "V-2026-11-13-MODEL-STACK-ARTIFACT-PACK-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -541,9 +541,9 @@ owner_priority_2026_11_13:
   functions_panels: ["Deep Research", "Agents", "Skills", "Connectors"]
   required: "Owner UI; real Deep Research; real AgentRun and live states; Skill lifecycle; real connectors; local-file Coder sandbox; full evaluated RAG; document/book/web parsers, OCR and converters; installed Whisper/ASR, TTS/VAD and target-device voice; tested mode combinations; conditional helper-model routing; cache, observability and N2O in main; end-to-end owner runbook."
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
-  stack_status: "Main model is not frozen; qwen3.5:4b is only a runbook example. RAG remains FTS5/lexical baseline; AgentRunStore is storage-only prototype; voice code paths require separately installed binaries/weights; VPS runtime unverified."
-  live_main: "9033c6ad708a993cba5d1b27442f53651ad71c0f"
-  open_prs: [175, 176, 177, 178, 179, 180, 181, 182]
+  stack_status: "Primary candidate source-pinned: HauhauCS Qwen3.5-4B-Uncensored Q4_K_M; main checkpoint owner-supplied and excluded from downloader. Auxiliary artifact manifest pins 5,645,657,360 bytes; actual downloads blocked by outbound DNS. Production selection awaits template/license review and same-host RU/EN/TH eval. RAG remains FTS5/lexical baseline; embedding/reranker/OCR adapters not yet implemented; VPS runtime unverified."
+  live_main: "6a366125720453193c82a7385f8c088224a5928e"
+  open_prs: [175, 176, 178, 179, 180, 182, 184, 185]
   open_issues: [111]
   target_pr_hygiene: "main plus at most one active product/landing PR; resolve all other PRs after selective preservation."
 
@@ -552,7 +552,7 @@ model_stack_artifact_checkpoint_2026_11_13:
   status: "SPECIFIED / PINNED in PR #185; exact-head CI running; not merged."
   branch: "feat/model-stack-artifact-pack-20261113"
   pr: 185
-  head_sha: "ce693569ad109fbfd900fbebb85ce0feaa73af4e"
+  head_sha: "2ad5dc8d25b0f0f1028c0c7582efdae0d3a4b372"
   base_main: "6a366125720453193c82a7385f8c088224a5928e"
   primary_candidate: "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; 2707513696 bytes; SHA-256 pinned; main weights excluded from repo downloader for owner upload."
   auxiliary_payload_bytes: 5645657360
