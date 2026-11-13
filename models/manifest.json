@@ -20,7 +20,27 @@
       "sha256": "79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741",
       "format": "GGUF Q4_K_M",
       "license": "Apache-2.0 declared by derivative repository; preserve base-model provenance",
-      "notes": "Skipped by repository workflow; owner transfers to private server. Author's 0/465 refusal claim is self-reported, not independently reproduced. PAIT-GGUF-100 is informational for presence of Jinja template; review template and patched runtime before loading."
+      "notes": "Skipped by repository workflow; owner transfers to private server. Author's 0/465 refusal claim is self-reported, not independently reproduced. PAIT-GGUF-100 is informational for presence of Jinja template; review template and patched runtime before loading.",
+      "ollama_server_route": {
+        "model": "dzgg/Qwen3.5-Uncensored-HauhauCS-Aggressive",
+        "tag": "4b",
+        "pull_command": "ollama pull dzgg/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+        "architecture": "qwen35",
+        "parameters": "4.54B per Ollama registry metadata",
+        "quantization": "Q4_K_M",
+        "context_tokens": 262144,
+        "capabilities": [
+          "vision",
+          "tools",
+          "thinking"
+        ],
+        "total_bytes": 3376218165,
+        "manifest_sha256": "dd3be4e31ad3f0f",
+        "model_layer_sha256": "464c1dda6a052d909b11d20c31bcb21060e969e334716ba8ed7abf64ca1be10f",
+        "model_layer_bytes": 3376217632,
+        "observed_updated_at": "2026-06-20T12:35:00Z",
+        "caveat": "Third-party Ollama registry mirror. Exact relationship to the pinned Hugging Face Q4_K_M + mmproj files is not independently byte-verified; verify model card, layer digest and inference behavior before production use."
+      }
     },
     {
       "id": "qwen35_mmproj",
@@ -159,6 +179,23 @@
       "format": "Model card",
       "license": "MIT voice repository card",
       "size_bytes": 276
+    },
+    {
+      "id": "sherpa_qwen3_asr_06b_int8",
+      "role": "asr-cpu-runtime-candidate",
+      "acquisition": "artifact",
+      "repository": "k2-fsa/sherpa-onnx",
+      "revision": "asr-models release asset (mutable tag; asset is content-pinned by SHA-256)",
+      "filename": "sherpa-onnx-qwen3-asr-0.6B-int8-2026-03-25.tar.bz2",
+      "source_url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-qwen3-asr-0.6B-int8-2026-03-25.tar.bz2",
+      "size_bytes": 878702423,
+      "max_bytes": 950000000,
+      "sha256": "393f8a14e2f5fb96746aaab342997a40641001fbd5bf9592a080a8329178ee96",
+      "format": "tar.bz2 containing ONNX INT8 model, tokenizer and test audio",
+      "license": "Apache-2.0 code; exported weights derive from Qwen3-ASR Apache-2.0 model (verify artifact-specific notices in archive)",
+      "languages": "Inherited from Qwen3-ASR; verify RU/TH/EN output on identical golden audio",
+      "runtime": "sherpa-onnx CPU; official docs show real-time microphone + Silero VAD CLI",
+      "notes": "Preferred CPU deployment challenger to raw BF16 Qwen3-ASR weights; archive must be inspected for path traversal, links and size bounds before extraction."
     }
   ]
 }
