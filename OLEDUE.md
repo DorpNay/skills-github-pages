@@ -100,3 +100,14 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 
 ### Freshness correction — 2026-11-13
 The first atomic state refresh (#43418866025) passed all 19 checker unit tests and validated the direct-parent/required-path contract, but the live-document check found a missing literal marker: `ORIENTER.md` must contain `**Current main SHA:**` and `Open PR queue:`. This correction restores both markers and advances the snapshot parent to `189c54f9845b9180aa59c369cb89e09863b72620`; all seven required handoff/state files are rewritten together in one direct-main commit. No product code changed.
+
+
+## Current owner execution checkpoint — 2026-11-13 (main-only; API/runtime inventory updated)
+
+**Resume:** checkpoint parent `3c57595e6032a9b69553e23848fbaddd1fa7973e`; this atomic main commit updates runtime lock, systems/architecture maps and the seven handoff/state files. Fetch live main and queue once, then continue from NEXT. No open PRs; issue #111 is owner/environment gated.
+
+- Exact main checks on checkpoint parent: Quality #43419102024 PASS (Chromium, Ruff, Jekyll, Security, Integrity, Context and published release-contract jobs); Project State Freshness #43419101988 PASS.
+- PR #184 Browser Local workspace and PR #185 model/runtime pack are merged; PR #176 research was ported; #175/#178/#179/#180/#182 closed with branches retained.
+- Artifacts: external run #43417527347, 6,054,440,341 bytes; Ollama run #43417305393, 7,728,830,475 bytes; total 13,783,270,816 bytes. Expires 2026-12-13. Primary uncensored checkpoint remains owner-supplied. Downloads are not target-host installation.
+- API/dependency inventory is in `docs/ALANDI_SYSTEMS_MAP_RU.md`; machine-readable states in `models/runtime-stack.lock.json`. Gateway root deps are pinned in `pyproject.toml`/ `uv.lock`; model-specific optional dependencies are isolated. SQLite remains; no Postgres/Redis/Qdrant selected.
+- **NEXT:** owner downloads artifacts before expiry and supplies target-host OS/architecture, free disk, RAM/VRAM, CPU/GPU. Continue main-only four-panel Functions UI and actual Connector registry; then wire only measured model APIs and isolated optional workers. Finish P7 with tested owner install/backup/rollback instructions.

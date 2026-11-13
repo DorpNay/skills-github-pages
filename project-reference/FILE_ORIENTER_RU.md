@@ -264,3 +264,11 @@ Root engineering records (`DECISIONS.md`, `EVALS.md`, `IMPROVEMENT_SELECTION.md`
 - Main Q4_K_M weights are not downloaded by the repository tool; owner supplies them to the server. External-cache payload is 6,033,970,026 exact bytes before tokenizer/config overhead; Ollama model store adds about 3,939,000,000 bytes for the base Qwen and embedding reference models. Runtime lock and install guide are models/runtime-stack.lock.json and models/runtime-install.md.
 - The downloader is models/../scripts/download_model_artifacts.py; it verifies SHA-256 or upstream Git blob SHA-1 and stages outside Git. Current environment DNS prevented actual acquisition.
 - Thai TTS remains deferred: Piper 1.8.0 includes Thai phonemization but no official Thai voice; F5-TTS-THAI base-model license is non-commercial.
+
+
+## API/runtime checkpoint — 2026-11-13
+
+- Exact main Quality #43419102024 PASS; Freshness #43419101988 PASS on `3c57595e6032a9b69553e23848fbaddd1fa7973e`.
+- Open PRs: 0; open issue #111 only.
+- 13,783,270,816 bytes of auxiliary model/runtime artifacts verified in Actions; expiry 2026-12-13; not installed on host.
+- Use `docs/ALANDI_SYSTEMS_MAP_RU.md` and `models/runtime-stack.lock.json` for provider/API/library/database/runtime facts.

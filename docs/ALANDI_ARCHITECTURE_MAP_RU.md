@@ -1,7 +1,9 @@
 # aLandi — карта архитектуры и модулей
 
-**Срез main:** `c4f23e03f563d03213eb87002863da630fc8b833` (2026-11-08). Ранее указанные PR #146–#150 — исторические milestones; не использовать их SHA/очередь как текущие. PR #169 — активная интеграционная ветка: в ней удаляется server-memory graph (§8.12), но main до merge всё ещё содержит старую реализацию. После merge обновить route/module snapshot и повторно построить Graphify. VPS/Tunnel/Ollama не подтверждены live.  
+**Срез main:** `3c57595e6032a9b69553e23848fbaddd1fa7973e` (2026-11-13). PR #184 Browser Local Coder workspace and PR #185 model/runtime acquisition pack are merged; open PR queue is zero; owner issue #111 remains open. Model/runtime artifacts are verified in GitHub Actions but not installed on VPS. Last site-affecting Pages SHA remains `6a366125720453193c82a7385f8c088224a5928e`; no site deployment is implied by documentation/runtime changes. Tunnel/VPS/Ollama are not confirmed live.
+
 **Тип:** кураторская схема границ модулей по дереву репозитория и фактическим route/function declarations. Это **не** автоматически извлечённый call graph и не доказательство live deployment.
+
 
 ## 1. Системная схема
 
@@ -35,7 +37,7 @@ flowchart TD
 | Контур | Точки входа | Что важно |
 |---|---|---|
 | Клиент | `index.md` | Большой статический HTML/JS; история и настройки в браузере. Browser API keys не являются server-side vault. |
-| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Owner decision D-021 retires server-memory graph; PR #169 removes its API/modules. Main still has the old implementation until merge. VPS не подтверждён live. |
+| Gateway | `gateway/app.py`, `gateway/README_RU.md` | FastAPI: health/capabilities/models/chat, admin, conversation delta sync, RAG, search, documents, audio. Owner decision D-021 retired the server-memory graph; its API/modules are removed from main. Conversation delta sync remains separate. VPS не подтверждён live. |
 | Routing | `gateway/routing.py` | Детерминированная allowlist-политика; общий helper-model cascade не считать включённым. |
 | Browser-local notes | `index.md` | Personal/project notes remain in browser storage with explicit local scope controls. PR #169 removes the old server-graph bridge; main remains on the previous implementation until merge. |
 | Conversation delta sync | `gateway/memory/delta_sync.py` | Versioned patch/revision conflict; separate from browser-local project notes and retired server-memory graph. |
@@ -48,6 +50,11 @@ flowchart TD
 | Search | `index.md`, `gateway/app.py` | Web-search adapters remain independent. PR #169 removes the Research Studio UI/modal while retaining the independent four-stage research pipeline; main remains unchanged until merge. |
 | Quality | `.github/workflows/`, `scripts/check_project_metadata.py`, `scripts/check_license_manifest.py` | Проверки относятся к точному SHA; зелёный CI не подтверждает runtime на VPS. |
 
+| Coder Browser Local | `workspace/`, Browser Local provider and E2E | PR #184 merged: user-selected file/folder, bounded read/write, diff approval and local recovery; no arbitrary shell/CLI or execution sandbox |
+| AgentRun | `gateway/agent_runtime/store.py` | SQLite state/event/lease store prototype only; no scheduler, model/tool execution or capability runtime |
+| Models/runtime | `models/runtime-stack.lock.json`, `models/runtime-install.md` | 10 external artifacts + four Ollama registry packages verified in Actions; not installed on target host |
+| Connectors | Functions Connectors surface / OAuth routes | No real external connector registry/action handlers connected; Google OAuth backend is not Drive integration |
+
 ## 3. Маршруты gateway, проверенные в `gateway/app.py`
 
 - `GET /livez` (process liveness), `GET /readyz` (Ollama readiness), legacy `GET /healthz` (alias readiness)
@@ -56,7 +63,7 @@ flowchart TD
 - `GET/DELETE /v1/memory/state/{conversation_id}`, `POST /v1/memory/delta`
 - `POST /v1/rag/ingest`, `POST /v1/rag/retrieve`, `DELETE /v1/rag/documents/{document_id}`
 - `GET /v1/search/web`, `POST /v1/documents/extract`
-- `POST /v1/audio/transcriptions`, `POST /v1/audio/speech`, `POST /v1/chat/completions`
+- `POST /v1/audio/transcriptions`, `POST /v1/audio/speech`, `POST /v1/helpers/project-memory-suggestions`, `POST /v1/chat/completions`
 
 Перед изменением API перечитать сам route, settings/flag и тесты; этот список — навигация, не контракт.
 
@@ -145,3 +152,13 @@ PR #121 merged at f4d880f9648989f4fe48ddd2284220b3606c3b86 after exact-head Gate
 - The graph was reduced from 2,102 nodes / 4,960 edges / 91 files on the earlier run after excluding vendored upstream snapshots via `.graphifyignore`. The new graph is first-party focused; selected RAG-Anything/Memvid archives remain in the repository with license/provenance manifests but are not architecture nodes.
 - Artifact #13583874333; SHA-256 `4af473c232adffae306c432756712ed51ba3747afc6d937422233699dc42da2b`. No model calls; artifact retention 7 days.
 - After PR #169 merges, rerun Graphify on the resulting main SHA and replace this PR-branch snapshot. Graphify remains a dev-only navigation hint; source/call-site inspection remains authoritative.
+
+
+## 6. Model/runtime and API integration boundaries — 2026-11-13
+
+- Provider registry is client-side and OpenAI-compatible: Gemini, Groq, xAI, Pollinations, Cloudflare Workers AI, OpenRouter, NVIDIA NIM, Hugging Face Inference Providers, Kilo, custom API and first-party aServi. API keys are user-managed; no secret is stored in the repo. aServi has no silent third-party fallback.
+- Gateway routes are implemented, but feature flags remain off by default for RAG, SearXNG, document extraction, ASR, TTS, memory sync and helper-model suggestions. A route's existence does not mean the model/runtime is installed or the UI invokes it.
+- Model packages and runtimes are downloaded into 30-day GitHub Actions artifacts (13,783,270,816 bytes total); not installed. Main uncensored primary checkpoint is owner-supplied. Linux AMD64 archive is provisional until target OS/architecture is checked.
+- Python dependency source of truth is root `pyproject.toml` + `uv.lock`; model-specific optional environments are pinned separately under `models/requirements-*.txt`. Do not merge model-specific packages into the gateway environment without isolation and resource review.
+- SQLite/FTS5 remains the only server database baseline. PostgreSQL, Redis and Qdrant are deferred pending measured scale/latency needs.
+- No live VPS, Cloudflare Tunnel, Ollama service, external connector or model API smoke test is claimed.

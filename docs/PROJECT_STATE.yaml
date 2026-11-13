@@ -16,15 +16,16 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main checkpoint parent 189c54f9845b9180aa59c369cb89e09863b72620; atomic state refresh follows. Zero open PRs; issue #111 remains owner/environment gated. PR #185 and #184 merged; #176 research ported; stale stacked UI PRs closed with branches retained."
+    status: "Main checkpoint parent 3c57595e6032a9b69553e23848fbaddd1fa7973e; exact main Quality #43419102024 and Freshness #43419101988 passed. Zero open PRs; issue #111 remains owner/environment gated. PR #184/#185 merged; #176 research ported; stale UI PRs closed."
     branch: "main"
-    base_main: "189c54f9845b9180aa59c369cb89e09863b72620"
+    base_main: "3c57595e6032a9b69553e23848fbaddd1fa7973e"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "PR #185 exact head 2a93d6d829c375e6b2e650f5c996c9640956ae76 passed Quality, Gateway (Python 3.12/13/14), Graphify, Freshness, License/Provenance and Dead Code. PR #184 exact head df9f3e4e60459473ec1b83b81b1856fd7ea0e68c passed Quality/Chromium and Graphify. Acquisition runs #43417527347 and #43417305393 completed successfully with all download, verification and artifact-upload steps passed. Final state-refresh Quality/Freshness must be checked on its resulting main SHA."
-    runtime_boundary: "Auxiliary models/runtime artifacts are downloaded and SHA-verified in GitHub Actions (13,783,270,816 bytes total; expire 2026-12-13), not installed on target VPS. Main uncensored checkpoint remains owner-supplied. Host OS/architecture, RAM/VRAM, Ollama service, template, API wiring and RU/EN/TH eval remain unverified. Browser Local is in main; no sandboxed shell."
-    next: "Download Actions artifacts before expiry; inspect target host before install. Continue main-only implementation from section K: four Functions panels, API/database/library inventory, real AgentRun/sandbox, full RAG/ingestion, connectors, voice and operator runbook. Keep issue #111 open until owner/environment gates pass."
+    exact_head_checks: "Main Quality #43419102024 PASS (Chromium, Ruff, Jekyll, Security, Integrity, Context, published release-contract); Project State Freshness #43419101988 PASS on exact parent 3c57595e6032a9b69553e23848fbaddd1fa7973e. PR #185 exact head passed Quality/Gateway/Graphify/Freshness/Provenance/Dead Code; PR #184 exact head passed Quality/Chromium and Graphify. Model acquisition runs #43417527347 and #43417305393 passed download, SHA verification and artifact upload."
+    runtime_boundary: "13,783,270,816 bytes of auxiliary model/runtime artifacts are downloaded and SHA-verified in Actions; expire 2026-12-13; not installed on VPS. Owner-supplied primary checkpoint excluded. Target OS/architecture, RAM/VRAM, Ollama, Piper, Whisper, OCR binary, API wiring and RU/EN/TH eval remain unverified."
+    next: "Owner downloads artifacts and supplies target-host facts. Continue main-only four-panel Functions UI, real Connector registry and API/library/database integration; keep optional model workers isolated and feature flags off until measured."
+
 
     source_triage:
     status: "Main bf039f887e29137b627b06fc2bb107c2793d6b69 is live; PR #173 merged and PR #174 is the only open follow-up. Pages root/landing verified exact SHA. Current release-contract failure is a stale Functions-menu prohibition. Source archives remain reference-only; VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
@@ -295,21 +296,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-13"
-  verified_main: "189c54f9845b9180aa59c369cb89e09863b72620"
-  last_main_action: "PR #185 merged at f1fc737 and PR #184 merged at f7cc9a4; PR #176 research ported to main; stale/stacked UI PRs closed. Open PRs: 0. Issue #111 remains open."
+  verified_main: "3c57595e6032a9b69553e23848fbaddd1fa7973e"
+  last_main_action: "PR #185 model/runtime pack and PR #184 Browser Local Coder workspace merged; PR #176 research ported; stale UI PRs closed. Open PRs: 0. Issue #111 remains open."
   last_functional_checkpoint: "f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00"
-  main_quality: "Quality #43418176179 was in progress on parent SHA 189c54f9845b9180aa59c369cb89e09863b72620; rerun after the atomic state-refresh commit and record only exact-head result."
-  main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no post-refresh main Graphify result claimed."
-  main_gateway: "PR #185 Gateway #43402260215 passed Python 3.12/13/14 on exact PR head; no new main Gateway run claimed."
-  main_freshness: "Freshness #43417183312 passed on merge SHA f1fc737 before subsequent state/docs commits; final state-refresh commit must trigger and pass main Freshness."
-  main_provenance: "PR #185 License/Provenance #43402260337 passed on exact PR head; no later model/license changes. No new main provenance run claimed."
-  main_pages: "No public root/landing files changed in the model/Coder slices; last verified Pages deployment remains #43387599298 on site-affecting SHA 6a366125720453193c82a7385f8c088224a5928e. No new deployment claimed."
+  main_quality: "PASS: Quality run #43419102024 on exact main checkpoint 3c57595e6032a9b69553e23848fbaddd1fa7973e; Chromium, Ruff, Jekyll, Security, Integrity, Context and published release-contract jobs all passed."
+  main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no separate Graphify main push run claimed."
+  main_gateway: "PR #185 Gateway #43402260215 passed Python 3.12/13/14 on exact PR head; no separate Gateway main run claimed."
+  main_freshness: "PASS: Project State Freshness run #43419101988 on exact main checkpoint 3c57595e6032a9b69553e23848fbaddd1fa7973e."
+  main_provenance: "PR #185 License/Provenance #43402260337 passed exact PR head. Runtime lock status update is included in this commit; verify any triggered main Provenance run before claiming it."
+  main_pages: "No public root/landing files changed. Last site-affecting Pages deployment remains #43387599298 on SHA 6a366125720453193c82a7385f8c088224a5928e; Quality published release-contract passed on 3c57595e6032a9b69553e23848fbaddd1fa7973e, no new deployment claimed."
   merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled release gates."
-  freshness_guard: "scripts/check_project_state_freshness.py; state-refresh commit changes OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together."
+  freshness_guard: "scripts/check_project_state_freshness.py; next direct-main commit updates OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot atomically."
   runtime_boundary: "13,783,270,816 bytes of auxiliary model/runtime artifacts downloaded and SHA-verified in Actions; artifacts expire 2026-12-13. Not installed on VPS. Main uncensored Qwen3.5-4B checkpoint remains owner-supplied. Host and target runtime unverified."
-  next: "Download artifacts before expiry, inspect target host and install only after platform/resource checks; continue LANDING-V2-2026-001 on main, beginning with four-panel UI and API/database/library inventory."
+  next: "Download artifacts before expiry, inspect target host, then continue LANDING-V2-2026-001 on main: four Functions panels, real Connector registry, API/library/database inventory and gated runtime integration."
 
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
@@ -550,7 +551,7 @@ owner_priority_2026_11_13:
 
 
 model_stack_artifact_checkpoint_2026_11_13:
-  status: "MERGED to main via PR #185 at f1fc737; auxiliary downloads VERIFIED in Actions; target runtime NOT INSTALLED."
+  status: "ARTIFACTS_VERIFIED_NOT_INSTALLED; PR #185 merged into main; target runtime not installed."
   branch: "feat/model-stack-artifact-pack-20261113"
   pr: 185
   last_verified_implementation_head_sha: "2a93d6d829c375e6b2e650f5c996c9640956ae76"
@@ -564,7 +565,7 @@ model_stack_artifact_checkpoint_2026_11_13:
   runtime_lock: "models/runtime-stack.lock.json"
   install_guide: "models/runtime-install.md"
   platform_artifacts: "Provisional Linux x86_64 only; verify VPS OS/architecture before install."
-  download_state: "VERIFIED_DOWNLOADED_IN_GITHUB_ACTIONS: external run #43417527347 and Ollama run #43417305393; combined uploaded artifact bytes 13,783,270,816; artifacts expire 2026-12-13. Not installed on target host."
+  download_state: "VERIFIED_DOWNLOADED_IN_GITHUB_ACTIONS: external run #43417527347 (6,054,440,341 bytes) and Ollama run #43417305393 (7,728,830,475 bytes); total artifact payload 13,783,270,816 bytes; expires 2026-12-13. Not installed on target host."
   runtime_selection: "Candidate only. Production requires template review, license/provenance review, same-host RU/EN/TH eval and memory/latency measurements."
   voice_state: "Piper 1.8.0 pinned; RU dmitri and EN joe voice chains reviewed. Thai phonemizer exists but no official Thai voice; F5-TTS-THAI deferred due non-commercial base checkpoint."
   open_prs_at_checkpoint: []

@@ -58,3 +58,10 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Owner-supplied uncensored Qwen3.5-4B primary checkpoint remains excluded. No model binary is committed to Git.
 - Downloaded artifacts are not installed. Verify target OS/architecture and resources before installing; see `models/runtime-install.md`.
 - Ordinary chat remains one direct main-model request; helpers remain conditional.
+
+
+## API/runtime inventory checkpoint — 2026-11-13
+
+- Machine-readable acquisition/install state: `models/runtime-stack.lock.json`; system/API/dependency matrix: `docs/ALANDI_SYSTEMS_MAP_RU.md`; architecture: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
+- 10 external artifacts + four Ollama model packages are verified downloads in Actions, not installed. Artifact expiry: 2026-12-13. Owner-supplied primary checkpoint excluded.
+- Current database baseline is SQLite/FTS5; do not add Postgres/Redis/Qdrant without measured evidence. Root Python lock is `pyproject.toml` + `uv.lock`; optional ASR/OCR dependencies remain isolated.

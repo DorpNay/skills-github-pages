@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "updated_on": "2026-11-13",
-  "status": "SPECIFIED_NOT_INSTALLED",
+  "status": "ARTIFACTS_VERIFIED_NOT_INSTALLED",
   "target_profile": {
     "os": "Linux",
     "architecture": "x86_64",
     "architecture_status": "PROVISIONAL_NOT_VERIFIED",
     "ram_gb": 8,
     "ram_status": "REFERENCE_PROFILE_ONLY",
-    "disk_free_recommended_gb": 20,
+    "disk_free_recommended_gb": 30,
     "gpu": "unknown; CPU-first baseline",
     "notes": "Do not install platform-specific Ollama/Piper binaries until the actual VPS OS/architecture and available disk/RAM are verified."
   },
@@ -19,7 +19,7 @@
       "license": "MIT",
       "artifact": "models/artifacts.manifest.json#ollama_runtime_linux_amd64_v04016",
       "linux_amd64_archive_sha256": "87bfafb2acbc89b2e6a1be0a9043de6aa75fb450696f86bc426e65fc448f788d",
-      "install_state": "NOT_DOWNLOADED_NOT_INSTALLED",
+      "install_state": "ARCHIVE_DOWNLOADED_NOT_INSTALLED",
       "api": {
         "chat": "POST /v1/chat/completions (OpenAI-compatible) or POST /api/chat",
         "embeddings": "POST /api/embed",
@@ -36,6 +36,16 @@
           "tag": "qwen3-embedding:0.6b-q8_0",
           "digest_prefix": "ac6da0dfba84",
           "size_estimate_bytes": 639000000
+        },
+        "helper": {
+          "tag": "qwen3.5:2b-q4_K_M",
+          "digest_prefix": "1e2d21a4f03a",
+          "size_estimate_bytes": 1945781358
+        },
+        "document_ocr": {
+          "tag": "glm-ocr:q8_0",
+          "digest_prefix": "6e5935a916fc",
+          "size_estimate_bytes": 1819687501
         }
       },
       "policy": "One main model on ordinary chat. Embedding model only on RAG paths. Keep base reference and uncensored candidate unloaded sequentially on 8-GB hardware."
@@ -53,7 +63,7 @@
         "ffprobe"
       ],
       "model_artifact": "whisper_large_v3_turbo_q5_0",
-      "install_state": "NOT_BUILT_NOT_INSTALLED"
+      "install_state": "MODEL_DOWNLOADED_BINARY_NOT_BUILT_NOT_INSTALLED"
     },
     "piper": {
       "version": "1.8.0",
@@ -61,7 +71,7 @@
       "package": "piper-tts==1.8.0",
       "license": "GPL-3.0-or-later",
       "linux_x86_64_wheel_sha256": "25b4d3f31ff70c8fa7151908e00aaa5650cbdf16bca8fcf21299f3941b89a7d3",
-      "install_state": "NOT_DOWNLOADED_NOT_INSTALLED",
+      "install_state": "WHEEL_AND_RU_EN_VOICES_DOWNLOADED_NOT_INSTALLED",
       "voices": {
         "ru": "ru/ru_RU/dmitri/medium at rhasspy/piper-voices@2f358b6a560e3a913ebf509b2f3344f20b367f94",
         "en": "en/en_US/joe/medium at rhasspy/piper-voices@2f358b6a560e3a913ebf509b2f3344f20b367f94",
@@ -90,13 +100,13 @@
       "backend": "Transformers for CPU-first evaluation; vLLM optional only with suitable GPU",
       "model": "Qwen/Qwen3-ASR-0.6B at 5eb144179a02acc5e5ba31e748d22b0cf3e303b0",
       "languages": "52 languages/dialects; includes Russian and Thai",
-      "install_state": "NOT_INSTALLED"
+      "install_state": "MODEL_DOWNLOADED_NOT_INSTALLED"
     },
     "qwen_reranker": {
       "model": "Qwen/Qwen3-Reranker-0.6B at e61197ed45024b0ed8a2d74b80b4d909f1255473",
       "license": "Apache-2.0",
       "runtime_candidate": "Transformers 4.57.6 + CPU PyTorch in an isolated worker environment",
-      "install_state": "NOT_INSTALLED",
+      "install_state": "MODEL_DOWNLOADED_NOT_INSTALLED",
       "activation": "Only after first-stage FTS5/vector retrieval and only if measured nDCG/MRR improves."
     },
     "tesseract": {
@@ -110,15 +120,25 @@
         "tha"
       ],
       "mode": "LSTM OEM 1",
-      "install_state": "NOT_INSTALLED",
-      "note": "5.5.4 release fixes 17 security advisories. Install from the target OS package source or build this exact source; verify tesseract --version before use."
+      "install_state": "LANGUAGE_DATA_DOWNLOADED_BINARY_NOT_INSTALLED",
+      "note": "5.5.4 release fixes 17 security advisories. Install from the target OS package source or build this exact source; verify tesseract --version before use.",
+      "binary_downloaded": false
     },
     "silero_vad": {
       "model": "silero_vad_16k_op15.onnx",
       "commit": "066409f3d9db45a30d21dfcbf9147826ffdd7052",
       "license": "MIT",
       "runtime": "ONNX Runtime CPU; pin exact onnxruntime wheel after target architecture confirmation",
-      "install_state": "NOT_INSTALLED"
+      "install_state": "MODEL_DOWNLOADED_RUNTIME_NOT_INSTALLED"
+    },
+    "glm_ocr": {
+      "model_tag": "glm-ocr:q8_0",
+      "parameters": "891M",
+      "quantization": "Q8_0",
+      "license": "MIT weights; Apache-2.0 SDK",
+      "runtime": "Ollama registry package downloaded",
+      "install_state": "MODEL_PACKAGE_DOWNLOADED_NOT_INSTALLED",
+      "layout_dependency": "PP-DocLayoutV3 not included; separate review required"
     }
   },
   "gateway_api": {
@@ -137,6 +157,12 @@
       "model_metadata": [
         "GET /v1/models",
         "GET /v1/capabilities"
+      ],
+      "project_memory_helper": "POST /v1/helpers/project-memory-suggestions (conditional; helper model unset by default)",
+      "memory_delta": [
+        "GET /v1/memory/state/{conversation_id}",
+        "DELETE /v1/memory/state/{conversation_id}",
+        "POST /v1/memory/delta"
       ]
     },
     "proposed_not_implemented": {
@@ -160,5 +186,35 @@
     "voice": "Only when voice mode is used: VAD -> ASR; TTS only when speech output is requested.",
     "documents": "Only when a document is uploaded: native parser first, OCR only for pages without usable text.",
     "agents": "No full agent runtime is claimed by this lock; AgentRunStore is storage prototype. Tool execution remains behind approval/permission gates."
+  },
+  "acquisition": {
+    "state": "VERIFIED_DOWNLOADED_NOT_INSTALLED",
+    "external_cache": {
+      "workflow_run": 43417527347,
+      "artifact_name": "alandi-external-model-cache-43417527347",
+      "artifact_id": 14032083513,
+      "artifact_bytes": 6054440341,
+      "package_count": 10,
+      "expires_on": "2026-12-13"
+    },
+    "ollama_registry": {
+      "workflow_run": 43417305393,
+      "artifact_ids": [
+        14031837868,
+        14032317541,
+        14032427244,
+        14031799248,
+        14032207856
+      ],
+      "package_count": 4,
+      "artifact_bytes": 7728830475,
+      "expires_on": "2026-12-13"
+    },
+    "total_uploaded_artifact_bytes": 13783270816,
+    "owner_supplied_primary_checkpoint": {
+      "status": "NOT_DOWNLOADED_OWNER_SUPPLIED",
+      "size_bytes": 2707513696
+    },
+    "target_installation": "NOT_STARTED_HOST_PLATFORM_NOT_VERIFIED"
   }
 }
