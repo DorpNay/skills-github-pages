@@ -4,13 +4,13 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main checkpoint parent `692a2df264951320b4264e5c39e42d35f5cdeab3`; this atomic state refresh records provider-bound OAuth PKCE commit #692a2df and latest model artifacts. Fetch live SHA on resume.
+- Main checkpoint parent `a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b`; this state repair restores owner-authored `PROJECT_STATE.yaml` metadata after Provenance caught missing `improvements` and VPS-unverified declarations.
 - **Snapshot marker:** open PRs (0): ; open issues (1): #111.
-- PR #185 and #184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions and branches retained.
-- Model artifacts: external run #43420046411 (6,054,442,377 bytes); Ollama run #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes; expiry 2026-12-13. Not installed on target.
-- OAuth PKCE state is provider-bound and single-use; legacy state rows migrate to `google_drive`. Google Drive and GitHub connectors are not yet integrated/registered.
-- Root gateway dependencies are pinned in `pyproject.toml`/`uv.lock`; not yet installed or staged as an offline cache. Confirm target OS/architecture before host installation.
-- Continue `LANDING-V2-2026-001` section K on main only; no new PRs under the current owner directive.
+- PR #185/#184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions.
+- Artifacts: external #43420046411 (6,054,442,377 bytes) + Ollama #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes. Not installed on target.
+- OAuth PKCE provider-bound and single-use in #692a2df; Gateway Tests #43421709910 PASS.
+- Provenance #43422026430 failure root cause documented and corrected; re-run Provenance/Freshness on this exact main.
+- Continue section K on main only; no new PRs under current owner directive.
 
 ## 1. Быстрый маршрут
 

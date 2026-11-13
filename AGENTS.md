@@ -77,3 +77,7 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 ## OAuth and connector security invariant (2026-11-13)
 - OAuth PKCE transactions are provider-bound, single-use and expiring. Existing provider-less state rows migrate as `google_drive`; future providers must pass their explicit provider ID to begin/consume. Keep tokens encrypted at rest and never expose them in UI, logs or tool output.
 - OAuth/Drive groundwork is not a connector. Do not expose a Connectors action until its registry, least-privilege permissions, explicit consent, real handlers, quotas/timeouts, revoke/deletion/audit and regression tests are implemented.
+
+
+## Project-state metadata preservation (2026-11-13)
+- When refreshing `docs/PROJECT_STATE.yaml`, patch individual fields/known sections; do not slice broad spans across top-level sections. Preserve the non-empty `improvements` mapping, explicit `project_state.deployment.gateway_vps: not verified by this change; do not claim deployed`, and all other owner-authored project metadata. Run the existing metadata/provenance checker; never weaken it to accommodate a malformed state file.

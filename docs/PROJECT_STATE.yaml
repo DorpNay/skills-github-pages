@@ -16,35 +16,537 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-  status: "Main checkpoint parent 692a2df264951320b4264e5c39e42d35f5cdeab3; provider-bound OAuth PKCE is implemented in #692a2df. Exact-head CI for #692a2df is pending. Zero open PRs; issue #111 remains owner/environment gated."
-  branch: "main"
-  base_main: "692a2df264951320b4264e5c39e42d35f5cdeab3"
-  open_prs_at_checkpoint: 0
-  open_issues_at_checkpoint: 1
-  exact_head_checks: "Parent d88e464: Quality #43420261793 PASS, Pages #43420261025 SUCCESS, Freshness #43420261792 PASS and Provenance #43420261795 PASS. Provider-bound PKCE commit #692a2df requires exact-head rerun."
-  next: "Verify exact-main Quality/Gateway/Freshness/Provenance/Pages. Then implement a real read-only GitHub App connector before exposing the Connectors panel; inspect target host before installation."
+    status: "Main checkpoint parent a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b; provider-bound OAuth PKCE is implemented in #692a2df. Provenance #43422026430 failed because a prior state rewrite removed the required improvements mapping and explicit VPS-unverified status; both are restored from the owner-authored baseline in this commit. No gate is weakened. Exact-head CI is pending. Zero open PRs; issue #111 remains owner-gated."
+    branch: "main"
+    base_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
+    open_prs_at_checkpoint: 0
+    open_issues_at_checkpoint: 1
+    merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
+    exact_head_checks: "Parent d88e464: Quality #43420261793 PASS, Pages #43420261025 SUCCESS, Freshness #43420261792 PASS and Provenance #43420261795 PASS. PKCE code #692a2df passed Lite Gateway Tests #43421709910; current Quality #43422084339 and Pages #43422085331 are in progress. Provenance #43422026430 exposed missing project metadata; restored from baseline here; rerun."
+    runtime_boundary: "13,783,272,852 bytes of auxiliary model/runtime artifacts are downloaded and SHA-verified in Actions (#43420046411 external; #43418126506 Ollama); expire 2026-12-13; not installed on VPS. Owner-supplied primary checkpoint excluded. Gateway deps are pinned in uv.lock but not installed/offline-cached. Target OS/architecture, RAM/VRAM, Ollama, Piper, Whisper, OCR binary, API wiring and RU/EN/TH eval remain unverified."
+    next: "Verify exact-main Quality/Gateway/Freshness/Provenance/Pages after the metadata repair. Then implement a real read-only GitHub App connector before exposing Connectors; inspect target host and stage uv-locked dependencies before installation."
+
+
+
+    source_triage:
+    status: "Main bf039f887e29137b627b06fc2bb107c2793d6b69 is live; PR #173 merged and PR #174 is the only open follow-up. Pages root/landing verified exact SHA. Current release-contract failure is a stale Functions-menu prohibition. Source archives remain reference-only; VPS/Tunnel/Ollama and native iPhone/VoiceOver remain unverified."
+    record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
+    technique_register: "docs/TECHNIQUE_REGISTER_RU.md"
+    upstream_archive:
+      status: "One exact W3C WAI WCAG 2.2 change-guide source is archived unchanged and merged in PR #136 at d35812af1746ccf7268b582edf45019619431e7b. Upstream/archive Git blob SHA-1 match 91ba79fbf918aa1ab14202dc5b4030a1b3087d19; SHA-256 d837a780c59ad261aaad05c31a86e195c00e71794f5b8921e01a74ba105d47a6; size 25,472 bytes. W3C Document License 2023 notice and manifest are present. _config.yml excludes docs/upstream-archive from Pages. Exact PR-head Quality #41783917001 (Jekyll + Chromium), Freshness #41783917215 and Provenance #41783916918 passed."
+      manifest: "docs/upstream-archive/manifest.yaml"
+      count: 3
+      next: "Select further artifacts only for concrete project tasks after exact source/version, redistribution license, checksum and storage policy review; no bulk model/voice/dataset mirrors."
+
+    branch: "docs/source-triage-and-next-steps-20261027"
+    verified_main_at_start: "529b1d0b86aef58c2b84663a44e78677a31ce9b1"
+    docs_merge_commit: "f689cbe17a2996ebd4cd2ca9fcb71d60102a6c25"
+    queue_after_triage: "PR #37 closed without merge; PR #62 merged; Issue #1 closed as not_planned"
+    graphify_execution: "isolated GitHub Actions execution verified on PR head; graph output artifact-only; local container still has no repository checkout"
+    open_pr_at_start: 37
+    open_issue_at_start: 1
+    next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
+  last_volley: "V-2026-11-13-MODEL-STACK-ARTIFACT-PACK-001"
+  gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
+  file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
+  memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
+  source_of_truth:
+    - "docs/PROJECT_STATE.yaml"
+    - "EVALS.md"
+    - "DECISIONS.md"
+    - "LOOP.md"
+    - "INTEL.md"
+    - "docs/CODER_PACKET.md"
+    - "docs/ACCEPTED_IMPROVEMENTS.md"
+    - "docs/START_HERE_RU.md"
+    - "docs/IMPLEMENTATION_ROADMAP_RU.md"
+  repository: "https://github.com/DorpNay/skills-github-pages"
+  public_client: "https://dorpnay.github.io/skills-github-pages/"
+  deployment:
+    pages: "published; unrelated to gateway deployment"
+    gateway_vps: "not verified by this change; do not claim deployed"
+    experimental_feature_flags: "false by default"
+  current_ui_track:
+    branch: "main"
+    merged_pr: 121
+    status: "2026-11-08 source batch: 310 distinct URL references / 183 GitHub repositories. Reviewed durable execution, code graph, RAG/document parsing, local inference, RU/TH ASR, edge voice and GitHub artifact limits. CodeGraph and Qwen3-ASR remain pilot candidates; Docling/RAG failure probes accepted; no model weights or new runtime installed. RAG-Anything v1.4.1 and Memvid v2.0.140 selected snapshots have exact upstream LICENSE/manifests in PR #169."
+    primary_cloud: "aLandi-only card; connected state requires prior real completion and successful /healthz"
+    providers: "Legacy APIs collapsed; Kilo is an alternate provider only; no silent cross-provider fallback; PR114 leaves the optional global system prompt empty by default and removes the obsolete Gemini reset"
+    projects: "PR35 merged and Chromium E2E passed: collapsed project list with per-project chat children; top-level unassigned chats only; browser-local project notes with project-only vs project-and-global scope; one-shot project context scoped by chat. Experimental server-memory graph/API/browser bridge retired by owner 2026-11-07; conversation delta sync and independent RAG remain separate contracts."
+    voice_ui: "PR44 merged at 9145b5f; gateway/security/context/integrity/Jekyll/Chromium/live-site checks passed; local whisper.cpp ASR, Piper TTS and message mini-player are implemented but disabled by default; target device/model quality and VPS setup remain unverified"
+    chat_actions: "PR33+34+35 merged; PR71 stable bottom composer; PR115 composer popover scrim, modal backdrop blur and inert first outside tap for toolbar/language/chat-row menus; exact-head Chromium and published-site smoke passed on PR head d7f57d0abfba46a5764e6a1182bcc9a847f7a6ef"
+    detailed_ledger: "docs/V016_IMPLEMENTATION_CHECKLIST.md"
+    user_todo: "docs/USER_REQUEST_CHECKLIST.md"
+    google_oauth_credentials_configured: false
+    voice_runtime_live: false
+    hardware_benchmark_8gb: "not run; no reference host in CI"
+
+current_v016_track:
+  source_state_hash: "CI-passed prototype; includes index.md; fingerprint is not a signature or safety proof"
+  intel_triad_gate: "offline completeness gate CI-passed; no live license/URL/hash verification"
+  latency_budget: "target-only contract; no target-hardware measurements"
+  risk_router: "typed local policy prototype; not integrated into live request path"
+  web_search_fallback: "bounded keyless public-source fallback and Chromium E2E passed; still CORS-dependent"
+
+improvements:
+  AI-STATE-001b: {status: "implemented_source_fingerprint_ci_passed_not_signature", artifact: "scripts/manifest_state.py; gateway/tests/test_v016_foundation.py", eval: "EV-STATE-001"}
+  AI-INTEL-001: {status: "offline_provenance_triad_ci_passed_no_live_verification", artifact: "scripts/check_intel_triad.py; intel/RECON.yaml", eval: "EV-INTEL-001"}
+  AI-LATENCY-001: {status: "target_budget_contract_unmeasured", artifact: "latency/budget_v2.yaml", eval: "EV-VOICE-002"}
+  AI-ROUTER-001: {status: "typed_policy_tests_passed_not_runtime_integrated", artifact: "router/policy.py; gateway/tests/test_v016_foundation.py", eval: "EV-ROUTER-001"}
+  AI-SEARCH-001: {status: "keyless_public_source_fallback_e2e_passed_cors_dependent", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-SEARCH-001"}
+  AI-VOICE-001: {status: "conditional_interface_only", artifact: "gateway/voice/native_core_interface.py", eval: "EV-VOICE-001", benchmark: "pending"}
+  AI-VOICE-002: {status: "cleanup_resilience_and_bounded_registrations_gateway_ci_passed_voice_runtime_not_live", artifact: "gateway/voice/cpocket.py", eval: "EV-CPOCKET-001"}
+  AI-VOICE-003: {status: "target_unmeasured", artifact: "docs/LATENCY_CONTRACT.md", eval: "EV-VOICE-002"}
+  AI-VOICE-004: {status: "read_only_prototype", artifact: "gateway/voice/speculative_transaction.py", eval: "EV-SPEC-001"}
+  AI-VOICE-005: {status: "candidate_license_review_pending", artifact: "evals/voice/language_matrix_v2.yaml", eval: "EV-LANG-001"}
+  AI-VOICE-006: {status: "decision_module_not_live", artifact: "gateway/voice/tier_router.py", eval: "EV-VOICE-003"}
+  AI-VOICE-007: {status: "policy_only_no_native_aec", artifact: "gateway/voice/barge_in.py", eval: "EV-VOICE-004"}
+  AI-VOICE-008: {status: "proposed_experiment", artifact: "gateway/voice/endpoint_heuristic.py", eval: "EV-ENDPOINT-001"}
+  AI-VOICE-009: {status: "merged_PR44_local_whisper_cpp_adapter_disabled_by_default_hardware_quality_unverified", artifact: "gateway/app.py; gateway/tests/test_audio_transcription.py; index.md; tests/e2e/audio-transcription.spec.mjs", eval: "EV-VOICE-005"}
+  AI-VOICE-010: {status: "merged_PR44_local_piper_adapter_miniplayer_license_and_hardware_quality_unverified", artifact: "gateway/app.py; gateway/tests/test_audio_speech.py; index.md; infra/license/provenance_manifest.yaml", eval: "EV-VOICE-006"}
+  AI-VOICE-011: {status: "merged_PR48_bounded_nonblocking_audio_concurrency_http_429", artifact: "gateway/app.py; gateway/tests/test_audio_concurrency.py", eval: "EV-VOICE-007"}
+  AI-VOICE-012: {status: "merged_PR60_browser_half_duplex_dialogue_Quality_and_Chromium_passed_hardware_model_accuracy_latency_echo_unverified", artifact: "index.md; tests/e2e/app.spec.mjs; tests/e2e/audio-transcription.spec.mjs", eval: "EV-LOCAL-VOICE-DIALOGUE-001"}
+  AI-DOC-001: {status: "merged_PR45_local_bounded_extraction_capability_discovery_live_setup_unverified", artifact: "gateway/app.py; gateway/tests/test_document_extraction.py; gateway/requirements.txt; infra/license/provenance_manifest.yaml", eval: "EV-DOC-001"}
+  AI-DOC-002: {status: "merged_PR50_composer_local_document_extraction_quality_chromium_and_provenance_passed_live_setup_unverified", artifact: "index.md; tests/e2e/document-attachments.spec.mjs; tests/e2e/app.spec.mjs", eval: "EV-DOC-002"}
+  AI-AUDIO-012: {status: "local_audio_file_attachment_transcription_in_branch_pending_ci_and_live_model_quality", artifact: "index.md; tests/e2e/audio-transcription.spec.mjs; gateway/app.py", eval: "EV-VOICE-008"}
+  AI-STORAGE-001: {status: "merged_PR56_80_95_thresholds_nonblocking_estimator_and_Chromium_Quality_passed", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-STORAGE-001"}
+  AI-PROJECT-SCOPE-001: {status: "three_project_scope_and_clear_history_regression_tests_in_PR59_pending_exact_head_CI", artifact: "tests/e2e/app.spec.mjs", eval: "EV-PROJECT-SCOPE-001"}
+  AI-MOBILE-MESSAGE-TOOLS-001: {status: "message_viewer_copy_fallback_and_jump_to_latest_pending_exact_head_CI", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-MOBILE-MESSAGE-TOOLS-001"}
+  AI-INFRA-001: {status: "optional_manual_path_no_vm_created", artifact: "docs/INFRASTRUCTURE_UPGRADE.md", eval: "EV-INFRA-001"}
+  AI-INFRA-002: {status: "manual_instructions_no_dns_changed", artifact: "docs/DOMAIN_SETUP.md", eval: "EV-INFRA-002"}
+  AI-INFRA-003: {status: "target_profile_unmeasured", artifact: "infra/hardware_profiles.yaml", eval: "EV-HW-001"}
+  AI-CODE-001: {status: "report_only", artifact: ".github/workflows/dead-code-check.yml", eval: "EV-CODE-001"}
+  AI-CODE-002: {status: "deferred_until_benchmark", artifact: "gateway/evals/serialization_benchmark.py", eval: "EV-CODE-002"}
+  AI-CODE-003: {status: "deferred_until_uv_lock_review", artifact: "pyproject.toml", eval: "EV-CODE-003"}
+  AI-OBS-001: {status: "prototype_integrated_in_gateway", artifact: "observability/trace_context.py", eval: "EV-OBS-001"}
+  AI-OBS-002: {status: "optional_disabled", artifact: "observability/otel_config.py", eval: "EV-OBS-002"}
+  AI-OBS-003: {status: "event_schema_only_ui_deferred", artifact: "observability/events.schema.json", eval: "EV-UI-001"}
+  AI-MEM-001: {status: "sqlite_prototype", artifact: "gateway/memory/schema.sql", eval: "EV-MEM-001"}
+  AI-MEM-002: {status: "bitemporal_primitives_not_in_frontend", artifact: "gateway/memory/temporal.py", eval: "EV-MEM-002"}
+  AI-MEM-003: {status: "scoped_manager_prototype", artifact: "gateway/memory/scope.py", eval: "EV-MEM-003"}
+  AI-MEM-004: {status: "explicit_conflicts_no_auto_winner", artifact: "gateway/memory/conflict.py", eval: "EV-MEM-004"}
+  AI-MEM-005: {status: "scoped_fts5_memory_search_prototype_exposed_via_opt_in_project_bridge_live_gateway_required", artifact: "gateway/memory/manager.py; gateway/memory/schema.sql; index.md", eval: "EV-MEM-005"}
+  AI-MEM-006: {status: "authenticated_single_owner_api_manual_candidate_first_browser_bridge_ci_passed_gateway_activation_required", artifact: "gateway/app.py; gateway/memory/manager.py; index.md; tests/e2e/app.spec.mjs", eval: "EV-MEM-006"}
+  AI-RAG-001: {status: "fts5_lexical_graph_not_full_lazygraphrag", artifact: "gateway/rag/lazy_graph_rag.py", eval: "EV-RAG-001"}
+  AI-RAG-002: {status: "conditional_not_installed", artifact: "gateway/rag/rag_anything.py", eval: "EV-RAG-002"}
+  AI-RAG-003: {status: "citation_hash_offset_primitives", artifact: "gateway/rag/citations.py", eval: "EV-RAG-003"}
+  AI-RAG-004: {status: "local_evidence_ledger_not_api_exposed", artifact: "gateway/rag/evidence_ledger.py", eval: "EV-RAG-004"}
+  AI-RAG-005: {status: "scoped_rag_delete_and_version_gated_fts_secure_delete_postmerge_ci_passed_not_full_erasure", artifact: "gateway/rag/lazy_graph_rag.py; gateway/tests/test_six_layers.py", eval: "EV-RAG-005"}
+  AI-TOOLS-001: {status: "blocked_no_container_sandbox", artifact: "sandbox/cli_sandbox.py", eval: "EV-SANDBOX-001"}
+  AI-TOOLS-002: {status: "bounded_dag_prototype_no_default_tools", artifact: "gateway/tools/dag_engine.py", eval: "EV-TOOLS-001"}
+  AI-TOOLS-003: {status: "schema_validation_prototype", artifact: "gateway/tools/validator.py", eval: "EV-TOOLS-002"}
+  AI-TOOLS-004: {status: "ssrf_policy_helper_only", artifact: "gateway/security/ssrf_protection.py", eval: "EV-SEC-001"}
+  AI-TOOLS-005: {status: "approval_ticket_primitive_no_ui", artifact: "gateway/security/approval_gates.py", eval: "EV-SEC-002"}
+  AI-LICENSE-001: {status: "manifest_and_ci_gate_prototype_no_voice_shipped", artifact: "infra/license/provenance_manifest.yaml", eval: "EV-LICENSE-001"}
+  AI-UI-001: {status: "browser_project_prototype_e2e_passed_local_only", artifact: "index.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-UI-002"}
+  AI-UI-002: {status: "local_project_memory_plus_manual_server_graph_bridge_opt_in_per_chat_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; gateway/app.py; tests/e2e/app.spec.mjs", eval: "EV-UI-003"}
+  AI-UI-003: {status: "partial_bilingual_theme_clock_composer_voice_preview_e2e_passed", artifact: "index.md", eval: "EV-UI-004"}
+  AI-UI-004: {status: "safe_structured_markdown_fallback_merged_pr32_all_six_quality_jobs_passed", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-UI-005"}
+  AI-PROVIDER-001: {status: "cloud_first_provider_recovery_e2e_passed_gateway_unconfigured", artifact: "index.md", eval: "EV-PROVIDER-UI-001"}
+  AI-PROVIDER-002: {status: "live_smoke_explicit_consent_guard_ci_passed_not_dispatched", artifact: ".github/workflows/provider-smoke-all.yml; scripts/provider-smoke-all.mjs", eval: "EV-PROVIDER-001"}
+  AI-PROJECT-001: {status: "browser_local_crud_and_manual_server_bridge_e2e_ci_passed_live_gateway_unverified", artifact: "index.md; tests/e2e/app.spec.mjs", eval: "EV-PROJECT-001"}
+  AI-AGENT-001: {status: "logical_roles_not_process_swarm", artifact: "docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-001"}
+  AI-AGENT-002: {status: "limited_existing_routing", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-002"}
+  AI-AGENT-003: {status: "bounded_dag_prototype", artifact: "gateway/tools/dag_engine.py", eval: "EV-AGENT-003"}
+  AI-AGENT-004: {status: "synthetic_benchmark_harness_gateway_ci_verified_no_target_model_benchmark_no_helper_dispatch", artifact: "gateway/evals/run_local_model_benchmark.py; gateway/tests/test_local_model_benchmark.py; docs/ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md", eval: "EV-AGENT-004"}
+  AI-AGENT-005: {status: "accepted_design_documented_runtime_not_implemented", artifact: "docs/AGENT_ORCHESTRATION_RESEARCH_RU.md; DECISIONS.md; docs/CODER_PACKET.md", eval: "EV-AGENT-005"}
+  AI-IMAGE-001: {status: "roadmap_only_no_image_generation_runtime", artifact: "docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md; docs/V016_IMPLEMENTATION_CHECKLIST.md", eval: "EV-IMAGE-001"}
+  AI-OPS-001: {status: "free_first_roadmap_no_billable_resources_provisioned", artifact: "DECISIONS.md; docs/USER_REQUEST_CHECKLIST.md", eval: "EV-OPS-001"}
+  AI-MODEL-001: {status: "no_hidden_refusal_filter_policy_only_no_zero_refusal_guarantee", artifact: "DECISIONS.md", eval: "EV-MODEL-001"}
+  AI-LEARN-001: {status: "governance_only_no_self_modification", artifact: "LOOP.md", eval: "EV-LEARN-001"}
+  AI-LEARN-002: {status: "versioned_skill_rollback_deferred", artifact: "LOOP.md", eval: "EV-LEARN-002"}
+
+rejected_improvements:
+  - id: AI-CUT-001
+    title: "Universal wake-word latency guarantee"
+    reason: "Requires measured target hardware and cannot be promised from a paper design."
+  - id: AI-CUT-002
+    title: "Silero TTS as commercial default"
+    reason: "Most models in the upstream repository are non-commercial; exact exceptions must be individually verified."
+  - id: AI-CUT-003
+    title: "Pure Python raw PCM hotpath"
+    reason: "Raw audio should remain in native capture/inference subsystem; Python consumes bounded events."
+  - id: AI-CUT-004
+    title: "Cloud ASR/TTS fallback"
+    reason: "Violates the default local-first voice privacy contract."
+
+blocked_items:
+  - id: BLK-RU-TTS-COMMERCIAL
+    reason: "Exact Russian voice model card, artifact checksum and license approval required."
+  - id: BLK-NATIVE-BENCH
+    reason: "No native audio backend or reference 8GB hardware measurement."
+  - id: BLK-CLI-SANDBOX
+    reason: "No tested container/seccomp/Landlock implementation or escape test evidence."
+
+latest_checkpoint:
+  date: "2026-11-08"
+  main_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
+  open_prs: 0
+  open_issues: 1
+  active_pr: 174
+  active_pr_base_sha: "c4f23e03f563d03213eb87002863da630fc8b833"
+  active_pr_head_at_checkpoint: "2d816fb066d68bd58da226abf25c4332c0306085"
+  reconciled_closed_prs: [168, 171, 172]
+  main_quality_run_id: 42372746360
+  main_quality_status: "success"
+  main_graphify_run_id: 42372746441
+  main_graphify_status: "success"
+  main_pages_run_id: 42372745873
+  main_pages_status: "success"
+  open_prs_at_checkpoint: []
+  open_issues_at_checkpoint: [111]
+  next: "Refresh PR #169 exact-head gates and live queue snapshot after reconciled PR closures. Merge only after all required checks pass; then verify main integrity/quality and Pages against exact merge SHA. Audit #155/#154/#152/#131/#125 selectively; continue system-by-system review and thematic source intake."
+
+architecture_map_checkpoint:
+  date: "2026-10-27"
+  main_sha_at_checkpoint: "3887b408988e0476251736a8e7a3e3374eb2ce58"
+  pr65: "merged; exact PR-head 7/7 checks passed"
+  post_merge_quality_run: "40527418639; success; 6/6 jobs including Chromium and published-site smoke"
+  repository_tree: "140 tracked files inspected via GitHub API"
+  architecture_map: "docs/ALANDI_ARCHITECTURE_MAP_RU.md; curated, not generated AST graph"
+  graphify:
+    upstream: "Graphify-Labs/graphify"
+    package: "graphifyy"
+    license: "Apache-2.0"
+    code_extraction: "local tree-sitter AST per upstream docs"
+    docs_media: "semantic pass may use configured model"
+    execution: "blocked; git clone failed DNS resolution for github.com"
+    first_run_metrics: "1,717 nodes; 2,877 edges; 140 communities; 80 code files found; 52 docs skipped; YAML/YML/TOML noise dominated 999 nodes; SQL grammar missing; index.md inline JS not represented"
+  refinement: "include tree-sitter-sql; exclude declarative YAML/YML/TOML from graph corpus; extract inline index.md JavaScript with source line numbers preserved; focused --context call queries"
+  first_run_metrics: "1,717 nodes; 2,877 edges; 140 communities; YAML/YML/TOML noise dominated 999 nodes; SQL grammar missing; index.md inline JS absent"
+  refined_run_metrics: "940 nodes; 2,637 edges; 44 communities; 59 source files; 209 index-inline.js nodes; 14 SQL schema nodes; three query result sizes 134/50/59"
+  refinement: "completed: tree-sitter-sql, YAML/YML/TOML exclusion, line-preserving index.md JS extraction; all ten focused --context call queries returned 10-151 nodes"
+  ten_query_run: "40534892152 success; 10/10 queries returned nodes; result sizes 55,151,104,50,83,52,31,31,40,10"
+  artifact: "12747755798; SHA-256 e16c01df143a3380bfd66be523ec709d2dc85bf35fd4d8e5133a64922a841b22; expires 2026-11-03"
+  runtime_dependency: false
+  next: "Graphify CI pilot and ten focused queries passed; keep output artifact-only. Next: complete helper-memory PR #69 after exact-head gates"
+
+graphify_exclusions:
+  file: ".graphifyignore"
+  status: "added in PR #66; actual Graphify interpretation not yet tested"
+  intended_exclusions: "env/secrets, databases, generated outputs, dependencies, model/media weights"
+
+
+post_architecture_map_checkpoint:
+  date: "2026-10-27"
+  main_checkpoint_before_this_docs_pr: "1faf60164b9a0f82eb5e0c56b143ba90499be4a5"
+  pr66: "merged; exact-head quality 6/6 and provenance passed"
+  post_merge_pages: "40530195904 success"
+  post_merge_provenance: "40530196480 success"
+  post_merge_quality: "40530196483 success"
+  open_prs_after_pr66: 0
+  open_issues_after_pr66: 0
+  next: "inspect PR-head Graphify pilot workflow run and artifact; record graph coverage, runtime, memory, query results and ignore safety; then implement one bounded feature backed by tests"
+
+
+graphify_pilot_workflow:
+  file: ".github/workflows/graphify-pilot.yml"
+  status: "merged in PR #68; main Graphify run #40537790122 passed; ten-query navigation validation passed; output retained as artifact only"
+  package: "graphifyy[sql]==0.9.96 (PyPI exact version; release-tag LICENSE checked as Apache-2.0)"
+  mode: "code-only; no model credentials; read-only token; checkout credentials disabled"
+  staging: "git archive of tracked PR commit into runner temp, then prune secrets/dbs/weights/media/user-data patterns"
+  output: "graph.json/GRAPH_REPORT.md/graph.html/manifest plus run summary artifact; cache excluded; 7-day retention; never committed"
+  license_note: "PyPI release v0.9.96 says Apache-2.0; default-branch pyproject metadata appears stale/different (0.1.14/MIT); source provenance discrepancy recorded"
+  runtime_dependency: false
+  rollback: "remove workflow file and revert documentation-only references; no product/runtime behavior changes"
+
+
+local_helper_memory_suggestions:
+  status: "merged in PR #69; exact-head Gateway, Quality/Chromium, published-site smoke and provenance passed; helper remains disabled by default"
+  pr: 69
+  branch: "feat/local-helper-memory-suggestions-current-main-20261027"
+  baseline_main: "9aa36465158c27c49ff647a6ce349b46a6e1151e"
+  merged_main_sha: "4c9096999fbb3e1265150c420b136066c555285b"
+  exact_head_gateway_run_id: 40539476154
+  exact_head_quality_run_id: 40539476242
+  exact_head_provenance_run_id: 40539476214
+  implementation_head_before_sync: "c12391cbbbd2fb917035919c29ee900af477ec83"
+  endpoint: "POST /v1/helpers/project-memory-suggestions"
+  security: "Bearer-authenticated; bounded inputs and outputs; common secret-like patterns filtered before and after inference; shares inference semaphore; keep_alive=0; Cache-Control no-store"
+  user_control: "manual request only; candidates rendered as text; no automatic writes; each fact requires explicit click and project/duplicate recheck"
+  model_runtime: "local Ollama model chosen by operator via ALANDI_HELPER_MODEL; blank default disables route; no browser model selection or cloud fallback"
+  regression: "server secret filter now recognizes secret names after underscore/hyphen prefixes such as ALANDI_API_KEY; test covers input filtering and candidate-output filtering"
+  gateway_test_run_before_sync: "40538692632 success on c12391cbbbd2fb917035919c29ee900af477ec83; exact post-sync Gateway/Quality/Chromium/published-site/provenance passed on 16ea47ac8a9b94675b67ed2bba4adbb6c15c906c"
+  live_runtime: "not tested; VPS inference, installed model, quality, RAM and latency remain unverified"
+  rollback: "revert PR #69; leave ALANDI_HELPER_MODEL blank; no schema migration"
+
+mobile_composer_docking:
+  status: "implemented on PR #71 branch; exact-head CI pending"
+  pr: 71
+  branch: "fix/mobile-composer-docking-20261027"
+  base_main: "4c9096999fbb3e1265150c420b136066c555285b"
+  fix: "composer remains a normal bottom flex item; removed centered fixed positioning and compensating chat padding"
+  viewport_handling: "textarea height follows visualViewport; recomputed on viewport resize; bottom touch-safe inset increased"
+  regression_test: "mobile composer stays visible at the bottom in new chats across viewport resizes"
+  test_limit: "Chromium viewport resizing is a regression proxy; real iOS Safari keyboard and swipe-area behavior still need device verification"
+  next: "pass exact-head Gateway, Quality/Chromium, published-site smoke and provenance, then merge only after GitHub reports clean"
+
+voice_selection:
+  status: "merged; exact PR-head required checks passed; first-run guide updated; post-merge main CI and live runtime pending"
+  branch: "feat/configurable-local-tts-voices-20261028"
+  merged_pr: 75
+  merge_commit: "4296a8decc12710fafb0a1a4e9644cd8f00b2dfa"
+  verified_pr_head: "006d5d564b6afd4606a604baab0cf1f78e745565"
+  source_register: "evals/voice/language_matrix_v2.yaml"
+  implementation: "operator-configured local Piper voice allowlist; authenticated /v1/capabilities exposes only installed allowlisted voices; /v1/audio/speech validates the selected voice; mini-player selects an available voice"
+  security: "voice artifacts must pre-exist; no auto-download; authenticated endpoints; safe voice IDs; transcription and speech flags remain false by default; gateway and Ollama must remain loopback-bound behind the private HTTPS gateway"
+  verification: "PR-head Gateway run 40633704413 success; Quality run 40633704436 success including 6/6 jobs and published Pages smoke; provenance run 40633704435 success; dead-code audit run 40633704411 success. These runs correspond to PR head 006d5d5; local tests not run. Post-merge main runs not yet verified."
+  licensing: "engine and individual model/voice/phonemizer licenses must be reviewed separately; exact artifact SHA-256 and compatibility remain operator ship gates"
+  deployment_runbook: "docs/VOICE_IMPLEMENTATION_PLAN_RU.md; owner-facing install, checksum/license review, flags, private bind, smoke, metrics and rollback steps"
+  next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
   date: "2026-11-13"
-  verified_main: "692a2df264951320b4264e5c39e42d35f5cdeab3"
+  verified_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
+  last_main_action: "Provider-bound OAuth PKCE commit #692a2df on main; model artifact runbook synced in a535ab6; open PRs 0; issue #111 remains open and owner-gated."
   last_functional_checkpoint: "692a2df264951320b4264e5c39e42d35f5cdeab3"
-  main_quality: "Quality #43420261793 PASS on parent d88e464; provider-bound PKCE code #692a2df exact-head Quality/Gateway matrix pending."
-  main_freshness: "Freshness #43420261792 PASS on parent d88e464; this state refresh changes all required handoff paths and must pass on its exact main SHA."
-  main_provenance: "Provenance #43420261795 PASS on parent d88e464; rerun after this state refresh."
-  main_pages: "Pages #43420261025 SUCCESS on parent d88e464; verify new deployment run."
+  main_quality: "Quality #43422084339 in progress on main parent a535ab6; Lite Gateway Tests #43421709910 PASS on code commit #692a2df. Exact final-head Quality/Gateway matrix pending."
+  main_freshness: "Freshness #43422026395 PASS on previous state commit ad2ec80. Provenance #43422026430 FAILED on that commit because improvements mapping and VPS-unverified status were removed by an over-broad state replacement; restored from d88e464 owner baseline in this commit. Exact-head Freshness/Provenance rerun pending."
+  main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no separate Graphify main push run claimed."
+  main_gateway: "Lite Gateway Tests #43421709910 PASS on code commit #692a2df; full exact-head Quality/Gateway matrix pending."
+  main_provenance: "Provenance #43422026430 FAILED on ad2ec80 due to missing PROJECT_STATE improvements mapping and explicit VPS-unverified status; restored from owner baseline. Rerun exact-head gate; do not weaken it."
+  main_pages: "Pages #43422085331 in progress on parent a535ab6; this slice does not alter public UI. Verify final deployment run."
+  merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
   open_pull_requests: "0 live open PRs."
-  open_issues: "Issue #111 only; owner-controlled host/release gates."
-  runtime_boundary: "External #43420046411 plus Ollama #43418126506 = 13,783,272,852 verified artifact bytes; not installed. uv.lock pins gateway dependencies; no offline cache or target-host install yet."
-  oauth_security: "Provider-bound, single-use PKCE; legacy state migration to google_drive; encrypted token storage; GitHub App connector not implemented."
+  open_issues: "Issue #111 only; owner-controlled release gates."
+  freshness_guard: "scripts/check_project_state_freshness.py; atomic refresh updates OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together."
+  runtime_boundary: "13,783,272,852 bytes of auxiliary model/runtime artifacts downloaded and SHA-verified in Actions (#43420046411 external; #43418126506 Ollama); expire 2026-12-13. Not installed on VPS. Main uncensored Qwen3.5-4B checkpoint remains owner-supplied. Gateway deps pinned but not offline-cached. Host and target runtime unverified."
+  next: "Verify final exact-main Quality/Gateway/Freshness/Provenance/Pages; then implement the real GitHub App connector; inspect target host and install the staged runtime only after host facts are known."
+
+v1_ui_finalization:
+  status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
+  register: "docs/V1_UI_FINALIZATION_RU.md"
+  merged_pr: 121
+  branch: "main"
+  merge_commit: "f4d880f9648989f4fe48ddd2284220b3606c3b86"
+  exact_pr_head: "e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b"
+  scope: "free static landing page plus existing browser client; not public multi-user SaaS or hosted inference"
+  implemented_in_branch: "clarified free UI vs inference costs; roadmap section with reduced-motion ticker; agent/connector in-app roadmap cues; landing E2E; fixed duplicate Settings close action and integrity provider-group parser"
+  pending: "post-merge Pages deployment smoke; native iPhone Safari/manual checks; owner-only issue #111"
+  status_boundary: "ticker is decorative roadmap copy, not a background task indicator; independent agents, integrations, voice and document extraction remain gated/unverified"
+
+ui_owner_override_2026_11_08:
+  status: "IMPLEMENTED AND MERGED in PR #169/#173; Pages root and landing verified exact SHA. Follow-up sentinel correction pending."
+  main_sha_at_checkpoint: "bf039f887e29137b627b06fc2bb107c2793d6b69"
+  pr_169_base: "c4f23e03f563d03213eb87002863da630fc8b833"
+  pr_169_head_at_checkpoint: "16196423d9d308bf057dc65df89a3cbfd93f26f1"
+  owner_decisions:
+    - "Research Studio retired entirely."
+    - "Functions surface: Agents/structured analysis, Deep Research via Thorough, Skills/task profile; placeholder connectors absent."
+    - "Agents is the existing four-stage same-model pipeline, not independent swarm runtime."
+    - "Skills/task profile adds instructions only, not tools/permissions/data scope."
+    - "Functions modal blur/clean close and provider settings exclusivity are E2E acceptance."
+    - "aLandi aServi is first-party and separate from third-party provider selector; no silent cross-provider fallback."
+  implementation:
+    - "PR #169 carries owner Functions UI, provider route guard, E2E regressions, 18-system map, concise English AGENTS, source-backed orchestration method, durable state records."
+    - "Curated Memvid v2.0.140 Apache-2.0 and RAG-Anything v1.4.1 MIT source snapshots imported with pinned commits and per-file Git blob SHA-1 verification; reference-only, ship=false, no runtime."
+    - "PR #168/#171/#172 reconciled and closed with recorded dispositions."
+  pending:
+    - "Code/test 08a73a non-Quality gates all passed; Quality Chromium active. Documentation/state head 161964 has exact gates queued/in progress; re-fetch before merge."
+    - "Refresh Quality/Chromium, Graphify, Gateway, Dead Code and Freshness on final exact SHA."
+    - "Merge only after required gates pass; verify main + Pages exact merge SHA."
+    - "Whole selected archive SHA-256 is uncomputed; native iPhone/VoiceOver, VPS/Tunnel/Ollama and target hardware remain unverified."
+
+three_role_audit_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  status: "PR #121 and PR #122 merged; exact-head CI passed. Historical source branch is retained as an audit reference only."
+  main_base_at_start: "e6404d510229fa64a7bb375995d76dcba55de623"
+  current_main: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  merged:
+    pr_121: "f4d880f9648989f4fe48ddd2284220b3606c3b86; exact head e3c30173c40c4bd45bd2f49b23e0a3f33bdfb97b; six workflow groups passed"
+    pr_122: "fd4f0a105183feb23e0f4e4697446235de9ffe9a; exact head 94d871dbf76a5364ebb3c61d86cc763affa5eaa1; Gateway/Quality/Graphify/Dead Code passed"
+  verified:
+    - "PR #121 exact-head Quality/Chromium/Jekyll/published-site smoke, Gateway, Freshness, Provenance, Graphify and Dead Code passed"
+    - "PR #122 exact-head Gateway, Quality/Chromium/Jekyll/published-site smoke, Graphify and Dead Code passed"
+    - "Audio subprocess timeout/cancellation cleanup and regression tests are included in PR #121"
+    - "Gateway liveness/readiness routes are included in PR #122"
+    - "Legacy 64-role memory/knowledge design and AGENTS/provider E2E already exist in main"
+    - "Legacy provider mode selector is superseded; project workspace tools remain deferred"
+  pending:
+    - "Post-merge Pages deployment and native iPhone Safari/accessibility"
+    - "Full manual cross-subsystem security/runtime matrix"
+    - "Target-host helper model, voice, GPU/CPU and memory/RAG benchmarks"
+    - "Owner-only release gates in issue #111"
+  next: "Freeze V1 scope; complete the current reconciliation PR, then polish and verify only within the selected stack."
+
+audit_update_2026_10_30:
+  tracker: "docs/ARCHITECTURE_DEBUGGER_PLANNER_2026-10-30_RU.md"
+  architecture_graph:
+    artifact_id: 12956306584
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    nodes: 1109
+    edges: 3103
+    communities: 53
+    detected_import_cycles: 0
+    workflow_state: "cancelled after artifact generation; artifact inspected, workflow not marked green"
+  dead_code:
+    artifact_id: 12956377148
+    source_sha: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    finding: "Vulture false positive: BufferedTTS.synthesize_prefix Protocol parameter max_duration_ms is part of adapter contract"
+    deletion_authorized: false
+  gateway_fix:
+    commit: "f9d5afaae983675d2c616e3fbc70942840d314e5"
+    workflow_run: 41007980098
+    run_number: 483
+    conclusion: "success"
+    tests: "150 passed; prior failure was missing test import only"
+  quality:
+    workflow_run: 41007980120
+    run_number: 916
+    conclusion: "cancelled"
+    note: "Integrity, Security, Context and Jekyll jobs passed; Chromium job cancelled during branch update; rerun requested"
+  voice_capability_gaps:
+    existing: "local ASR transcription with editable text; local Piper single-message TTS; half-duplex voice loop"
+    missing_or_unverified: "selected-text TTS; multi-message queue; true streaming turn-taking; native AEC and acoustic barge-in; target-device RU/EN/TH quality and latency"
+  research:
+    knowledge_to_skill: "virgiliojr94/book-to-skill; use as design reference, do not vendor blindly"
+    streaming_voice_candidate: "moonshine-ai/moonshine; verify RU/TH STT model coverage and exact model licenses before adoption"
+    gpu_runtime_candidates: "Ollama GPU, llama.cpp offload, vLLM for GPU-serving workloads; benchmark hardware before migration"
+  cleanup:
+    files_deleted:
+    - "temp/3 — obsolete conversation/planning scratch; commit 936f37b2d9c3542956a227a72c0d3d8069042231"
+    - "temp/4 — simulated brainstorm with stale claims; commit 81bfe30428fdf3b60ea775eb7668253e270aefad"
+    - "temp/5 — unrelated generic Jekyll portfolio plan; commit 893736069e24bc04cd984aa57699caff9780f91d"
+    rationale: "Only temp/3–temp/5 were removed after repository reference search and updating IMPROVEMENT_SELECTION.md. temp/1 and temp/2 remain as substantial historical research; no production source was deleted."
+  next: "Complete exact-head Quality/Chromium rerun, then continue request/provider, memory/RAG, tools/security, voice and document subsystem audit."
+
+
+owner_addendum_2026_10_30:
+  backlog: "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  required_first_release_voice:
+    - "editable local speech-to-text"
+    - "natural streaming conversational voice with turn detection and interruption"
+    - "read selected text aloud"
+    - "read one complete message aloud"
+    - "ordered queue for multiple selected messages"
+    - "real-device RU/EN/TH accuracy, latency, echo and resource acceptance"
+  helper_and_agent_scope:
+    - "role-based helper model registry with task-specific evaluations"
+    - "GPU inference profile; CPU remains for OS/API/orchestration"
+    - "optional high-throughput vLLM only on compatible GPU hardware"
+    - "bounded durable multi-agent execution with budgets, queue, cancellation, idempotency, scopes and traces"
+    - "private Knowledge-to-Skill conversion with provenance, license and prompt-injection review"
+  research_decisions:
+    - "Moonshine Voice is a streaming candidate but listed STT languages omit Russian and Thai; keep whisper.cpp for those languages"
+    - "OpenWOP v2, LangGraph and Temporal are protocol/runtime research only; no adoption"
+    - "Qwen3.5-0.8B and Granite-4.2-3B are eval candidates, not selected production helpers"
+  implementation_status: "requirements and acceptance criteria recorded; code implementation and target hardware tests pending"
+
+
+audio_subprocess_cancellation_fix:
+  implementation_commit: "77b2691f4a9cedfab280384667ece9ae92ba9bd3"
+  regression_tests_commit: "363bb5c46c6a0fcad55bb5d243289e065ee6450a"
+  finding: "ASR ffprobe/ffmpeg/whisper.cpp and Piper TTS subprocesses were not terminated/reaped when request tasks were cancelled; timeout path already killed them."
+  change: "Shared await_local_process helper now kills/reaps child on timeout and asyncio.CancelledError; applied to all local ASR/TTS subprocess waits."
+  tests_added:
+    - "test_local_audio_process_is_killed_and_reaped_on_request_cancellation"
+    - "test_local_audio_process_is_killed_and_reaped_on_timeout"
+  local_equivalent_smoke: "Both subprocesses killed/reaped; return code -9. Not a repository pytest run."
+  ci_status: "Gateway #483 passed 150 tests before this fix; new functional SHA requires Gateway CI. GitHub connector cannot dispatch a new workflow on the current SHA."
+landing_ux_polish_2026_10_30:
+  tracker: "docs/LANDING_UX_POLISH_BACKLOG_RU.md"
+  source_documents:
+    - "docs/LEGACY_UX_REQUEST_AUDIT_RU.md"
+    - "docs/V1_UI_FINALIZATION_RU.md"
+    - "docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md"
+  implementation:
+    landing_ticker_pause_controls: "implemented in f42c42d51eb624b4d2e9fe638ddebffc3b7ab8db"
+    landing_ticker_pause_resume_e2e: "added in b213c8a5d50c93af675693986fe22c3bd4d5499d"
+    runtime_dependency_added: false
+  verification:
+    exact_head_ci: "pending"
+    native_keyboard_screen_reader: "unverified"
+    published_pages_after_merge: "pending"
+  next: "Complete exact-head CI, then implement remaining visual consistency, dialogs/popovers, mobile and accessibility work in bounded slices."
+
+
+landing_voice_scope_2026_10_30:
+  visible_capabilities:
+    - "editable speech transcription"
+    - "conversational voice with interruption"
+    - "read selected text aloud"
+    - "read a complete message aloud"
+    - "ordered playback queue for multiple selected messages"
+  copy_status: "added to landing capability card and roadmap; explicitly distinguishes existing ASR/Piper/half-duplex prototype from unfinished streaming, AEC, barge-in, multi-message queue and device acceptance"
+  e2e_status: "Playwright assertions added in tests/e2e/landing.spec.mjs; exact-head CI not yet run"
+  product_status: "first functional update requirement; not claimed as fully shipped"
+voice_asr_research_update:
+  baseline: "whisper.cpp; keep until measured replacement wins"
+  candidates:
+    - "Nemotron 3.5 ASR Streaming 0.6B via NeMo-Speech.cpp: Russian transcription-ready; Thai adaptation-ready; exact artifact/license and target GPU benchmark required"
+    - "Qwen3-ASR-0.6B via sherpa-onnx: Russian and Thai listed; streaming behavior and license to verify"
+    - "Parakeet RNNT 1.1B: Russian and Thai supported; larger model and NVIDIA Community Model License"
+    - "Moonshine Voice: not a RU/TH STT replacement based on currently listed language support"
+  decision: "no ASR model/runtime migration until RU/EN/TH golden-set WER, endpointing, latency, VRAM/RAM and license acceptance"
+
+exa_research_and_current_build_2026_10_30:
+  research_document: "docs/EXA_RESEARCH_SYNTHESIS_2026-10-30_RU.md"
+  coverage: "45 targeted queries; up to 360 requested result slots; primary-source fetches; not exhaustive census"
+  decisions:
+    asr: "Keep whisper.cpp. Nemotron 3.5 0.6B is RU transcription-ready / TH adaptation-ready (OpenMDW-1.1); Typhoon 115M is Thai CC-BY-4.0; VibeVoice covers RU but not TH."
+    tts: "Keep Piper. VoxCPM2 2B supports RU/TH under Apache-2.0 but is VRAM-heavy; MagpieTTS excludes RU/TH."
+    realtime_voice: "NeMo-Speech.cpp is optional; VoiceChat 11B requires 80GB VRAM/CUDA x86_64."
+    orchestration: "No adoption; keep bounded ToolDAG; DBOS conditional on Postgres; Temporal for distributed long-running workflows."
+    knowledge_to_skill: "Agent Skills spec + book-to-skill v1.3.0 are design references; private human-reviewed converter not implemented."
+  security_fix:
+    commit: "051308c3a8ff95369ddd784503771f6387bc70d9"
+    changes:
+      - "Reject DTD/entity declarations in DOCX/XLSX XML"
+      - "Enforce actual expanded XML size"
+      - "Remove seven duplicate test definitions"
+      - "Add internal entity and external DTD regressions"
+    gateway_ci: "156 passed, 1 upstream Starlette/AnyIO warning"
+  node24_migration:
+    commit: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    workflows_updated: 13
+    external_reusable: "skills/exercise-toolkit stays at ebf43bb pending behavior review"
+  exact_head_ci:
+    sha: "48874eab1cdce698b2dcfd681413d2cd45e27b38"
+    gateway_run: 41014174742
+    quality_run: 41014174703
+    graphify_run: 41014174760
+    dead_code_run: 41014174711
+    provenance_run: 41014174761
+    freshness_run: 41014174686
+    result: "All successful, including Chromium and published Pages smoke"
+  remaining: "Full manual audit; RU/EN/TH hardware voice benchmarks; streaming voice; helper registry; durable orchestration; Knowledge-to-Skill; owner-host gates"
+
+
+whole_stack_integrity_audit_2026_10_30:
+  status: "baseline_recorded_audit_not_yet_started"
+  repository: "DorpNay/skills-github-pages"
+  base_main_sha: "fd4f0a105183feb23e0f4e4697446235de9ffe9a"
+  audit_branch: "chore/reconcile-architecture-and-helper-eval-20261030"
+  baseline_head_sha: "f6e67db5a7e39abc5f9351aae5ccadefc58e865e"
+  pr: 123
+  pr_state_at_baseline: "open_mergeable"
+  baseline_exact_head_ci: "6/6 workflow groups passed; evidence must be rechecked after any new commit"
+  open_issue: 111
+  stack_expansion: "forbidden; audit and improvements must remain inside accepted stack"
+  checklist: "docs/WHOLE_STACK_INTEGRITY_AUDIT_2026-10-30_RU.md"
+  subagent_handoff: "brief prepared in audit document; no independent agent execution claimed"
+  deployment_boundary: "post-merge Pages deployment and live VPS/Ollama unverified"
+
+
+memory_retirement_2026_11_07:
+  status: "OWNER DECISION; implementation in PR #169 branch; exact-head CI pending; not merged or published."
+  removed: "Experimental server-memory graph API/routes, flags, SQLite schema/store, graph-only temporal/conflict modules, browser bridge/actions and per-chat server-memory state."
+  preserved: "Browser-local personal/project notes; conversation delta sync; independent scoped RAG, citations and evidence ledger."
+  isolation_evidence: "RAG exact-scope retrieval/delete and Evidence Ledger scope filtering are covered by gateway tests; exact-response cache key includes full payload and a regression now distinguishes project-specific prompt context."
+  open: "Browser-global-memory multi-project prompt-leak E2E and a dedicated project-ID cache namespace contract are not yet proven."
+  data_retention: "No server DB, WAL/journal, snapshot or backup deletion was performed. Live VPS was not inspected; preserve existing data pending separate owner backup/export/retention decision."
+  canonical_record: "DECISIONS.md D-021; docs/USER_REQUEST_CHECKLIST.md UR-061/UR-064; docs/MASTER_TASK_REGISTRY_RU.md; EVALS.md EV-MEM-003."
+
 
 owner_priority_2026_11_13:
   task: "LANDING-V2-2026-001"
   canonical_scope: "docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md section K"
   functions_panels: ["Deep Research", "Agents", "Skills", "Connectors"]
-  priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
+  required: "Owner UI; real Deep Research; real AgentRun and live states; Skill lifecycle; real connectors; local-file Coder sandbox; full evaluated RAG; document/book/web parsers, OCR and converters; installed Whisper/ASR, TTS/VAD and target-device voice; tested mode combinations; conditional helper-model routing; cache, observability and N2O in main; end-to-end owner runbook."
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
+  priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "Auxiliary model/runtime artifacts 13,783,272,852 bytes downloaded and SHA-verified in Actions (external #43420046411; Ollama #43418126506); primary uncensored Qwen3.5-4B checkpoint is owner-supplied and excluded. Target runtime not installed. Gateway deps pinned in uv.lock but not installed/offline-cached; host OS/architecture and RU/EN/TH eval remain open."
-  live_main: "692a2df264951320b4264e5c39e42d35f5cdeab3"
+  live_main: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -68,21 +570,24 @@ model_stack_artifact_checkpoint_2026_11_13:
   install_guide: "models/runtime-install.md"
   platform_artifacts: "Provisional Linux x86_64; inspect actual VPS OS/architecture before install."
   download_state: "VERIFIED_DOWNLOADED_IN_GITHUB_ACTIONS; external run #43420046411 includes current runtime lock; Ollama run #43418126506 contains four auxiliary models plus lock. Not installed on target host."
+  runtime_selection: "Candidate only. Production requires template/license review, same-host RU/EN/TH eval and memory/latency measurements."
+  voice_state: "Piper 1.8.0 pinned; RU dmitri and EN joe voice chains reviewed. Thai voice remains deferred pending a permissive base/voice license."
   gateway_dependencies: "pyproject.toml and uv.lock pin gateway dependencies; not installed or staged as offline cache."
   oauth_security: "Provider-bound single-use PKCE; legacy OAuth state rows migrate to google_drive; encrypted tokens remain provider-scoped."
   target_install_state: "NOT_INSTALLED; target host and service access not available in this session."
 
 current_execution_checkpoint:
   date: "2026-11-13"
-  checkpoint_parent_sha: "692a2df264951320b4264e5c39e42d35f5cdeab3"
+  checkpoint_parent_sha: "a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b"
   open_prs: []
   open_issues: [111]
   completed:
     - "Model/runtime artifacts acquired and verified in Actions: external #43420046411, Ollama #43418126506."
     - "Provider-bound PKCE implemented in #692a2df; legacy SQLite migration, explicit Google provider, encryption-at-rest tests added."
     - "15 owner priorities verified: K.1 items 1-14 plus K.2 decision pack; K.1 item 14 is the owner runbook."
+  recovery:
+    - "Provenance #43422026430 failed because a previous state rewrite removed the non-empty improvements mapping and explicit VPS-unverified declaration. Restored both from owner-authored baseline d88e464; metadata gate remains unchanged."
   next:
     - "Verify final exact-main Quality/Gateway/Freshness/Provenance/Pages checks."
     - "Implement the real read-only GitHub App connector with Contents/Metadata read-only permissions, expiry/refresh/revoke, quotas/timeouts, audit and tests."
     - "Only then expose Connectors panel; inspect target host and install model/runtime plus uv-locked gateway dependencies."
-

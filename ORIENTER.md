@@ -4,12 +4,13 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `692a2df264951320b4264e5c39e42d35f5cdeab3` (parent of this state-refresh commit; fetch live ref on resume).
+- **Current main SHA:** `a535ab652a2a69dc1feeb9b73125bf10bf1e7e6b` (parent of this metadata repair/state refresh; fetch live ref on resume).
 - **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
 - **Merged/ported:** PR #185 model/runtime pack; PR #184 Browser Local workspace; PR #176 research ported. Stale #175/#178/#179/#180/#182 closed with dispositions; branches retained.
-- **Model acquisition:** external run #43420046411 (6,054,442,377 bytes; latest runtime lock) and Ollama run #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes, expiry 2026-12-13. Downloaded and SHA-verified in Actions, not installed on target.
-- **OAuth security:** commit #692a2df adds provider-bound single-use PKCE and legacy Google-state migration; encrypted token storage remains. GitHub App connector is not implemented.
-- **Parent checks:** Quality #43420261793, Pages #43420261025, Freshness #43420261792 and Provenance #43420261795 passed on parent `d88e464`. New exact-head checks for #692a2df are pending.
+- **Artifacts:** external run #43420046411 (6,054,442,377 bytes) + Ollama #43418126506 (7,728,830,475 bytes) = 13,783,272,852 bytes, verified in Actions, not installed on target.
+- **OAuth:** provider-bound single-use PKCE in #692a2df; Lite Gateway Tests #43421709910 PASS. GitHub App connector not implemented.
+- **Metadata incident:** Provenance #43422026430 exposed removed `improvements` and VPS-unverified declarations; restored from d88e464 baseline, no gate weakened. Re-run exact-head Provenance/Freshness.
+- **Current checks:** Quality #43422084339 and Pages #43422085331 were in progress on parent a535ab6; exact final-head checks pending.
 
 ## Current owner priority
 
