@@ -116,7 +116,18 @@
           "sha256": "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
         }
       ],
-      "notes": "Only after first-stage retrieval, and only if Recall@k/MRR/nDCG improves. Not part of the default chat hot path."
+      "notes": "Only after first-stage retrieval, and only if Recall@k/MRR/nDCG improves. Not part of the default chat hot path.",
+      "required_paths": [
+        "config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "vocab.json",
+        "merges.txt",
+        "modules.json",
+        "1_LogitScore/config.json",
+        "chat_template.jinja",
+        "README.md"
+      ]
     },
     {
       "id": "qwen3_asr_06b",
@@ -139,7 +150,18 @@
           "sha256": "79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea"
         }
       ],
-      "notes": "Official model card lists 52 languages/dialects including Russian and Thai. Evaluate separately against the already-implemented whisper.cpp path; not yet wired into gateway."
+      "notes": "Official model card lists 52 languages/dialects including Russian and Thai. Evaluate separately against the already-implemented whisper.cpp path; not yet wired into gateway.",
+      "required_paths": [
+        "config.json",
+        "tokenizer.json",
+        "tokenizer_config.json",
+        "vocab.json",
+        "merges.txt",
+        "preprocessor_config.json",
+        "generation_config.json",
+        "chat_template.json",
+        "README.md"
+      ]
     },
     {
       "id": "whisper_large_v3_turbo_q5_0",
@@ -198,7 +220,11 @@
           "sha256": "9ed9941bac7373f2ec1be36627e0e71a349a59ca5522d4363fd50701db05193a"
         }
       ],
-      "notes": "Use the retrained model at this exact revision. The older 2023 dmitri checkpoint was Lessac-derived and research-only; do not substitute it."
+      "notes": "Use the retrained model at this exact revision. The older 2023 dmitri checkpoint was Lessac-derived and research-only; do not substitute it.",
+      "required_paths": [
+        "ru/ru_RU/dmitri/medium/MODEL_CARD",
+        "ru/ru_RU/dmitri/medium/ru_RU-dmitri-medium.onnx.json"
+      ]
     },
     {
       "id": "piper_en_joe_medium",
@@ -220,7 +246,11 @@
           "sha256": "abf4b998e34045cbd00eaf050de2de620f81ded6eb8b85a24b022a1c2b3f08d2"
         }
       ],
-      "notes": "Chosen over Lessac-derived voices. Preserve MODEL_CARD and attribution/provenance metadata."
+      "notes": "Chosen over Lessac-derived voices. Preserve MODEL_CARD and attribution/provenance metadata.",
+      "required_paths": [
+        "en/en_US/joe/medium/MODEL_CARD",
+        "en/en_US/joe/medium/en_US-joe-medium.onnx.json"
+      ]
     },
     {
       "id": "tesseract_fast_ru_en_th",
