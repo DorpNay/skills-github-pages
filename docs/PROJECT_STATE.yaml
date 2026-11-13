@@ -558,10 +558,11 @@ model_stack_artifact_checkpoint_2026_11_13:
   auxiliary_payload_bytes: 6033970026
   ollama_reference_estimate_bytes: 3939000000
   total_with_ollama_reference_estimate_bytes: 9972970026
-  ollama_reference_estimate_bytes: 3300000000
-  total_with_ollama_reference_estimate_bytes: 8945657360
   artifact_manifest: "models/artifacts.manifest.json"
   downloader: "scripts/download_model_artifacts.py"
+  runtime_lock: "models/runtime-stack.lock.json"
+  install_guide: "models/runtime-install.md"
+  platform_artifacts: "Provisional Linux x86_64 only; verify VPS OS/architecture before install."
   download_state: "NOT_DOWNLOADED: outbound DNS unavailable in engineering container. No server or runtime changed."
   runtime_selection: "Candidate only. Production requires template review, license/provenance review, same-host RU/EN/TH eval and memory/latency measurements."
   voice_state: "Piper 1.8.0 pinned; RU dmitri and EN joe voice chains reviewed. Thai phonemizer exists but no official Thai voice; F5-TTS-THAI deferred due non-commercial base checkpoint."
