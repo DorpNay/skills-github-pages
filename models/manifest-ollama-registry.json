@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-13T08:37Z",
+  "updated": "2026-11-13T08:45Z",
   "policy": {
     "storage": "Ollama registry blobs are acquired to GitHub Actions artifacts, never committed to Git or Git LFS.",
     "verification": "Pin the official registry manifest digest prefix, exact config/layer SHA-256 and byte sizes. The downloader verifies the raw manifest prefix and every blob.",
@@ -13,7 +13,6 @@
       "namespace": "library",
       "tag": "4b",
       "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3.5/manifests/4b",
-      "manifest_digest_prefix": "7f3251fa6878",
       "total_bytes": 3324173934,
       "architecture": "qwen35",
       "parameters": "4.21B",
@@ -64,7 +63,9 @@
           "filename": "params.json"
         }
       ],
-      "notes": "Official base checkpoint for the main-model bake-off. Keep as baseline; do not replace the uncensored candidate by assumption. Official registry package includes the vision projector."
+      "notes": "Official base checkpoint for the main-model bake-off. Keep as baseline; do not replace the uncensored candidate by assumption. Official registry package includes the vision projector. The Ollama model-page short digest is not the raw registry manifest SHA-256; all config/layer descriptors are pinned individually and the raw manifest hash is recorded during acquisition.",
+      "model_page_short_digest": "7f3251fa6878",
+      "manifest_sha256": null
     },
     {
       "id": "qwen35_helper_2b_q4km",
@@ -72,7 +73,6 @@
       "namespace": "library",
       "tag": "2b-q4_K_M",
       "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3.5/manifests/2b-q4_K_M",
-      "manifest_digest_prefix": "1e2d21a4f03a",
       "total_bytes": 1945781358,
       "architecture": "qwen35",
       "parameters": "1.88B",
@@ -123,7 +123,9 @@
           "filename": "params.json"
         }
       ],
-      "notes": "Candidate for one conditional small helper (classification/extraction/compression) and smaller-hardware fallback. Do not load concurrently with the main model on the 8 GB host until memory is measured."
+      "notes": "Candidate for one conditional small helper (classification/extraction/compression) and smaller-hardware fallback. Do not load concurrently with the main model on the 8 GB host until memory is measured.",
+      "model_page_short_digest": "1e2d21a4f03a",
+      "manifest_sha256": "1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7"
     }
   ],
   "owner_server_only": [
