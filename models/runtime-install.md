@@ -8,6 +8,19 @@ Recommended starting disk headroom is at least 30 GB. The complete auxiliary acq
 
 The reference profile is 8 GB RAM, one resident LLM, 4K context and concurrency 1. This is a starting hypothesis, not a benchmark. Do not keep ASR, reranker, embeddings and TTS resident simultaneously without exact-host RSS/PSS measurements.
 
+## 0.1 Download the already verified Actions artifacts
+
+Run on a workstation or the target host with GitHub CLI authenticated (`gh auth login`). These commands download the ZIP artifacts from the completed runs; they do not install anything:
+
+    gh run download 43417527347 -R DorpNay/skills-github-pages -n alandi-external-model-cache-43417527347
+    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen35-base-4b-43417305393
+    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen35-helper-2b-43417305393
+    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-qwen3-embedding-06b-q8-0-43417305393
+    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-glm-ocr-q8-0-43417305393
+    gh run download 43417305393 -R DorpNay/skills-github-pages -n alandi-ollama-helper-lock-43417305393
+
+Keep the downloaded directories and their checksum/lock files intact. The external artifact contains the 10 non-Ollama packages; the four registry artifacts each contain one verified Ollama package. The artifacts expire on 2026-12-13.
+
 ## 1. Acquire pinned artifacts
 
 From a network-enabled workstation/server:
@@ -16,6 +29,8 @@ From a network-enabled workstation/server:
     python scripts/download_model_artifacts.py --dry-run
     python scripts/download_model_artifacts.py --skip-ollama
     python scripts/download_model_artifacts.py --verify-only --skip-ollama
+
+The GitHub Actions artifact above is already downloaded and verified; use the `gh run download` commands in §0.1 instead of re-running network acquisition when staging it on the target host.
 
 This downloads the Ollama runtime archive, Piper wheel, Qwen vision projector, Qwen reranker and ASR weights, Whisper model, VAD, Piper RU/EN voices and Tesseract RU/EN/TH data. The full HF Qwen3 embedding weights are not downloaded; the official Ollama Q8_0 model is the runtime selection. The main uncensored Qwen Q4_K_M checkpoint is deliberately excluded for owner upload. The full HF Qwen3 embedding checkpoint is provenance-only; the smaller official Ollama Q8_0 model is selected instead.
 
