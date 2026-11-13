@@ -25,13 +25,16 @@ const suites = {
       matches(/<\/html>\s*$/, 'Document must close its html element.');
     }],
     ['critical UI controls exist', () => {
-      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
+      for (const id of ['chatBox', 'userInput', 'sendBtn', 'stopBtn', 'settingsModal', 'apiKey', 'apiKeyShell', 'apiKeyStatus', 'baseUrl', 'modelName', 'systemPromptInput', 'memoryBox', 'toggleSearch', 'toggleMultiAgent', 'modeFast', 'modeDeep', 'modeHint', 'providerPreset', 'modelPreset', 'modelSearch', 'refreshModelCatalog', 'providerHint', 'providerDocsLink', 'traceModal', 'traceContent', 'settingsProfileFile', 'toast', 'uiTheme', 'uiLanguage', 'uiMotion', 'cloudSettingsCard', 'cloudStatusDot', 'cloudStatus', 'cloudBaseUrl', 'cloudBaseUrlError', 'cloudModel', 'cloudModelError', 'cloudApiKey', 'cloudApiKeyError', 'clockDigital', 'homeThemeToggle', 'brandWordmark', 'projectPanel', 'projectSettingsModal', 'currentProjectSelect', 'projectMemoryToggle', 'globalMemoryToggle', 'projectManagerDetails', 'projectMemoryBox', 'importProjectFile', 'functionsMenu', 'functionsMenuSummary', 'functionPanelModal', 'functionsDrawerNav', 'notebookFunctionSettings', 'notebookWorkspace', 'notebookTextFile', 'notebookRightsConsent', 'skillPresetSelect', 'agentModeControl', 'voiceMenu', 'attachTextButton', 'textAttachmentInput']) {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
-      assert.ok(source.includes('<details id="functionsMenu"'), 'The owner-approved Functions menu must exist.');
-      assert.ok(source.includes('data-function="agents"'), 'Functions must expose structured analysis.');
-      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Functions must expose Deep Research as a Thorough-mode shortcut.');
-      assert.ok(source.includes('data-function="skills"'), 'Functions must expose task profiles/Skills.');
+      assert.ok(source.includes('<div id="functionsMenu"'), 'The owner-approved Functions drawer launcher must exist.');
+      assert.ok(source.includes('aria-controls="functionPanelModal"') && source.includes('aria-modal="true"'), 'Functions drawer must expose an accessible dialog trigger and modal.');
+      for (const section of ['agents', 'research', 'notebook', 'skills']) {
+        assert.ok(source.includes('data-action="open-function-panel" data-function="' + section + '"'), 'Functions drawer must expose the ' + section + ' section.');
+      }
+      assert.ok(source.includes('data-action="open-functions-drawer"'), 'Functions drawer must have an explicit opener.');
+      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must expose the Thorough-mode shortcut.');
       assert.equal(source.includes('data-function="connectors"'), false, 'Do not expose placeholder Integrations without registered connectors.');
     }],
     ['independent processing controls and on-demand resources', () => {
@@ -82,8 +85,10 @@ const suites = {
       includes("setCloudFieldConnection('connected')", 'The server fields must only turn green after the connection and health checks pass.');
       includes('Never show a green connection lamp for proxy text, HTML, or an unknown error body.', 'HTTP 200 with unrecognized text must not be considered a successful model probe.');
       includes("globalMemoryEnabled=safeGet(STORAGE.globalMemoryEnabled)==='true'", 'Global memory must be explicitly enabled, not added to every request by default.');
-      includes("indexedDB.open('AI_Agent_DB_v87', 2)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
+      includes("indexedDB.open('AI_Agent_DB_v87', 3)", 'Memory schema migration must create a separate shared store without deleting legacy private notes.');
       includes("database.createObjectStore('sharedMemory')", 'Shared memory must use a distinct IndexedDB object store.');
+      includes("database.createObjectStore('notebooks')", 'Research notebooks must use a separate object store.');
+      includes("database.createObjectStore('notebookEntries')", 'Notebook entries must use a separate object store.');
       includes("const privateMemories=selectedProviderForMemory==='alandi'?await MemoryDB.getAll():[]", 'Private notes must only be read for the local aLandi route.');
       assert.equal(source.includes('serverMemoryDetails'), false, 'The retired experimental server-memory UI must be fully removed.');
       assert.equal(source.includes('getServerProjectMemories'), false, 'The retired server graph-memory feature must not remain callable.');
