@@ -52,6 +52,14 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 0
+      - name: Upload sherpa-onnx Qwen ASR INT8 CPU bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-sherpa-qwen3-asr-0.6b-int8-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-model-artifacts/sherpa_qwen3_asr_06b_int8/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
       - name: Upload ASR model
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
