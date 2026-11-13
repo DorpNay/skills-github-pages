@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-11-13",
+  "updated": "2026-11-13T08:37Z",
   "policy": {
     "storage": "Ollama registry blobs are acquired to GitHub Actions artifacts, never committed to Git or Git LFS.",
     "verification": "Pin the official registry manifest digest prefix, exact config/layer SHA-256 and byte sizes. The downloader verifies the raw manifest prefix and every blob.",
