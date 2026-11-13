@@ -4,12 +4,12 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `fc0fd26b099088f419c5391e5e23b692bab9e50f` (checkpoint parent for this atomic state-refresh correction). The resulting commit will be the new live main HEAD; fetch it on resume.
-- Open PR queue: 0. **Open issue:** #111 only (owner/environment release gates).
-- PR #185 model/runtime artifact pack merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 Browser Local Coder workspace merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`; PR #176 research ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. #175/#178/#179/#180/#182 closed with dispositions; branches retained.
-- Model artifacts: external run #43417527347 (6,054,440,341 bytes) and Ollama run #43417305393 (7,728,830,475 bytes), total 13,783,270,816 bytes; expire 2026-12-13. Downloaded and SHA-verified in Actions, not installed. Main uncensored primary checkpoint owner-supplied and excluded.
-- Exact previous main checks: Quality #43419102024 PASS and Freshness #43419101988 PASS on `3c57595e6032a9b69553e23848fbaddd1fa7973e`. Quality #43420046546 is running on this parent; Freshness #43420047399 failed because ORIENTER contained the prior SHA. This correction restores the exact marker; rerun Freshness on resulting main SHA.
-- Runtime boundary: target host OS/architecture, disk, RAM/VRAM, Ollama service, Piper/Whisper/OCR install, model template, API smoke tests and RU/EN/TH quality remain unverified. Browser Local is implemented; sandboxed CLI and real Connector registry remain open.
+- **Current main SHA:** `692a2df264951320b4264e5c39e42d35f5cdeab3` (parent of this state-refresh commit; fetch live ref on resume).
+- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
+- **Merged/ported:** PR #185 model/runtime pack; PR #184 Browser Local workspace; PR #176 research ported. Stale #175/#178/#179/#180/#182 closed with dispositions; branches retained.
+- **Model acquisition:** external run #43420046411 (6,054,442,377 bytes; latest runtime lock) and Ollama run #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes, expiry 2026-12-13. Downloaded and SHA-verified in Actions, not installed on target.
+- **OAuth security:** commit #692a2df adds provider-bound single-use PKCE and legacy Google-state migration; encrypted token storage remains. GitHub App connector is not implemented.
+- **Parent checks:** Quality #43420261793, Pages #43420261025, Freshness #43420261792 and Provenance #43420261795 passed on parent `d88e464`. New exact-head checks for #692a2df are pending.
 
 ## Current owner priority
 

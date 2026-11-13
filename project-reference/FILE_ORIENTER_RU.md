@@ -4,12 +4,13 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main checkpoint parent `fc0fd26b099088f419c5391e5e23b692bab9e50f`; current main advances by one atomic state-refresh commit directly after it. Fetch the live SHA on resume.
+- Main checkpoint parent `692a2df264951320b4264e5c39e42d35f5cdeab3`; this atomic state refresh records provider-bound OAuth PKCE commit #692a2df and latest model artifacts. Fetch live SHA on resume.
 - **Snapshot marker:** open PRs (0): ; open issues (1): #111.
-- PR #185 merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`; PR #176 research ported into main at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. #175/#178/#179/#180/#182 closed with dispositions; branches retained.
-- Model artifacts verified: external run #43417527347 (6,054,440,341 bytes); Ollama run #43417305393 (7,728,830,475 bytes); combined 13,783,270,816 bytes. Artifacts expire 2026-12-13. The primary uncensored main checkpoint is owner-supplied and excluded.
-- Artifacts are not installed on the target host. Confirm OS/architecture, disk, RAM/VRAM, CPU/GPU and service constraints before installing Linux AMD64 runtime packages.
-- Browser Local Coder workspace is implemented in main; sandboxed CLI/native companion are not. Main priority remains `LANDING-V2-2026-001`, section K; use the existing register and OLEDUE checkpoint, not a new backlog.
+- PR #185 and #184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions and branches retained.
+- Model artifacts: external run #43420046411 (6,054,442,377 bytes); Ollama run #43418126506 (7,728,830,475 bytes); total 13,783,272,852 bytes; expiry 2026-12-13. Not installed on target.
+- OAuth PKCE state is provider-bound and single-use; legacy state rows migrate to `google_drive`. Google Drive and GitHub connectors are not yet integrated/registered.
+- Root gateway dependencies are pinned in `pyproject.toml`/`uv.lock`; not yet installed or staged as an offline cache. Confirm target OS/architecture before host installation.
+- Continue `LANDING-V2-2026-001` section K on main only; no new PRs under the current owner directive.
 
 ## 1. Быстрый маршрут
 

@@ -72,3 +72,8 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Checkpoint parent: `fc0fd26b099088f419c5391e5e23b692bab9e50f`.
 - Prior Freshness #43420047399 passed 19 unit tests but rejected the live docs because ORIENTER lacked the exact current checkpoint SHA. This correction updates ORIENTER and all other required state/handoff files atomically.
 - Main Quality #43419102024 and Freshness #43419101988 passed on previous parent 3c57595; exact current-main runs must be checked after this commit.
+
+
+## OAuth and connector security invariant (2026-11-13)
+- OAuth PKCE transactions are provider-bound, single-use and expiring. Existing provider-less state rows migrate as `google_drive`; future providers must pass their explicit provider ID to begin/consume. Keep tokens encrypted at rest and never expose them in UI, logs or tool output.
+- OAuth/Drive groundwork is not a connector. Do not expose a Connectors action until its registry, least-privilege permissions, explicit consent, real handlers, quotas/timeouts, revoke/deletion/audit and regression tests are implemented.
