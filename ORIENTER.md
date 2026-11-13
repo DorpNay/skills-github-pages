@@ -4,13 +4,15 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2` (parent of this final Freshness correction; fetch live ref on resume).
-- **Open PR queue:** 0. **Open issue:** #111 only.
-- **Model artifacts:** external #43420046411 + Ollama #43418126506 = 13,783,272,852 verified bytes; not installed on target.
-- **OAuth:** provider-bound PKCE in #692a2df; Lite Gateway Tests #43421709910 PASS.
-- **Project metadata:** Provenance #43422778379 PASS on parent #72f77aeb; `improvements` and VPS-unverified declaration preserved.
-- **Freshness:** #43422778432 failed only because VOLLEY_LOG omitted the snapshot parent SHA a535ab6; this commit adds it and refreshes all required files. Exact-head rerun pending.
-- **Quality/Pages:** #43422778445 and #43422778231 were in progress on parent #72f77aeb; exact final-head checks pending.
+- **Current main SHA:** `1760cb0391bd0257737bf72db4ea4c5e01d2dde4` (parent of the four-panel Functions UI/state commit; fetch live ref on resume).
+- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
+- PR #185 model/runtime pack and PR #184 Browser Local workspace are merged; PR #176 research was ported. Stale #175/#178/#179/#180/#182 were closed with dispositions; source branches retained.
+- **Security:** provider-bound, single-use OAuth PKCE state and encrypted token vault are implemented; Google Drive OAuth remains groundwork, not a connector.
+- **Model artifacts:** external run #43420046411 and Ollama run #43418126506 total 13,783,272,852 bytes; downloaded and SHA-verified, not installed on target.
+- **API/library cache:** Python runtime cache #43423610986 SUCCESS, 81,549,321 bytes; runtime-only Ubuntu 24.04 x86_64 uv cache/bootstrap/lock/checksums with offline sync and pip-check for CPython 3.12/13/14. Not installed on target; inspect actual host before using it.
+- **Four-panel UI:** Deep Research, Agents, Skills and Connectors open independently in this UI slice. Connectors is an honest empty state; real registry/actions remain unimplemented. Research Studio remains retired.
+- **Parent checks:** Pages #43423609329 SUCCESS; Quality #43423610395 in progress. Freshness/Provenance exact-head reruns required.
+- **Runtime boundary:** target host OS/architecture, disk, RAM/VRAM, Ollama, Piper/Whisper/OCR install, API smoke tests, RU/EN/TH quality, full RAG and AgentRun remain unverified.
 
 ## Current owner priority
 

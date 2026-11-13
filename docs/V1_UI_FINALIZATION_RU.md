@@ -498,3 +498,15 @@ PR #122 добавил только эксплуатационную надёж�
 
 
 **Progress 2026-11-08 / PR #169 (branch only):** added a dedicated localized `Check and connect` action inside the aServi settings disclosure. The connection function and scheduled probe now exit when the selected provider is not `alandi`, preventing third-party mode from sending any aServi connectivity request. Voice/document E2E setup now uses the explicit first-party connection flow; probe traffic is excluded from user-chat assertions. Exact-head gates are still required; this is not live main until merge.
+
+
+## Owner override — 2026-11-13: four-panel Functions contract
+
+This owner directive is later than and supersedes the 2026-11-08 three-entry Functions override above. The top-level Functions menu must expose exactly four independent entry points, in this order: **Deep Research, Agents, Skills and Connectors**. Each opens its own panel through a real handler and has an honest state, data/permission boundary and regression coverage.
+
+- **Deep Research:** the current panel is configuration/navigation for Quick/Thorough, web breadth and the existing structured workflow. It is not yet the full resumable evidence/report engine described in LANDING-V2-2026-001.
+- **Agents:** the current execution path remains the bounded four-stage same-model workflow; saved team-size/role blueprints do not create independent workers. The durable AgentRun runtime remains required work.
+- **Skills:** current task profiles alter chat-scoped instructions only; they do not grant tools, credentials or data access. Skill Factory lifecycle remains required work.
+- **Connectors:** expose the independent panel with a truthful empty state. Until a real connector registry, OAuth scopes, consent, credential lifecycle, action handlers, revoke/audit and tests exist, show no connect switches or fake actions. This UI entry point is not a claim that an integration is connected.
+
+Keep Research Studio retired. Preserve the existing HTML/CSS/JavaScript + Jekyll client, responsive 320–1440px checks, 44px touch targets, keyboard/focus, RU/EN, dark/light and reduced-motion requirements. Root browser app and `/landing/` remain distinct release surfaces.

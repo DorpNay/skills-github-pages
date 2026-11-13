@@ -85,3 +85,9 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Checkpoint log invariant (2026-11-13)
 - Every atomic state refresh must include the exact `snapshot.main_sha` parent SHA in `docs/VOLLEY_LOG.md`; update OLEDUE, AGENTS, ORIENTER, FILE_ORIENTER, PROJECT_STATE, snapshot and VOLLEY_LOG together. Preserve project metadata and do not weaken Freshness/Provenance gates.
+
+
+## Owner main-only and Functions UI checkpoint (2026-11-13)
+- Current owner instruction: bounded direct commits to `main`, zero open PRs. Do not create a PR unless the owner explicitly changes this instruction.
+- The top-level Functions menu must expose exactly four independent entry points in this order: Deep Research, Agents, Skills and Connectors. Connectors currently opens an honest empty state; never add connect actions until registry, scopes, consent, encrypted credentials, real handlers, revoke/audit and regression tests exist.
+- On `oledue`, read the latest checkpoint in root `OLEDUE.md`, fetch live main/queue/exact-head checks once, and continue from NEXT. Do not restart broad repository archaeology when the checkpoint is current.

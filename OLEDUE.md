@@ -85,3 +85,18 @@ Merge, deployment, rebase/main synchronization, force-push, destructive changes,
 - **Security:** #692a2df provider-binds PKCE, preserves single-use/expiry, migrates legacy rows to `google_drive`, keeps token encryption. Lite Gateway Tests #43421709910 PASS.
 - **Metadata repair:** Provenance #43422778379 PASS on #72f77aeb; owner-authored `improvements` mapping and explicit VPS-unverified metadata restored. Freshness #43422778432 failed only because VOLLEY_LOG omitted parent SHA `a535ab6`; this commit records it and refreshes all seven files. No gate was weakened.
 - **NEXT:** verify final exact-main Freshness/Provenance/Quality/Pages; then build the read-only GitHub App connector; then inspect target host and stage/install the platform-matched stack. Keep ordinary chat direct and helper models conditional.
+
+
+## Current owner execution checkpoint — 2026-11-13 (four-panel Functions UI, main-only)
+
+**Resume rule:** parent main SHA for this atomic UI/state commit is `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`. On the next `oledue`, read this block, batch-fetch live main SHA + open PR/issue queue + exact-head Actions once, then continue from NEXT. The latest explicit owner request drives routing; do not default to any PR or re-scan historical files.
+
+- **15 priorities:** canonical section K in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md`: K.1 items 1–14 plus K.2 decision pack = 15. UI and four-panel Functions are P1; K.1 item 14 is the owner-facing tested install/backup/troubleshooting/rollback runbook; K.4 is the end-to-end done gate.
+- **UI slice in this commit:** menu exposes exactly four independent entries in canonical order: Deep Research, Agents, Skills, Connectors. Connectors opens an honest empty-state panel; it has no connect controls because no real registry/actions are integrated. Research Studio stays retired.
+- **Runtime truth:** Agents is still the bounded four-stage same-model workflow, not independent workers. Deep Research remains settings/navigation, not yet the resumable evidence/report engine. Skills remain chat-scoped instructions, not Skill Factory. Browser Local workspace is merged, but arbitrary CLI execution still requires a real OS sandbox.
+- **Main-only:** parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`; open PRs = 0; issue #111 only. Do not create PRs unless the owner changes this directive.
+- **Security foundation:** provider-bound, single-use PKCE state and legacy Google-state migration are implemented; token values remain encrypted at rest. This is not a GitHub/Drive connector.
+- **Model artifacts:** external cache #43420046411 (6,054,442,377 bytes) + Ollama packages #43418126506 (7,728,830,475 bytes) = 13,783,272,852 bytes, SHA-verified in Actions; not installed on VPS.
+- **API/library cache:** Python runtime cache #43423610986 SUCCESS, 81,549,321 bytes, runtime-only uv cache + pinned bootstrap/lock/checksums for Ubuntu 24.04 x86_64 and CPython 3.12/13/14. Offline sync and pip-check matrix passed in workflow; not installed on target. OS packages and optional model-specific dependencies remain separate.
+- **Parent checks:** Pages #43423609329 SUCCESS; Quality #43423610395 in progress. New exact-head checks are required for this UI commit.
+- **NEXT:** (1) verify exact-head UI/Quality/Freshness/Pages/Graphify/Provenance; (2) implement the real read-only GitHub App connector registry and credential/action lifecycle before connect controls; (3) continue Deep Research evidence workflow and durable AgentRun runtime; (4) complete Skills lifecycle; (5) inspect target host and install platform-matched model/API/runtime artifacts.

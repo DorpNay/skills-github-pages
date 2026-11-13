@@ -3,16 +3,16 @@
 **Дата:** 2026-11-08  
 **Контекст:** owner-directed PR #169, с сохранением проверенных UX-контрактов из PR #131. Документ — спецификация и карта управления; кроме текущего UI-среза §0, перечисленные будущие runtime-функции не считаются реализованными.
 
-## 0. Аудит фактического UI на owner-directed PR #169 code/test HEAD 08a73a7 (branch only; not merged)
+## 0. Verified Functions UI on main — 2026-11-13
 
-**Verified source snapshot:** main `c4f23e03f563d03213eb87002863da630fc8b833`; PR #169 code/test HEAD `08a73a7594695b8a74fa88d90db07832a8373665`. This is an implementation candidate, not a live/main release. The following menu details describe the current branch source; exact-head Quality/E2E must pass before status becomes VERIFIED.
+**Source snapshot:** main parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`. The top-level Functions menu now has four independent entry points, in owner-defined order: **Deep Research, Agents, Skills and Connectors**. The Connectors entry opens the existing independent empty-state panel; it does not claim a connector is registered or connected. Exact-head Quality/Chromium and Freshness are required for this new main commit.
 
-### Top-level Functions menu — three actual actions
+### Top-level Functions menu — four independent panels
 
+- **Deep Research:** opens a dedicated settings panel. It reports current Quick/Thorough effort, Web search breadth (standard/expanded/offline) and current structured-pipeline state; it can select Thorough, open Web settings or navigate to Agents. Research Studio remains retired; the full resumable evidence/report workflow is still required work.
 - **Agents / Structured analysis:** opens the existing Agent panel. Current implementation is a bounded four-stage sequential pipeline (planner → researcher → critic → synthesizer) on one selected model, conditionally invoked for suitable complex tasks. Team Blueprint may be saved, but it does not launch independent worker agents.
-- **Deep Research:** opens a dedicated Deep Research settings panel (new in this PR). It reports current Quick/Thorough effort, current Web search breadth (standard/expanded/offline) and current structured-pipeline state. It provides actions to select Thorough, open the existing Web settings menu, or navigate to the Agents panel. The separate Research Studio is retired.
-- **Skills / Task profile:** opens the chat-scoped task profile panel. Presets/custom instructions change task guidance and output style only; they do not grant tools, permissions, network access or data scope.
-- **Integrations:** no external connectors are connected; placeholder switches and fake runtime states are absent.
+- **Skills / Task profile:** opens the chat-scoped task profile panel. Presets/custom instructions change task guidance and output style only; they do not grant tools, permissions, network access or data scope. Skill Factory lifecycle remains required work.
+- **Connectors:** opens an independent panel with a truthful empty state. No external connector is currently registered or connected; the panel has no connect switches or fake actions. A real registry, OAuth/API scopes, explicit consent, encrypted credential lifecycle, action handlers, quotas, revoke/deletion and audit remain required.
 
 ### Agents panel — actual vs roadmap
 
@@ -31,9 +31,9 @@
 
 ### Modal and regression contract
 
-- All three panels share `functionPanelModal`, with the existing `backdrop-filter: blur(4px)` overlay. Close, Escape/outside click where supported, focus restoration, no stale overlay and 390×844 keyboard/touch behavior are acceptance.
-- A Chromium E2E spec now opens Deep Research, changes effort, opens Web settings, navigates to Agents, and opens Skills while checking blur/clean-close. Exact-head result must be re-fetched; authored assertions alone are not verification.
-- The four-group menu proposed in §2 below is a future IA expansion, not the current top-level menu. Only expose future items after real handlers, capability registry, status and permission evidence exist.
+- All four panels share `functionPanelModal`, with the existing `backdrop-filter: blur(4px)` overlay. Close, Escape/outside click where supported, focus restoration, no stale overlay and 320/390px keyboard/touch behavior are acceptance.
+- The Chromium E2E contract opens all four panels, checks the Connectors empty state has no fake controls, validates 44px touch targets and verifies RU/EN labels, focus trap, Escape, backdrop and clean close. Exact-head results must be re-fetched; authored assertions alone are not verification.
+- The broader multi-group Functions IA proposed in §2 below remains future expansion. Do not expose future actions until real handlers, capability registry, status and permission evidence exist.
 
 ## 1. Принцип представления возможностей
 

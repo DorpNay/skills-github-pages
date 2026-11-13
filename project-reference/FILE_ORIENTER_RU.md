@@ -4,12 +4,14 @@
 
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
-- Main checkpoint parent `72f77aebd0a2cfdbd6de5bb7dc78ee7a4eba85f2`; exact SHA is recorded in VOLLEY_LOG for the Freshness sentinel.
+- Main checkpoint parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`; this atomic commit exposes the owner-required four-panel Functions menu and refreshes all state/handoff records. Fetch live SHA on resume.
 - **Snapshot marker:** open PRs (0): ; open issues (1): #111.
-- Provenance #43422778379 PASS; Freshness #43422778432 failed only the missing VOLLEY parent SHA a535ab6, now recorded and corrected.
-- Provider-bound PKCE #692a2df; Lite Gateway Tests #43421709910 PASS.
-- Model artifacts #43420046411/#43418126506 acquired and verified; target install remains unverified.
-- Continue section K on main only; no new PRs under current owner directive.
+- PR #185 and #184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions and branches retained.
+- Provider-bound single-use OAuth PKCE and encrypted token vault are implemented; Google Drive OAuth is groundwork, not a connector.
+- Four Functions panels are visible and independently open. Connectors is an honest empty state only; no real connector registry/actions are connected. Research Studio remains retired.
+- Model artifacts: external #43420046411 and Ollama #43418126506, total 13,783,272,852 bytes, SHA-verified in Actions, not installed on target.
+- Python runtime cache #43423610986 SUCCESS, 81,549,321 bytes; Ubuntu 24.04 x86_64 / CPython 3.12–3.14 only. Offline cache not installed on target.
+- Continue `LANDING-V2-2026-001` section K on main only; no new PRs under the current owner directive.
 
 ## 1. Быстрый маршрут
 

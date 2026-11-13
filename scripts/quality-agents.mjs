@@ -32,7 +32,13 @@ const suites = {
       assert.ok(source.includes('data-function="agents"'), 'Functions must expose structured analysis.');
       assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Functions must expose Deep Research as a Thorough-mode shortcut.');
       assert.ok(source.includes('data-function="skills"'), 'Functions must expose task profiles/Skills.');
-      assert.equal(source.includes('data-function="connectors"'), false, 'Do not expose placeholder Integrations without registered connectors.');
+      const functionsMenu = source.match(/<details id="functionsMenu"[\s\S]*?<\/details>/)?.[0] || '';
+      const menuEntries = [...functionsMenu.matchAll(/data-function="(research|agents|skills|connectors)"/g)].map(match => match[1]);
+      assert.deepEqual(menuEntries, ['research', 'agents', 'skills', 'connectors'], 'Functions must expose the four owner-required panels in canonical order.');
+      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\s\S]*?<\/section>/)?.[0] || '';
+      assert.ok(connectorPanel, 'Connectors must open an independent panel.');
+      assert.ok(connectorPanel.includes('functionConnectorsDescription'), 'Connectors must explain the current connection state.');
+      assert.equal(/<(?:button|input|select|textarea)\b/i.test(connectorPanel), false, 'Do not show fake connector actions before a real registry and permissions exist.');
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');

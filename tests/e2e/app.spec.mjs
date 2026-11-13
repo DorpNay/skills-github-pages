@@ -2552,7 +2552,7 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
 });
 
-test('Functions menu exposes truthful Agents, Deep Research and Skills panels with blurred backdrop', async ({ page }) => {
+test('Functions menu exposes four truthful independent panels with blurred backdrop', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
@@ -2563,7 +2563,7 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await summary.focus();
   await page.keyboard.press('Enter');
   await expect(menu).toHaveAttribute('open', '');
-  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
+  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(4);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
   await expect(menu.locator('[data-function="agents"]')).toContainText('Агенты');
   await expect(menu.locator('[data-function="agents"]')).toContainText('4 этапа на одной модели');
@@ -2573,6 +2573,9 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await expect(menu.locator('[data-function="skills"]')).toBeVisible();
   await expect(menu.locator('[data-function="skills"]')).toContainText('Скиллы');
   await expect(menu.locator('[data-function="skills"]')).toContainText('только для этого чата');
+  await expect(menu.locator('[data-function="connectors"]')).toBeVisible();
+  await expect(menu.locator('[data-function="connectors"]')).toContainText('Интеграции');
+  await expect(menu.locator('[data-function="connectors"]')).toContainText('реальных интеграций');
   await expect(page.locator('[data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#researchStudioModal')).toHaveCount(0);
 
@@ -2657,8 +2660,25 @@ test('Functions menu exposes truthful Agents, Deep Research and Skills panels wi
   await modal.locator('[data-action="close-function-panel"]').first().click();
   await expect(modal).toBeHidden();
 
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-function="connectors"]').click();
+  await expect(modal).toBeVisible();
+  const connectorsPanel = page.locator('#connectorFunctionStatus');
+  await expect(connectorsPanel).toBeVisible();
+  await expect(connectorsPanel).toContainText('Внешние коннекторы пока не подключены');
+  await expect(connectorsPanel).toContainText('не будут имитироваться переключателями');
+  await expect(connectorsPanel.locator('button, input, select, textarea')).toHaveCount(0);
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
+
   await selectLanguage(page, 'en');
   await expect(summary).toHaveAccessibleName(/Functions/);
+  await summary.click();
+  await expect(menu.locator('[data-function="connectors"]')).toHaveAccessibleName(/Integrations/);
+  await menu.locator('[data-function="connectors"]').click();
+  await expect(page.locator('#functionPanelTitle')).toHaveText('Integrations');
+  await expect(page.locator('#connectorFunctionStatus')).toBeVisible();
+  await page.locator('[data-action="close-function-panel"]').first().click();
   await summary.click();
   await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Structured analysis/);
   await menu.locator('[data-function="agents"]').click();

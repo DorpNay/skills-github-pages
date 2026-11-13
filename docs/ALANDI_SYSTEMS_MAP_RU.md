@@ -1,6 +1,6 @@
 # aLandi — карта систем и подсистем
 
-**Срез:** 2026-11-13. **Статус:** main checkpoint parent `3c57595e6032a9b69553e23848fbaddd1fa7973e`; PR #184/#185 merged, open PRs = 0, owner issue #111 remains. Main Quality #43419102024 and Project State Freshness #43419101988 passed on this exact SHA. Model/runtime artifacts (13,783,270,816 bytes uploaded) are SHA-verified in GitHub Actions but not installed on VPS. Last site-affecting Pages SHA remains `6a366125720453193c82a7385f8c088224a5928e`; no public root/landing files changed in this stack slice. **Назначение:** короткая карта продукта, границ и методов реализации; не backlog и не доказательство VPS/runtime deployment.
+**Срез:** 2026-11-13. **Статус:** main parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`; PR queue = 0; issue #111 remains owner/environment gated. Model/runtime payload 13.78 GB and pinned Python gateway runtime cache 81,549,321 bytes are downloaded and SHA-verified in Actions, not installed on target. Python cache run #43423610986 and Pages #43423609329 succeeded; Quality #43423610395 is in progress. Four-panel Functions UI is the next bounded slice. **Назначение:** короткая карта продукта, границ и методов реализации; не backlog и не доказательство VPS/runtime deployment.
 
 ## 0. Топология
 
@@ -33,7 +33,7 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 | 2 | **Chat, projects and browser persistence** | `index.md`, browser storage helpers, Playwright E2E | Browser-local chat/project state; transactional writes, backup/restore, fail-closed persistence, quota-injection tests; keep existing storage keys/schema | IMPLEMENTED |
 | 3 | **Personal / shared / project memory** | `index.md`, local memory helpers, project settings | Personal memory stays browser-local; shared memory requires explicit opt-in; project memory stays scoped to the selected project; helper suggestions require user selection before saving | IMPLEMENTED / scoped |
 | 4 | **Conversation delta sync** | `gateway/memory/delta_sync.py`, `gateway/app.py` | Versioned bounded patches, revision/conflict checks and explicit deletion; separate from local notes and RAG | IMPLEMENTED |
-| 5 | **aServi and provider routing** | `index.md`, provider registry, `tests/e2e/alandi-provider.spec.mjs` | First-party aServi is distinct from third-party providers; manual route choice; no silent cross-provider fallback. Registry: Gemini, Groq, xAI, Pollinations, Cloudflare Workers AI, OpenRouter, NVIDIA NIM, Hugging Face, Kilo and custom OpenAI-compatible API | IMPLEMENTED baseline; four-panel Functions expansion remains OPEN |
+| 5 | **aServi and provider routing** | `index.md`, provider registry, `tests/e2e/alandi-provider.spec.mjs` | First-party aServi is distinct from third-party providers; manual route choice; no silent cross-provider fallback. Registry: Gemini, Groq, xAI, Pollinations, Cloudflare Workers AI, OpenRouter, NVIDIA NIM, Hugging Face, Kilo and custom OpenAI-compatible API | IMPLEMENTED; four-panel Functions navigation implemented by this UI slice |
 | 6 | **Chat orchestration and Agents** | `index.md`, gateway chat route, `gateway/agent_runtime/store.py` | Direct one-model chat and bounded four-stage pipeline; AgentRunStore persists state/events only and is not an independent agent scheduler/runtime | IMPLEMENTED chat baseline / PROTOTYPE AgentRunStore |
 | 7 | **Skills and task profiles** | `skills/`, on-demand loader, `index.md` | Progressive disclosure; profiles change task instructions only and do not grant tools, credentials or data access | IMPLEMENTED |
 | 8 | **Search and external sources** | `index.md`, `gateway/app.py`, adapters, `INTEL.md` | Search adapters are separate from evidence/citation validation; retrieved content is untrusted data, never an instruction source | IMPLEMENTED / adapter-dependent |
@@ -52,7 +52,7 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 | 20 | **AgentRun state store** | `gateway/agent_runtime/store.py`, `gateway/tests/test_agent_run_store.py` | SQLite run/task state, events, leases/fencing and cancellation primitives; no scheduler, model calls, capability grant or API runtime | PROTOTYPE |
 | 21 | **Model/runtime artifact acquisition** | `models/artifacts.manifest.json`, `models/manifest-ollama-registry.json`, acquisition workflows | 10 external-cache packages + four Ollama model packages acquired and verified in Actions (13.78 GB); owner main checkpoint excluded; 30-day retention | VERIFIED DOWNLOADED / NOT INSTALLED |
 | 22 | **API/provider and dependency inventory** | `index.md`, `gateway/app.py`, `pyproject.toml`, `uv.lock`, `models/runtime-stack.lock.json` | OpenAI-compatible provider registry, 19 authenticated gateway routes, pinned Python/runtime libraries and explicit optional adapters; no speculative installs | IMPLEMENTED inventory / integrations conditional |
-| 23 | **Connector registry and actions** | Functions Connectors surface / OAuth routes | OAuthVault encrypts provider tokens and binds single-use PKCE state to the provider; Google Drive OAuth remains groundwork without Picker/actions; GitHub App repository connector is not implemented or registered; keep truthful empty state | SECURITY FOUNDATION IMPLEMENTED / CONNECTOR NOT IMPLEMENTED |
+| 23 | **Connector registry and actions** | `index.md` Connectors panel / OAuth routes | Independent Connectors panel shows an honest empty state; OAuthVault encrypts provider tokens and binds single-use PKCE state to the provider; Google Drive OAuth has no Picker/actions; GitHub App connector is not registered. No connect controls before real handlers, scopes and consent exist. | UI ENTRYPOINT IMPLEMENTED / CONNECTOR NOT IMPLEMENTED |
 
 ## 2. Non-negotiable boundaries
 
@@ -182,3 +182,8 @@ Gateway baseline: Python 3.12+, FastAPI 0.162.0, httpx 0.28.1, Uvicorn 0.54.0, c
 - PostgreSQL, Redis and Qdrant are **not selected**. Add only after dataset/concurrency/latency measurements demonstrate SQLite/FTS5 is insufficient.
 - Ollama binds to loopback; FastAPI uses systemd on loopback; Cloudflare Tunnel is target-only until live host evidence exists. No VPS, Tunnel, model runtime or database migration is claimed deployed.
 - Downloaded Actions artifacts total 13,783,270,816 bytes and expire 2026-12-13. They are not installed on a target host. The owner-supplied uncensored primary checkpoint is excluded.
+
+
+### 2026-11-13 Functions UI checkpoint
+
+The main Functions menu exposes four independent panels in the owner-defined order: Deep Research, Agents, Skills, Connectors. Connectors opens a non-interactive empty state; this does not satisfy the real connector registry/action requirement in LANDING-V2-2026-001 K.1 item 6. Deep Research is still a settings/navigation panel, Agents is the existing bounded same-model four-stage workflow, and Skills are chat-scoped instruction profiles. Full runtime scope remains open.
