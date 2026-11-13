@@ -48,3 +48,11 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 
 ## Canonical navigation
 `OLEDUE.md` (handoff/authority) · `ORIENTER.md` (checkpoint) · `PROJECT_ORCHESTRATOR_RU.md` (index) · `docs/ALANDI_N2O_CORE_RU.md` (principles) · `LOOP.md` (method) · `docs/ALANDI_SYSTEMS_MAP_RU.md` (systems) · `docs/IMPLEMENTATION_ROADMAP_RU.md` (sequence) · `docs/MASTER_TASK_REGISTRY_RU.md` + addendum (single backlog) · `docs/PROJECT_STATE.yaml` / snapshot / `docs/VOLLEY_LOG.md` (state/evidence).
+
+
+## Model artifact/runtime checkpoint — 2026-11-13
+
+- PR #185 pins a candidate stack and an external-cache downloader; the primary uncensored Qwen Q4_K_M remains owner-supplied and excluded.
+- Runtime lock: models/runtime-stack.lock.json; owner installation sequence: models/runtime-install.md; exact artifacts: models/artifacts.manifest.json.
+- Platform-specific Ollama and Piper runtime artifacts are pinned for provisional Linux x86_64 only. Verify the actual server OS/architecture before installation.
+- Keep all model/voice/OCR helpers conditional; ordinary chat remains one direct main-model request.
