@@ -129,3 +129,10 @@ def test_verify_package_checks_required_support_files(tmp_path: Path) -> None:
     assert MODULE.verify_package(tmp_path, package) == []
     (package_root / "config.json").unlink()
     assert MODULE.verify_package(tmp_path, package)
+
+
+def test_disk_preflight_reserves_minimum_and_scaled_margin() -> None:
+    assert MODULE.required_free_bytes(0) == 0
+    assert MODULE.required_free_bytes(1) == 1 + 64 * 1024 * 1024
+    payload = 2_000_000_000
+    assert MODULE.required_free_bytes(payload) == payload + payload // 20
