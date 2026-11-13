@@ -1,13 +1,15 @@
 # aLandi model artifact cache
 
-Model binaries are not stored in this GitHub Pages source repository or Git LFS. Exact external-cache payload is 6,033,970,026 bytes; the two Ollama model references add about 3,939,000,000 bytes. Total is about 8.39 GB before tokenizer/config overhead, excluding the owner-supplied main model. The canonical inventory is models/artifacts.manifest.json; downloads go to ~/.cache/alandi/models by default.
+Model binaries are not stored in this GitHub Pages source repository or Git LFS. Exact external-cache payload is 6,033,970,026 bytes; the two Ollama model references add about 3,939,000,000 bytes. Total is about 9.97 GB before tokenizer/config overhead, excluding the owner-supplied main model. The canonical inventory is models/artifacts.manifest.json; runtime versions are in models/runtime-stack.lock.json; the step-by-step install guide is models/runtime-install.md; downloads go to ~/.cache/alandi/models by default.
 
 ## Acquire and verify
 
     python -m pip install "huggingface_hub>=0.34,<2"
     python scripts/download_model_artifacts.py --dry-run
-    python scripts/download_model_artifacts.py
-    python scripts/download_model_artifacts.py --verify-only
+    python scripts/download_model_artifacts.py --skip-ollama
+    python scripts/download_model_artifacts.py --verify-only --skip-ollama
+
+After installing Ollama v0.40.16 from the pinned archive, run the default command to pull and verify the two Ollama model tags:
 
 The default run also pulls the official Qwen3.5-4B base reference (about 3.3 GB) and Qwen3-Embedding-0.6B Q8_0 (about 639 MB) into the configured Ollama model store and verifies their registry digest prefixes. The external cache also includes the pinned Ollama v0.40.16 Linux AMD64 archive and Piper 1.8.0 wheel; these are downloaded, not installed. Use --skip-ollama only when Ollama is not installed on this host; run the pull on the same host used for the base-vs-uncensored evaluation.
 
