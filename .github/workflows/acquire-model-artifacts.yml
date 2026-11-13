@@ -5,9 +5,7 @@ on:
     branches:
       - "feat/model-artifact-acquisition-*"
     paths:
-      - "models/manifest.json"
       - "scripts/download_model_artifacts.py"
-      - ".github/workflows/acquire-model-artifacts.yml"
   workflow_dispatch:
 
 permissions:
