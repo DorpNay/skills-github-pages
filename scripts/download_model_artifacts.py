@@ -145,6 +145,12 @@ def verify_package(root: Path, package: dict[str, Any]) -> list[str]:
         print(f"{'OK' if ok else 'MISSING/INVALID'} {package['id']}/{item['path']}: {detail}")
         if not ok:
             problems.append(f"{package['id']}/{item['path']}: {detail}")
+    for relative in package.get("required_paths", []):
+        target = destination(root, package["id"], relative)
+        if not target.is_file():
+            detail = "missing required support file"
+            print(f"MISSING/INVALID {package['id']}/{relative}: {detail}")
+            problems.append(f"{package['id']}/{relative}: {detail}")
     return problems
 
 
