@@ -153,7 +153,6 @@
       "notes": "Official model card lists 52 languages/dialects including Russian and Thai. Evaluate separately against the already-implemented whisper.cpp path; not yet wired into gateway.",
       "required_paths": [
         "config.json",
-        "tokenizer.json",
         "tokenizer_config.json",
         "vocab.json",
         "merges.txt",
