@@ -12,7 +12,7 @@ gh auth status >/dev/null
 mkdir -p "$DEST"
 chmod 700 "$DEST"
 
-echo "Downloading aLandi model artifacts from workflow run ${RUN_ID..."
+echo "Downloading aLandi model artifacts from workflow run ${RUN_ID}..."
 gh run download "$RUN_ID" --repo "$REPO" --dir "$DEST"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
