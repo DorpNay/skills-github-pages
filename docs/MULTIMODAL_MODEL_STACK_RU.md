@@ -96,7 +96,7 @@ WER/CER считать отдельно по каждому языку; отде
 
 ## 2026-11-13 — pinned CPU-first OCR / ASR / TTS artifact set
 
-**Status: SPECIFIED and source-pinned; downloads and target-host runtime remain unverified.** The full inventory and checksums are in models/artifacts.manifest.json; the downloader writes to an external cache, never to the Pages source tree.
+**Status: SPECIFIED and source-pinned; downloads and target-host runtime remain unverified.** The full inventory and checksums are in models/artifacts.manifest.json; the downloader writes to an external cache, never to the Pages source tree. The official Ollama Qwen3 embedding Q8_0 tag is pulled into Ollama's own model store.
 
 ### OCR baseline for RU / EN / TH
 
@@ -129,6 +129,8 @@ Pin Piper engine v1.8.0 (GPL-3.0-or-later). Its voice licensing guide requires f
 ### API boundary
 
 Existing gateway routes are /v1/audio/transcriptions (whisper.cpp CLI), /v1/audio/speech (Piper CLI), and /v1/documents/extract (bounded text extraction). /v1/rag/ingest and /v1/rag/retrieve already exist. Embedding/reranking and scanned-page OCR workers are not yet implemented; the proposed internal /v1/embeddings, /v1/rerank and OCR adapter must remain conditional and must not add model calls to ordinary chat.
+
+The selected embedding runtime is Ollama qwen3-embedding:0.6b-q8_0 (about 639 MB; digest prefix ac6da0dfba84), using native /api/embed only during RAG. The full 1.19-GB HF safetensors reference is not downloaded to avoid duplicate weights.
 
 The current container has no outbound DNS/network route, so pinned downloads were not acquired in this pass. The downloader and manifest are ready for a network-enabled host. Downloaded ≠ installed ≠ integrated ≠ verified.
 
