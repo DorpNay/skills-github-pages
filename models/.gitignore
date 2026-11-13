@@ -1,0 +1,9 @@
+# Keep downloaded model weights out of Git and the GitHub Pages build.
+cache/
+*.gguf
+*.safetensors
+*.onnx
+*.traineddata
+*.bin
+*.pt
+*.pth
