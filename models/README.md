@@ -11,6 +11,8 @@ Model binaries are not stored in this GitHub Pages source repository or Git LFS.
 
 After installing Ollama v0.40.16 from the pinned archive, run the default command to pull and verify the two Ollama model tags:
 
+    python scripts/download_model_artifacts.py
+
 The default run also pulls the official Qwen3.5-4B base reference (about 3.3 GB) and Qwen3-Embedding-0.6B Q8_0 (about 639 MB) into the configured Ollama model store and verifies their registry digest prefixes. The external cache also includes the pinned Ollama v0.40.16 Linux AMD64 archive and Piper 1.8.0 wheel; these are downloaded, not installed. Use --skip-ollama only when Ollama is not installed on this host; run the pull on the same host used for the base-vs-uncensored evaluation.
 
 Use --root /path/to/cache to choose another location or --package PACKAGE_ID to acquire one package. Use --skip-ollama for the first acquisition pass before Ollama is installed; it still downloads the Ollama runtime archive and other files. The primary uncensored Qwen3.5-4B Q4_K_M checkpoint is intentionally download:false: the owner supplies that file directly to the server. Its vision projector and all selected auxiliary artifacts are separate downloads. The full HF embedding weights are pinned for provenance but not downloaded; the smaller official Ollama Q8_0 model is the runtime choice.
