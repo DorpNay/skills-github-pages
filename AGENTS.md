@@ -65,3 +65,10 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Machine-readable acquisition/install state: `models/runtime-stack.lock.json`; system/API/dependency matrix: `docs/ALANDI_SYSTEMS_MAP_RU.md`; architecture: `docs/ALANDI_ARCHITECTURE_MAP_RU.md`.
 - 10 external artifacts + four Ollama model packages are verified downloads in Actions, not installed. Artifact expiry: 2026-12-13. Owner-supplied primary checkpoint excluded.
 - Current database baseline is SQLite/FTS5; do not add Postgres/Redis/Qdrant without measured evidence. Root Python lock is `pyproject.toml` + `uv.lock`; optional ASR/OCR dependencies remain isolated.
+
+
+## Current state-refresh correction — 2026-11-13
+
+- Checkpoint parent: `fc0fd26b099088f419c5391e5e23b692bab9e50f`.
+- Prior Freshness #43420047399 passed 19 unit tests but rejected the live docs because ORIENTER lacked the exact current checkpoint SHA. This correction updates ORIENTER and all other required state/handoff files atomically.
+- Main Quality #43419102024 and Freshness #43419101988 passed on previous parent 3c57595; exact current-main runs must be checked after this commit.

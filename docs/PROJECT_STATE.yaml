@@ -16,15 +16,16 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Main checkpoint parent 3c57595e6032a9b69553e23848fbaddd1fa7973e; exact main Quality #43419102024 and Freshness #43419101988 passed. Zero open PRs; issue #111 remains owner/environment gated. PR #184/#185 merged; #176 research ported; stale UI PRs closed."
+    status: "Main checkpoint parent fc0fd26b099088f419c5391e5e23b692bab9e50f; main Quality #43419102024 and Freshness #43419101988 passed on previous parent 3c57595. Freshness #43420047399 failed only because ORIENTER carried stale SHA; this atomic correction restores it. Zero open PRs; issue #111 remains owner-gated."
     branch: "main"
-    base_main: "3c57595e6032a9b69553e23848fbaddd1fa7973e"
+    base_main: "fc0fd26b099088f419c5391e5e23b692bab9e50f"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Main Quality #43419102024 PASS (Chromium, Ruff, Jekyll, Security, Integrity, Context, published release-contract); Project State Freshness #43419101988 PASS on exact parent 3c57595e6032a9b69553e23848fbaddd1fa7973e. PR #185 exact head passed Quality/Gateway/Graphify/Freshness/Provenance/Dead Code; PR #184 exact head passed Quality/Chromium and Graphify. Model acquisition runs #43417527347 and #43417305393 passed download, SHA verification and artifact upload."
+    exact_head_checks: "Previous main parent 3c57595: Quality #43419102024 PASS and Freshness #43419101988 PASS. Current-parent Quality #43420046546 running; Freshness #43420047399 failed only the ORIENTER SHA assertion. Corrected in this atomic refresh; rerun exact-main Freshness."
     runtime_boundary: "13,783,270,816 bytes of auxiliary model/runtime artifacts are downloaded and SHA-verified in Actions; expire 2026-12-13; not installed on VPS. Owner-supplied primary checkpoint excluded. Target OS/architecture, RAM/VRAM, Ollama, Piper, Whisper, OCR binary, API wiring and RU/EN/TH eval remain unverified."
     next: "Owner downloads artifacts and supplies target-host facts. Continue main-only four-panel Functions UI, real Connector registry and API/library/database integration; keep optional model workers isolated and feature flags off until measured."
+
 
 
     source_triage:
@@ -296,21 +297,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-13"
-  verified_main: "3c57595e6032a9b69553e23848fbaddd1fa7973e"
+  verified_main: "fc0fd26b099088f419c5391e5e23b692bab9e50f"
   last_main_action: "PR #185 model/runtime pack and PR #184 Browser Local Coder workspace merged; PR #176 research ported; stale UI PRs closed. Open PRs: 0. Issue #111 remains open."
   last_functional_checkpoint: "f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00"
-  main_quality: "PASS: Quality run #43419102024 on exact main checkpoint 3c57595e6032a9b69553e23848fbaddd1fa7973e; Chromium, Ruff, Jekyll, Security, Integrity, Context and published release-contract jobs all passed."
+  main_quality: "Previous exact main parent 3c57595 Quality #43419102024 PASS. Current-parent Quality #43420046546 in progress at time of checkpoint."
+  main_freshness: "Previous exact main parent 3c57595 Freshness #43419101988 PASS. Current-parent Freshness #43420047399 FAILED only because ORIENTER lacked this parent SHA; corrected atomically here; rerun required."
   main_graphify: "PR #184 exact-head Graphify #43389169751 PASS; no separate Graphify main push run claimed."
   main_gateway: "PR #185 Gateway #43402260215 passed Python 3.12/13/14 on exact PR head; no separate Gateway main run claimed."
-  main_freshness: "PASS: Project State Freshness run #43419101988 on exact main checkpoint 3c57595e6032a9b69553e23848fbaddd1fa7973e."
-  main_provenance: "PR #185 License/Provenance #43402260337 passed exact PR head. Runtime lock status update is included in this commit; verify any triggered main Provenance run before claiming it."
-  main_pages: "No public root/landing files changed. Last site-affecting Pages deployment remains #43387599298 on SHA 6a366125720453193c82a7385f8c088224a5928e; Quality published release-contract passed on 3c57595e6032a9b69553e23848fbaddd1fa7973e, no new deployment claimed."
+  main_provenance: "PR #185 License/Provenance #43402260337 passed exact PR head; runtime lock inventory was updated in parent fc0fd26; inspect triggered main provenance run if present."
+  main_pages: "No public root/landing files changed. Last site-affecting Pages deployment remains #43387599298 on SHA 6a366125720453193c82a7385f8c088224a5928e; no new deployment claimed."
   merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled release gates."
-  freshness_guard: "scripts/check_project_state_freshness.py; next direct-main commit updates OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot atomically."
-  runtime_boundary: "13,783,270,816 bytes of auxiliary model/runtime artifacts downloaded and SHA-verified in Actions; artifacts expire 2026-12-13. Not installed on VPS. Main uncensored Qwen3.5-4B checkpoint remains owner-supplied. Host and target runtime unverified."
-  next: "Download artifacts before expiry, inspect target host, then continue LANDING-V2-2026-001 on main: four Functions panels, real Connector registry, API/library/database inventory and gated runtime integration."
+  freshness_guard: "scripts/check_project_state_freshness.py; atomic refresh updates OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together."
+  runtime_boundary: "13,783,270,816 bytes of auxiliary model/runtime artifacts downloaded and SHA-verified in Actions; expire 2026-12-13. Not installed on VPS. Main uncensored Qwen3.5-4B checkpoint remains owner-supplied. Host and target runtime unverified."
+  next: "Verify new exact-main Freshness/Quality; owner downloads artifacts and supplies target host facts; continue four-panel Functions UI and Connector registry on main."
 
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"

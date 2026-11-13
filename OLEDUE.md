@@ -111,3 +111,14 @@ The first atomic state refresh (#43418866025) passed all 19 checker unit tests a
 - Artifacts: external run #43417527347, 6,054,440,341 bytes; Ollama run #43417305393, 7,728,830,475 bytes; total 13,783,270,816 bytes. Expires 2026-12-13. Primary uncensored checkpoint remains owner-supplied. Downloads are not target-host installation.
 - API/dependency inventory is in `docs/ALANDI_SYSTEMS_MAP_RU.md`; machine-readable states in `models/runtime-stack.lock.json`. Gateway root deps are pinned in `pyproject.toml`/ `uv.lock`; model-specific optional dependencies are isolated. SQLite remains; no Postgres/Redis/Qdrant selected.
 - **NEXT:** owner downloads artifacts before expiry and supplies target-host OS/architecture, free disk, RAM/VRAM, CPU/GPU. Continue main-only four-panel Functions UI and actual Connector registry; then wire only measured model APIs and isolated optional workers. Finish P7 with tested owner install/backup/rollback instructions.
+
+
+## Current owner execution checkpoint — 2026-11-13 (main-only; state-refresh correction)
+
+**Resume parent:** `fc0fd26b099088f419c5391e5e23b692bab9e50f`. The previous atomic commit synchronized the model/API inventory but its Freshness run #43420047399 failed only because ORIENTER still carried the previous checkpoint SHA. This correction updates all seven required handoff/state files together. Do not rescan the repository; read this checkpoint and verify the new exact-main Freshness/Quality runs.
+
+- **Main state:** PR queue = 0; issue #111 remains owner-controlled. PR #184/#185 merged; #176 research ported; #175/#178/#179/#180/#182 closed with source branches retained.
+- **Model acquisition:** external artifact run #43417527347 (6,054,440,341 bytes) and Ollama run #43417305393 (7,728,830,475 bytes); total 13,783,270,816 bytes, expires 2026-12-13. SHA verification and artifact uploads passed. Owner-supplied uncensored primary checkpoint excluded. Artifacts are NOT installed on VPS.
+- **System inventory:** current provider APIs, gateway routes, Python dependencies, model-specific libraries, SQLite/FTS5 and connector maturity are in `docs/ALANDI_SYSTEMS_MAP_RU.md`; machine state in `models/runtime-stack.lock.json`.
+- **Previous exact-main checks:** Quality #43419102024 PASS and Freshness #43419101988 PASS on parent `3c57595e6032a9b69553e23848fbaddd1fa7973e`. Quality #43420046546 is running on the current parent; Freshness #43420047399 failed only on stale ORIENTER SHA. New Freshness must pass after this correction.
+- **NEXT:** owner downloads artifacts before expiry and supplies target host OS/architecture, disk, RAM/VRAM and CPU/GPU. Continue on main with four independent Functions panels and a real Connector registry; then integrate isolated model APIs/workers after resource checks. P7 remains the tested owner install/backup/rollback runbook.

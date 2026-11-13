@@ -4,13 +4,12 @@
 
 ## Verified baseline — 2026-11-13
 
-- **Current main SHA:** `189c54f9845b9180aa59c369cb89e09863b72620`; the current main ref advances by one atomic state-refresh commit directly after it. Fetch the live main SHA when resuming.
+- **Current main SHA:** `fc0fd26b099088f419c5391e5e23b692bab9e50f` (checkpoint parent for this atomic state-refresh correction). The resulting commit will be the new live main HEAD; fetch it on resume.
 - Open PR queue: 0. **Open issue:** #111 only (owner/environment release gates).
-- **Merged:** PR #185 model/runtime artifact pack at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 Browser Local Coder workspace at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`. PR #176's unique research was ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. Stale/stacked #175/#178/#179/#180/#182 are closed with dispositions; branches are retained.
-- **Model acquisition:** external artifact run [#43417527347](https://github.com/DorpNay/skills-github-pages/actions/runs/43417527347) verified 10 external model/runtime packages (6,054,440,341 bytes); Ollama run [#43417305393](https://github.com/DorpNay/skills-github-pages/actions/runs/43417305393) verified four model packages + lock (7,728,830,475 bytes). Total 13,783,270,816 bytes; artifact expiry 2026-12-13. Main uncensored primary model remains owner-supplied and excluded.
-- **CI:** Quality run #43418176179 was in progress on the checkpoint parent; state refresh changes the HEAD, so verify the new exact-main Quality/Freshness runs before claiming a final green baseline. Freshness must compare the atomic snapshot against the live queue.
-- **Runtime boundary:** artifacts are downloaded and checksum-verified in Actions, not installed on the target host. Linux AMD64 runtime is provisional until host inspection. VPS/Tunnel/Ollama, target hardware, installed model/voice services, real connectors and RU/EN/TH device quality remain unverified.
-- **Coder boundary:** Browser Local is implemented in main; native providers, companion, sandboxed execution and arbitrary CLI remain open. Do not imply a secure shell exists.
+- PR #185 model/runtime artifact pack merged at `f1fc73783a46bf38014acd0a8019914d5a3f14d4`; PR #184 Browser Local Coder workspace merged at `f7cc9a4b878d995d46a6df7cb4af9d5e60d16e00`; PR #176 research ported at `e79e70db61255755c26ebb4a0ceaad55688b0a4c`. #175/#178/#179/#180/#182 closed with dispositions; branches retained.
+- Model artifacts: external run #43417527347 (6,054,440,341 bytes) and Ollama run #43417305393 (7,728,830,475 bytes), total 13,783,270,816 bytes; expire 2026-12-13. Downloaded and SHA-verified in Actions, not installed. Main uncensored primary checkpoint owner-supplied and excluded.
+- Exact previous main checks: Quality #43419102024 PASS and Freshness #43419101988 PASS on `3c57595e6032a9b69553e23848fbaddd1fa7973e`. Quality #43420046546 is running on this parent; Freshness #43420047399 failed because ORIENTER contained the prior SHA. This correction restores the exact marker; rerun Freshness on resulting main SHA.
+- Runtime boundary: target host OS/architecture, disk, RAM/VRAM, Ollama service, Piper/Whisper/OCR install, model template, API smoke tests and RU/EN/TH quality remain unverified. Browser Local is implemented; sandboxed CLI and real Connector registry remain open.
 
 ## Current owner priority
 
