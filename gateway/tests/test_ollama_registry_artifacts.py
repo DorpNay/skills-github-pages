@@ -191,9 +191,11 @@ def test_fetch_manifest_checks_raw_sha256_and_registry_url(monkeypatch):
         registry.fetch_manifest(model, 10)
 
 
-def test_download_and_verification_shell_helper_has_valid_bash_syntax():
-    import subprocess
-
+def test_model_acquisition_and_install_scripts_compile():
     root = Path(__file__).resolve().parents[2]
-    script = root / "scripts" / "download_model_artifacts_from_github.sh"
-    subprocess.run(["bash", "-n", str(script)], check=True)
+    for relative in (
+        "scripts/download_ollama_registry_models.py",
+        "scripts/install_ollama_registry_model.py",
+    ):
+        source = (root / relative).read_text(encoding="utf-8")
+        compile(source, relative, "exec")
