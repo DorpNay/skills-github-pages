@@ -1,6 +1,6 @@
 # aLandi model artifact cache
 
-Model binaries are not stored in this GitHub Pages source repository or Git LFS. Exact external-cache payload is 6,033,970,026 bytes; the two Ollama model references add about 3,939,000,000 bytes. Total is about 9.97 GB before tokenizer/config overhead, excluding the owner-supplied main model. The canonical inventory is models/artifacts.manifest.json; runtime versions are in models/runtime-stack.lock.json; the step-by-step install guide is models/runtime-install.md; downloads go to ~/.cache/alandi/models by default.
+Model binaries are not stored in this GitHub Pages source repository or Git LFS. The pinned acquisition set is 6,033,970,026 bytes of external-cache artifacts plus 7,728,793,651 bytes across four official Ollama model packages: about 13.76 GB before tokenizer/config overhead. The owner-supplied uncensored primary Qwen3.5-4B checkpoint (2,707,513,696 bytes) is deliberately excluded. The canonical inventory is models/artifacts.manifest.json; runtime versions are in models/runtime-stack.lock.json; the step-by-step install guide is models/runtime-install.md; downloads go to ~/.cache/alandi/models by default.
 
 ## Acquire and verify
 
@@ -9,13 +9,9 @@ Model binaries are not stored in this GitHub Pages source repository or Git LFS.
     python scripts/download_model_artifacts.py --skip-ollama
     python scripts/download_model_artifacts.py --verify-only --skip-ollama
 
-After installing Ollama v0.40.16 from the pinned archive, run the default command to pull and verify the two Ollama model tags:
+The main-branch GitHub Actions workflows acquire the complete pinned auxiliary set outside Git: all enabled Hugging Face/raw-GitHub artifacts, plus four official Ollama registry packages (Qwen3.5-4B base comparator, Qwen3.5-2B helper, Qwen3 embedding and GLM-OCR). They upload checksum-verified packages as temporary Actions artifacts. The owner-supplied uncensored primary checkpoint is the only model intentionally excluded. The Ollama runtime archive and Piper wheel are downloaded, not installed. Verify target OS/architecture before installing either.
 
-    python scripts/download_model_artifacts.py
-
-The default run also pulls the official Qwen3.5-4B base reference (about 3.3 GB) and Qwen3-Embedding-0.6B Q8_0 (about 639 MB) into the configured Ollama model store and verifies their registry digest prefixes. The external cache also includes the pinned Ollama v0.40.16 Linux AMD64 archive and Piper 1.8.0 wheel; these are downloaded, not installed. Use --skip-ollama only when Ollama is not installed on this host; run the pull on the same host used for the base-vs-uncensored evaluation.
-
-Use --root /path/to/cache to choose another location or --package PACKAGE_ID to acquire one package. Use --skip-ollama for the first acquisition pass before Ollama is installed; it still downloads the Ollama runtime archive and other files. The primary uncensored Qwen3.5-4B Q4_K_M checkpoint is intentionally download:false: the owner supplies that file directly to the server. Its vision projector and all selected auxiliary artifacts are separate downloads. The full HF embedding weights are pinned for provenance but not downloaded; the smaller official Ollama Q8_0 model is the runtime choice.
+For a network-enabled host, use `python scripts/download_ollama_registry_models.py --manifest models/manifest-ollama-registry.json --output-dir ~/.cache/alandi/ollama-packages --timeout 900` to acquire the four pinned registry packages. Install each verified package only after target-host review with `python scripts/install_ollama_registry_model.py --package <package-dir> --models-dir <OLLAMA_MODELS>`. The primary uncensored Qwen3.5-4B Q4_K_M checkpoint remains owner-supplied; its vision projector is acquired separately. The full HF embedding weights are pinned for provenance but not downloaded; the smaller official Ollama Q8_0 model is the runtime choice.
 
 The downloader pins immutable upstream revisions, verifies exact file sizes and SHA-256 for Hugging Face LFS objects, and verifies Git blob SHA-1 + size for raw GitHub artifacts. It does not execute downloaded files. Keep the accompanying model cards and voice provenance metadata.
 
