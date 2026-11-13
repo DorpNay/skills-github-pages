@@ -126,7 +126,16 @@ permalink: /
               <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
               <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">+</button></div>
               <div id="projectMemoryBox" class="max-h-24 overflow-y-auto text-[11px] text-gray-400 space-y-1"></div>
-              <section id="projectSourcesSection" class="rounded-xl border border-gray-800 p-3 space-y-1.5" aria-labelledby="projectSourcesTitle">
+              <details id="projectMemoryHelperDetails" class="rounded-lg border border-gray-700">
+                <summary class="cursor-pointer select-none px-2.5 py-2 text-xs font-semibold" data-i18n="helperMemoryTitle">Помощник памяти проекта</summary>
+                <div class="p-2 space-y-2">
+                  <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="helperMemoryDescription">Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.</p>
+                  <button type="button" data-action="suggest-helper-memory" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-2 py-2 text-[11px]" data-i18n="helperMemorySuggest">Предложить компактные факты</button>
+                  <p id="helperMemoryStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite" data-i18n="helperMemoryInitial">Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.</p>
+                  <div id="helperMemorySuggestionsBox" class="max-h-40 space-y-2 overflow-y-auto text-[11px] text-gray-300"></div>
+                </div>
+              </details>
+<section id="projectSourcesSection" class="rounded-xl border border-gray-800 p-3 space-y-1.5" aria-labelledby="projectSourcesTitle">
                 <h3 id="projectSourcesTitle" class="text-xs font-semibold" data-i18n="projectSourcesTitle">Источники проекта</h3>
                 <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="projectSourcesUnavailable">Управление источниками пока не подключено: gateway умеет индексировать, удалять и искать документы в рамках scope, но не предоставляет API списка источников. Вложения чата не считаются сохранёнными источниками проекта.</p><div class="roadmap-ticker mt-2" aria-label="Раздел в разработке"><span class="roadmap-ticker-track" aria-hidden="true" data-i18n="projectSourcesRoadmap">1ИV3ИT10И · Управление источниками проекта — в разработке</span></div><p class="roadmap-note" data-i18n="projectSourcesRoadmapNote">Раздел и его место в проекте уже предусмотрены; управление списком станет доступно после появления API источников. Пока никаких действий с источниками не имитируется.</p><button type="button" class="roadmap-details-button" data-action="open-roadmap-details" data-roadmap-status="in-development" data-i18n="roadmapDetailsButton">Подробнее</button>
               </section>
