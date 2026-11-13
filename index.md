@@ -733,6 +733,7 @@ permalink: /
         <button type="button" data-action="open-function-panel" data-function="research">🔬 <span data-i18n="functionDeepResearch">Исследования</span><small data-i18n="functionResearchHelp">Deep Research · effort / web</small></button>
         <button type="button" data-action="open-function-panel" data-function="notebook">📓 <span data-i18n="functionNotebook">Notebook</span><small data-i18n="functionNotebookHelp">Тетради и источники</small></button>
         <button type="button" data-action="open-function-panel" data-function="skills">🧩 <span data-i18n="functionSkills">Скиллы</span><small data-i18n="functionSkillsHelp">Профили инструкций</small></button>
+        <button type="button" data-action="open-function-panel" data-function="connectors">🔌 <span data-i18n="functionConnectors">Интеграции</span><small data-i18n="functionConnectorsHelp">Подключённые источники и разрешения</small></button>
       </nav>
       <section id="researchFunctionSettings" class="hidden space-y-3">
         <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
