@@ -17,10 +17,12 @@ The downloader pins immutable upstream revisions, verifies exact file sizes and 
 
 ## Artifact acquisition state
 
-- Manifest is SPECIFIED and source-pinned.
-- No model binary is present in this source tree.
-- The current engineering container has no outbound DNS/network route; acquisition attempts failed with Temporary failure in name resolution. Run the downloader from a network-enabled workstation or the target host.
-- A successful download is not an installed runtime. Record runtime version, target-host memory/latency and eval results separately before enabling flags.
+- Manifest is source-pinned; the complete auxiliary acquisition set is **VERIFIED downloaded and SHA-checked in GitHub Actions** (not installed on the target host).
+- External cache run [#43417527347](https://github.com/DorpNay/skills-github-pages/actions/runs/43417527347): artifact `alandi-external-model-cache-43417527347`, 6,054,440,341 bytes; 10 packages acquired and verified, including Qwen vision projector/reranker/ASR, Whisper, Silero VAD, Piper RU/EN, Tesseract RU/EN/TH, Ollama Linux AMD64 archive and Piper wheel.
+- Ollama registry run [#43417305393](https://github.com/DorpNay/skills-github-pages/actions/runs/43417305393): Qwen3.5-4B base, Qwen3.5-2B helper, Qwen3 embedding Q8_0 and GLM-OCR packages verified; total 7,728,830,475 bytes plus the 2,045-byte registry lock artifact.
+- Combined Actions artifact payload: 13,783,270,816 bytes (~13.78 GB decimal). All artifacts expire **2026-12-13** (30-day retention); download them to governed storage before expiry.
+- The owner-supplied uncensored primary Qwen3.5-4B checkpoint (2,707,513,696 bytes) remains intentionally excluded from automated acquisition. No model weights are committed to Git.
+- A successful acquisition is not an installed runtime. Target OS/architecture, free disk, RAM/VRAM, Ollama service, model template, API wiring and RU/EN/TH evals remain unverified.
 
 ## Storage and runtime policy
 
