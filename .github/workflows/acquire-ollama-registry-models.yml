@@ -5,7 +5,6 @@ on:
     branches:
       - "feat/model-artifact-acquisition-*"
     paths:
-      - "models/manifest-ollama-registry.json"
       - ".github/workflows/acquire-ollama-registry-models.yml"
   workflow_dispatch:
 
