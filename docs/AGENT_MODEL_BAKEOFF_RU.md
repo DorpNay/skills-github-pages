@@ -222,3 +222,13 @@ For an apples-to-apples comparison, acquire the official Ollama Qwen3.5-4B Q4_K_
 - Residency: keep the official and uncensored variants in the Ollama model store, but load/evaluate them sequentially on the 8-GB profile.
 
 This reference is a benchmark comparator, not the production default. The uncensored model remains the owner-preferred primary candidate pending same-prompt RU/EN/TH evaluation.
+
+
+### Runtime version pins
+
+- Ollama v0.40.16, commit d63b702609c4300a2ca07be2bdb0adb9834725e5; Linux AMD64 archive SHA-256 in the artifact manifest.
+- whisper.cpp v1.9.5, commit d1be6fde11ac6e0407606b4e42fe72d34add8037; build whisper-cli from source.
+- Piper 1.8.0, commit 639388b6317fc4731e91d53da42aea68fd4166ff; GPL-3.0-or-later Linux x86_64 wheel pinned.
+- Qwen ASR Python package qwen-asr==0.0.6; official dependencies pin Transformers 4.57.6, Accelerate 1.12.0, Nagisa 0.2.11 and SoyNLP 0.0.493; optional vLLM 0.14.0 is GPU-only and excluded from the CPU-first baseline.
+- Tesseract 5.5.4, commit 7e548e6eff172f38f97664afe7f7ce40db36c8d6; release fixes 17 security advisories.
+- Exact API boundaries, runtime install status and current SQLite/IndexedDB storage policy are recorded in models/runtime-stack.lock.json.
