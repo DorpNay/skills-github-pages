@@ -708,7 +708,7 @@ The following 103 distinct URL references were absent from the existing INTEL re
 
 ### Acquisition outcome and policy
 
-- models/artifacts.manifest.json and scripts/download_model_artifacts.py now pin selected revisions, artifact sizes and SHA-256/Git blob SHA-1. Expected exact external-cache payload is 4,454,070,944 bytes; the Ollama base-model and embedding references add about 3,939,000,000 bytes in Ollama's own model store. Both exclude the owner-supplied main Q4 checkpoint and tokenizer/config overhead.
+- models/artifacts.manifest.json and scripts/download_model_artifacts.py now pin selected revisions, artifact sizes and SHA-256/Git blob SHA-1. Expected exact external-cache payload is 6,033,970,026 bytes; the Ollama base-model and embedding references add about 3,939,000,000 bytes in Ollama's own model store. Both exclude the owner-supplied main Q4 checkpoint and tokenizer/config overhead.
 - Actual downloads did **not** complete in this engineering container: outbound DNS returned Temporary failure in name resolution. The downloader is prepared for a network-enabled workstation/server. No artifact is marked installed or runtime-verified.
 - Keep all weights outside the GitHub Pages source repository and Git LFS. Preserve code, manifest, licenses, model cards, hashes and acquisition script in Git. This follows the existing model/binary acquisition policy; no bulk model corpus in the repository.
 - Existing runtime boundary remains: Ollama is the intended main inference server; gateway ASR/TTS routes exist but require separate binaries/weights; RAG is still FTS5/lexical baseline; embedding/reranker/OCR adapters are not yet implemented; target VPS/Tunnel/Ollama remain UNVERIFIED.
