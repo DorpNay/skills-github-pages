@@ -1,0 +1,74 @@
+name: Acquire Thai TTS evaluation artifacts
+
+on:
+  push:
+    branches:
+      - "feat/model-artifact-acquisition-*"
+    paths:
+      - "models/manifest-thai-tts.json"
+      - ".github/workflows/acquire-thai-tts-artifacts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: thai-tts-artifact-acquisition-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acquire:
+    name: Download, verify and package Thai TTS candidates
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Download pinned Thai TTS artifacts outside the Git working tree
+        run: |
+          python scripts/download_model_artifacts.py \
+            --manifest models/manifest-thai-tts.json \
+            --output-dir "$RUNNER_TEMP/alandi-thai-tts-artifacts" \
+            --workers 2 \
+            --timeout 900
+      - name: Upload Thai F5-TTS V1 500k FP16 checkpoint
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-f5-tts-thai-v1-500k-fp16-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_thai_v1_500k_fp16/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload Thai TTS vocabulary, model card and code license
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-f5-tts-thai-v1-support-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_thai_v1_vocab/
+            ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_thai_v1_model_card/
+            ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_thai_code_license/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+      - name: Upload Vocos 24 kHz vocoder
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-f5-tts-vocos-24khz-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_vocos_vocoder/
+            ${{ runner.temp }}/alandi-thai-tts-artifacts/f5_tts_vocos_config/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload Thai TTS acquisition lock
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-f5-tts-thai-lock-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-thai-tts-artifacts/artifacts-lock.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
