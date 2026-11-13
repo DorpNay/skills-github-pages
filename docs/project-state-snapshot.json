@@ -252,15 +252,27 @@
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Live open PR #174 is the current bounded follow-up and is excluded from the expected queue snapshot; no other open PRs. Issue #111 remains owner-controlled. Closed non-merged #125/#131/#152/#154/#155/#168/#171/#172 retain task scope.",
     "pr_check_policy": "Current PR #174 is the bounded follow-up and is intentionally excluded from the expected main-checkpoint queue snapshot; live queue is one PR (#174), with no other open PRs.",
-    "note": "Main #174 includes UI and contract changes; Pages PASS is not proof of VPS/Tunnel/Ollama or installed local model/voice artifacts."
+    "note": "Main #174 includes UI and contract changes; Pages PASS is not proof of VPS/Tunnel/Ollama or installed local model/voice artifacts.",
+    "last_volley": "V-2026-11-13-MODEL-STACK-ARTIFACT-PACK-001",
+    "active_ui_pr": 184,
+    "open_prs": "8 live open PRs #175, #176, #178, #179, #180, #182, #184, #185; current PR #185 is excluded from freshness snapshot.",
+    "open_prs_at_checkpoint": 7,
+    "main_quality_status": "PASS on exact main SHA 6a366125720453193c82a7385f8c088224a5928e; Quality #43387599840.",
+    "main_pages_status": "SUCCESS on exact main SHA 6a366125720453193c82a7385f8c088224a5928e; Pages #43387599298.",
+    "main_graphify_status": "PASS on exact main SHA 6a366125720453193c82a7385f8c088224a5928e; Graphify #43387599792.",
+    "main_freshness_run": null,
+    "main_freshness_status": "No Freshness run verified on exact main SHA. PR #185 Freshness passed on an earlier head, but later model/runtime and state commits require a new exact-head run.",
+    "main_provenance_run": null,
+    "main_provenance_status": "No separate provenance run verified on exact main SHA; PR #185 provenance runs are exact-head-specific and must be rechecked.",
+    "owner_priority_summary": "LANDING-V2-2026-001 / Section K remains the owner programme. Model stack now has a pinned uncensored Qwen3.5-4B primary candidate, official Qwen3.5 base comparator, Ollama Q8_0 embedding, Qwen reranker, Whisper/Qwen ASR, Piper RU/EN, Silero VAD and Tesseract RU/EN/TH. Production selection and integration still require downloads, exact-host evals, permissions and runtime proof."
   },
-  "last_volley": "V-2026-11-08-REGISTRY-VOICE-LAUNCH-CROSSWALK-005",
+  "last_volley": "V-2026-11-13-MODEL-STACK-ARTIFACT-PACK-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "SPECIFIED_PINNED_NOT_DOWNLOADED",
     "pr": 185,
     "branch": "feat/model-stack-artifact-pack-20261113",
     "primary_candidate": "HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive Q4_K_M; main weights excluded for owner upload",
-    "auxiliary_payload_bytes": 5645657360,
+    "auxiliary_payload_bytes": 6033970026,
     "manifest": "models/artifacts.manifest.json",
     "download_state": "blocked by outbound DNS in engineering container",
     "thai_tts": "deferred pending permissive voice/base license",
@@ -273,6 +285,10 @@
       180,
       182,
       184
-    ]
+    ],
+    "ollama_reference_estimate_bytes": 3939000000,
+    "total_with_ollama_reference_estimate_bytes": 9972970026,
+    "runtime_lock": "models/runtime-stack.lock.json",
+    "install_guide": "models/runtime-install.md"
   }
 }
