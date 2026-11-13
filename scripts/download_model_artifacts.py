@@ -185,7 +185,7 @@ def main():
             try:
                 result = future.result()
                 results.append(result)
-                print(f"{result['status']}: {artifact_id} ({result.get('size_bytes', 0)} bytes)")
+                print(f"{result['status']}: {artifact_id} ({result.get('size_bytes', 0)} bytes; SHA-256 {result.get('sha256', 'n/a')})")
             except Exception as exc:
                 failures.append(f"{artifact_id}: {exc}")
                 print(f"FAILED: {artifact_id}: {exc}", file=sys.stderr)
