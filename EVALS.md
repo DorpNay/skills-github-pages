@@ -212,3 +212,16 @@ Every JSON/Markdown report includes run ID, Git SHA, timestamp, Python/OS versio
 - **Scope:** pinned manifest, bounded HTTPS downloader, archive safety, SHA-256/SHA-1 sidecars, Actions artifact packaging and server-side verification.
 - **Acceptance:** all acquired artifacts match their lock, no weights in Git/Git LFS, owner-server-only main weight is skipped, archives reject traversal/link/device entries, exact artifact run and retention are recorded.
 - **Status:** main acquisition run 43393099472 and Thai TTS run 43393859216 passed; server-side import/verification remains pending.
+
+
+## EV-MODEL-002 — official Qwen3.5-4B base versus uncensored derivative
+
+- **Scope:** official Ollama qwen3.5:4b Q4_K_M baseline versus the owner-server-only HauhauCS Qwen3.5-4B Uncensored Aggressive Q4_K_M candidate.
+- **Acceptance:** same RU/EN/TH conversational, coding, JSON, tool, image and refusal-boundary fixtures; compare quality, tool-call exactness, vision, TTFT, p50/p95, peak RSS/PSS and cold load. Do not infer uncensored behavior from a model name or author benchmark.
+- **Status:** official base package acquired and hash-verified; uncensored model remains owner-server-only; no inference benchmark.
+
+## EV-AGENT-005 — conditional Qwen3.5-2B helper
+
+- **Scope:** official qwen3.5:2b-q4_K_M for classification, extraction, compression and narrow structured helper tasks.
+- **Acceptance:** evaluate each bounded task separately against deterministic code and main-only baseline. Helper is called only when it reduces total cost/latency or improves quality; it never selects/authorizes tools. Measure load/unload overhead and memory with the 4B model evicted.
+- **Status:** package acquired and hash-verified; dispatch adapter/eval not implemented.
