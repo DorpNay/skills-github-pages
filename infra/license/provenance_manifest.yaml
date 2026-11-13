@@ -1,5 +1,5 @@
 schema_version: 1
-updated_on: "2026-11-05"
+updated_on: "2026-11-13"
 policy:
   no_model_downloads_in_git: true
   require_artifact_sha256_before_shipping: true
@@ -156,3 +156,143 @@ artifacts:
     ship: false
     status: "archived_selected_source_snapshot; 18_source_files_and_LICENSE_exact_upstream_git_blob_sha1_verified; whole_archive_sha256_not_computed"
     notes: "Selected 18 source files including parser.py, plus exact MIT LICENSE; not a complete checkout. MinerU, LightRAG, OCR/ASR/VLM model, dataset and transitive dependency terms are separate; no runtime or optional dependency installed."
+
+
+  - id: qwen35-4b-uncensored-hauhaucs-q4km
+    kind: main_model_weights
+    upstream: "https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive/tree/c09cdbcdb1fefad6d335809d445621b5f5ba0c6e"
+    source_version: "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e; Q4_K_M; 2707513696 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_subject_to_base_model_and_derivative_provenance_review"
+    sha256: "79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741"
+    ship: false
+    status: "owner_server_only_pinned_not_downloaded"
+    notes: "Preferred main-model candidate, not production-selected. Author's 0/465 refusal claim is self-reported. Main weights are intentionally excluded from repository acquisition workflows."
+
+  - id: qwen35-4b-uncensored-vision-projector
+    kind: multimodal_model_weights
+    upstream: "https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive/tree/c09cdbcdb1fefad6d335809d445621b5f5ba0c6e"
+    source_version: "c09cdbcdb1fefad6d335809d445621b5f5ba0c6e; BF16 mmproj; 675568768 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_subject_to_base_model_and_derivative_provenance_review"
+    sha256: "a1e32e86ea99aa7a56f3dcfe7e63c1d0be9439d31fd07087099f15bc0fda0f22"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "Separate vision companion; runtime compatibility with the Q4 main GGUF is not yet tested."
+
+  - id: qwen3-embedding-0.6b
+    kind: embedding_model_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/tree/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3"
+    source_version: "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3; BF16; 1191586416 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_RU_EN_TH_retrieval_eval"
+    sha256: "0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd"
+    ship: false
+    status: "downloaded_for_eval_not_integrated"
+    notes: "1024-dimension multilingual embedding candidate. No production RAG adapter yet."
+
+  - id: qwen3-reranker-0.6b
+    kind: reranker_model_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-Reranker-0.6B/tree/e61197ed45024b0ed8a2d74b80b4d909f1255473"
+    source_version: "e61197ed45024b0ed8a2d74b80b4d909f1255473; BF16; 1191588280 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_RU_EN_TH_retrieval_eval"
+    sha256: "27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b"
+    ship: false
+    status: "downloaded_for_eval_not_integrated"
+    notes: "Conditional bounded top-k reranker; raw logits are not calibrated probabilities."
+
+  - id: qwen3-asr-0.6b-bf16
+    kind: asr_model_weights
+    upstream: "https://huggingface.co/Qwen/Qwen3-ASR-0.6B/tree/5eb144179a02acc5e5ba31e748d22b0cf3e303b0"
+    source_version: "5eb144179a02acc5e5ba31e748d22b0cf3e303b0; BF16; 1876091704 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_RU_EN_TH_asr_eval"
+    sha256: "79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "Raw Qwen3-ASR checkpoint; separate inference toolkit/runtime is required."
+
+  - id: sherpa-onnx-qwen3-asr-0.6b-int8
+    kind: asr_model_weights
+    upstream: "https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models"
+    source_version: "asr-models release asset sherpa-onnx-qwen3-asr-0.6B-int8-2026-03-25.tar.bz2; 878702423 bytes"
+    license_spdx: "Apache-2.0"
+    commercial_use: "candidate_allowed_subject_to_exported_weight_notice_review_and_RU_EN_TH_eval"
+    sha256: "393f8a14e2f5fb96746aaab342997a40641001fbd5bf9592a080a8329178ee96"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "INT8 CPU challenger. Archive is path/link/device/expanded-size checked before packaging; runtime adapter is not implemented."
+
+  - id: silero-vad-onnx-066409f3
+    kind: vad_model_weights
+    upstream: "https://github.com/snakers4/silero-vad/tree/066409f3d9db45a30d21dfcbf9147826ffdd7052"
+    source_version: "066409f3d9db45a30d21dfcbf9147826; 2327524 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_voice_eval"
+    sha256: "1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+
+  - id: whisper-large-v3-turbo-q5-0
+    kind: asr_model_weights
+    upstream: "https://huggingface.co/ggerganov/whisper.cpp"
+    source_version: "ggml-large-v3-turbo-q5_0.bin; upstream SHA-1 e050f7970618a659205450ad97eb95a18d69c9ee; 574041195 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_voice_eval"
+    sha256: "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+
+  - id: piper-ru-ru-dmitri-medium
+    kind: tts_voice_model
+    upstream: "https://huggingface.co/rhasspy/piper-voices/tree/375a0fe641dea077c2a47b4e9a056d6da521eed3/ru/ru_RU/dmitri/medium"
+    source_version: "375a0fe641dea077c2a47b4e9a056d6da521eed3; 63201294 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_voice_repository_notice_and_voice_consent_controls"
+    sha256: "f073356ebc4bd0f80c5af58df2953a5988bd5bdab1eb38635ce960b071fbefcb"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
+    notes: "Voice dataset card states CC0. Piper engine code is separately GPL-3.0-or-later."
+
+  - id: piper-engine
+    kind: tts_runtime_code
+    upstream: "https://github.com/OHF-Voice/piper1-gpl"
+    source_version: "piper1-gpl; pin exact release/commit before install"
+    license_spdx: "GPL-3.0-or-later"
+    commercial_use: "candidate_allowed_subject_to_distribution_and_dependency_review"
+    sha256: null
+    ship: false
+    status: "not_installed"
+
+  - id: f5-tts-thai-v1-500k-fp16
+    kind: tts_model_weights
+    upstream: "https://huggingface.co/VIZINTZOR/F5-TTS-THAI"
+    source_version: "906b3376c719c72cefbc6aca33a5527a5c53a8c3; old_small_model/model_500000_FP16.pt; 674367818 bytes"
+    license_spdx: "CC-BY-4.0"
+    commercial_use: "not_cleared_until_training_dataset_rights_are_verified"
+    sha256: "e66bca8f0380775089969250fb5b3b2cda197a4fc6ada355fed6f5c44edd1e47"
+    ship: false
+    status: "downloaded_for_eval_only_dataset_license_review_required"
+    notes: "Model card lists Common Voice and Porjai sources; Porjai data license not verified. Use only for private evaluation until resolved."
+
+  - id: f5-tts-thai-code
+    kind: tts_runtime_code
+    upstream: "https://github.com/VYNCX/F5-TTS-THAI"
+    source_version: "7b0989f5f67378cdea12a117e140c11ac0a9f57d; package version 1.1.2"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_dependency_review"
+    sha256: "58c79c37e6cf013d7560ac857db3ae242e493ccf03b8a3c83cc1f1ce2d546dd5"
+    ship: false
+    status: "source_license_acquired_runtime_not_installed"
+    notes: "Run in an isolated environment; Torch/Torchaudio and legacy NumPy/Pydantic constraints must not alter the gateway."
+
+  - id: f5-tts-vocos-mel-24khz
+    kind: tts_vocoder_weights
+    upstream: "https://huggingface.co/charactr/vocos-mel-24khz"
+    source_version: "a91e656a21df4e98ed0640ece71211deadd67933; 54365991 bytes"
+    license_spdx: "MIT"
+    commercial_use: "candidate_allowed_with_license_notice_subject_to_voice_eval"
+    sha256: "97ec976ad1fd67a33ab2682d29c0ac7df85234fae875aefcc5fb215681a91b2a"
+    ship: false
+    status: "downloaded_for_eval_not_installed"
