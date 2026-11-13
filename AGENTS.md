@@ -10,14 +10,14 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Never force-push, rebase, reset, rewrite history, delete branches/data, weaken safeguards, or deploy/alter live infrastructure without explicit authorization. Preserve owner changes.
 - Keep main/base/head/tested/merge/deployed SHAs distinct. CI green is not merge; merge is not deploy; Pages is not VPS.
 
-## Live checkpoint (2026-11-08)
-- Verified main: `bf039f887e29137b627b06fc2bb107c2793d6b69`; PR #173 is squash-merged. PR #174 is the only open PR (this bounded follow-up); issue #111 is the only open issue.
-- Pages deployment #42410162803 passed on the exact main SHA.
-- Main Quality #42410163178: Context, Jekyll, Static Analysis, Security, Integrity and Chromium jobs passed. Chromium verified the built app, public root revision, canonical landing content and landing Chromium (8/8).
-- Published release-contract job #128517290166 failed only because a stale forbidden marker rejects the owner-approved Functions menu (`functionsMenu`). Correct the sentinel to require Agents/Deep Research/Skills while still forbidding Research Studio, legacy provider selection and removed sidebar controls.
-- Follow-up branch `fix/pages-functions-contract-and-state-20261108` is a bounded CI-contract/state-sync repair based on this exact main. It is not merged; separate owner authorization is required.
-- Issue #111 retains owner/environment gates. VPS/Tunnel/Ollama, target hardware, native iPhone/VoiceOver and real provider credentials remain unverified.
-- Closed non-merged PRs #125/#131/#152/#154/#155/#168/#171/#172 retain deferred task scope; do not merge wholesale.
+## Live checkpoint (2026-11-13)
+- Verified main: `9033c6ad708a993cba5d1b27442f53651ad71c0f`; PR #174 is merged. Current live queue: #175–#182 (8 open PRs); issue #111 remains the only open issue.
+- Main Quality #42430269155, Pages deployment #42430269181 and Provenance #42430269144 passed on exact main SHA. Graphify #42629163792 passed. Scheduled Freshness #43247857963 failed because saved queue state predates the eight open PRs.
+- Exact-head visible state: #181 visible required checks pass; #176/#177/#178 visible Chromium/Jekyll/security/integrity/context checks pass; #175 Chromium fails; #179 Chromium and Freshness fail; #182 Chromium fails; #180 Integrity fails and Chromium was cancelled. Refetch before integration.
+- PR relationships: #175 is main-based UI/Notebook workbench; #179 and #182 are stacked from older #175 bases; #180 is stacked from older #179 state. #177 Browser Local, #178 landing content, #176 audit and #181 supply-chain fix are main-based independent candidates.
+- Owner's 2026-11-13 primary task is LANDING-V2-2026-001, section K of the single addendum. Required end-state: full owner UI; separate Deep Research / Agents / Skills / Connectors panels; real agent runtime and live run-state UI; mandatory local-file Coder; desired GitHub repo access; installed Whisper/ASR + TTS/VAD; full RAG; documents/books/web OCR/parsers/converters; mode-combination gates; conditional efficient model routing; cache/observability/N₂O in main; tested VPS runbook.
+- Current stack candidates are not final model selections: qwen3.5:4b is an example in the runbook; Whisper/Piper code paths require separately installed binaries and weights; Vosk archive is evaluation-only; RAG is FTS5/lexical baseline; AgentRunStore is storage-only prototype. VPS/Tunnel/Ollama, actual hardware, voice devices and connectors remain unverified.
+- Do not merge stacked/failed/draft work wholesale. Reconcile all PRs to main with exact-head gates; target main plus at most one active product PR. Issue #111 stays open until owner/environment gates are evidenced.
 
 ## Resume and orient
 - `oledue`: read root `OLEDUE.md` first and execute its handoff.
