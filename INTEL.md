@@ -688,7 +688,7 @@ The following 103 distinct URL references were absent from the existing INTEL re
 
 ### Conditional RAG models
 
-- [Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B), revision 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3: Apache-2.0; model.safetensors 1,191,586,416 bytes; SHA-256 0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd.
+- [Qwen3-Embedding-0.6B](https://huggingface.co/Qwen/Qwen3-Embedding-0.6B) is Apache-2.0; its full HF model.safetensors is 1,191,586,416 bytes (SHA-256 0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd) and is retained as provenance only. **Runtime choice:** [Ollama qwen3-embedding:0.6b-q8_0](https://ollama.com/library/qwen3-embedding:0.6b-q8_0), approx 639 MB, digest prefix ac6da0dfba84; use native /api/embed only during RAG.
 - [Qwen3-Reranker-0.6B](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B), revision e61197ed45024b0ed8a2d74b80b4d909f1255473: Apache-2.0; model.safetensors 1,191,588,280 bytes; SHA-256 27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b.
 - **Decision:** both are conditional RAG workers only. Do not route ordinary chat through either model. Embedding and reranking are separate eval gates; one resident helper at a time on the 8-GB profile.
 
@@ -708,10 +708,13 @@ The following 103 distinct URL references were absent from the existing INTEL re
 
 ### Acquisition outcome and policy
 
-- models/artifacts.manifest.json and scripts/download_model_artifacts.py now pin selected revisions, artifact sizes and SHA-256/Git blob SHA-1. Expected primary auxiliary payload is 5,645,657,360 bytes, excluding the owner-supplied main Q4 checkpoint and excluding tokenizer/config overhead.
+- models/artifacts.manifest.json and scripts/download_model_artifacts.py now pin selected revisions, artifact sizes and SHA-256/Git blob SHA-1. Expected exact external-cache payload is 4,454,070,944 bytes; the Ollama base-model and embedding references add about 3,939,000,000 bytes in Ollama's own model store. Both exclude the owner-supplied main Q4 checkpoint and tokenizer/config overhead.
 - Actual downloads did **not** complete in this engineering container: outbound DNS returned Temporary failure in name resolution. The downloader is prepared for a network-enabled workstation/server. No artifact is marked installed or runtime-verified.
 - Keep all weights outside the GitHub Pages source repository and Git LFS. Preserve code, manifest, licenses, model cards, hashes and acquisition script in Git. This follows the existing model/binary acquisition policy; no bulk model corpus in the repository.
 - Existing runtime boundary remains: Ollama is the intended main inference server; gateway ASR/TTS routes exist but require separate binaries/weights; RAG is still FTS5/lexical baseline; embedding/reranker/OCR adapters are not yet implemented; target VPS/Tunnel/Ollama remain UNVERIFIED.
 
 
 - [Official Ollama Qwen3.5-4B reference](https://ollama.com/library/qwen3.5:4b): Q4_K_M, about 3.3 GB, registry digest prefix d8b0f5e9760c. This is the matched base comparator for the owner-preferred uncensored Qwen3.5-4B candidate; acquire through ollama pull and verify the local digest prefix.
+
+
+- [Ollama Qwen3 embedding Q8_0](https://ollama.com/library/qwen3-embedding:0.6b-q8_0): approx 639 MB, registry digest prefix ac6da0dfba84. Chosen over duplicating the full 1.19-GB HF safetensors artifact; use Ollama's native /api/embed only on RAG paths.
