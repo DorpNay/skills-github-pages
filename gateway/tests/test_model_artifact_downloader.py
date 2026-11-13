@@ -74,7 +74,7 @@ def test_download_cli_dry_run_is_offline_and_succeeds() -> None:
         text=True,
     )
     assert result.returncode == 0, result.stderr
-    assert "5645657360" in result.stdout
+    assert "4454070944" in result.stdout
     assert "qwen35_uncensored_main" not in result.stdout
     assert "qwen35_4b_base_reference" in result.stdout
     assert "qwen3_embedding_06b_ollama" in result.stdout
@@ -119,3 +119,13 @@ def test_ollama_reference_digest_prefix_is_checked() -> None:
     assert MODULE.ollama_digest_matches(output, package)[0] is True
     bad = "NAME ID SIZE MODIFIED\nqwen3.5:4b 000000000000 3.3 GB 2 weeks ago\n"
     assert MODULE.ollama_digest_matches(bad, package)[0] is False
+
+
+def test_verify_package_checks_required_support_files(tmp_path: Path) -> None:
+    package_root = tmp_path / "support_package"
+    package_root.mkdir()
+    (package_root / "config.json").write_text("{}", encoding="utf-8")
+    package = {"id": "support_package", "files": [], "required_paths": ["config.json"]}
+    assert MODULE.verify_package(tmp_path, package) == []
+    (package_root / "config.json").unlink()
+    assert MODULE.verify_package(tmp_path, package)
