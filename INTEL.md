@@ -1,6 +1,6 @@
 # aLandi Intelligence / Source Register (INTEL.md)
 
-**Review date:** 2026-11-04. Recheck upstream releases and model cards before shipping an artifact. Recheck upstream releases and model cards before shipping an artifact.
+**Review date:** 2026-11-13. Recheck upstream releases and model cards before shipping an artifact. Recheck upstream releases and model cards before shipping an artifact.
 
 ## Voice and model licensing
 
@@ -674,3 +674,45 @@ The following 103 distinct URL references were absent from the existing INTEL re
 | `https://stability.ai/license` | LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://web.dev/articles/storage-for-the-web` | DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
 | `https://www.libreoffice.org/` | VERT_CONVERSION_ARCHITECTURE_ASSESSMENT_2026-10-31_RU.md | prior research snapshot; current upstream recheck pending |
+
+
+## 2026-11-13 — model, retrieval, ASR/VAD and TTS source refresh
+
+This pass revisited sources by the active workstream rather than doing an undirected bulk import.
+
+### Main local inference and model provenance
+
+- Qwen3.5-4B base card: https://huggingface.co/Qwen/Qwen3.5-4B — Apache-2.0 model family, multimodal architecture and long context. The 262K model context is not a practical default on the planned 8 GB RAM host.
+- Uncensored derivative: https://huggingface.co/HauhauCS/Qwen3.5-4B-Uncensored-HauhauCS-Aggressive/tree/c09cdbcdb1fefad6d335809d445621b5f5ba0c6e — pinned Q4_K_M file is 2,707,513,696 bytes; upstream LFS SHA-256 79e28ecacf84e75b6056cf4059636d435aa9eb67795780f7b7dbc7d32a962741. The “0/465 refusals” statement is the author's self-reported test, not an independent benchmark. Keep the derivative and base provenance separate.
+- Main vision companion is a separate 675,568,768-byte BF16 GGUF, SHA-256 a1e32e86ea99aa7a56f3dcfe7e63c1d0be9439d31fd07087099f15bc0fda0f22.
+- Ollama official import docs: https://docs.ollama.com/import — Modelfile import is documented for a single GGUF or a split GGUF set; no official separate mmproj directive was found in this pass. A third-party Ollama registry mirror advertises Qwen3.5-4B vision/tools/thinking, but its mapping to the pinned HF files is unverified. Do not treat a community mirror as the authoritative source.
+- llama.cpp multimodal docs: https://github.com/ggml-org/llama.cpp/blob/5676f71a3c2a1b6e4e13f37a18c0ef3b7b16a9df/docs/multimodal.md — direct HF main GGUF + mmproj is the transparent fallback to test. Confirm the gateway can point at its OpenAI-compatible server before selecting this runtime.
+
+### Retrieval models and API
+
+- Qwen3-Embedding-0.6B: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B/tree/97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3 — Apache-2.0, 32K context, 1024 dimensions, multilingual claim 100+ languages. Exact weights acquired and SHA-256 verified: 0437e45c94563b09e13cb7a64478fc406947a93cb34a7e05870fc8dcd48e23fd.
+- Qwen3-Reranker-0.6B: https://huggingface.co/Qwen/Qwen3-Reranker-0.6B/tree/e61197ed45024b0ed8a2d74b80b4d909f1255473 — Apache-2.0, 32K, 100+ languages. Official card documents SentenceTransformers CrossEncoder.predict() and rank(); raw logits are not calibrated probabilities. Exact weights acquired and SHA-256 verified: 27cd75a405b9c1b46b59abfd88aaa209e6fed2a1972cde9b70e7659537c5e65b.
+- Sentence Transformers docs: https://sbert.net/docs/quickstart.html — use encode_query()/encode_document(), consistent task instructions and normalize only when the retrieval metric requires it. Keep the embedding model on ingestion/query retrieval paths, not ordinary chat.
+
+### ASR and VAD
+
+- Qwen3-ASR-0.6B: https://huggingface.co/Qwen/Qwen3-ASR-0.6B/tree/5eb144179a02acc5e5ba31e748d22b0cf3e303b0 — Apache-2.0, model card lists Russian, Thai, English and further languages/dialects. BF16 checkpoint acquired: 1,876,091,704 bytes, SHA-256 79d6cbd4c98c7bbffe9db2edac07f56cd6637d0d5944b27f6c2b8353840323ea.
+- sherpa-onnx Qwen3-ASR INT8 release: https://github.com/k2-fsa/sherpa-onnx/releases/tag/asr-models — 878,702,423-byte archive, SHA-256 393f8a14e2f5fb96746aaab342997a40641001fbd5bf9592a080a8329178ee96. Archive contains conv frontend, INT8 encoder/decoder and tokenizer assets; it is the CPU deployment challenger, not yet integrated.
+- sherpa-onnx model configuration docs: https://github.com/k2-fsa/sherpa-onnx/blob/master/sherpa-onnx/c-api/docs/offline-asr.dox — Qwen3-ASR config fields include conv_frontend, encoder, decoder, tokenizer, tokens, max_total_len and max_new_tokens. Do not confuse the C API config with an implemented gateway adapter.
+- Silero VAD: https://github.com/snakers4/silero-vad/tree/066409f3d9db45a30d21dfcbf9147826ffdd7052 — MIT; pinned ONNX 2,327,524 bytes, locally computed SHA-256 1a153a22f4509e292a94e67d6f9b85e8deb25b4988682b7e174c65279d8788e3.
+- Whisper.cpp model: https://huggingface.co/ggerganov/whisper.cpp — large-v3-turbo Q5_0; upstream SHA-1 e050f7970618a659205450ad97eb95a18d69c9ee verified; local SHA-256 394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2. Use as a same-audio challenger, not a second always-resident ASR.
+
+### TTS and voice licensing
+
+- Piper runtime: https://github.com/OHF-Voice/piper1-gpl — GPL-3.0-or-later engine code. Selected Russian voice: https://huggingface.co/rhasspy/piper-voices/tree/375a0fe641dea077c2a47b4e9a056d6da521eed3/ru/ru_RU/dmitri/medium — repository card declares MIT; its voice card says the training dataset is CC0. The ONNX voice is 63,201,294 bytes, SHA-256 f073356ebc4bd0f80c5af58df2953a5988bd5bdab1eb38635ce960b071fbefcb.
+- Thai F5-TTS V1: https://huggingface.co/VIZINTZOR/F5-TTS-THAI — model card declares CC-BY-4.0; VYNCX code repository is MIT. The acquired 500k FP16 checkpoint is 674,367,818 bytes, SHA-256 e66bca8f0380775089969250fb5b3b2cda197a4fc6ada355fed6f5c44edd1e47. The model card references Common Voice and Porjai data; the Porjai source license is not clear enough for commercial/redistribution approval. Evaluation-only.
+- Vocos 24 kHz vocoder: https://huggingface.co/charactr/vocos-mel-24khz — MIT, acquired with weight SHA-256 97ec976ad1fd67a33ab2682d29c0ac7df85234fae875aefcc5fb215681a91b2a.
+- Excluded from production: https://github.com/biodatlab/thonburian-tts weights are CC-BY-NC-SA 4.0; https://huggingface.co/facebook/mms-tts-tha is CC-BY-NC 4.0. The newer F5-TTS-TH-V2 repository has no license metadata in its model API response and was not acquired.
+- Keep F5-TTS in an isolated environment: its Torch/Torchaudio and legacy NumPy/Pydantic constraints must not alter the gateway environment. Supply reference transcript explicitly to avoid loading an extra ASR pipeline.
+
+### Acquisition evidence and limits
+
+- Main non-primary batch: GitHub Actions run 43393099472 succeeded; 6,453,112,704 bytes across nine artifacts/lock; per-file sidecars and lock contain exact SHA-256/SHA-1.
+- Thai TTS batch: run 43393859216 succeeded; 728,750,351 bytes across four artifacts/lock.
+- Large weights are Actions artifacts with 30-day retention, not committed to Git or Git LFS. Main Qwen weights remain owner-server-only.
+- No model is installed, loaded, or production-approved. No target-host RAM, p95 latency, WER/CER, TTS MOS, or retrieval metric has been measured.
