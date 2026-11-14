@@ -2,9 +2,11 @@ import asyncio
 import json
 import os
 import tempfile
+import time
 from typing import AsyncIterator
 
 import httpx
+from cryptography.fernet import Fernet
 import pytest
 from starlette.requests import Request
 from fastapi.testclient import TestClient
@@ -689,3 +691,79 @@ def test_health_probes_never_expose_configured_secrets():
             assert secret not in response.text
         assert "api_key" not in response.text.lower()
         assert "client_secret" not in response.text.lower()
+
+
+
+def test_agent_run_api_is_off_by_default_and_requires_authentication():
+    with client_for(settings()) as client:
+        assert client.get("/v1/agent-runs/profiles").status_code == 401
+        response = client.get(
+            "/v1/agent-runs/profiles",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+        )
+    assert response.status_code == 503
+
+
+def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path):
+    calls = []
+
+    async def handler(request):
+        if request.url.path != "/api/chat":
+            return httpx.Response(404, json={})
+        body = json.loads(request.content)
+        calls.append(body)
+        return httpx.Response(200, json={
+            "message": {"role": "assistant", "content": "Persistent answer."},
+            "done": True,
+            "eval_count": 9,
+        })
+
+    config = settings(
+        agent_runs_enabled=True,
+        agent_runs_path=str(tmp_path / "agent-runs.sqlite3"),
+        agent_runs_encryption_key=Fernet.generate_key().decode("ascii"),
+        agent_runs_retention_seconds=3600,
+        agent_runs_max_payload_bytes=256_000,
+        agent_runs_max_prompt_chars=2000,
+        agent_runs_max_output_tokens=128,
+        agent_runs_max_output_bytes=4096,
+        agent_runs_max_pending_runs=4,
+        agent_runs_poll_interval_seconds=0.02,
+    )
+    headers = {"Authorization": f"Bearer {API_KEY}", "Idempotency-Key": "api-agent-1"}
+    with client_for(config, handler) as client:
+        profiles = client.get("/v1/agent-runs/profiles", headers=headers)
+        assert profiles.status_code == 200
+        assert profiles.json()["worker_concurrency"] == 1
+        assert profiles.json()["tools_enabled"] is False
+        created = client.post(
+            "/v1/agent-runs",
+            headers=headers,
+            json={
+                "prompt": "Review the supplied patch.",
+                "scope_kind": "project",
+                "scope_id": "alpha",
+                "profile_id": "reviewer",
+            },
+        )
+        assert created.status_code == 202, created.text
+        run_id = created.json()["run"]["run_id"]
+        for _ in range(200):
+            snapshot = client.get(f"/v1/agent-runs/{run_id}", headers=headers).json()
+            if snapshot["run"]["state"] in {"succeeded", "failed"}:
+                break
+            time.sleep(0.01)
+        assert snapshot["run"]["state"] == "succeeded"
+        assert snapshot["output"] == "Persistent answer."
+        assert snapshot["output_available"] is True
+        events = client.get(f"/v1/agent-runs/{run_id}/events", headers=headers)
+        assert events.status_code == 200
+        assert events.json()["state"] == "succeeded"
+        assert len(calls) == 1
+        assert calls[0]["model"] == MODEL
+        assert calls[0]["stream"] is False
+        assert "tools" not in calls[0]
+
+    raw_db = (tmp_path / "agent-runs.sqlite3").read_bytes()
+    assert b"Review the supplied patch." not in raw_db
+    assert b"Persistent answer." not in raw_db

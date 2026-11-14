@@ -24,6 +24,14 @@ from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
 
 import httpx
+try:
+    from .agent_runtime.payloads import AgentPayloadVault
+    from .agent_runtime.store import AgentRunError, IdempotencyConflict, AgentRunStore
+    from .agent_runtime.worker import AgentRunBusy, AgentRunUnavailable, AgentRunWorker
+except ImportError:  # supports "uvicorn app:app" from the gateway directory
+    from agent_runtime.payloads import AgentPayloadVault
+    from agent_runtime.store import AgentRunError, IdempotencyConflict, AgentRunStore
+    from agent_runtime.worker import AgentRunBusy, AgentRunUnavailable, AgentRunWorker
 from pypdf import PdfReader
 from pypdf.errors import LimitReachedError
 from fastapi import FastAPI, Header, HTTPException, Query, Request
@@ -180,6 +188,17 @@ class Settings:
     github_app_installation_id: str = ""
     github_app_private_key: str = field(default="", repr=False)
     github_app_allowed_repositories: tuple[str, ...] = ()
+    agent_runs_enabled: bool = False
+    agent_runs_path: str = "/var/lib/alandi-gateway/agent-runs.sqlite3"
+    agent_runs_encryption_key: str = field(default="", repr=False)
+    agent_runs_retention_seconds: int = 604800
+    agent_runs_max_payload_bytes: int = 1_100_000
+    agent_runs_timeout_seconds: float = 120.0
+    agent_runs_max_prompt_chars: int = 12_000
+    agent_runs_max_output_tokens: int = 768
+    agent_runs_max_output_bytes: int = 65_536
+    agent_runs_max_pending_runs: int = 16
+    agent_runs_poll_interval_seconds: float = 0.5
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -305,6 +324,43 @@ class Settings:
             raise ValueError("ALANDI_AUDIO_SPEECH_ENABLED requires Python executable, Piper voice name and data directory")
         if audio_speech_model and (os.path.basename(audio_speech_model) != audio_speech_model or not all(char.isalnum() or char in "._-" for char in audio_speech_model)):
             raise ValueError("ALANDI_AUDIO_SPEECH_MODEL must be a voice name, not a path")
+        agent_runs_enabled = bool_env("ALANDI_AGENT_RUNS_ENABLED", False)
+        agent_runs_path = os.getenv(
+            "ALANDI_AGENT_RUNS_PATH", "/var/lib/alandi-gateway/agent-runs.sqlite3"
+        ).strip() or "/var/lib/alandi-gateway/agent-runs.sqlite3"
+        agent_runs_encryption_key = os.getenv("ALANDI_AGENT_RUNS_ENCRYPTION_KEY", "").strip()
+        if agent_runs_enabled and not agent_runs_encryption_key:
+            raise ValueError("ALANDI_AGENT_RUNS_ENCRYPTION_KEY is required when AgentRun is enabled")
+        agent_runs_retention_seconds = int_env("ALANDI_AGENT_RUNS_RETENTION_SECONDS", 604800, 60)
+        if agent_runs_retention_seconds > 31_536_000:
+            raise ValueError("ALANDI_AGENT_RUNS_RETENTION_SECONDS must be <= one year")
+        agent_runs_max_payload_bytes = int_env("ALANDI_AGENT_RUNS_MAX_PAYLOAD_BYTES", 1_100_000, 4096)
+        if agent_runs_max_payload_bytes > 2_097_152:
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_PAYLOAD_BYTES must be <= 2 MB")
+        try:
+            agent_runs_timeout = float(os.getenv("ALANDI_AGENT_RUNS_TIMEOUT_SECONDS", "120"))
+            agent_runs_poll_interval = float(os.getenv("ALANDI_AGENT_RUNS_POLL_INTERVAL_SECONDS", "0.5"))
+        except ValueError as exc:
+            raise ValueError("AgentRun timeout and poll interval must be numeric") from exc
+        if not 1 <= agent_runs_timeout <= 300:
+            raise ValueError("ALANDI_AGENT_RUNS_TIMEOUT_SECONDS must be between 1 and 300")
+        if not 0.05 <= agent_runs_poll_interval <= 10:
+            raise ValueError("ALANDI_AGENT_RUNS_POLL_INTERVAL_SECONDS must be between 0.05 and 10")
+        model_context_length_tokens = int_env("ALANDI_MODEL_CONTEXT_LENGTH_TOKENS", 4096, 256)
+        agent_runs_max_prompt_chars = int_env("ALANDI_AGENT_RUNS_MAX_PROMPT_CHARS", 12_000, 1)
+        if agent_runs_max_prompt_chars > 40_000:
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_PROMPT_CHARS must be <= 40000")
+        agent_runs_max_output_tokens = int_env("ALANDI_AGENT_RUNS_MAX_OUTPUT_TOKENS", 768, 1)
+        if agent_runs_enabled and agent_runs_max_output_tokens > min(4096, model_context_length_tokens - 128):
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_OUTPUT_TOKENS must leave room for prompt context")
+        agent_runs_max_output_bytes = int_env("ALANDI_AGENT_RUNS_MAX_OUTPUT_BYTES", 65_536, 1024)
+        if agent_runs_max_output_bytes > 1_000_000:
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_OUTPUT_BYTES must be <= 1000000")
+        if agent_runs_max_payload_bytes < max(agent_runs_max_output_bytes + 2048, agent_runs_max_prompt_chars * 4 + 1024):
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_PAYLOAD_BYTES is too small for input/output limits")
+        agent_runs_max_pending_runs = int_env("ALANDI_AGENT_RUNS_MAX_PENDING_RUNS", 16, 1)
+        if agent_runs_max_pending_runs > 256:
+            raise ValueError("ALANDI_AGENT_RUNS_MAX_PENDING_RUNS must be <= 256")
         return cls(
             api_key=os.getenv("ALANDI_API_KEY", "").strip(),
             ollama_base_url=base,
@@ -361,6 +417,17 @@ class Settings:
             github_app_installation_id=github_app_installation_id,
             github_app_private_key=github_app_private_key,
             github_app_allowed_repositories=github_app_allowed_repositories,
+            agent_runs_enabled=agent_runs_enabled,
+            agent_runs_path=agent_runs_path,
+            agent_runs_encryption_key=agent_runs_encryption_key,
+            agent_runs_retention_seconds=agent_runs_retention_seconds,
+            agent_runs_max_payload_bytes=agent_runs_max_payload_bytes,
+            agent_runs_timeout_seconds=agent_runs_timeout,
+            agent_runs_max_prompt_chars=agent_runs_max_prompt_chars,
+            agent_runs_max_output_tokens=agent_runs_max_output_tokens,
+            agent_runs_max_output_bytes=agent_runs_max_output_bytes,
+            agent_runs_max_pending_runs=agent_runs_max_pending_runs,
+            agent_runs_poll_interval_seconds=agent_runs_poll_interval,
         )
 
 
@@ -872,6 +939,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.state.rag_store = None
         app.state.oauth_vault = None
         app.state.github_app_connector = None
+        app.state.agent_run_store = None
+        app.state.agent_payload_vault = None
+        app.state.agent_run_worker = None
         if config.github_app_enabled:
             try:
                 from .connectors.github_app import GitHubAppConnector
@@ -903,7 +973,38 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 config.rag_path, max_chunk_chars=config.rag_max_chunk_chars
             )
             app.state.rag_store.initialize()
+        if config.agent_runs_enabled:
+            app.state.agent_run_store = AgentRunStore(config.agent_runs_path)
+            app.state.agent_run_store.initialize()
+            app.state.agent_payload_vault = AgentPayloadVault(
+                config.agent_runs_path,
+                encryption_key=config.agent_runs_encryption_key,
+                retention_seconds=config.agent_runs_retention_seconds,
+                max_payload_bytes=config.agent_runs_max_payload_bytes,
+            )
+            app.state.agent_payload_vault.initialize()
+            app.state.agent_payload_vault.prune_expired()
+            app.state.agent_run_worker = AgentRunWorker(
+                app.state.agent_run_store,
+                app.state.agent_payload_vault,
+                app.state.client,
+                ollama_base_url=config.ollama_base_url,
+                allowed_models=config.allowed_models,
+                inference_semaphore=app.state.semaphore,
+                context_tokens=config.model_context_length_tokens,
+                timeout_seconds=config.agent_runs_timeout_seconds,
+                max_prompt_chars=config.agent_runs_max_prompt_chars,
+                max_output_tokens=config.agent_runs_max_output_tokens,
+                max_output_bytes=config.agent_runs_max_output_bytes,
+                max_pending_runs=config.agent_runs_max_pending_runs,
+                poll_interval_seconds=config.agent_runs_poll_interval_seconds,
+                lease_seconds=min(3600, max(30, int(config.agent_runs_timeout_seconds) + 30)),
+                max_attempts=2,
+            )
+            await app.state.agent_run_worker.start()
         yield
+        if app.state.agent_run_worker is not None:
+            await app.state.agent_run_worker.stop()
         await app.state.client.aclose()
 
     app = FastAPI(title="aLandi Lite Gateway", version="0.1.0",
@@ -920,7 +1021,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.add_middleware(TraceContextMiddleware)
     app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins),
                        allow_credentials=False, allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass", "X-AI-Trace-ID", "traceparent"],
+                       allow_headers=["Authorization", "Content-Type", "Accept", "Cache-Control", "X-AI-Cache-Bypass", "X-AI-Trace-ID", "traceparent", "Idempotency-Key"],
                        expose_headers=["X-AI-Cache", "X-AI-Route", "X-AI-Trace-ID"], max_age=600)
 
     @app.get("/livez")
@@ -965,6 +1066,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             },
             "documents": {"extraction": config.document_extraction_enabled},
             "connectors": {"github_app": config.github_app_enabled},
+            "agent_runs": {"enabled": config.agent_runs_enabled, "worker_concurrency": 1, "tools_enabled": False},
         }, headers={"Cache-Control": "no-store"})
 
     @app.get("/v1/models")
@@ -984,6 +1086,105 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
              "context_length": config.model_context_length_tokens}
             for model in config.allowed_models if model in found
         ]})
+
+    @app.get("/v1/agent-runs/profiles")
+    async def agent_run_profiles(request: Request,
+                                 authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        worker = request.app.state.agent_run_worker
+        if worker is None:
+            raise HTTPException(503, "AgentRun is disabled")
+        return JSONResponse(
+            {"profiles": worker.profiles(), "models": list(config.allowed_models),
+             "worker_concurrency": 1, "max_pending_runs": config.agent_runs_max_pending_runs,
+             "tools_enabled": False, "filesystem_enabled": False, "network_enabled": False},
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.post("/v1/agent-runs")
+    async def create_agent_run(request: Request,
+                               authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        worker = request.app.state.agent_run_worker
+        if worker is None:
+            raise HTTPException(503, "AgentRun is disabled")
+        body_limit = min(config.max_body_bytes, config.agent_runs_max_prompt_chars * 4 + 4096)
+        body = await read_limited_body(request, body_limit)
+        try:
+            payload = json.loads(body)
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            raise HTTPException(400, "Request body must be valid JSON") from None
+        if not isinstance(payload, dict):
+            raise HTTPException(400, "Request body must be a JSON object")
+        idempotency_key = request.headers.get("Idempotency-Key") or payload.get("idempotency_key")
+        try:
+            run = worker.submit(
+                prompt=payload.get("prompt"),
+                idempotency_key=idempotency_key,
+                scope_kind=payload.get("scope_kind"),
+                scope_id=payload.get("scope_id"),
+                profile_id=payload.get("profile_id", "general"),
+                model_id=payload.get("model_id"),
+            )
+        except AgentRunBusy as exc:
+            raise HTTPException(429, str(exc), headers={"Retry-After": "2"}) from None
+        except AgentRunUnavailable:
+            raise HTTPException(503, "AgentRun worker is unavailable") from None
+        except IdempotencyConflict:
+            raise HTTPException(409, "Idempotency-Key was already used for a different request") from None
+        except AgentRunError as exc:
+            raise HTTPException(400, str(exc)) from None
+        return JSONResponse(
+            {"run": run, "status_url": f"/v1/agent-runs/{run['run_id']}",
+             "events_url": f"/v1/agent-runs/{run['run_id']}/events"},
+            status_code=202, headers={"Cache-Control": "no-store"},
+        )
+
+    @app.get("/v1/agent-runs/{run_id}")
+    async def get_agent_run(run_id: str, request: Request,
+                            authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        worker = request.app.state.agent_run_worker
+        if worker is None:
+            raise HTTPException(503, "AgentRun is disabled")
+        try:
+            return JSONResponse(worker.snapshot(run_id), headers={"Cache-Control": "no-store"})
+        except AgentRunError:
+            raise HTTPException(404, "AgentRun was not found") from None
+
+    @app.get("/v1/agent-runs/{run_id}/events")
+    async def get_agent_run_events(run_id: str, request: Request,
+                                   after_event_id: int = Query(default=0, ge=0),
+                                   limit: int = Query(default=100, ge=1, le=500),
+                                   authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        worker = request.app.state.agent_run_worker
+        if worker is None:
+            raise HTTPException(503, "AgentRun is disabled")
+        try:
+            snapshot = worker.snapshot(run_id, after_event_id=after_event_id, limit=limit)
+        except AgentRunError:
+            raise HTTPException(404, "AgentRun was not found") from None
+        events = snapshot["events"]
+        return JSONResponse(
+            {"run_id": run_id, "events": events,
+             "next_after_event_id": events[-1]["event_id"] if events else after_event_id,
+             "state": snapshot["run"]["state"]},
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.delete("/v1/agent-runs/{run_id}")
+    async def cancel_agent_run(run_id: str, request: Request,
+                               authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        worker = request.app.state.agent_run_worker
+        if worker is None:
+            raise HTTPException(503, "AgentRun is disabled")
+        try:
+            run = worker.cancel(run_id)
+        except AgentRunError:
+            raise HTTPException(404, "AgentRun was not found") from None
+        return JSONResponse({"run": run}, headers={"Cache-Control": "no-store"})
 
     @app.get("/admin/cache/stats")
     async def cache_stats(authorization: str | None = Header(default=None)) -> dict[str, int | bool]:

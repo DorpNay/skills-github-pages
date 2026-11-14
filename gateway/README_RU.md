@@ -107,3 +107,15 @@ This is still an opt-in code path. Install the exact model tag locally before co
 - Installation tokens are scoped to the explicit allowlist, contain only read permissions, live in process memory for at most one hour and are never persisted. App JWTs expire after nine minutes. The connector uses the fixed api.github.com origin, bounded response sizes and timeouts.
 - Authenticated endpoints: `GET /v1/connectors/github/status`, `GET /v1/connectors/github/repositories`, read-only tree and UTF-8 contents routes, and `POST /v1/connectors/github/revoke-token`. No push, commit, branch creation, PR, issue, workflow or shell endpoint exists.
 - Revoking the current token does not uninstall the App. Uninstall it from GitHub to fully disconnect.
+
+
+## AgentRun — durable model worker (prototype, выключен)
+
+- Включение только через ALANDI_AGENT_RUNS_ENABLED=true и host-only Fernet key в ALANDI_AGENT_RUNS_ENCRYPTION_KEY. Сгенерировать отдельный ключ на сервере и сохранить резервную копию в secret manager; без того же ключа восстановленная БД не расшифрует payload.
+- POST /v1/agent-runs создаёт run по Idempotency-Key; GET /v1/agent-runs/{run_id} возвращает статус/события/результат; GET /events — журнал; DELETE отменяет запуск и удаляет payload.
+- Worker использует только разрешённую модель из ALANDI_ALLOWED_MODELS через приватный OLLAMA_BASE_URL. Он делит общий inference semaphore с обычным chat, один процесс и один активный run.
+- Вход и результат шифруются Fernet в SQLite payload vault. Срок хранения по умолчанию — 7 дней. SQLite хранит только ссылки/хеши/метаданные и события; plaintext prompt/answer не добавляются в task metadata или логи.
+- Четыре профиля — реальные отдельные system prompts одного model worker, не независимые модели/процессы. В этом прототипе запрещены tools, web access, filesystem, shell, Git write, DAG/fan-out и автономные агенты. Coder предлагает код, но не открывает репозиторий и не запускает тесты.
+- После падения процесс возобновляет задачу после истечения lease. Если encrypted input недоступен, run переводится в needs_human. Output сохраняется до завершения task, поэтому повторный worker может завершить run без второго model call.
+- CI использует MockTransport; это не проверка реальной Ollama-модели, VPS, ключевого backup/restore или браузерной панели. Не включать флаг на production до отдельного host acceptance test.
+
