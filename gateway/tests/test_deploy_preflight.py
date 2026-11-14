@@ -60,3 +60,8 @@ def test_paths_or_credentials_in_origins_are_rejected() -> None:
 def test_ollama_url_with_path_is_rejected() -> None:
     unsafe = ENV.replace("OLLAMA_BASE_URL=http://127.0.0.1:11434", "OLLAMA_BASE_URL=http://127.0.0.1:11434/admin")
     assert any("loopback listener" in error for error in preflight.validate_files(SERVICE, unsafe))
+
+
+def test_github_app_private_key_must_not_be_committed_in_example() -> None:
+    unsafe = ENV.replace("GITHUB_APP_PRIVATE_KEY=", "GITHUB_APP_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----")
+    assert any("GitHub App IDs" in error for error in preflight.validate_files(SERVICE, unsafe))

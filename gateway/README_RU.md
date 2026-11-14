@@ -98,3 +98,12 @@ Configuration:
 The helper does not accept a model name from the browser. It shares the gateway inference semaphore, uses bounded structured JSON output and keep_alive=0, and filters common secret-like patterns from input and output. UI suggestions are never stored automatically: the user adds each candidate individually to the current local project memory.
 
 This is still an opt-in code path. Install the exact model tag locally before configuring it; run gateway tests and E2E first. No live VPS/model inference is implied by CI.
+
+
+## Read-only GitHub App connector (Coder)
+
+- Disabled by default. Create a GitHub App with only **Contents: read-only** and **Metadata: read-only**, then install it on one owner account and only the selected repositories.
+- Set `GITHUB_APP_ENABLED=true`, `GITHUB_APP_ID`, `GITHUB_APP_INSTALLATION_ID`, `GITHUB_APP_PRIVATE_KEY` and `GITHUB_APP_ALLOWED_REPOSITORIES=owner/repo`. Store the private key only in the owner-only environment file (mode 600); encode PEM line breaks as literal `\\n`. The key is excluded from Settings repr/logging.
+- Installation tokens are scoped to the explicit allowlist, contain only read permissions, live in process memory for at most one hour and are never persisted. App JWTs expire after nine minutes. The connector uses the fixed api.github.com origin, bounded response sizes and timeouts.
+- Authenticated endpoints: `GET /v1/connectors/github/status`, `GET /v1/connectors/github/repositories`, read-only tree and UTF-8 contents routes, and `POST /v1/connectors/github/revoke-token`. No push, commit, branch creation, PR, issue, workflow or shell endpoint exists.
+- Revoking the current token does not uninstall the App. Uninstall it from GitHub to fully disconnect.

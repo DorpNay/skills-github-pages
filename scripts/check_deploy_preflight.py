@@ -22,6 +22,7 @@ EXPERIMENTAL_FLAGS = (
     "ALANDI_AUDIO_TRANSCRIPTION_ENABLED",
     "ALANDI_AUDIO_SPEECH_ENABLED",
     "OAUTH_ENABLED",
+    "GITHUB_APP_ENABLED",
 )
 
 
@@ -139,6 +140,8 @@ def validate_files(service_text: str, env_text: str) -> list[str]:
         errors.append("ALANDI_HELPER_MODEL must remain blank in the safe example configuration")
     if env.get("OAUTH_ENCRYPTION_KEY", "") or env.get("GOOGLE_DRIVE_CLIENT_SECRET", ""):
         errors.append("OAuth encryption key and client secret must remain blank in the safe example configuration")
+    if any(env.get(name, "") for name in ("GITHUB_APP_ID", "GITHUB_APP_INSTALLATION_ID", "GITHUB_APP_PRIVATE_KEY", "GITHUB_APP_ALLOWED_REPOSITORIES")):
+        errors.append("GitHub App IDs, private key and repository allowlist must remain blank in the safe example configuration")
     return errors
 
 

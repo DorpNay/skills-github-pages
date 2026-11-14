@@ -18,7 +18,7 @@ import time
 import zipfile
 import xml.etree.ElementTree as ET  # nosec B405 -- custom parser below rejects all DTD declarations.
 from contextlib import asynccontextmanager, closing
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, AsyncIterator, Mapping
 from urllib.parse import urlsplit
@@ -175,6 +175,11 @@ class Settings:
     google_oauth_client_secret: str = ""
     google_oauth_redirect_uri: str = ""
     oauth_success_redirect: str = "https://dorpnay.github.io/skills-github-pages/"
+    github_app_enabled: bool = False
+    github_app_id: str = ""
+    github_app_installation_id: str = ""
+    github_app_private_key: str = field(default="", repr=False)
+    github_app_allowed_repositories: tuple[str, ...] = ()
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -218,6 +223,33 @@ class Settings:
         oauth_success_redirect = os.getenv(
             "OAUTH_SUCCESS_REDIRECT", "https://dorpnay.github.io/skills-github-pages/"
         ).strip()
+        github_app_enabled = bool_env("GITHUB_APP_ENABLED", False)
+        github_app_id = os.getenv("GITHUB_APP_ID", "").strip()
+        github_app_installation_id = os.getenv("GITHUB_APP_INSTALLATION_ID", "").strip()
+        github_app_private_key = os.getenv("GITHUB_APP_PRIVATE_KEY", "").replace("\\n", "\n").strip()
+        github_app_allowed_repositories = tuple(
+            item.strip() for item in os.getenv("GITHUB_APP_ALLOWED_REPOSITORIES", "").split(",")
+            if item.strip()
+        )
+        if github_app_enabled:
+            if not re.fullmatch(r"[1-9][0-9]{0,19}", github_app_id):
+                raise ValueError("GITHUB_APP_ENABLED requires a numeric GITHUB_APP_ID")
+            if not re.fullmatch(r"[1-9][0-9]{0,19}", github_app_installation_id):
+                raise ValueError("GITHUB_APP_ENABLED requires a numeric GITHUB_APP_INSTALLATION_ID")
+            if not github_app_private_key.startswith("-----BEGIN "):
+                raise ValueError("GITHUB_APP_ENABLED requires GITHUB_APP_PRIVATE_KEY")
+            if not 1 <= len(github_app_allowed_repositories) <= 50:
+                raise ValueError("GITHUB_APP_ALLOWED_REPOSITORIES must contain 1 to 50 repositories")
+            if len({name.casefold() for name in github_app_allowed_repositories}) != len(github_app_allowed_repositories):
+                raise ValueError("GITHUB_APP_ALLOWED_REPOSITORIES must be unique")
+            owners = set()
+            for repository in github_app_allowed_repositories:
+                match = re.fullmatch(r"([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))/([A-Za-z0-9][A-Za-z0-9_.-]{0,99})", repository)
+                if not match or ".." in match.group(2):
+                    raise ValueError("GITHUB_APP_ALLOWED_REPOSITORIES must use safe owner/repository names")
+                owners.add(match.group(1).casefold())
+            if len(owners) != 1:
+                raise ValueError("GITHUB_APP_ALLOWED_REPOSITORIES must belong to one GitHub account")
         if oauth_enabled:
             if not all((oauth_encryption_key, google_oauth_client_id, google_oauth_client_secret,
                         google_oauth_redirect_uri, oauth_success_redirect)):
@@ -324,6 +356,11 @@ class Settings:
             google_oauth_client_secret=google_oauth_client_secret,
             google_oauth_redirect_uri=google_oauth_redirect_uri,
             oauth_success_redirect=oauth_success_redirect,
+            github_app_enabled=github_app_enabled,
+            github_app_id=github_app_id,
+            github_app_installation_id=github_app_installation_id,
+            github_app_private_key=github_app_private_key,
+            github_app_allowed_repositories=github_app_allowed_repositories,
         )
 
 
@@ -834,6 +871,13 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.state.delta_store = None
         app.state.rag_store = None
         app.state.oauth_vault = None
+        app.state.github_app_connector = None
+        if config.github_app_enabled:
+            try:
+                from .connectors.github_app import GitHubAppConnector
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from connectors.github_app import GitHubAppConnector
+            app.state.github_app_connector = GitHubAppConnector(config, app.state.client)
         if config.oauth_enabled:
             try:
                 from .security.oauth_vault import OAuthVault
@@ -920,6 +964,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 ] if config.audio_speech_enabled else [],
             },
             "documents": {"extraction": config.document_extraction_enabled},
+            "connectors": {"github_app": config.github_app_enabled},
         }, headers={"Cache-Control": "no-store"})
 
     @app.get("/v1/models")
@@ -1574,6 +1619,11 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
     except ImportError:  # supports "uvicorn app:app" from the gateway directory
         from security.google_oauth import build_google_oauth_router
     app.include_router(build_google_oauth_router(config, authorize))
+    try:
+        from .connectors.github_app import build_github_app_router
+    except ImportError:  # supports "uvicorn app:app" from the gateway directory
+        from connectors.github_app import build_github_app_router
+    app.include_router(build_github_app_router(config, authorize))
 
     return app
 

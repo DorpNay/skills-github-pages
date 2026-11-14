@@ -29,3 +29,13 @@ python -m pytest -q gateway/tests/test_deploy_preflight.py
 5. Пройти smoke test, записать SHA приложения, версии runtime/model, latency/RAM и откат.
 
 **Важно:** зелёный preflight не доказывает, что production-файлы совпадают с шаблоном или что сервис работает на VPS. Не вставляйте реальные ключи в чат, issue или CI-логи.
+
+
+## GitHub App connector preflight (optional)
+
+Если владелец отдельно включает read-only GitHub App для Coder, проверьте до рестарта:
+
+- GitHub App имеет только Repository permissions: **Contents: read-only**, **Metadata: read-only**; никаких write, Actions, Issues, Pull requests или Administration permissions.
+- App установлен только на один owner/account и выбранные репозитории, перечисленные в `GITHUB_APP_ALLOWED_REPOSITORIES`.
+- `GITHUB_APP_PRIVATE_KEY` хранится только в `/etc/alandi-gateway.env` с правами 600; PEM line breaks передаются как literal `\\n`. Не помещайте ключ в Git, browser storage, CI variables или логи.
+- `GITHUB_APP_ENABLED=false` остаётся baseline до проверки статуса и read-only поведения. Для полного отключения удалите App installation на GitHub; API revoke endpoint отзывает только текущий installation token.

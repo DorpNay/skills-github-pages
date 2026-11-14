@@ -78,6 +78,7 @@ def test_capabilities_require_auth_and_only_report_enabled_flags():
         "search": {"searxng": False},
         "audio": {"transcription": True, "speech": False, "speech_voices": []},
         "documents": {"extraction": True},
+        "connectors": {"github_app": False},
     }
 
 
