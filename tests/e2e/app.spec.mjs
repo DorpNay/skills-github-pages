@@ -2691,7 +2691,7 @@ test('Functions panels share theme-aware surfaces, actions and readable states',
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-function="agents"]').click();
+  await page.locator('.toolbar-menu-option[data-function="agents"]').click();
   const modal = page.locator('#functionPanelModal');
   await expect(modal).toBeVisible();
   const surface = modal.locator('.function-panel-surface');
