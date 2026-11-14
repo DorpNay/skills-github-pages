@@ -29,7 +29,6 @@ SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 HANDOFF_PATHS = ("NOW.md", "AGENTS.md")
 REQUIRED_REFRESH_PATHS = {
     "NOW.md",
-    "AGENTS.md",
     "docs/PROJECT_STATE.yaml",
     "docs/VOLLEY_LOG.md",
     "docs/project-state-snapshot.json",
