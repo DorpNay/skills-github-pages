@@ -6,7 +6,11 @@
 
 ## CURRENT
 
-- **Task ID:** `CONTINUITY-NOW-001`
+- **Task ID:** `LANDING-2.0-2026-001`
+- **Owner task received:** 2026-11-15; full verbatim request appended below.
+- **Scope:** finish the 15-step Landing 2.0 plan, especially its final owner-action instructions; download/integrate all specified assets except the large model; audit/update modules against their authoritative external sources; unify product UI/UX and navigation; implement real model-backed agents and specialist tools; verify whole-system integrity and aLandi operation.
+- **Authorization:** owner explicitly permits merges and plugin connections. This does not waive branch/CI/security checks or authorize deployment/destructive history changes.
+- **Immediate NEXT:** locate exact `landing 2.0 2026 001` source and its 15-step list; read its final owner-action section before implementation.
 - **Status:** IN PROGRESS — consolidate orientation and continuity.
 - **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never revive stale PR/tasks by default.
 - **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
@@ -35,6 +39,9 @@ Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. 
 
 ## JOURNAL — latest first
 
+- [2026-11-15] S-005 | IN PROGRESS | Owner started `LANDING-2.0-2026-001`; verbatim request captured below. | No implementation yet. | Authorization includes merges and plugin connections; all large-model downloads excluded. | First inspect exact 15-step plan and last owner-action instruction; establish current main SHA and focused task scope.
+
+
 - [2026-11-15] S-004 | IN PROGRESS | Replace orientation ritual with NOW.md; update AGENTS, freshness checker/tests/workflow and active pointers; delete obsolete orientation docs. | Parent `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`. | Checks pending. | Keep machine-readable product state and historic evidence as on-demand references, not startup docs. | Run focused tests and inspect exact main diff.
 - [2026-11-15] S-003 | FACT | Live GitHub: main `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`, 0 open PRs, issue #111 only. Startup duplicated across AGENTS, OLEDUE, ORIENTER, two FILE_ORIENTER copies, orchestrator, YAML state, JSON snapshot and log. Freshness CI required old orienter files. | Live GitHub API. | No exact-SHA workflow runs returned for `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`. | Migrate checker before deleting required paths.
 - [2026-11-15] S-002 | PROPOSAL | One root checkpoint plus append-only full prompt and step journal. Detailed product docs remain on-demand. | Explicit owner authorization. | Redact secrets/private personal data from prompt archive. | Implement atomically on main.
@@ -52,4 +59,10 @@ Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. 
 
 ```text
 А я тебе говорю, до ума сука все доводи и лишнее ориентирование и его файлы удаляй назуй. А то я тебя знаю, ты их потом в запрос включишь и опять назуй интерфейс 10 дневной давности оформишь блять  (вот нахуй предыдущее сообщение: а то вдруг ты не догадаешься про него вспомнить блять: Ну так, блядь, я тебе каждый раз нахуй, каждый запрос прошу. Сделай и исправь это ёбаное ориентирование. Почему ты с ним так мудришь? Мы все лимиты на него тратим. Только и делаешь, блядь, что в файлах ориентируешься. Раз-два и всё, и потом уже нахуй чат не отвечает, не загружается, блядь. И никакой работы не сделано в итоге. Что, нельзя, что ли, блядь, сделать один файл, в который ты будешь каждый свой шаг нахуй указывать поэтапно, когда ты его сделал, чтобы потом, блядь, сориентироваться по нему, сразу к нему обращаться? Как ты его так назвать, чтобы ты сразу на него внимание обращал? Как в какое-то такое место положить, чтобы вот которое ты в первую очередь обращаешься, когда тебе там слово all I do пишешь, например. И блядь, чтобы ты, потому что тебе когда говоришь просто сориентируйсь, ты берёшь, начинаешь с какого-то там старого PR продолжать работу. Что, нельзя, что ли, блядь, этот файл сделать так, чтобы ты к нему обращался, чтобы это было быстро, чтобы мы на это не тратили время? И блядь, туда как-то фиксировать задачи каждую прям кропотливо и детально. И мои сообщения, что ли, туда тоже дублировать, блядь. Каждое, каждое, когда я присылаю. Мои задачи, промпты целиком сообщения, блядь, чтобы в следующем чате могли к нему отослаться, и мне не пришлось его заново печатать. Сейчас у нас есть all do, ориентир, statement. Там ещё дохуя всякой хуйни. Блядь, сделай уже всё это комплексно. Я не знаю, упрости в один файл, продумай так, чтобы то место, в которое ты обращаешься в первую очередь, куда бы ты посмотрел. Туда его и положи, так и назови, который ты первый откроешь. И вот сделай так, чтобы, блядь, на него тратить пять секунд, а не всё время, блядь, так что проект на месте стоит, ёбаный в рот, блядь) @GitHub  думай УСЕРДНЕЕ
+```
+
+### OR-2026-11-15-003 — landing 2.0 task
+
+```text
+Окей, раз тот чат не грузится еще раз: делаем , доводим до финализации и до ума landing 2.0 2026 001. 15 шагов в него включены, очень важны - конец списка там инструкция моих действий. Все скачиваем кроме большой модели, абсолютно все, собираем. Пере проверяем работоспособность и актуальность модулей. Например, вышел whisper 3, если он новее - качаем, внедряем. При проверке модулей, типа кодера - проверяем внешние источники из списка, подходящие по данной конкретной тематике, извлекаем лучшее, собираем идеально. Стараемся держать только main, на самом сайте не забудь про единую концепцию визуалов, кнопок, текста, анимации, размеров, движений, удвоений и тд. Минимизация текста, минималистичность, статусы, индикаторы, упрощение текстов и инструкций, систематизация и умная сортировка всего сайта, его функций и настроек, перепроверка логики включения, комбинаций, правильности смыслов режимов, типа быстро, дольше. Важно выдвигающееся меню функций, где агенты, глубокие исследования, и тд. Каждый с отдельным меню, агенты настоящие с моделями, не имитация, у них лучшие решения типа зарнесов, окна статуса из работы, разных режимов на выбор и способов настройки. Инструменты  типа конвертера файлов, считывателя сайтов и конвертации в кодинговый формат для удобства кодинга самого Ии-агента-кодера. Ноутбук. Все это пожалуйста в свой now тоже фиксируй, и каждый свой шаг. И в начале этого файла сам себе инструкции дай, чтоб точно не запутаться. Не забывай избавляться от рудиментов, проверять целостность всей системы и работоспособность aLandi. Даю добро на мерджи и подключение плагинов; кодекса, exa, и всего, что тебе нужно для эффективнейшей работы. @GitHub
 ```
