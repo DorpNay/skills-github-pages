@@ -1,6 +1,6 @@
 # aLandi — Agent Operating Contract
 
-**Mandatory first project file:** read root `NOW.md` lines 1–100 before any task, including when the owner writes `oledue`, "orient yourself" or asks to continue. NOW.md is the only session/task checkpoint and append-only owner-request/action journal. Do not read or recreate OLEDUE/ORIENTER/FILE_ORIENTER or another parallel handoff.
+**Mandatory first project file:** read root `NOW.md` lines 1–100 before any task, including when the owner writes `oledue`, "orient yourself" or asks to continue. NOW.md is the only session/task checkpoint and append-only owner-request/action journal. Do not use or recreate parallel handoff/navigation files.
 
 ## Authority and truth
 - Owner authority and safety outrank speed. Initiative is not authorization.
