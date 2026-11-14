@@ -741,3 +741,8 @@ The following 103 distinct URL references were absent from the existing INTEL re
 
 - pypdf 7.1.0 has a GitHub-verified signed release tag (2026-11-13) and includes the 7.0.1 image-buffer-size security fix. The project makes a narrow pypdf-only freshness-cutoff exception through 2026-11-14, retains the global seven-day cooldown, and maps LimitReachedError to HTTP 413.
 - pytest 9.2.0 and pytest-asyncio 1.4.1.post1 are selected after call-site/API review. pytest-asyncio 1.5.0 and FastAPI 0.162.7 remain in the seven-day cooldown; Pydantic 2.14.3 is expected to resolve in the regenerated lock. Exact Python matrix is pending.
+
+
+## 2026-11-14 — exact lock generation result
+
+CI generated the 142,587-byte universal uv.lock on Python 3.13. It pins FastAPI 0.162.0, Pydantic 2.14.1, pypdf 7.1.0, pytest 9.2.0 and pytest-asyncio 1.4.1.post1. Gateway: 245/245 tests on Python 3.12/13/14; six-layer offline evaluation PASS. The pinned Python runtime-cache workflow still needs to pass after this exact lock is committed. The pytest-asyncio default fixture loop scope is now explicitly function-scoped.

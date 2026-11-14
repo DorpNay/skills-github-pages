@@ -29,6 +29,7 @@ exclude-newer-package = { pypdf = "2026-11-14T00:00:00Z" }
 testpaths = ["gateway/tests"]
 addopts = "-ra"
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.vulture]
 paths = ["gateway", "observability"]

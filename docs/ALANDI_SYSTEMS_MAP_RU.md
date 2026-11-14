@@ -202,4 +202,4 @@ The main Functions menu exposes four independent panels in the owner-defined ord
 - PDF parser: pypdf 7.1.0 принят вместо 6.21.4 из-за security fix в 7.0.1 (image buffer size теперь рассчитывается по фактическим bytes-per-pixel). Добавлена обработка LimitReachedError → HTTP 413 и регрессионная проверка.
 - Test tooling: pytest 9.2.0 и pytest-asyncio 1.4.1.post1; 1.5.0 остаётся на семидневном cooldown.
 - FastAPI 0.162.7 пока не обновлён: релиз слишком свежий для общего cooldown, а затронутый cancellation cleanup yield-dependencies в текущем Gateway не используется.
-- Pydantic 2.14.3 должен быть закреплён обновлённым uv.lock после CI lock regeneration. До успешной матрицы Python 3.12/13/14 статус — CANDIDATE.
+- Pydantic 2.14.1 остаётся в lock: 2.14.3 попадает в общий семидневный cooldown. CI сгенерировал universal uv.lock (142 587 байт; FastAPI 0.162.0, Pydantic 2.14.1, pypdf 7.1.0, pytest 9.2.0, pytest-asyncio 1.4.1.post1). Матрица Python 3.12/13/14: 245/245 тестов и six-layer offline evaluation PASS; после коммита lock нужно подтвердить pinned runtime-cache workflow.

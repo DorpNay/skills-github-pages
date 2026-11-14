@@ -62,7 +62,7 @@ jobs:
           test "$(dpkg-deb -f "$out/openshell_0.1.8-1_amd64.deb" Architecture)" = "amd64"
           for archive in "$out"/*.tar.gz; do tar -tzf "$archive" >/dev/null; done
           cp infra/sandbox/openshell-v0.1.8-manifest.yaml "$out/"
-          sha256sum --check "$out/SHA256SUMS"
+          ( cd "$out" && sha256sum --check SHA256SUMS )
       - name: Upload verified staging artifact (not installed)
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
