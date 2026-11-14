@@ -6,28 +6,23 @@
 
 ## CURRENT
 
-- **Task ID:** `LANDING-V2-2026-001`
-- **Owner task received:** 2026-11-15; full verbatim request appended below.
-- **Scope:** finish the 15-step Landing 2.0 plan, especially its final owner-action instructions; download/integrate all specified assets except the large model; audit/update modules against their authoritative external sources; unify product UI/UX and navigation; implement real model-backed agents and specialist tools; verify whole-system integrity and aLandi operation.
-- **Authorization:** owner explicitly permits merges and plugin connections. This does not waive branch/CI/security checks or authorize deployment/destructive history changes.
-- **Canonical scope:** `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K; 15 items = K.1.1–K.1.14 + K.2; progress table K.5 updated in place only.
-- **Owner-only action guide:** `docs/PRE_LAUNCH_STACK_RU.md` §8. These are explicit owner/environment gates, not work to fake as completed.
-- **Live checkpoint:** `main` SHA `05b98dfe18886810cae0e14f950a2927e72d0337` (parent of this atomic correction); 0 open PRs; issue #111 only. Provenance, Graphify and Pages passed on this SHA; Freshness failed on a test import, now corrected.
-- **Immediate NEXT:** rerun exact-head Freshness and Quality after the missing test import is fixed; then begin the first real model-backed AgentRun service slice.
-- **Status:** IN PROGRESS — Landing V2 delivery; orientation consolidated to NOW.md.
-- **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never select an old PR as a default; never revive stale tasks by default.
-- **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
-- **Last functional baseline SHA (PROJECT_STATE snapshot):** `8e4edd83d50e6872852e7de8090934fbf6ae5f24`.
-- **Live main SHA at this update:** `05b98dfe18886810cae0e14f950a2927e72d0337` (parent of this atomic correction).
-- **Open PRs:** none
-- **Open issues:** #111
-- Open PRs: none
-- Open issues: #111
-- Routing invariant: never select an old PR as a default; route from the latest explicit owner request.
-- **Live facts:** GitHub API confirms main at checkpoint parent, zero open PRs, issue #111 only. Commit `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`: `feat(github): add allowlisted read-only App connector` (2026-11-14). No workflow runs returned for this exact SHA; exact-head CI is NOT VERIFIED.
-- **Prior-chat task:** not recovered. Do not infer it from old PRs, stale registry entries or historical checkpoints.
-- **NEXT:** verify Freshness and Quality on the corrected atomic checkpoint; then implement real model-backed AgentRun. No old PR is a default continuation.
-
+- **Task ID:** LANDING-V2-2026-001
+- **Owner task received:** 2026-11-15; original delivery request is archived verbatim as OR-2026-11-15-003. This turn's continuation/restatement is recorded as OR-2026-11-15-004 below.
+- **Scope:** finish the 15-point Landing 2.0 programme in addendum §K/K.5; do not split or recreate its backlog. Owner-only/environment instructions are in docs/PRE_LAUNCH_STACK_RU.md §8.
+- **Authorization:** owner explicitly authorizes merges and plugin connections; current execution policy is direct-to-main, zero open PRs. This does not waive exact-head verification, safety gates, cost/credential/host confirmations, or authorize deployment, force-push, history rewrite or destructive data operations.
+- **Canonical task tracker:** docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K, single 15-point table K.5. No parallel backlog.
+- **Live checkpoint (verified 2026-11-15):** main SHA 0f5a99b66af710c528cc4e39336f9f05da44fc89; 0 open PRs; issue #111 remains open. Exact-main Actions: Pages #43623729315 SUCCESS; Provenance #43623729398 SUCCESS; Freshness #43623729463 SUCCESS; Quality #43623729425 SUCCESS.
+- **Handoff file:** root OLEDUE.md is absent on live main (GitHub 404). Do not create or follow a second handoff file; AGENTS.md and this NOW.md define the only startup route.
+- **K.5 status:** UI and four Functions panels are implemented but still have open capability/device checks. Deep Research is specified. AgentRun is only a safe SQLite lifecycle store; no real model worker, scheduler, API integration or live event stream. Skills lifecycle, Connectors, Coder sandbox, Voice installation, full RAG, document/web/book conversion, complete mode matrix, observability and host-tested runbook remain incomplete. The 15-point status table is the authority for detail.
+- **Model/artifact facts:** auxiliary artifacts are staged and checksum-verified in GitHub Actions, not installed on the target host. The owner-supplied primary/large model is excluded. No officially named Whisper 3 was found; the currently recorded Whisper model line is large-v3 / large-v3-turbo with whisper.cpp v1.9.5. Current target-host installation is NOT VERIFIED.
+- **Owner-only actions:** docs/PRE_LAUNCH_STACK_RU.md §8: owner confirms host/budget/domain/DNS/credentials/SSH, supplies sanitized host facts, tests actual mic/speaker/device and personally verifies backup restoration. Do not request secrets in chat or mark these complete from CI.
+- **Immediate NEXT:** implement one bounded, genuinely model-backed AgentRun slice on top of gateway/agent_runtime/store.py and the configured loopback Ollama client. Keep it default-off, allowlist-only, single-worker and read-only (no tools or side effects), with bounded input/output/time/concurrency, no raw prompts or chain-of-thought in SQLite/events, real status/events and cancellation. Record limitations honestly; do not claim full DAG/fan-out/recovery or live VPS operation until those layers are implemented and tested.
+- **Status:** IN PROGRESS — Landing V2 owner-priority delivery; NOW.md is the only session/task checkpoint and append-only owner-request/action journal.
+- **Routing invariant:** latest explicit owner request in the current conversation wins; otherwise resume this CURRENT/NEXT. Never revive a historical PR, old task, or roadmap row by default.
+- **Repository / branch:** DorpNay/skills-github-pages / main; main-only durable baseline.
+- **Known release gate:** issue #111 remains open for repository governance, host/hardware, live model completion, permissioned RAG corpus, native-device voice and backup/restore evidence.
+- **Last verified live update:** 2026-11-15, GitHub branch/API + Actions runs listed above. Recheck immediately before any write.
+- **No claim:** repository CI and Pages success do not prove a VPS, Cloudflare Tunnel, Ollama model, worker runtime, native device or backup is operational.
 ## START PROTOCOL — five-second route
 
 1. Read NOW.md lines 1–100. Identify CURRENT, status, checkpoint SHA and NEXT.
@@ -45,6 +40,8 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+
+- [2026-11-15] S-014 | VERIFIED | Re-oriented from live GitHub after oledue: root OLEDUE.md is 404/absent; NOW.md is the sole entrypoint per AGENTS.md. | Live main 0f5a99b66af710c528cc4e39336f9f05da44fc89; 0 open PRs; issue #111 open. | Exact-SHA checks: Pages #43623729315 SUCCESS, Provenance #43623729398 SUCCESS, Freshness #43623729463 SUCCESS, Quality #43623729425 SUCCESS. K.5 confirms K.1.4 AgentRun is storage-only: no model worker, scheduler, API integration or event stream. | Container clone was unavailable because DNS could not resolve github.com; no local code tests run. No repository source behavior changed in this checkpoint. | Implement a default-off, allowlisted, single-worker model-backed AgentRun vertical slice with offline mocked tests; inspect complete store/API boundaries first.
 
 - [2026-11-15] S-012 | IMPLEMENTED / CHECKS PENDING | Fixed Freshness/Ruff regression: imported legacy_orientation_files in tests/test_project_state_freshness.py; helper and legacy-file guard are in scripts/check_project_state_freshness.py. | Parent main 05b98dfe18886810cae0e14f950a2927e72d0337. | Freshness #43623253330 failed with 20 tests passing and 1 NameError (legacy_orientation_files import missing); Quality #43623253249 Ruff gate failed on the same undefined name, other jobs still running. Provenance #43623253304 PASS; Graphify #43623253242 PASS; Pages #43623253308 SUCCESS. | No product runtime behavior changed. | Run exact-head Freshness/Quality on this correction.
 - [2026-11-15] S-013 | FACT | Removed stale current routing from docs/PROJECT_STATE.yaml: current live queue is zero PRs and issue #111; historical PR records remain history only. | Parent 05b98dfe18886810cae0e14f950a2927e72d0337. | Current task is LANDING-V2-2026-001; latest owner prompt in NOW is authoritative. | Keep old PR IDs out of active sequence; continue K.5 only.
@@ -90,3 +87,8 @@ Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. 
 ```
 
 - [2026-11-15] S-007 | IN PROGRESS | Upstream audit started from `INTEL.md`, model manifest/lock and current release sources. | Current manifest and lock last updated 2026-11-13; INTEL review date 2026-11-04. | Existing model/runtime assets are recorded as downloaded in GitHub Actions, not installed on target host. | Compare current release tags/commits/licenses; do not claim target installation.
+
+
+### OR-2026-11-15-004 — oledue continuation / request restatement
+
+The owner restated the full LANDING 2.0 request already preserved verbatim in OR-2026-11-15-003, then instructed: “Oledue, продолжаем”. The continuation quoted the previous assistant handoff and the latest repeated agent-runtime progress labels (“Проектируя запуск агентов”, “Проектируя AgentRun”, “Проектируя агентский рантайм”, “Проектируя выполнение агентов”, “Планируя реализацию агентов”). Treat OR-003 as the exact canonical text of the unchanged product request; this entry records the continuation without duplicating the same multi-paragraph request a second time.
