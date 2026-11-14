@@ -15,14 +15,18 @@
 - **Live checkpoint:** `main` SHA `18da1a1f2c4568818fba136d50648c61a209bd74`; open PRs 0; open issue #111. This SHA contains the latest NOW owner-prompt record. No workflow runs associated with this commit were returned by the connector; CI is NOT VERIFIED for this SHA.
 - **Immediate NEXT:** audit manifest/lock/download artifacts against current upstream source versions; preserve large primary checkpoint exclusion; then start first bounded UI/code slice only after code/test inspection.
 - **Status:** IN PROGRESS — Landing V2 delivery; orientation consolidated to NOW.md.
-- **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never revive stale PR/tasks by default.
+- **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never select an old PR as a default; never revive stale tasks by default.
 - **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
-- **Checkpoint parent SHA:** `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`
+- **Last functional baseline SHA (PROJECT_STATE snapshot):** `8e4edd83d50e6872852e7de8090934fbf6ae5f24`.
+- **Live main SHA at this update:** `638cd2e7d537f923d9d79dc9983f58eb11b412cf` (documentation-only continuity update).
 - **Open PRs:** none
 - **Open issues:** #111
+- Open PRs: none
+- Open issues: #111
+- Routing invariant: never select an old PR as a default; route from the latest explicit owner request.
 - **Live facts:** GitHub API confirms main at checkpoint parent, zero open PRs, issue #111 only. Commit `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`: `feat(github): add allowlisted read-only App connector` (2026-11-14). No workflow runs returned for this exact SHA; exact-head CI is NOT VERIFIED.
 - **Prior-chat task:** not recovered. Do not infer it from old PRs, stale registry entries or historical checkpoints.
-- **NEXT:** update current 15-point K.5 evidence after each verified milestone; keep issue #111 open until host/device gates are actually proven.
+- **NEXT:** fix NOW freshness markers against the functional baseline and exact live queue; inspect main static-analysis failure; then start the first bounded implementation slice.
 
 ## START PROTOCOL — five-second route
 
@@ -41,6 +45,9 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+
+- [2026-11-15] S-008 | FACT | Exact-main CI audit found the freshness failure is a stale/incomplete NOW checkpoint contract: checker expects functional baseline SHA `8e4edd83d50e6872852e7de8090934fbf6ae5f24`, literal open-queue markers, and exact no-default-PR wording. 19 freshness unit tests passed. | Main before fix `638cd2e7d537f923d9d79dc9983f58eb11b412cf`; Freshness #43621101052 FAIL; Pages #43621100962 SUCCESS; Quality #43621101004 still running, with Static Analysis failed Ruff gate. | No code behavior change. | Fix NOW contract and rerun exact-main Freshness; inspect Ruff JSON before touching code.
+
 
 - [2026-11-15] S-006 | FACT | Resolved canonical task ID and source: `LANDING-V2-2026-001`, addendum §K; K.1.1–K.1.14 + K.2 = 15; status table K.5. Owner-only actions are in `docs/PRE_LAUNCH_STACK_RU.md` §8. | Live main `18da1a1f2c4568818fba136d50648c61a209bd74`; 0 open PRs; issue #111 open. | `OLEDUE.md`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md` return 404 on live main; root `AGENTS.md` mandates NOW.md. No Actions runs returned for current main SHA. | Do not revive stale orienter pointers in older docs; use addendum K and owner §8 only as task-specific source. | Inspect artifacts/lock and revalidate upstream versions.
 
