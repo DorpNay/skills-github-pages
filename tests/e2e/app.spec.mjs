@@ -2687,6 +2687,36 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(modal).toBeHidden();
 });
 
+test('Functions panels share theme-aware surfaces, actions and readable states', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-function="agents"]').click();
+  const modal = page.locator('#functionPanelModal');
+  await expect(modal).toBeVisible();
+  const surface = modal.locator('.function-panel-surface');
+  const themeStyles = [];
+  for (const theme of ['dark', 'light']) {
+    await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+    const style = await surface.evaluate(element => ({
+      background: getComputedStyle(element).backgroundColor,
+      color: getComputedStyle(element).color,
+      border: getComputedStyle(element).borderTopColor
+    }));
+    expect(style.background).not.toBe('rgba(0, 0, 0, 0)');
+    expect(style.color).not.toBe('');
+    expect(style.border).not.toBe('');
+    themeStyles.push(style);
+  }
+  expect(themeStyles[0].background).not.toBe(themeStyles[1].background);
+  expect(themeStyles[0].color).not.toBe(themeStyles[1].color);
+  for (const control of await modal.locator('.function-panel-action:visible').all()) {
+    const box = await control.boundingBox();
+    expect(box?.height || 0, 'Function panel actions must keep a 44px touch target').toBeGreaterThanOrEqual(44);
+  }
+  await page.evaluate(() => { document.documentElement.dataset.theme = 'dark'; });
+});
+
 test('browser Python snippets cannot access page globals through Pyodide js module', async ({ page }) => {
   await page.addInitScript(() => {
     window.loadPyodide = async options => ({

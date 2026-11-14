@@ -363,6 +363,24 @@ permalink: /
     .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
     .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
     :root { --ui-control-compact:32px; --ui-control-standard:40px; --ui-control-touch:44px; --ui-control-gap:8px; --ui-control-font:12px; --ui-control-icon:18px; }
+    /* Shared Functions panel primitives: theme-aware surfaces, actions and truthful states. */
+    #functionPanelModal .function-panel-surface { background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-lg);color:var(--ui-text);box-shadow:0 24px 72px rgb(0 0 0 / 28%); }
+    #functionPanelModal .function-panel-card { background:var(--ui-surface-raised);border:1px solid var(--ui-border);border-radius:var(--ui-radius-md);color:var(--ui-text); }
+    #functionPanelModal .function-panel-muted { color:var(--ui-text-muted); }
+    #functionPanelModal .function-panel-value { display:inline-flex;align-items:center;min-height:var(--ui-control-compact);border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-surface);color:var(--ui-info); }
+    #functionPanelModal .function-panel-action { display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);padding:.5rem .75rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);background:var(--ui-surface-raised);color:var(--ui-text);font-size:var(--ui-control-font);font-weight:650;line-height:1.3;text-align:center; }
+    #functionPanelModal .function-panel-action:hover:not(:disabled) { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft);color:var(--ui-text); }
+    #functionPanelModal .function-panel-action-primary { background:var(--ui-primary);border-color:transparent;color:#fff; }
+    #functionPanelModal .function-panel-action-primary:hover:not(:disabled) { background:color-mix(in srgb,var(--ui-primary) 86%,var(--ui-text));color:#fff; }
+    #functionPanelModal .function-panel-action-secondary { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
+    #functionPanelModal .function-panel-close { flex:0 0 auto;width:var(--ui-control-touch);padding:.35rem; }
+    #functionPanelModal .function-panel-footer { border-color:var(--ui-border); }
+    #functionPanelModal .function-panel-notice { border:1px solid var(--ui-border);border-radius:var(--ui-radius-md);background:color-mix(in srgb,var(--ui-info) 7%,var(--ui-surface));color:var(--ui-text); }
+    #functionPanelModal .function-panel-notice-warning { border-color:color-mix(in srgb,var(--ui-warning) 34%,var(--ui-border));background:color-mix(in srgb,var(--ui-warning) 8%,var(--ui-surface)); }
+    #functionPanelModal .function-panel-notice-title { color:var(--ui-warning); }
+    #functionPanelModal .function-panel-field { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
+    #functionPanelModal .function-panel-field:focus { border-color:var(--ui-tiffany)!important;box-shadow:0 0 0 2px var(--ui-tiffany-soft)!important; }
+    @media (prefers-reduced-transparency:reduce) { #functionPanelModal .function-panel-surface { box-shadow:0 12px 36px rgb(0 0 0 / 18%); } }
     .header-icon { display:inline-flex;align-items:center;justify-content:center;min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);padding:.35rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);font-size:var(--ui-control-icon);line-height:1; }
     .header-preferences { display:flex;align-items:center;gap:4px;flex:0 0 auto; }
     .header-chat-title { padding:5px 9px;border:1px solid var(--ui-border);border-radius:12px;background:color-mix(in srgb,var(--ui-surface-raised) 78%,transparent); }
@@ -706,57 +724,57 @@ permalink: /
 
   
   <div id="functionPanelModal" class="hidden fixed inset-0 z-[66] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="functionPanelTitle">
-    <section class="w-full max-w-lg max-h-[88dvh] overflow-y-auto rounded-2xl border border-gray-700 bg-gray-950 p-4 sm:p-5 shadow-2xl space-y-4">
+    <section class="function-panel-surface w-full max-w-lg max-h-[88dvh] overflow-y-auto p-4 sm:p-5 space-y-4">
       <header class="flex items-start justify-between gap-3">
-        <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="mt-1 text-xs leading-relaxed text-gray-400"></p></div>
-        <button type="button" data-action="close-function-panel" class="shrink-0 rounded-lg px-2 py-1 text-gray-400 hover:text-white" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
+        <div class="min-w-0"><h2 id="functionPanelTitle" class="font-bold text-base">Функции</h2><p id="functionPanelDescription" class="function-panel-muted mt-1 text-xs leading-relaxed"></p></div>
+        <button type="button" data-action="close-function-panel" class="function-panel-action function-panel-action-secondary function-panel-close shrink-0" data-i18n-aria-label="functionPanelClose" aria-label="Закрыть">✕</button>
       </header>
       <section id="researchFunctionSettings" class="hidden space-y-3">
-        <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-3">
-          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchModeStatusLabel">Режим обработки</strong><span id="researchModeSummary" class="rounded-lg border border-gray-700 px-2 py-1 text-[11px] font-semibold text-cyan-200">Тщательно</span></div>
-          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchModeStatusHelp">Быстро и Тщательно управляют бюджетом инструментов текущего запроса.</p>
-          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="mt-3 min-h-[44px] w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200" data-i18n="researchUseThorough">Включить режим «Тщательно»</button>
+        <div class="function-panel-card p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchModeStatusLabel">Режим обработки</strong><span id="researchModeSummary" class="function-panel-value px-2 py-1 text-[11px] font-semibold">Тщательно</span></div>
+          <p class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="researchModeStatusHelp">Быстро и Тщательно управляют бюджетом инструментов текущего запроса.</p>
+          <button type="button" data-action="select-processing-mode" data-processing-mode="deep" class="function-panel-action function-panel-action-primary mt-3 w-full" data-i18n="researchUseThorough">Включить режим «Тщательно»</button>
         </div>
-        <div class="rounded-xl border border-gray-800 p-3">
-          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchSearchStatusLabel">Веб-поиск</strong><span id="researchSearchModeSummary" class="text-[11px] text-gray-300">Веб: обычный</span></div>
-          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchSearchStatusHelp">Охват результатов настраивается отдельно и не увеличивает число раундов.</p>
-          <button type="button" data-action="open-search-mode-settings" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenSearchSettings">Настроить охват веб-поиска</button>
+        <div class="function-panel-card p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchSearchStatusLabel">Веб-поиск</strong><span id="researchSearchModeSummary" class="function-panel-value px-2 py-1 text-[11px]">Веб: обычный</span></div>
+          <p class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="researchSearchStatusHelp">Охват результатов настраивается отдельно и не увеличивает число раундов.</p>
+          <button type="button" data-action="open-search-mode-settings" class="function-panel-action function-panel-action-secondary mt-3 w-full" data-i18n="researchOpenSearchSettings">Настроить охват веб-поиска</button>
         </div>
-        <div class="rounded-xl border border-gray-800 p-3">
-          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchWorkflowStatusLabel">Структурированный pipeline</strong><span id="researchWorkflowSummary" class="text-[11px] text-gray-300">Прямой</span></div>
-          <p class="mt-2 text-[11px] leading-relaxed text-gray-400" data-i18n="researchWorkflowStatusHelp">Четыре последовательных этапа используют выбранную модель; blueprint не запускает независимых workers.</p>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="mt-3 min-h-[44px] w-full rounded-lg border border-gray-700 px-3 py-2 text-xs font-semibold" data-i18n="researchOpenAgentSettings">Настроить Agents / structured analysis</button>
+        <div class="function-panel-card p-3">
+          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchWorkflowStatusLabel">Структурированный pipeline</strong><span id="researchWorkflowSummary" class="function-panel-value px-2 py-1 text-[11px]">Прямой</span></div>
+          <p class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="researchWorkflowStatusHelp">Четыре последовательных этапа используют выбранную модель; blueprint не запускает независимых workers.</p>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="function-panel-action function-panel-action-secondary mt-3 w-full" data-i18n="researchOpenAgentSettings">Настроить Agents / structured analysis</button>
         </div>
-        <div class="rounded-xl border border-amber-900/50 bg-amber-950/20 p-3">
-          <strong class="block text-xs text-amber-100" data-i18n="research2RoadmapLabel">Deep Research 2.0 — в разработке</strong>
-          <p class="mt-2 text-[11px] leading-relaxed text-amber-100/70" data-i18n="research2RoadmapHelp">Планируемые функции: возобновляемые runs, коллекции источников, evidence ledger и проверка цитат. Это не активный runtime.</p>
+        <div class="function-panel-notice function-panel-notice-warning p-3">
+          <strong class="function-panel-notice-title block text-xs" data-i18n="research2RoadmapLabel">Deep Research 2.0 — в разработке</strong>
+          <p class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="research2RoadmapHelp">Планируемые функции: возобновляемые runs, коллекции источников, evidence ledger и проверка цитат. Это не активный runtime.</p>
         </div>
       </section>
       <section id="agentFunctionSettings" class="hidden space-y-3">
-        <label class="flex items-start gap-2 rounded-xl border border-gray-800 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="mt-1 rounded bg-gray-800 border-gray-700 text-blue-600 focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block text-[11px] leading-relaxed text-gray-500" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
+        <label class="function-panel-card flex items-start gap-2 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="function-panel-field mt-1 rounded focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block function-panel-muted text-[11px] leading-relaxed" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
         <div class="grid grid-cols-2 gap-3">
-          <label class="block text-xs text-gray-400">Размер команды · blueprint
-            <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="text-[11px] font-semibold text-cyan-300">4 агента</span>
+          <label class="function-panel-muted block text-xs">Размер команды · blueprint
+            <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="function-panel-muted text-[11px] font-semibold">4 агента</span>
           </label>
-          <label class="block text-xs text-gray-400">Сценарий
-            <select id="agentTeamScenario" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="general">Общий</option><option value="research">Исследование</option><option value="software">Разработка</option><option value="product">Продукт</option><option value="due-diligence">Due diligence</option><option value="custom">Свой вариант</option></select>
+          <label class="function-panel-muted block text-xs">Сценарий
+            <select id="agentTeamScenario" class="advanced-control function-panel-field mt-1 w-full rounded-lg border"><option value="general">Общий</option><option value="research">Исследование</option><option value="software">Разработка</option><option value="product">Продукт</option><option value="due-diligence">Due diligence</option><option value="custom">Свой вариант</option></select>
           </label>
-          <label class="block text-xs text-gray-400 col-span-2">Роли
-            <select id="agentRolePreset" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="balanced">Сбалансированные</option><option value="research">Исследовательская команда</option><option value="software">Разработка ПО</option><option value="product">Продуктовая команда</option><option value="custom">Свой вариант</option></select>
+          <label class="function-panel-muted block text-xs col-span-2">Роли
+            <select id="agentRolePreset" class="advanced-control function-panel-field mt-1 w-full rounded-lg border"><option value="balanced">Сбалансированные</option><option value="research">Исследовательская команда</option><option value="software">Разработка ПО</option><option value="product">Продуктовая команда</option><option value="custom">Свой вариант</option></select>
           </label>
         </div>
-        <div id="agentCustomFields" class="hidden space-y-2 rounded-xl border border-gray-800 p-3">
-          <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Опиши сценарий команды"></textarea>
-          <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Роли и обязанности, по одной на строку"></textarea>
+        <div id="agentCustomFields" class="hidden function-panel-card space-y-2 p-3">
+          <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control function-panel-field w-full resize-y rounded-lg border" placeholder="Опиши сценарий команды"></textarea>
+          <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control function-panel-field w-full resize-y rounded-lg border" placeholder="Роли и обязанности, по одной на строку"></textarea>
         </div>
-        <p class="rounded-lg border border-amber-900/50 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-100/80">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
+        <p class="function-panel-notice function-panel-notice-warning p-2 text-[10px] leading-relaxed function-panel-muted">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
         <div class="roadmap-ticker mt-2" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Независимое исполнение ролей — в дорожной карте</span></div>
         <p class="roadmap-note">Это планируемое направление, а не активный runtime или индикатор фоновой работы.</p>
-        <p id="agentConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
+        <p id="agentConfigSummary" class="function-panel-muted text-[10px]" aria-live="polite"></p>
       </section>
       <section id="skillFunctionSettings" class="hidden space-y-2">
         <label for="skillPresetSelect" class="block text-xs font-semibold" data-i18n="skillPresetLabel">Навык этого чата</label>
-        <select id="skillPresetSelect" class="w-full rounded-xl border border-gray-700 bg-gray-900 p-3 text-sm">
+        <select id="skillPresetSelect" class="function-panel-field w-full rounded-xl border p-3 text-sm">
           <option value="auto" data-i18n="skillAuto">Автоматически по задаче</option>
           <option value="planning" data-i18n="skillPlanning">Планирование</option>
           <option value="research" data-i18n="skillResearch">Исследование</option>
@@ -767,24 +785,24 @@ permalink: /
           <option value="custom">Свой вариант</option>
         </select>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <label class="block text-[11px] text-gray-400">Задача по ответам
-            <select id="skillGoalSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
+          <label class="function-panel-muted block text-[11px]">Задача по ответам
+            <select id="skillGoalSelect" class="advanced-control function-panel-field mt-1 w-full rounded-lg border"><option value="planning">Планирование</option><option value="research">Исследование</option><option value="code-review">Код и ревью</option><option value="data-analysis">Анализ данных</option><option value="agent-systems">Системы агентов</option><option value="multimodal">Мультимодальные задачи</option><option value="custom">Свой вариант</option></select>
           </label>
-          <label class="block text-[11px] text-gray-400">Формат результата
-            <select id="skillOutputSelect" class="advanced-control mt-1 w-full rounded-lg border border-gray-700 bg-gray-900"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
+          <label class="function-panel-muted block text-[11px]">Формат результата
+            <select id="skillOutputSelect" class="advanced-control function-panel-field mt-1 w-full rounded-lg border"><option value="summary">Краткое резюме</option><option value="checklist">Чек-лист</option><option value="steps">Пошагово</option><option value="table">Таблица</option><option value="report">Отчёт</option><option value="custom">Свой вариант</option></select>
           </label>
         </div>
-        <div id="skillCustomFields" class="hidden space-y-2 rounded-xl border border-cyan-900/50 bg-cyan-950/15 p-3">
-          <input id="customSkillName" maxlength="80" class="advanced-field w-full rounded-lg border border-gray-700 bg-gray-900" placeholder="Название своего навыка">
-          <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свои инструкции для задачи"></textarea>
-          <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field w-full resize-y rounded-lg border border-gray-700 bg-gray-900" placeholder="Свой формат результата (необязательно)"></textarea>
+        <div id="skillCustomFields" class="hidden function-panel-card space-y-2 p-3">
+          <input id="customSkillName" maxlength="80" class="advanced-field function-panel-field w-full rounded-lg border" placeholder="Название своего навыка">
+          <textarea id="customSkillInstructions" rows="3" maxlength="3000" class="advanced-field function-panel-field w-full resize-y rounded-lg border" placeholder="Свои инструкции для задачи"></textarea>
+          <textarea id="customSkillOutput" rows="2" maxlength="500" class="advanced-field function-panel-field w-full resize-y rounded-lg border" placeholder="Свой формат результата (необязательно)"></textarea>
         </div>
-        <button type="button" data-action="apply-skill-quiz" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-2 text-xs font-semibold text-cyan-200">Подобрать навык</button>
-        <p id="skillConfigSummary" class="text-[10px] text-gray-500" aria-live="polite"></p>
-        <p class="text-[11px] leading-relaxed text-gray-500" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
+        <button type="button" data-action="apply-skill-quiz" class="function-panel-action function-panel-action-primary w-full">Подобрать навык</button>
+        <p id="skillConfigSummary" class="function-panel-muted text-[10px]" aria-live="polite"></p>
+        <p class="function-panel-muted text-[11px] leading-relaxed" data-i18n="skillPresetHelp">Профиль добавляет инструкции, но не открывает инструменты или данные.</p>
       </section>
-      <section id="connectorFunctionStatus" class="hidden rounded-xl border border-gray-800 bg-gray-900/60 p-3 text-sm leading-relaxed text-gray-300"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
-      <footer class="flex justify-end border-t border-gray-800 pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="rounded-xl border border-gray-700 px-4 py-2 text-sm">Закрыть</button></footer>
+      <section id="connectorFunctionStatus" class="hidden function-panel-card function-panel-muted p-3 text-sm leading-relaxed"><p data-i18n="functionConnectorsDescription">Показываем только реально подключённые источники. Внешние коннекторы пока не подключены; они не будут имитироваться переключателями.</p><div class="roadmap-ticker mt-3" aria-label="Планируемое улучшение"><span class="roadmap-ticker-track" aria-hidden="true">1nv3nt10n 1n PrOc3ss… · Интеграции с контролируемыми разрешениями — в дорожной карте</span></div><p class="roadmap-note">Подключение источников появится только после проверки прав, границ данных и реального соединения. Анимация декоративная и не означает, что сервис уже выполняет работу.</p></section>
+      <footer class="function-panel-footer flex justify-end border-t pt-3"><button type="button" data-action="close-function-panel" data-i18n="functionPanelClose" class="function-panel-action function-panel-action-secondary">Закрыть</button></footer>
     </section>
   </div>
   <div id="traceModal" class="hidden fixed inset-0 z-[70] bg-black/75 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="traceTitle">

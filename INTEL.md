@@ -718,3 +718,11 @@ The following 103 distinct URL references were absent from the existing INTEL re
 
 
 - [Ollama Qwen3 embedding Q8_0](https://ollama.com/library/qwen3-embedding:0.6b-q8_0): approx 639 MB, registry digest prefix ac6da0dfba84. Chosen over duplicating the full 1.19-GB HF safetensors artifact; use Ollama's native /api/embed only on RAG paths.
+
+
+## 2026-11-14 — ASR upstream clarification and challenger review
+
+- **OpenAI Whisper naming:** the official model catalogue lists large-v3 and large-v3-turbo; there is no separate official model named “Whisper 3”. The current aLandi artifact remains the pinned large-v3-turbo Q5_0 baseline. Sources: https://github.com/openai/whisper/blob/main/whisper/__init__.py and https://github.com/openai/whisper/blob/main/CHANGELOG.md.
+- **Runtime:** https://github.com/ggml-org/whisper.cpp/releases lists v1.9.5 (2026-10-06) as latest stable in this review. Keep the existing pinned runtime until a newer stable release is checked against the build/API contract.
+- **Challenger:** https://github.com/QwenLM/Qwen3-ASR documents Qwen3-ASR-0.6B and 1.7B for 52 languages/dialects, plus ForcedAligner-0.6B; native Transformers support and torch.compile were announced 2026-06-26. Existing 0.6B artifact remains staged. The 1.7B model is a research candidate only; do not download or install before target-host resource fit and same-audio RU/EN/TH evaluation.
+- **Decision:** retain whisper.cpp + large-v3-turbo as baseline; evaluate Qwen3-ASR on the identical permissioned golden set. Compare WER/CER, language detection, timestamps, RTF, cold/warm latency, peak RSS/PSS, cancellation and license/provenance. No migration based on model age or parameter count alone.
