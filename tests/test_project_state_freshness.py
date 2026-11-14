@@ -116,18 +116,18 @@ class QueueComparisonTests(unittest.TestCase):
 
 
 class HandoffPolicyTests(unittest.TestCase):
-    def test_owner_intent_drives_routing_without_a_default_pr(self):
-        oledue = "The latest explicit owner request takes priority. Do not default to any PR. Match an open PR only when its scope matches."
-        agents = "Read OLEDUE.md when the owner sends `oledue`."
-        self.assertEqual(validate_handoff_policy(oledue, agents), [])
+    def test_now_is_the_single_owner_driven_entrypoint(self):
+        now = "The latest explicit owner request takes priority. Never select an old PR as a default."
+        agents = "Read NOW.md when the owner sends oledue."
+        self.assertEqual(validate_handoff_policy(now, agents), [])
 
-    def test_rejects_hard_coded_pr_131_fallback(self):
-        oledue = "Otherwise default to Landing 2.0 in PR #131."
-        agents = "Read OLEDUE.md when the owner sends `oledue`."
-        errors = validate_handoff_policy(oledue, agents)
-        self.assertTrue(any("hard-coded PR #131 fallback" in error for error in errors))
+    def test_legacy_orientation_files_are_rejected_from_agents_route(self):
+        now = "The latest explicit owner request takes priority. Never select an old PR as a default."
+        agents = "Read OLEDUE.md and ORIENTER.md when the owner sends oledue."
+        errors = validate_handoff_policy(now, agents)
+        self.assertTrue(any("legacy orientation files" in error for error in errors))
 
-    def test_requires_owner_intent_and_agents_entrypoint(self):
+    def test_requires_owner_intent_and_now_entrypoint(self):
         errors = validate_handoff_policy("Choose the default branch.", "No handoff trigger here.")
         self.assertTrue(any("latest explicit owner request" in error for error in errors))
         self.assertTrue(any("no-default-PR" in error for error in errors))
