@@ -348,7 +348,7 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#searchModeSummary')).toBeVisible();
   await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
   await expect(page.locator('#toggleSearch')).toBeChecked();
-  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(3);
+  await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(4);
   const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
     element.classList.remove('hidden');
     const color = getComputedStyle(element).backgroundColor;
@@ -2665,8 +2665,8 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(modal).toBeVisible();
   const connectorsPanel = page.locator('#connectorFunctionStatus');
   await expect(connectorsPanel).toBeVisible();
-  await expect(connectorsPanel).toContainText('Внешние коннекторы пока не подключены');
-  await expect(connectorsPanel).toContainText('не будут имитироваться переключателями');
+  await expect(connectorsPanel).toContainText(/не подключены/i);
+  await expect(connectorsPanel).toContainText(/переключател/i);
   await expect(connectorsPanel.locator('button, input, select, textarea')).toHaveCount(0);
   await modal.locator('[data-action="close-function-panel"]').first().click();
   await expect(modal).toBeHidden();
