@@ -23,6 +23,8 @@ try:
 except ImportError:  # supports imports when launched with gateway/ as the working directory
     from memory.scope import ScopeError, ScopeRef
 
+GRAPH_QUERY_CONCEPT_LIMIT = 12
+
 _WORD = re.compile(r"[^\w'-]+", re.UNICODE)
 _STOP = frozenset("""
 a an the and or but to of in on at for with from by as is are was were be been being it
@@ -361,22 +363,26 @@ class LazyGraphRAG:
                 }
 
             graph_ranked_ids: list[str] = []
-            query_concepts = concepts(query, limit=12)
+            query_concepts = concepts(query, limit=GRAPH_QUERY_CONCEPT_LIMIT)
             if query_concepts:
-                placeholders = ",".join("?" for _ in query_concepts)
-                graph_sql = (  # nosec B608 -- only bounded placeholder count is interpolated; query values remain bound.
-                    f"""
+                query_concepts = query_concepts[:GRAPH_QUERY_CONCEPT_LIMIT]
+                graph_rows = db.execute(
+                    """
                     SELECT c.*, COUNT(DISTINCT ce.concept) AS shared_concepts
                     FROM rag_chunk_concepts ce
                     JOIN rag_chunks c ON c.chunk_key=ce.chunk_key
-                    WHERE ce.concept IN ({placeholders}) AND c.scope=? AND c.scope_id=?
+                    WHERE ce.concept IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                      AND c.scope=? AND c.scope_id=?
                     GROUP BY c.chunk_key
                     ORDER BY shared_concepts DESC, c.document_id ASC, c.chunk_id ASC LIMIT ?
-                """
-                )
-                graph_rows = db.execute(  # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query -- only bounded placeholders are interpolated; all data values are bound.
-
-                    graph_sql, (*query_concepts, scope, scope_id, candidate_limit)
+                    """,
+                    (
+                        *query_concepts,
+                        *([None] * (GRAPH_QUERY_CONCEPT_LIMIT - len(query_concepts))),
+                        scope,
+                        scope_id,
+                        candidate_limit,
+                    ),
                 ).fetchall()
                 for row in graph_rows:
                     chunk_key = row["chunk_key"]

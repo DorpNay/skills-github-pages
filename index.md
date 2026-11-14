@@ -1117,6 +1117,15 @@ permalink: /
       scheduleStorageHealthCheck();
       return true;
     }
+    function safeAssignOwn(target, source) {
+      if (!target || typeof target !== 'object' || !source || typeof source !== 'object') return target;
+      for (const [key, value] of Object.entries(source)) {
+        if (key === '__proto__' || key === 'prototype' || key === 'constructor') continue;
+        Object.defineProperty(target, key, { value, writable: true, enumerable: true, configurable: true });
+      }
+      return target;
+    }
+
     function persistChatMutation(chat, updates, mirroredWrites = []) {
       if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
       const allowedUpdateKeys = new Set([
@@ -2172,7 +2181,7 @@ permalink: /
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
       chat.projectId=project.id;chat.projectMemoryEnabled=false
-      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;Object.assign(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;safeAssignOwn(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
       renderProjectUI();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
@@ -2184,7 +2193,7 @@ permalink: /
       if(!name){showToast('Название проекта не может быть пустым.','error');return;}
       const previous={name:project.name,instructions:project.instructions,memoryScope:project.memoryScope,updatedAt:project.updatedAt};
       project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
-      if(!persistProjects()){Object.assign(project,previous);renderProjectUI();return;}
+      if(!persistProjects()){safeAssignOwn(project,previous);renderProjectUI();return;}
       renderProjectUI();renderChatList();
       showToast(getUiLanguage()==='en'?'Project instructions saved.':'Инструкции проекта сохранены.');
     }
@@ -2194,7 +2203,7 @@ permalink: /
       if(chat.projectId===(target?.id||null))return;
       const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=falseselectedProjectForSettingsId=target?.id||null;
-      if(!persistChats()){Object.assign(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
+      if(!persistChats()){safeAssignOwn(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
       renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
@@ -2959,10 +2968,10 @@ permalink: /
           multiAgentEnabled: activeChat.multiAgentEnabled,
           skillPreset: activeChat.skillPreset
         };
-        Object.assign(activeChat, nextChatSettings);
+        safeAssignOwn(activeChat, nextChatSettings);
         if (!VALID_SKILL_PRESETS.has(activeChat.skillPreset)) activeChat.skillPreset = 'auto';
         if (!persistChats()) {
-          Object.assign(activeChat, previousChatSettings);
+          safeAssignOwn(activeChat, previousChatSettings);
           const restored = rollbackProfileStorage();
           throw new Error(restored
             ? 'Настройки чата не сохранились; импорт профиля отменён и прежние параметры восстановлены.'
@@ -4621,7 +4630,7 @@ permalink: /
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
       const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
       chat.projectId=projectId;chat.projectMemoryEnabled=false
-      if(!persistChats()){Object.assign(chat,previous);renderChatList();renderProjectUI({preserveDraft:true});return;}
+      if(!persistChats()){safeAssignOwn(chat,previous);renderChatList();renderProjectUI({preserveDraft:true});return;}
       renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
       showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
