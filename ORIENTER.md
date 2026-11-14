@@ -4,13 +4,15 @@
 
 ## Verified baseline — 2026-11-14
 
-- **Current main SHA:** 973a07eab5d8eef493e359d468499f263420a74c (parent for this atomic state refresh; fetch live ref on resume).
-- **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
-- **Recent functional commit:** e6a3a0817f1b955ccd32a3611a029851ea83915e exposed the four owner-required Functions panels. E2E corrections d54c8670f92118ee9af45651a559840cfc4b70ed and 973a07eab5d8eef493e359d468499f263420a74c align tests with the four-panel menu.
-- **Exact-parent checks:** Quality #43552190729 PASS (121/121 Chromium, live-site smoke 1/1, landing 8/8, release contract and static/security jobs); Graphify #43552190747 PASS; Pages #43552190545 SUCCESS. Freshness/Provenance require the atomic state refresh.
-- **Artifacts:** external #43420046411 + Ollama #43418126506 = 13,783,272,859 bytes, SHA-verified in Actions, expire 2026-12-13; not installed. Python cache #43423610986 passed offline sync/pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14; not installed.
-- **Dependency freshness:** FastAPI 0.162.7, Pydantic 2.14.3 and pypdf 7.1.0 are newer than the current lock. Lock regeneration and compatibility checks are required. Ollama 0.40.16, whisper.cpp 1.9.5, Piper 1.8.0 and Tesseract 5.5.4 remain selected baselines.
-- **Runtime boundary:** actual host OS/architecture, disk, RAM/VRAM, GPU, live APIs, install and RU/EN/TH quality remain unverified.
+- **Current main SHA:** 8e4edd83d50e6872852e7de8090934fbf6ae5f24 (live at checkpoint; re-fetch before writing).
+- **Open PR queue:** 0. **Open issue:** #111 only.
+- **Main checks:** Quality #43554105709 PASS (121/121 primary Chromium, live root 1/1, landing 8/8); Gateway #43554105717 PASS (Python 3.12/13/14); Graphify #43554105763 PASS; Pages #43554105358 SUCCESS.
+- **Freshness:** #43600882008 FAILED because snapshot main SHA was stale (973a07e); 19 deterministic unit tests passed. Fix via one atomic state refresh; do not weaken checker.
+- **Security:** current main includes safe chat mutation and fixed bounded RAG SQL changes; Ruff and Quality security sentinels pass. Bandit/Semgrep remain advisory; scanner artifact is available for review.
+- **UI baseline:** four Functions panels exist, but Deep Research engine, durable Agents, Skill Factory and real Connectors remain incomplete. Full owner UI requirements are in docs/V1_UI_FINALIZATION_RU.md.
+- **Artifacts:** external #43553056846 (6,054,444,756 bytes, SHA-256 dcf575b943493bff474e3bcabe92cc4c5882fa6ed99153577e8a02b633387d56), Ollama #43418126506 (7,728,830,482 bytes), Python cache #43553056865 (80,105,944 bytes). Actions artifacts are not installed.
+- **Runtime boundary:** actual target host, model installation, API wiring, restore and RU/EN/TH device quality remain unverified.
+
 
 
 ## Current owner priority

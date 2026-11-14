@@ -97,3 +97,9 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Checkpoint parent SHA: 973a07eab5d8eef493e359d468499f263420a74c; live queue at capture: 0 open PRs, issue #111 only.
 - Exact-parent UI checks: Quality #43552190729 PASS (121/121 Chromium, live-site 1/1, landing 8/8 and all other jobs); Graphify #43552190747 PASS; Pages #43552190545 SUCCESS.
 - Continue from the latest owner checkpoint in OLEDUE.md when the owner sends oledue. The current programme and 15-point status live in section K / K.5 of the existing master addendum; do not create another tracker.
+
+
+## Current main checkpoint pointer — 2026-11-14 security/UI baseline
+- Main SHA: 8e4edd83d50e6872852e7de8090934fbf6ae5f24; open PRs 0; open issue #111 only.
+- Quality #43554105709 PASS (121/121 Chromium, live root 1/1, landing 8/8); Gateway #43554105717 PASS (3.12/13/14); Graphify #43554105763 PASS; Pages #43554105358 SUCCESS. Freshness #43600882008 failed only because the snapshot was stale at 973a07e; exact live main is 8e4edd83d50e6872852e7de8090934fbf6ae5f24. Provenance exact-main run not found.
+- Resume from the latest OLEDUE.md checkpoint. Keep K.5 as the single 15-point tracker. Main-only; no new PRs.
