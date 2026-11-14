@@ -386,6 +386,24 @@ class AgentRunStore:
         item.pop("request_sha256", None)
         return item
 
+    def list_runnable_runs(self, *, limit: int = 50) -> list[dict[str, Any]]:
+        """Return bounded runs with non-terminal tasks for the local worker poller."""
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise AgentRunError("limit must be between 1 and 100")
+        with closing(self._connect()) as db:
+            rows = db.execute(
+                """SELECT r.* FROM agent_runs r
+                   WHERE r.state IN ('queued','running')
+                     AND EXISTS (
+                       SELECT 1 FROM agent_tasks t
+                       WHERE t.run_id=r.run_id
+                         AND t.state IN ('queued','leased','succeeded','failed')
+                     )
+                   ORDER BY r.created_at,r.run_id LIMIT ?""",
+                (limit,),
+            ).fetchall()
+        return [self._run_dict(row) for row in rows]
+
     def get_run(self, run_id: str) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
         with closing(self._connect()) as db:
@@ -491,6 +509,18 @@ class AgentRunStore:
         item.pop("payload_sha256", None)
         item.pop("lease_token_sha256", None)
         return item
+
+    def list_tasks(self, *, run_id: str) -> list[dict[str, Any]]:
+        """Return a run's bounded task records in stable creation order."""
+        _bounded_text(run_id, field="run_id", max_chars=128)
+        self.get_run(run_id)
+        with closing(self._connect()) as db:
+            rows = db.execute(
+                """SELECT * FROM agent_tasks WHERE run_id=?
+                   ORDER BY created_at,task_key,task_id""",
+                (run_id,),
+            ).fetchall()
+        return [self._task_dict(row) for row in rows]
 
     def get_task(self, task_id: str) -> dict[str, Any]:
         _bounded_text(task_id, field="task_id", max_chars=128)

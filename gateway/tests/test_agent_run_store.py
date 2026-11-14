@@ -525,3 +525,36 @@ def test_terminal_transition_racing_worker_completion_is_serialized(tmp_path):
     task_terminal_event = next(event for event in events
                                if event["event_type"] in {"task_completed", "task_cancelled"})
     assert task_terminal_event["event_id"] < terminal_event["event_id"]
+
+
+
+def test_worker_queue_listing_is_bounded_and_excludes_terminal_runs(tmp_path):
+    store = AgentRunStore(tmp_path / "worker-queue.sqlite3")
+    store.initialize()
+    queued = store.create_run(
+        idempotency_key="queue-run-1", scope_kind="project", scope_id="alpha",
+        goal_ref="agent-input:queue-run-1", now=1,
+    )
+    store.enqueue_task(
+        run_id=queued["run_id"], task_key="primary", idempotency_key="queue-task-1",
+        payload={"task_type": "agent_inference", "model_id": "qwen3.5:4b"},
+        now=2,
+    )
+    terminal = store.create_run(
+        idempotency_key="queue-run-2", scope_kind="project", scope_id="alpha",
+        goal_ref="agent-input:queue-run-2", now=3,
+    )
+    store.enqueue_task(
+        run_id=terminal["run_id"], task_key="primary", idempotency_key="queue-task-2",
+        payload={"task_type": "agent_inference", "model_id": "qwen3.5:4b"},
+        now=4,
+    )
+    store.transition_run(
+        run_id=terminal["run_id"], expected_state="queued", new_state="failed",
+        event_type="run_failed", now=5,
+    )
+
+    assert [item["run_id"] for item in store.list_runnable_runs()] == [queued["run_id"]]
+    assert [item["task_key"] for item in store.list_tasks(run_id=queued["run_id"])] == ["primary"]
+    with pytest.raises(AgentRunError, match="limit"):
+        store.list_runnable_runs(limit=0)
