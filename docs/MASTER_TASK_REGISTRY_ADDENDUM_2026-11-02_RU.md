@@ -112,7 +112,7 @@ Evidence status: test source changes are committed; JavaScript/Playwright syntax
 
 Порядок соответствует исходному запросу владельца: сохранить V1 baseline → ускорить ориентирование → разобрать и выборочно продвигать V2 → сохранить нужные источники/артефакты → консолидировать PR/ветки/Issues.
 
-- [x] **ORIENT-2026-001** — сохранить короткий Session Sync Capsule handoff. PR #140 merged at `fe43d7fbd04dd4da7b557a3dd3f6c7f3ef6a924b`; Quality, Freshness and Provenance passed on exact PR HEAD; main-level Freshness/Quality/Provenance also passed on the merge SHA. Routine flow is one batched live GitHub read + one task register; detailed docs on demand. **Still open:** observe a fresh independent `oledue` session and measure the handoff.
+- [x] **ORIENT-2026-001 — SUPERSEDED BY NOW.md (2026-11-15).** Historical PR #140 handoff remains evidence only; the single first-read checkpoint is root `NOW.md` lines 1–100, with full owner prompts and append-only step journal. Do not read/recreate Session Sync Capsule, OLEDUE, ORIENTER or FILE_ORIENTER as startup inputs. Detailed product documents are on-demand.
 - [x] **BASELINE-2026-001** — preserve original Landing V1 at `9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af` in branch `archive/landing-v1-baseline-9b746f7-20261105`. This is a separate recoverable reference; main remains open to bounded quality improvements.
 - [x] **LANDING-V1-2026-001** — promote the independent public landing accessibility/responsive slice via PR #139 (merge SHA `2e11849d409a51009693af95ac3ecbf1f057a3fc`). Exact-main Quality, Pages, Freshness, Provenance and Graphify passed on that merge SHA.
 - [x] **N2O-2026-001** — integrate the owner-provided N₂O Core, Knowledge Loop, ChatGPT Sources and Project Instructions documents via PR #142 (merge SHA `c307b7e3940e9051843befd5f77acfeaef66c91d`). Three owner-provided source documents were byte-for-byte matched to the uploaded files. Existing `AGENTS.md` and `LOOP.md` remain shared engineering foundations.
@@ -394,7 +394,7 @@ The programme is complete only when:
 **Live intake snapshot 2026-11-13 (verified before the four-panel UI slice):** main = 1760cb0391bd0257737bf72db4ea4c5e01d2dde4; open PRs = 0; issue #111 remains open and owner-gated. PR #185/#184 merged; #176 research ported; #175/#178/#179/#180/#182 closed with dispositions. Provider-bound PKCE security foundation is implemented. Model/runtime artifacts #43420046411/#43418126506 total 13,783,272,852 bytes and are SHA-verified; Python runtime cache #43423610986 succeeded (81,549,321 bytes, runtime-only Ubuntu 24.04 x86_64 cache for CPython 3.12/13/14). Pages #43423609329 SUCCESS; Quality #43423610395 in progress. These are downloaded artifacts, not target-host installation. GitHub App connector is not yet implemented.
 
 
-### K.5 Current delivery status — 2026-11-14
+### K.5 Current delivery status — 2026-11-15
 
 This is the single 15-point progress view for LANDING-V2-2026-001. Status is evidence-bounded; update this table in place after each material milestone. Do not create a parallel backlog.
 
@@ -403,19 +403,19 @@ This is the single 15-point progress view for LANDING-V2-2026-001. Status is evi
 | 1 | K.1.1 Owner-designed UI | **PARTIAL** | Four-panel navigation is implemented; remaining V1 owner UI, responsive/accessibility and manual device checks remain open |
 | 2 | K.1.2 Functions menu | **UI IMPLEMENTED / CAPABILITIES PARTIAL** | Four independent entries pass exact-main E2E; each backend must expose only real handlers and states |
 | 3 | K.1.3 Deep Research | **SPECIFIED / NOT IMPLEMENTED** | Resumable source/evidence workflow, citation validation, contradiction handling and report export |
-| 4 | K.1.4 Agents and orchestration | **PROTOTYPE** | Four-stage same-model path is not durable AgentRun; queue, tool/model calls, scopes, cancellation, recovery and live events remain |
+| 4 | K.1.4 Agents and orchestration | **PROTOTYPE / STORE SAFETY TESTED** | SQLite AgentRun store has typed payload/metadata, idempotency, leases, terminal fencing and offline tests; no model worker, scheduler, API integration or live event stream yet |
 | 5 | K.1.5 Skills | **IMPLEMENTED BASELINE / LIFECYCLE OPEN** | Chat-scoped instruction profiles exist; versioned Skill intake, provenance, tests, review, enable/disable and rollback remain |
 | 6 | K.1.6 Connectors | **OAUTH FOUNDATION / CONNECTOR NOT IMPLEMENTED** | Provider-bound PKCE exists; read-only GitHub App registry, short-lived credentials, real handlers, revoke and audit remain |
-| 7 | K.1.7 Local coding workspace | **PARTIAL** | Browser Local workspace exists; OS-level sandbox for arbitrary CLI and real GitHub repository access remain |
-| 8 | K.1.8 Voice | **ARTIFACTS VERIFIED / INSTALL NOT STARTED** | Whisper/Piper/VAD/ASR artifacts are staged; install, API wiring, interruption path and RU/EN/TH target-device tests remain; no approved Thai voice |
+| 7 | K.1.7 Local coding workspace | **PARTIAL / SANDBOX ARTIFACT STAGED** | Browser Local workspace exists; OpenShell v0.1.8 Ubuntu 24.04 x86_64 assets verified in Actions #43616944431; not installed. Host fit, sandbox wiring and real GitHub repository access remain |
+| 8 | K.1.8 Voice | **ARTIFACTS VERIFIED / INSTALL NOT STARTED** | whisper.cpp v1.9.5 + large-v3-turbo, Qwen3-ASR-0.6B challenger, Silero VAD and Piper RU/EN voices are staged; no separate official Whisper 3. Install, API wiring, interruption path and RU/EN/TH target-device tests remain; no approved Thai voice |
 | 9 | K.1.9 Full RAG | **PARTIAL** | SQLite FTS5 + lexical baseline exists; hybrid vector retrieval, fusion/reranking and permissioned RU/EN/TH eval remain |
-| 10 | K.1.10 Documents, scanners and converters | **PARTIAL** | Bounded PDF/DOCX/XLSX extraction exists; scanned OCR adapter, EPUB/book/web intake and broader conversion fixtures remain |
+| 10 | K.1.10 Documents, scanners and converters | **PARTIAL** | Bounded PDF/DOCX/XLSX extraction exists; GLM-OCR/Tesseract assets are staged but OCR is not installed/wired. EPUB/book/web intake, site scanner, Notebook source workflow and conversion fixtures remain |
 | 11 | K.1.11 Modes and feature logic | **PARTIAL** | Some modes and toggles exist; full compatibility, persistence, concurrency and cancellation matrix remains |
 | 12 | K.1.12 Efficiency | **SPECIFIED / MEASUREMENT OPEN** | Direct main-model path is default policy; helper routing must beat main-only baseline on measured quality/latency/cost |
 | 13 | K.1.13 Cache, observability and N₂O | **PARTIAL** | Cache layers and N₂O operating documents exist; production traces, redacted metrics, event audit and invalidation/bypass evidence remain |
-| 14 | K.1.14 Operator runbook | **SPECIFIED / NOT HOST-VERIFIED** | Install guide exists; actual host install, backup/restore, first completion, troubleshooting and rollback must be exercised |
-| 15 | K.2 Model/runtime/storage decision pack | **PARTIAL** | Immutable model/artifact inventory and alternatives exist; dependency updates, final model selection, hardware evaluation and API/database decisions remain |
+| 14 | K.1.14 Operator runbook | **SPECIFIED / NOT HOST-VERIFIED** | `docs/PRE_LAUNCH_STACK_RU.md` §8 is the owner-only action list. Actual host install, backup/restore, first completion, troubleshooting and rollback must be exercised |
+| 15 | K.2 Model/runtime/storage decision pack | **UPSTREAM RECHECKED / LOCK REFRESH PENDING** | FastAPI 0.163.0 newer but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is an eligible lock candidate vs 2.14.1; pypdf 7.1.0 already current. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16 and OpenShell 0.1.8 are latest stable. Final model/resource selection remains open |
 
-**Verified in this checkpoint:** four-panel UI contract on main (Quality #43552190729, Graphify #43552190747, Pages #43552190545); model/runtime files verified in Actions; Python offline dependency cache verified for its declared Ubuntu/Python matrix. These checks do not prove target-host installation or live VPS/Tunnel/Ollama.
+**Verified in this checkpoint:** exact main `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9`: Gateway #43621379836 PASS (Python 3.12/13/14), Quality #43621379825 PASS (7 jobs), Graphify #43621379893 PASS, Pages #43621380121 SUCCESS. Freshness #43621323351 on prior parent failed only because snapshot SHA lagged; 19 unit tests passed; atomic refresh reruns. External #43553056846, Ollama #43418126506, Python cache #43553056865 and OpenShell #43616944431 artifacts are SHA-verified in Actions, not installed. No exact-main Provenance run retrieved. These checks do not prove target-host installation or live VPS/Tunnel/Ollama.
 
 **Artifact policy:** keep model weights out of the GitHub Pages source tree and Git LFS. Use pinned Actions artifacts as temporary staging, then move required, licensed files to an owner-controlled durable store or verified target host. The owner-supplied primary checkpoint remains excluded.

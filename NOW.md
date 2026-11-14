@@ -18,7 +18,7 @@
 - **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never select an old PR as a default; never revive stale tasks by default.
 - **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
 - **Last functional baseline SHA (PROJECT_STATE snapshot):** `8e4edd83d50e6872852e7de8090934fbf6ae5f24`.
-- **Live main SHA at this update:** `638cd2e7d537f923d9d79dc9983f58eb11b412cf` (documentation-only continuity update).
+- **Live main SHA at this update:** `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9` (parent of this atomic state-refresh commit).
 - **Open PRs:** none
 - **Open issues:** #111
 - Open PRs: none
@@ -26,7 +26,7 @@
 - Routing invariant: never select an old PR as a default; route from the latest explicit owner request.
 - **Live facts:** GitHub API confirms main at checkpoint parent, zero open PRs, issue #111 only. Commit `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`: `feat(github): add allowlisted read-only App connector` (2026-11-14). No workflow runs returned for this exact SHA; exact-head CI is NOT VERIFIED.
 - **Prior-chat task:** not recovered. Do not infer it from old PRs, stale registry entries or historical checkpoints.
-- **NEXT:** fix NOW freshness markers against the functional baseline and exact live queue; inspect main static-analysis failure; then start the first bounded implementation slice.
+- **NEXT:** pass exact-head Freshness on this atomic checkpoint; then implement the first real model-backed AgentRun service slice. Keep sandbox installation gated on actual host facts.
 
 ## START PROTOCOL — five-second route
 
@@ -45,6 +45,11 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+
+- [2026-11-15] S-011 | VERIFIED | Fixed pre-existing Ruff E731 in `gateway/tests/test_github_app.py` with a typed helper. | Main commit `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9`. | Gateway #43621379836 PASS (Python 3.12/13/14); Quality #43621379825 PASS (7 jobs incl. Ruff, Security, Integrity, Context, Chromium, Jekyll and release contract); Graphify #43621379893 PASS; Pages #43621380121 SUCCESS — exact SHA. | Freshness #43621323351 failed on prior parent `137bf621d7c9a7dd67e0af49fb3b54413bc722e8` because snapshot lagged; all 19 checker tests passed. Provenance exact-main UNVERIFIED. | Complete atomic checkpoint and rerun Freshness.
+- [2026-11-15] S-010 | VERIFIED / UPSTREAM AUDIT | whisper.cpp v1.9.5 remains latest stable (2026-10-06); upstream HEAD `5922450fbce1ed9d1648babd0d5ac4520055b436` (2026-11-13) is an untagged CMake/Windows fix, not a new release. No official model named Whisper 3; large-v3/large-v3-turbo remain official names. Piper v1.8.0, Tesseract 5.5.4, Ollama v0.40.16 and OpenShell v0.1.8 are latest stable; pypdf 7.1.0 is current. FastAPI 0.163.0 (2026-11-14) is newer than lock 0.162.0 but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 (2026-11-05) is a lock-refresh candidate vs 2.14.1. | Official upstream release pages recorded in INTEL.md. | No dependency lock changed. Qwen3-ASR 0.6B remains staged challenger; 1.7B deferred pending host fit and same-audio RU/EN/TH eval. | Refresh Pydantic lock only after generated lock + gateway/document matrix; re-evaluate FastAPI after cooldown.
+- [2026-11-15] S-009 | VERIFIED | OpenShell v0.1.8 Ubuntu 24.04 x86_64 acquisition succeeded: run #43616944431, artifact #14122692509, 207,414,886 bytes, SHA-256 `d99d484ec2465f713b91b93cc37bf18cd1ad73ebe90d48d5a10f55572a2a9543`; all six pinned assets passed SHA/package/archive checks. | Run head `a71a117f2217449a00f32b3a14a06fa56a6a2808`; artifact expires 2026-11-28. | Actions artifact only, not installed. Target OS/architecture, kernel, Docker/VM, disk/RAM and network remain unverified. | Keep staged until host compatibility is confirmed; install only through §8 owner runbook.
+
 
 - [2026-11-15] S-008 | FACT | Exact-main CI audit found the freshness failure is a stale/incomplete NOW checkpoint contract: checker expects functional baseline SHA `8e4edd83d50e6872852e7de8090934fbf6ae5f24`, literal open-queue markers, and exact no-default-PR wording. 19 freshness unit tests passed. | Main before fix `638cd2e7d537f923d9d79dc9983f58eb11b412cf`; Freshness #43621101052 FAIL; Pages #43621100962 SUCCESS; Quality #43621101004 still running, with Static Analysis failed Ruff gate. | No code behavior change. | Fix NOW contract and rerun exact-main Freshness; inspect Ruff JSON before touching code.
 

@@ -746,3 +746,23 @@ The following 103 distinct URL references were absent from the existing INTEL re
 ## 2026-11-14 — exact lock generation result
 
 CI generated the 142,587-byte universal uv.lock on Python 3.13. It pins FastAPI 0.162.0, Pydantic 2.14.1, pypdf 7.1.0, pytest 9.2.0 and pytest-asyncio 1.4.1.post1. Gateway: 245/245 tests on Python 3.12/13/14; six-layer offline evaluation PASS. The pinned Python runtime-cache workflow still needs to pass after this exact lock is committed. The pytest-asyncio default fixture loop scope is now explicitly function-scoped.
+
+
+## 2026-11-15 — LANDING-V2-2026-001 upstream freshness recheck
+
+Release/tag recheck on 2026-11-15; this is not proof of target-host installation.
+
+| Component | Current pin | Latest official stable | Decision |
+|---|---|---|---|
+| whisper.cpp | v1.9.5 | [v1.9.5](https://github.com/ggml-org/whisper.cpp/releases/tag/v1.9.5), 2026-10-06 | Keep stable pin. Upstream HEAD `5922450fbce1ed9d1648babd0d5ac4520055b436` (2026-11-13) is an untagged CMake/Windows fix, not a new release. OpenAI model names remain large-v3 / large-v3-turbo; no separate official “Whisper 3”. |
+| Piper | v1.8.0 | [v1.8.0](https://github.com/OHF-Voice/piper1-gpl/releases/tag/v1.8.0), 2026-09-04 | Current; keep per-voice license-chain review. Thai phonemizer does not grant a Thai voice checkpoint. |
+| Tesseract | 5.5.4 | [5.5.4](https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4), 2026-10-28 | Current; OCR remains uninstalled/unwired on target. |
+| Ollama | v0.40.16 | [v0.40.16](https://github.com/ollama/ollama/releases/tag/v0.40.16), 2026-11-09 | Current pinned Linux AMD64 artifact; target install pending. |
+| OpenShell | v0.1.8 | [v0.1.8](https://github.com/NVIDIA/OpenShell/releases/tag/v0.1.8), 2026-11-10 | Current. Six Ubuntu 24.04 x86_64 assets verified in Actions #43616944431; artifact #14122692509 (207,414,886 bytes), not installed. |
+| FastAPI | 0.162.0 | [0.163.0](https://github.com/fastapi/fastapi/releases/tag/0.163.0), 2026-11-14 | Newer but within the repository seven-day cooldown; do not upgrade before 2026-11-21. Then regenerate lock and run Gateway/API matrix. |
+| Pydantic | 2.14.1 in uv.lock | [v2.14.3](https://github.com/pydantic/pydantic/releases/tag/v2.14.3), 2026-11-05 | Eligible upgrade candidate; regenerate uv.lock and run Gateway + document fixtures before promotion. |
+| pypdf | 7.1.0 | [7.1.0](https://github.com/py-pdf/pypdf/releases/tag/7.1.0), 2026-11-13 | Already current and pinned; retain narrow freshness exception and HTTP 413 mapping. |
+
+**ASR decision:** retain whisper.cpp + large-v3-turbo as stable baseline. Qwen3-ASR-0.6B is staged as a challenger; do not replace Whisper or download 1.7B until same-audio RU/EN/TH WER/CER, RTF, cold/warm latency, peak RSS/PSS, cancellation and target-host resource tests are run. The owner-supplied primary checkpoint remains excluded from automated downloads.
+
+**Artifact state:** external cache #43553056846 (6,054,444,756 bytes), Ollama packages #43418126506 (7,728,830,482 bytes), Python cache #43553056865 (80,105,944 bytes), and OpenShell #43616944431 (207,414,886 bytes) are verified temporary Actions artifacts, not installed on the target VPS. Check expiry before owner-host installation.

@@ -29,10 +29,17 @@ SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 HANDOFF_PATHS = ("NOW.md", "AGENTS.md")
 REQUIRED_REFRESH_PATHS = {
     "NOW.md",
+    "AGENTS.md",
     "docs/PROJECT_STATE.yaml",
     "docs/VOLLEY_LOG.md",
     "docs/project-state-snapshot.json",
 }
+LEGACY_HANDOFF_PATHS = (
+    "OLEDUE.md",
+    "ORIENTER.md",
+    "project-reference/FILE_ORIENTER_RU.md",
+    "docs/FILE_ORIENTER_RU.md",
+)
 DOC_PATHS = (
     "NOW.md",
     "docs/PROJECT_STATE.yaml",
@@ -160,6 +167,11 @@ def validate_handoff_policy(now: str, agents: str) -> list[str]:
     return errors
 
 
+def legacy_orientation_files(root: Path) -> list[str]:
+    """Return obsolete handoff paths that must stay deleted."""
+    return [relative for relative in LEGACY_HANDOFF_PATHS if (root / relative).exists()]
+
+
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     """Ensure NOW and retained machine/history records match this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
@@ -167,6 +179,8 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     prs = checkpoint["open_pull_requests"]
     issues = checkpoint["open_issues"]
     errors: list[str] = []
+    for relative in legacy_orientation_files(root):
+        errors.append(f"{relative}: obsolete orientation file must remain deleted; NOW.md is the only entrypoint")
     contents: dict[str, str] = {}
     for relative in DOC_PATHS:
         try:

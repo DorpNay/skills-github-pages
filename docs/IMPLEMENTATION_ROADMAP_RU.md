@@ -141,7 +141,7 @@
 - **2.2 Maturity matrix.** Для capability записывать runtime/code path, test/evidence, scope и maturity: available / experimental / specified-only / deprecated. Feature flag или UI control не доказывает backend capability.
 - **2.3 Drift prevention.** Сначала проверять существующие Freshness checks; расширять их только под обнаруженный повторяющийся drift. Генератор состояния не должен сам переписывать owner decisions или маскировать расхождения.
 
-**Acceptance:** ориентирование восстанавливает active task из live GitHub + OLEDUE + одного canonical register; stale SHA/PR snapshot явно помечен; все важные claims имеют code/test/evidence anchor.  
+**Acceptance:** active task восстанавливается из NOW.md + одного batched live GitHub read; нет PR по умолчанию; stale SHA/queue явно маркируются; важные claims имеют code/test/evidence anchor.  
 **Kill:** если live state расходится с snapshot — не выполнять зависящие от него protected/branch operations до reconciliation.
 
 ### Шаг 3. Архитектурные и capability contracts
@@ -389,7 +389,7 @@
 - `docs/LANDING_RELEASE_STRATEGY_RU.md` и `docs/V1_UI_FINALIZATION_RU.md` остаются специализированными acceptance/integration registers для V1/V2; их задачи маппятся на шаги 1–5 и 17, но не дублируются.
 - `docs/CODER_PACKET.md`, voice plans, memory/RAG specs и operational runbooks — детальные спецификации подсистем; они подчиняются этой последовательности и не образуют конкурирующий master roadmap.
 - `DECISIONS.md` хранит принятые/отклонённые архитектурные решения; `EVALS.md` — datasets, metrics, baselines и thresholds; `INTEL.md`/Technique Register — upstream evidence.
-- `docs/PROJECT_STATE.yaml` и `ORIENTER.md` — актуальный state/checkpoint, не долгосрочный backlog. `PROJECT_ORCHESTRATOR_RU.md` — центральный навигационный индекс принципов, источников, планов, оценок и артефактов; не создаёт параллельную стратегию или реестр.
+- `NOW.md` — единственная точка входа и журнал запросов/действий; `docs/PROJECT_STATE.yaml` и `docs/VOLLEY_LOG.md` — on-demand machine/history evidence, не startup bundle. `PROJECT_ORCHESTRATOR_RU.md` — центральный навигационный индекс принципов, источников, планов, оценок и артефактов; не создаёт параллельную стратегию или реестр.
 
 ## 7. Definition of Done для шага и фазы
 
@@ -403,7 +403,7 @@
 7. решение ACCEPT / PIVOT / DEFER / REJECT зафиксировано в каноническом месте;
 8. при необходимости merge и deployment отдельно подтверждены; merge не равен deployment;
 9. PR прошёл все required exact-HEAD gates, затем немедленно интегрирован в main; GitHub Pages и публичные canonical URLs проверены против точного merge SHA;
-10. material stage записан в VOLLEY_LOG; ORIENTER/PROJECT_STATE отражают новую live state.
+10. каждый material stage и полный owner prompt записаны в NOW.md; K.5 обновляется на milestone, PROJECT_STATE/VOLLEY_LOG — по необходимости.
 
 Фаза не обязана закончиться за 24/48/72 часа или 90 дней. Сроки — planning estimates после измерения capacity, не повод пропускать security/legal/owner gates.
 
@@ -414,7 +414,7 @@
 
 **Active integration:** PR #169 is the current main-based UI/provider + §8.12 retirement slice; its live head and exact checks must be re-fetched from GitHub before action. It is not merged/published at this snapshot. PR #168 (docs sync) and #171 (provider route) overlap by paths but require unique-diff reconciliation. Open PRs: #125 (FUTURE/HOLD), #131 (large V2 workbench), #152 (voice queue draft), #154 (stale/diverged V2 shell), #155 (source roadmap/archive draft), #168 and #171; open issue #111 remains owner-controlled.
 
-**Next execution order:** (1) finish all six exact-head gates on #169; update its PR body to the exact head, merge with expected SHA, and verify Pages/root/`/landing/` on the merge SHA; (2) refresh ORIENTER/PROJECT_STATE/snapshot/VOLLEY_LOG on the new main; (3) reconcile and close #168/#171 if fully superseded; (4) audit #152/#154/#155/#131/#125, port only individually accepted and tested deltas, and close superseded PRs with recorded reasons; (5) begin P0 step 1–5 system audits, then P1 security/execution gates, P2 memory/RAG/evals/document/model baselines, P3 voice/UX/observability/operations. Continue 8–15-source thematic batches and occasional cross-cutting sweeps. Owner has authorized main-first integration; no VPS/host changes or destructive history operations are authorized by this roadmap.
+**Next execution order:** follow NOW.md CURRENT/NEXT and the existing 15-point K.5 table; do not select historical PRs or roadmap rows by default. Main-only, zero open PRs. Complete the freshness checkpoint, then audit and unify the published UI; implement real model-backed AgentRun and truthful live status; use OpenShell only after target-host validation; continue Deep Research, Skills, real Connectors, voice, full RAG, document/book/web converters, mode matrix, efficient routing, observability/N₂O and the owner runbook.
 
 
 

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+import tempfile
+from pathlib import Path
 from urllib.request import Request
 
 from scripts.check_project_state_freshness import (
@@ -132,6 +134,18 @@ class HandoffPolicyTests(unittest.TestCase):
         self.assertTrue(any("latest explicit owner request" in error for error in errors))
         self.assertTrue(any("no-default-PR" in error for error in errors))
         self.assertTrue(any("AGENTS.md" in error for error in errors))
+
+
+class LegacyOrientationTests(unittest.TestCase):
+    def test_atomic_refresh_requires_now_and_agents(self):
+        self.assertIn("NOW.md", REQUIRED_REFRESH_PATHS)
+        self.assertIn("AGENTS.md", REQUIRED_REFRESH_PATHS)
+
+    def test_legacy_orientation_paths_must_remain_absent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ORIENTER.md").write_text("stale", encoding="utf-8")
+            self.assertEqual(legacy_orientation_files(root), ["ORIENTER.md"])
 
 
 class MainCheckpointTests(unittest.TestCase):

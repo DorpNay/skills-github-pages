@@ -867,10 +867,10 @@
 **PR #130:** `[RESEARCH — HOLD] Deep Research 2.0 — local knowledge, evidence and multimodal research`. Base: `future-workstreams/parking-base-20261031`. No runtime changes.
 
 
-## G. Session orientation and handoff reliability
+## G. Session continuity — single entrypoint
 
-- [~] **ORIENT-001** — Make `oledue` recover the active task from the latest explicit owner request plus one batched live GitHub state read; remove all hard-coded PR defaults; distinguish main/base/head/tested/merge SHAs; keep detailed navigation and history on demand; enforce the contract through freshness CI. **Acceptance:** a fresh session does not select PR #131 unless the owner's task actually maps to it; exact live queue and handoff policy are tested. **Evidence:** PR #153 is ready for owner review. Full code Quality passed on tested code SHA `5665e60ebdbb704f9fa95cadba610984ca1da60b` (4/4 Chromium, published-Pages smoke and required sentinels); subsequent docs-only Freshness/Provenance/Dead Code checks passed. Live PR HEAD is intentionally resolved from GitHub, not pinned here. Owner merge decision pending.
-- [x] **ORIENT-002** — Fresh-session handoff exercised 2026-11-07: read root OLEDUE first, made the live GitHub state read, routed the latest explicit owner request to UI-PROMO-001 / PR #154 (not #131 by default), then inspected exact #154 head `6ca47522d7d6998916b1b01931c217d8b7e76c75` and its checks. Current main at validation: `daad47da0c5ec07c6200d6d38bf6bb33c2290860`; open PRs #125/#131/#152/#154/#155; open issue #111. Evidence: Pages #42350650890 and main Quality #42350651114 passed on exact main; #154 Quality #42349173942 failed 17 E2E tests plus 1 flaky, so UI promotion remains blocked pending reconciliation. This verifies the handoff procedure in this fresh session; it is not a broader user-study or a claim that ChatGPT client hangs are fixed.
+- [x] **ORIENT-001 — SUPERSEDED BY NOW.md (2026-11-15).** Current contract: read only root `NOW.md` lines 1–100 first; append each complete owner request and each material action/checkpoint there; make one batched live GitHub read for main SHA and open queues. No default PR, no parallel handoff, no startup bundle. Historical ORIENT/OLEDUE/FILE_ORIENTER records are on-demand history only.
+- [x] **ORIENT-002 — HISTORICAL HANDOFF TEST (2026-11-07).** The previous fresh-session exercise is retained as historical evidence; it does not route current work or authorize resuming PR #154/#131. The latest explicit owner request in NOW.md always wins. This workflow does not claim to repair ChatGPT client loading failures.
 
 ## Owner override — 2026-11-07
 

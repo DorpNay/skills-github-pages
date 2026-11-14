@@ -10,21 +10,21 @@ project_state:
       - "After separate owner authorization for the sentinel follow-up, verify main Quality and Pages root + /landing/ against exact merge SHA"
       - "Audit open PRs #155/#154/#152/#131/#125 file-by-file; port compatible approved value only and close reconciled work with reasons"
       - "Audit #152/#154/#155/#131/#125; port only bounded compatible slices, never merge stale/future V2 wholesale"
-      - "Refresh ORIENTER, PROJECT_STATE, snapshot and VOLLEY_LOG on the new main checkpoint"
+      - "Record every owner request and material step in NOW.md; refresh PROJECT_STATE/snapshot/VOLLEY_LOG only at verified milestones"
       - "Continue system-by-system audit and 8–15-source thematic batches; measure before adoption"
     main_sha_at_plan_creation: "c4f23e03f563d03213eb87002863da630fc8b833"
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "Current main 8e4edd83d50e6872852e7de8090934fbf6ae5f24; Quality #43554105709 PASS (121/121 Chromium, live root 1/1, landing 8/8); Gateway #43554105717 PASS; Graphify #43554105763 PASS; Pages #43554105358 SUCCESS. Freshness #43600882008 failed because the saved snapshot was stale at 973a07e; atomic state refresh required. Artifacts remain in Actions, not installed. Zero open PRs; issue #111 owner-gated."
+    status: "NOW.md is the sole first-read checkpoint. Functional baseline 8e4edd83d50e6872852e7de8090934fbf6ae5f24; current parent main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9. Exact-main Gateway #43621379836, Quality #43621379825, Graphify #43621379893 and Pages #43621380121 passed. Freshness #43621323351 failed only because the saved snapshot lagged; 19 unit tests passed. Artifacts remain in Actions, not installed; issue #111 remains owner/environment gated."
     branch: "main"
-    base_main: "8e4edd83d50e6872852e7de8090934fbf6ae5f24"
+    base_main: "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact main 8e4edd83d50e6872852e7de8090934fbf6ae5f24: Quality #43554105709 PASS (121/121 Chromium, live root 1/1, landing 8/8, release contract); Gateway #43554105717 PASS (Python 3.12/13/14); Graphify #43554105763 PASS; Pages #43554105358 SUCCESS. Freshness #43600882008 failed only on stale snapshot main SHA 973a07e (19 unit tests passed). Provenance exact-main run not found."
+    exact_head_checks: "Exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9: Gateway #43621379836 PASS (Python 3.12/13/14); Quality #43621379825 PASS (7 jobs incl. Ruff, Security, Integrity, Context, Chromium, Jekyll and release contract); Graphify #43621379893 PASS; Pages #43621380121 SUCCESS. Freshness pending atomic state refresh; Provenance exact-main UNVERIFIED."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Verify Freshness/Provenance on this atomic checkpoint. Then implement the read-only GitHub App connector, inspect the actual host and stage only platform-matched artifacts. Continue Deep Research, durable AgentRun, Skill lifecycle, full RAG and the tested owner runbook."
+    next: "Pass exact-head Freshness on this atomic checkpoint; then implement real model-backed AgentRun lifecycle/API and UI status. Inspect actual host before sandbox/model installation."
 
 
 
@@ -297,22 +297,22 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-11-14"
-  verified_main: "8e4edd83d50e6872852e7de8090934fbf6ae5f24"
-  last_main_action: "Security hardening in 0fdab7e and 8e4edd83d50e6872852e7de8090934fbf6ae5f24; Quality #43554105709 PASS, Gateway #43554105717 PASS, Graphify #43554105763 PASS and Pages #43554105358 SUCCESS on exact main."
-  last_functional_checkpoint: "e6a3a0817f1b955ccd32a3611a029851ea83915e"
-  main_quality: "Quality #43554105709 PASS on 8e4edd83d50e6872852e7de8090934fbf6ae5f24: 121/121 primary Chromium, live root smoke 1/1, landing 8/8, release contract and static/security jobs."
-  main_freshness: "Freshness #43600882008 FAILED on exact main 8e4edd83d50e6872852e7de8090934fbf6ae5f24 because snapshot still recorded 973a07e; 19 deterministic unit tests passed. Atomic refresh will rerun on its own exact head."
-  main_graphify: "Graphify #43554105763 PASS on exact SHA 8e4edd83d50e6872852e7de8090934fbf6ae5f24."
-  main_gateway: "Lite Gateway Tests #43421709910 PASS on provider-bound OAuth code parent #692a2df; not an exact-main gateway run."
-  main_provenance: "No Provenance workflow found for exact main 8e4edd83d50e6872852e7de8090934fbf6ae5f24; keep status UNVERIFIED until a current run is retrieved."
-  main_pages: "Pages #43554105358 SUCCESS on exact SHA 8e4edd83d50e6872852e7de8090934fbf6ae5f24."
+  date: "2026-11-15"
+  verified_main: "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9"
+  last_main_action: "Test-only Ruff E731 correction at 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; exact-main Gateway #43621379836, Quality #43621379825, Graphify #43621379893 and Pages #43621380121 all PASS/SUCCESS."
+  last_functional_checkpoint: "8e4edd83d50e6872852e7de8090934fbf6ae5f24"
+  main_quality: "Quality #43621379825 PASS on exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9: all 7 jobs including Chromium, Jekyll, Ruff, Security, Integrity, Context and release contract."
+  main_freshness: "Freshness #43621323351 FAILED on prior parent 137bf621d7c9a7dd67e0af49fb3b54413bc722e8 because snapshot main SHA lagged; 19 deterministic unit tests passed. Atomic refresh from 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9 will rerun."
+  main_graphify: "Graphify #43621379893 PASS on exact SHA 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9."
+  main_gateway: "Lite Gateway Tests #43621379836 PASS on exact SHA 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9 across Python 3.12/13/14."
+  main_provenance: "No Provenance workflow found for exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; UNVERIFIED."
+  main_pages: "Pages #43621380121 SUCCESS on exact SHA 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9."
   merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled release gates."
-  freshness_guard: "scripts/check_project_state_freshness.py; atomic refresh updates OLEDUE/AGENTS/ORIENTER/FILE_ORIENTER/PROJECT_STATE/VOLLEY_LOG/snapshot together."
-  runtime_boundary: "External re-acquisition #43553056846 / artifact #14096889755: 6,054,444,756 bytes, SHA-256 dcf575b943493bff474e3bcabe92cc4c5882fa6ed99153577e8a02b633387d56, expires 2026-12-14. Ollama #43418126506: 7,728,830,482 bytes, expires 2026-12-13. Python cache #43553056865: 80,105,944 bytes; offline sync/pip-check passed for Ubuntu 24.04 x86_64 / CPython 3.12/13/14. All remain Actions artifacts, not installed. Owner primary checkpoint excluded; target host/resources, live APIs and RU/EN/TH device quality remain unverified."
-  next: "Verify Freshness and Provenance on this checkpoint. Then implement the read-only GitHub App connector; inspect target host; stage/install only after platform and resource fit are confirmed."
+  freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
+  runtime_boundary: "External cache #43553056846: 6,054,444,756 bytes; Ollama #43418126506: 7,728,830,482 bytes; Python cache #43553056865: 80,105,944 bytes; OpenShell #43616944431 artifact #14122692509: 207,414,886 bytes, SHA-256 d99d484ec2465f713b91b93cc37bf18cd1ad73ebe90d48d5a10f55572a2a9543. All are verified Actions artifacts, not installed. Owner primary checkpoint excluded; target host/resources and RU/EN/TH device quality remain unverified."
+  next: "Verify exact-head Freshness after atomic refresh. Then implement real model-backed AgentRun and status events; continue Deep Research, Skills, real Connectors, document/web/book conversion, RAG and voice. Install sandbox/models only after host facts."
 
 
 v1_ui_finalization:
@@ -547,8 +547,8 @@ owner_priority_2026_11_13:
   required: "Owner UI; real Deep Research; real AgentRun and live states; Skill lifecycle; real connectors; local-file Coder sandbox; full evaluated RAG; document/book/web parsers, OCR and converters; installed Whisper/ASR, TTS/VAD and target-device voice; tested mode combinations; conditional helper-model routing; cache, observability and N2O in main; end-to-end owner runbook."
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
-  stack_status: "Auxiliary model/runtime artifacts 13,783,272,859 bytes downloaded and SHA-verified in Actions (external #43420046411; Ollama #43418126506); Python cache #43423610986 passed offline sync + pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14 (80,097,141 compressed bytes). Artifacts are not installed. Owner-supplied primary checkpoint is excluded. FastAPI 0.162.7, Pydantic 2.14.3 and pypdf 7.1.0 are upgrade candidates; uv.lock remains unchanged pending regeneration and final Gateway/document checks. Host OS/architecture, RAM/VRAM and RU/EN/TH eval remain open."
-  live_main: "973a07eab5d8eef493e359d468499f263420a74c"
+  stack_status: "External/Ollama/Python/OpenShell artifacts are SHA-verified in Actions, not installed; owner primary checkpoint excluded. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16, OpenShell 0.1.8 and pypdf 7.1.0 are current stable pins. FastAPI 0.163.0 is in seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is a lock-refresh candidate vs pinned 2.14.1. Target host and RU/EN/TH eval remain open."
+  live_main: "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -579,8 +579,8 @@ model_stack_artifact_checkpoint_2026_11_13:
   target_install_state: "NOT_INSTALLED; target host and service access not available in this session."
 
 current_execution_checkpoint:
-  date: "2026-11-14"
-  checkpoint_parent_sha: "8e4edd83d50e6872852e7de8090934fbf6ae5f24"
+  date: "2026-11-15"
+  checkpoint_parent_sha: "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9"
   open_prs: []
   open_issues: [111]
   completed:
@@ -590,12 +590,12 @@ current_execution_checkpoint:
     - "Python runtime cache #43423610986 passed offline sync and pip-check for CPython 3.12/3.13/3.14 on Ubuntu 24.04 x86_64; three artifacts total 80,097,141 compressed bytes."
     - "15 owner priorities are tracked in the existing K.5 status table; no parallel backlog."
   dependency_audit:
-    current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 6.21.4."
-    current_upstream: "FastAPI 0.162.7 (signed official GitHub release); Pydantic 2.14.3 (PyPI provenance); pypdf 7.1.0 (PyPI provenance)."
-    decision: "Upgrade candidates only. Regenerate uv.lock in a connected environment, review the pypdf exclude-newer hold, then run the final Gateway/document matrix. No version strings changed yet."
+    current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
+    current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
+    decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
   next:
-    - "Verify exact-head Freshness and Provenance after this atomic state refresh."
-    - "Implement the real read-only GitHub App connector with Contents/Metadata read-only permissions, short-lived tokens, expiry/revoke, quotas/timeouts, audit and tests; keep Connectors empty until the real action exists."
-    - "Inspect actual target host OS/architecture, disk, RAM/VRAM and existing network before downloading/installing binaries or models."
+    - "Verify exact-head Freshness after this atomic state refresh; Provenance remains UNVERIFIED until a current run is retrieved."
+    - "Implement real model-backed AgentRun with typed profiles, worker lifecycle, model calls, live events, cancellation, budgets and verification; keep UI states honest until runtime exists."
+    - "Inspect actual target host OS/architecture, disk, RAM/VRAM, kernel, container/VM support and network before installing OpenShell or models."
     - "Continue Deep Research, durable AgentRun, Skill lifecycle, full RAG, document/book/web parsing and OCR, installed voice, mode matrix, cache/observability/N2O and tested owner runbook."
 
