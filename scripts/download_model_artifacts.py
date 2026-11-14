@@ -76,7 +76,8 @@ def write_sha256sums(package_root: Path) -> Path:
 
 def hashes(path: Path, size: int) -> tuple[str, str]:
     sha256 = hashlib.sha256()
-    git_sha1 = hashlib.sha1(usedforsecurity=False)
+    # GitHub blob SHA-1 is compatibility metadata; SHA-256 is the integrity digest.
+    git_sha1 = hashlib.sha1(usedforsecurity=False)  # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1 -- Git blob compatibility only.
     git_sha1.update(f"blob {size}\0".encode("ascii"))
     with path.open("rb") as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b""):

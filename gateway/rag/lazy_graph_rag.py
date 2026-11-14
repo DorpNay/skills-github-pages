@@ -364,7 +364,8 @@ class LazyGraphRAG:
             query_concepts = concepts(query, limit=12)
             if query_concepts:
                 placeholders = ",".join("?" for _ in query_concepts)
-                graph_sql = f"""
+                graph_sql = (  # nosec B608 -- only bounded placeholder count is interpolated; query values remain bound.
+                    f"""
                     SELECT c.*, COUNT(DISTINCT ce.concept) AS shared_concepts
                     FROM rag_chunk_concepts ce
                     JOIN rag_chunks c ON c.chunk_key=ce.chunk_key
@@ -372,9 +373,11 @@ class LazyGraphRAG:
                     GROUP BY c.chunk_key
                     ORDER BY shared_concepts DESC, c.document_id ASC, c.chunk_id ASC LIMIT ?
                 """
-                graph_rows = db.execute(
+                )
+                graph_rows = db.execute(  # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query -- only bounded placeholders are interpolated; all data values are bound.
+
                     graph_sql, (*query_concepts, scope, scope_id, candidate_limit)
-                ).fetchall()  # nosec B608 -- only a bounded placeholder count is interpolated; all values are bound.  # nosemgrep: python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query
+                ).fetchall()
                 for row in graph_rows:
                     chunk_key = row["chunk_key"]
                     graph_ranked_ids.append(chunk_key)

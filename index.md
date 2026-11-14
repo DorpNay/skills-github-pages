@@ -1118,8 +1118,15 @@ permalink: /
       return true;
     }
     function persistChatMutation(chat, updates, mirroredWrites = []) {
-      if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object') return false;
-      const previousFields = Object.keys(updates).map(key => ({
+      if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
+      const allowedUpdateKeys = new Set([
+        'searchMode', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
+        'processingMode', 'skillOutputMode', 'agentTeamSize'
+      ]);
+      const updateEntries = Object.entries(updates);
+      // Mutations originate from bounded UI handlers; reject unknown keys (including prototype keys).
+      if (!updateEntries.length || updateEntries.some(([key]) => !allowedUpdateKeys.has(key))) return false;
+      const previousFields = updateEntries.map(([key]) => ({
         key,
         existed: Object.prototype.hasOwnProperty.call(chat, key),
         value: chat[key]
@@ -1145,7 +1152,9 @@ permalink: /
         if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
         return restored;
       };
-      Object.assign(chat, updates);
+      for (const [key, value] of updateEntries) {
+        Object.defineProperty(chat, key, { value, writable: true, enumerable: true, configurable: true });
+      }
       const attemptedMirrors = [];
       for (let index = 0; index < mirroredWrites.length; index += 1) {
         attemptedMirrors.push(previousMirrors[index]);
@@ -1161,6 +1170,8 @@ permalink: /
       restoreMirrors(attemptedMirrors);
       return false;
     }
+
+
     function getCurrentChat() {
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }

@@ -53,7 +53,7 @@ def opener():
 
 
 def digests(path: Path) -> tuple[str, str, int]:
-    sha256, sha1, size = hashlib.sha256(), hashlib.sha1(), 0
+    sha256, sha1, size = hashlib.sha256(), hashlib.sha1(usedforsecurity=False), 0  # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1 -- sidecar compatibility metadata; SHA-256 is the integrity digest.
     with path.open("rb") as stream:
         while True:
             chunk = stream.read(READ_CHUNK)
@@ -211,7 +211,7 @@ def acquire_model(model: dict[str, Any], output_root: Path, timeout: int) -> lis
     manifest_dir.mkdir(parents=True, exist_ok=True)
     manifest_file = manifest_dir / "manifest.json"
     manifest_file.write_bytes(raw)
-    manifest_sha1 = hashlib.sha1(raw).hexdigest()
+    manifest_sha1 = hashlib.sha1(raw, usedforsecurity=False).hexdigest()  # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1 -- sidecar compatibility metadata; SHA-256 is the integrity digest.
     results = [write_file_record(
         model_id, "registry_manifest", manifest_file, model["registry_manifest_url"],
         manifest_sha, manifest_sha1, len(raw), "sha256:" + manifest_sha,

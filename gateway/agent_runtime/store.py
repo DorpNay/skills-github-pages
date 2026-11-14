@@ -239,7 +239,7 @@ class AgentRunStore:
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path, timeout=self.busy_timeout_ms / 1000)
         db.row_factory = sqlite3.Row
-        db.execute(f"PRAGMA busy_timeout={self.busy_timeout_ms}")
+        # sqlite3.connect(timeout=...) above already configures busy_timeout.
         db.execute("PRAGMA foreign_keys=ON")
         db.execute("PRAGMA secure_delete=ON")
         return db
