@@ -37,7 +37,7 @@ def make_worker(tmp_path, handler, **overrides):
         max_output_tokens=128,
         max_output_bytes=4096,
         max_pending_runs=8,
-        poll_interval_seconds=0.02,
+        poll_interval_seconds=0.05,
         lease_seconds=2,
         max_attempts=2,
     )
@@ -152,7 +152,7 @@ def test_worker_recovers_expired_lease_after_restart_without_losing_encrypted_in
             max_output_tokens=128,
             max_output_bytes=4096,
             max_pending_runs=8,
-            poll_interval_seconds=0.02,
+            poll_interval_seconds=0.05,
             lease_seconds=2,
             max_attempts=2,
         )

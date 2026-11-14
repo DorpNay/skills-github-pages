@@ -728,7 +728,7 @@ def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path
         agent_runs_max_output_tokens=128,
         agent_runs_max_output_bytes=4096,
         agent_runs_max_pending_runs=4,
-        agent_runs_poll_interval_seconds=0.02,
+        agent_runs_poll_interval_seconds=0.05,
     )
     headers = {"Authorization": f"Bearer {API_KEY}", "Idempotency-Key": "api-agent-1"}
     with client_for(config, handler) as client:
