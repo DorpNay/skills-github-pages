@@ -91,3 +91,9 @@ Be the owner's senior engineering partner: coherent product progress, precise ev
 - Current owner instruction: bounded direct commits to `main`, zero open PRs. Do not create a PR unless the owner explicitly changes this instruction.
 - The top-level Functions menu must expose exactly four independent entry points in this order: Deep Research, Agents, Skills and Connectors. Connectors currently opens an honest empty state; never add connect actions until registry, scopes, consent, encrypted credentials, real handlers, revoke/audit and regression tests exist.
 - On `oledue`, read the latest checkpoint in root `OLEDUE.md`, fetch live main/queue/exact-head checks once, and continue from NEXT. Do not restart broad repository archaeology when the checkpoint is current.
+
+
+## Current main checkpoint pointer — 2026-11-14
+- Checkpoint parent SHA: 973a07eab5d8eef493e359d468499f263420a74c; live queue at capture: 0 open PRs, issue #111 only.
+- Exact-parent UI checks: Quality #43552190729 PASS (121/121 Chromium, live-site 1/1, landing 8/8 and all other jobs); Graphify #43552190747 PASS; Pages #43552190545 SUCCESS.
+- Continue from the latest owner checkpoint in OLEDUE.md when the owner sends oledue. The current programme and 15-point status live in section K / K.5 of the existing master addendum; do not create another tracker.

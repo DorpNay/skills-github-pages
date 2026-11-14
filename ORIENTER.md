@@ -2,17 +2,16 @@
 
 **Live GitHub is mutable truth.** Re-fetch main, PR queue, exact HEAD/checks and deployment before acting.
 
-## Verified baseline — 2026-11-13
+## Verified baseline — 2026-11-14
 
-- **Current main SHA:** `1760cb0391bd0257737bf72db4ea4c5e01d2dde4` (parent of the four-panel Functions UI/state commit; fetch live ref on resume).
+- **Current main SHA:** 973a07eab5d8eef493e359d468499f263420a74c (parent for this atomic state refresh; fetch live ref on resume).
 - **Open PR queue:** 0. **Open issue:** #111 only (owner/environment release gates).
-- PR #185 model/runtime pack and PR #184 Browser Local workspace are merged; PR #176 research was ported. Stale #175/#178/#179/#180/#182 were closed with dispositions; source branches retained.
-- **Security:** provider-bound, single-use OAuth PKCE state and encrypted token vault are implemented; Google Drive OAuth remains groundwork, not a connector.
-- **Model artifacts:** external run #43420046411 and Ollama run #43418126506 total 13,783,272,852 bytes; downloaded and SHA-verified, not installed on target.
-- **API/library cache:** Python runtime cache #43423610986 SUCCESS, 81,549,321 bytes; runtime-only Ubuntu 24.04 x86_64 uv cache/bootstrap/lock/checksums with offline sync and pip-check for CPython 3.12/13/14. Not installed on target; inspect actual host before using it.
-- **Four-panel UI:** Deep Research, Agents, Skills and Connectors open independently in this UI slice. Connectors is an honest empty state; real registry/actions remain unimplemented. Research Studio remains retired.
-- **Parent checks:** Pages #43423609329 SUCCESS; Quality #43423610395 in progress. Freshness/Provenance exact-head reruns required.
-- **Runtime boundary:** target host OS/architecture, disk, RAM/VRAM, Ollama, Piper/Whisper/OCR install, API smoke tests, RU/EN/TH quality, full RAG and AgentRun remain unverified.
+- **Recent functional commit:** e6a3a0817f1b955ccd32a3611a029851ea83915e exposed the four owner-required Functions panels. E2E corrections d54c8670f92118ee9af45651a559840cfc4b70ed and 973a07eab5d8eef493e359d468499f263420a74c align tests with the four-panel menu.
+- **Exact-parent checks:** Quality #43552190729 PASS (121/121 Chromium, live-site smoke 1/1, landing 8/8, release contract and static/security jobs); Graphify #43552190747 PASS; Pages #43552190545 SUCCESS. Freshness/Provenance require the atomic state refresh.
+- **Artifacts:** external #43420046411 + Ollama #43418126506 = 13,783,272,859 bytes, SHA-verified in Actions, expire 2026-12-13; not installed. Python cache #43423610986 passed offline sync/pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14; not installed.
+- **Dependency freshness:** FastAPI 0.162.7, Pydantic 2.14.3 and pypdf 7.1.0 are newer than the current lock. Lock regeneration and compatibility checks are required. Ollama 0.40.16, whisper.cpp 1.9.5, Piper 1.8.0 and Tesseract 5.5.4 remain selected baselines.
+- **Runtime boundary:** actual host OS/architecture, disk, RAM/VRAM, GPU, live APIs, install and RU/EN/TH quality remain unverified.
+
 
 ## Current owner priority
 
@@ -53,3 +52,8 @@
 - Provider registry, 19 gateway routes, Python/optional model dependencies, Ollama API surface and SQLite decision are summarized in `docs/ALANDI_SYSTEMS_MAP_RU.md`.
 - Runtime/install status is machine-readable in `models/runtime-stack.lock.json`: artifacts verified, target installation not started.
 - Next: obtain target host facts; then implement four Functions panels and a real Connector registry on main. Do not reopen stale PR branches.
+
+
+## Latest execution checkpoint — 2026-11-14
+
+Parent main SHA 973a07eab5d8eef493e359d468499f263420a74c; live queue 0 PRs / issue #111. Quality #43552190729 PASS (121/121 Chromium, live-site 1/1, landing 8/8); Graphify #43552190747 PASS; Pages #43552190545 SUCCESS. External/Ollama artifacts are SHA-verified but not installed; Python cache passed its declared offline matrix but is not installed. Current dependency upgrade candidates are FastAPI 0.162.7, Pydantic 2.14.3 and pypdf 7.1.0; uv.lock remains unchanged. Continue with exact-head Freshness/Provenance, then read-only GitHub App connector, then target-host preflight. The 15-point status is maintained only in K.5 of the existing master addendum.

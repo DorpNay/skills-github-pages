@@ -2,6 +2,14 @@
 
 > Подробный индекс навигации. Это не источник live-статуса и не обязательный стартовый пакет. Для `oledue` сначала читай корневой OLEDUE.md, затем выполняй один batched live GitHub read. Используй этот файл для поиска конкретного пути.
 
+## Контрольная точка — 2026-11-14 (live main)
+
+- Checkpoint parent SHA: 973a07eab5d8eef493e359d468499f263420a74c; exact queue at capture: open PRs (0): ; open issues (1): #111.
+- Quality #43552190729 PASS: 121/121 main Chromium, live-site smoke 1/1, landing 8/8; Graphify #43552190747 PASS; Pages #43552190545 SUCCESS.
+- Four Functions panels match the E2E contract. Backend maturity remains as recorded in K.5; Connectors is still an honest empty state.
+- Model/runtime artifacts 13,783,272,859 bytes are SHA-verified in Actions; Python offline cache #43423610986 passed. None is installed on target.
+- Continue LANDING-V2-2026-001 on main only. The 15-point status is in K.5 of the existing addendum; no parallel backlog.
+
 ## Контрольная точка — 2026-11-13 (live GitHub)
 
 - Main checkpoint parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`; this atomic commit exposes the owner-required four-panel Functions menu and refreshes all state/handoff records. Fetch live SHA on resume.

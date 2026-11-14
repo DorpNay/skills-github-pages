@@ -104,18 +104,18 @@ GitHub Pages is the public client release surface. The Tunnel, VPS, Ollama runti
 - Memvid v2.0.140 and RAG-Anything v1.4.1 selected source snapshots are archived under `docs/upstream-archive/` for reference/evaluation only. They are not part of aLandi's runtime dependency graph; archive presence does not upgrade any memory/RAG system maturity. Per-source licenses, pinned upstream commit and per-file Git blob evidence are recorded in the manifests/provenance.
 
 
-## Functions detail crosswalk — historical owner snapshot (2026-11-08)
+## Functions detail crosswalk — current owner snapshot (2026-11-14)
 
 | Surface/system | Current truthful boundary | Maturity/evidence | Canonical detail |
 |---|---|---|---|
-| Agents / structured analysis | Four sequential stages on one selected model; saved team blueprint is not independent workers | Current UI/pipeline baseline; latest detailed panel change is PR #169 candidate, exact-head Quality pending | `index.md`; Functions IA; worker capability contract |
-| Deep Research settings | PR #169 merged: dedicated Functions panel exposes Quick/Thorough, Web breadth and pipeline status/navigation; Research Studio is retired. Public root/landing Chromium passed after PR #173 merge | IMPLEMENTED on main `bf039f887e29137b627b06fc2bb107c2793d6b69` | Functions IA; Deep Research current-state audit/plan |
-| Deep Research 2.0 engine | Durable/resumable research, evidence ledger, citation validation, contradiction analysis, source refresh, report artifacts | SPECIFIED / DEFERRED; not current runtime | `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md` |
-| Skills / task profile | Chat-scoped presets/custom instructions; adds task guidance only, no tools/permissions/data scope | IMPLEMENTED on main; profile changes instructions only and does not grant tools, permissions or data scope | Functions IA; Skill Factory spec |
-| Skill Factory / Agent Builder | source-to-Skill lifecycle, package manifest/provenance/evals and agent blueprint | SPECIFIED / FUTURE; no runtime grant or execution | `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; worker capability contract |
-| Integrations | No external connectors currently registered/connected; no fake switches | Unavailable until real registry, status, permission and action handler exist | Functions IA |
+| Agents / structured analysis | Independent Agents panel is visible; execution remains four sequential stages on one selected model, not independent workers | UI IMPLEMENTED; execution PROTOTYPE; Quality #43552190729 passed the current four-panel contract | index.md; Functions IA; worker capability contract |
+| Deep Research settings | Dedicated panel exposes Quick/Thorough and research settings/navigation; Research Studio is retired | UI IMPLEMENTED on main; published-site and landing Chromium checks passed on parent 973a07e | Functions IA; Deep Research current-state audit/plan |
+| Deep Research 2.0 engine | Durable/resumable research, evidence ledger, citation validation, contradiction analysis, source refresh and report artifacts | SPECIFIED / DEFERRED; not current runtime | docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md |
+| Skills / task profile | Chat-scoped presets/custom instructions; no tool, permission or data-scope grant | IMPLEMENTED baseline; no Skill Factory lifecycle | Functions IA; Skill Factory spec |
+| Skill Factory / Agent Builder | Source-to-Skill lifecycle, manifest/provenance/evals, review, versions and agent blueprint | SPECIFIED / FUTURE; no runtime grant or execution | docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md; worker capability contract |
+| Connectors | Independent panel opens an honest empty state; provider-bound OAuth PKCE groundwork exists, but no real registry or action handler | UI IMPLEMENTED; connector NOT IMPLEMENTED; do not show connect controls yet | Functions IA; OAuth vault and GitHub App connector plan |
 
-**Guard:** this crosswalk does not upgrade any system maturity from archived upstream source code. Source snapshots under docs/upstream-archive remain research-only, ship=false.
+**Guard:** UI visibility is not backend capability maturity. Archived upstream source code remains research-only and ship=false. OAuth PKCE is not a connector.
 
 
 ## Repository-orientation / Graphify bridge — 2026-11-08
@@ -164,6 +164,14 @@ Keys are not committed to source. Provider selection is manual; private aServi r
 
 Gateway baseline: Python 3.12+, FastAPI 0.162.0, httpx 0.28.1, Uvicorn 0.54.0, cryptography 50.0.2, jsonschema 4.26.0, pypdf 6.21.4; dev group pytest 9.1.1, pytest-asyncio 1.4.0, PyYAML 6.0.3 and vulture 2.16. `uv.lock` pins the transitive dependency graph. Static GitHub Pages UI has no Node `package.json` dependency graph.
 
+### Upstream version audit — 2026-11-14
+
+- FastAPI 0.162.7 is the current official release; its signed GitHub release fixes async-yield dependency cleanup on cancellation. The gateway currently uses no FastAPI Depends/yield dependency path. PyPI did not publish provenance for this release; the upstream release commit is signed and verified.
+- Pydantic 2.14.3 is newer than locked 2.14.1; PyPI provenance is available. Treat as a patch update candidate.
+- pypdf 7.1.0 is newer than locked 6.21.4 and has PyPI provenance. Version 7 removes deprecated APIs and changes some writer method signatures; current gateway uses PdfReader and tests use PdfWriter, but run the full document fixture set before promotion. pyproject.toml excludes pypdf releases newer than 2026-10-29; review that hold when regenerating the lock.
+- Ollama 0.40.16 remains latest stable; 0.40.17-rc0 is prerelease. whisper.cpp 1.9.5, Piper 1.8.0 and Tesseract 5.5.4 remain selected baselines.
+- Decision: do not edit version strings without lock regeneration. Current uv.lock remains authoritative until a connected environment can run uv 0.13.6 lock resolution and the final Gateway/document checks.
+
 ### Model/runtime and optional libraries
 
 | Capability | Acquired artifacts | Still required before use |
@@ -181,9 +189,9 @@ Gateway baseline: Python 3.12+, FastAPI 0.162.0, httpx 0.28.1, Uvicorn 0.54.0, c
 - Current server-side data: SQLite (FTS5 RAG, exact-response cache, AgentRunStore prototype); browser-side data: IndexedDB/localStorage.
 - PostgreSQL, Redis and Qdrant are **not selected**. Add only after dataset/concurrency/latency measurements demonstrate SQLite/FTS5 is insufficient.
 - Ollama binds to loopback; FastAPI uses systemd on loopback; Cloudflare Tunnel is target-only until live host evidence exists. No VPS, Tunnel, model runtime or database migration is claimed deployed.
-- Downloaded Actions artifacts total 13,783,270,816 bytes and expire 2026-12-13. They are not installed on a target host. The owner-supplied uncensored primary checkpoint is excluded.
+- Downloaded Actions artifacts total 13,783,272,859 bytes and expire 2026-12-13. They are not installed on a target host. The owner-supplied uncensored primary checkpoint is excluded.
 
 
-### 2026-11-13 Functions UI checkpoint
+### 2026-11-14 Functions UI checkpoint
 
-The main Functions menu exposes four independent panels in the owner-defined order: Deep Research, Agents, Skills, Connectors. Connectors opens a non-interactive empty state; this does not satisfy the real connector registry/action requirement in LANDING-V2-2026-001 K.1 item 6. Deep Research is still a settings/navigation panel, Agents is the existing bounded same-model four-stage workflow, and Skills are chat-scoped instruction profiles. Full runtime scope remains open.
+The main Functions menu exposes four independent panels in the owner-defined order: Deep Research, Agents, Skills, Connectors. Exact-parent Quality #43552190729 passed 121/121 primary Chromium tests, 1/1 live-site smoke and 8/8 landing tests; Graphify #43552190747 and Pages #43552190545 passed on SHA 973a07e. Connectors remains a non-interactive empty state; the real registry/action requirement is still open. Deep Research is settings/navigation, Agents is the bounded same-model four-stage workflow, and Skills are chat-scoped instruction profiles. See the 15-point status table in addendum section K.5. Full runtime scope remains open.

@@ -134,3 +134,26 @@ Choose the artifact matching the target's CPython minor version. The current art
     /opt/alandi/venv/bin/python -m pip check
 
 The offline sync is deliberately network-disabled and fails closed if the artifact does not match the lock/platform or lacks a required distribution. Keep the extracted cache until the service is installed and smoke-tested. This cache does not install Ollama, Piper, Whisper, Tesseract binaries, GPU drivers, system packages or optional Qwen-ASR/PyTorch dependencies; those remain separate, host-specific installation steps. Artifacts expire after 30 days; rerun the workflow if needed.
+
+
+## Current verified acquisition artifacts — 2026-11-14
+
+These are SHA-verified GitHub Actions staging artifacts, not installed runtimes and not Git-tracked model weights. Model binaries must not be committed to the GitHub Pages source tree or Git LFS.
+
+- External model/runtime cache: workflow 43420046411, artifact 14033946209, 6,054,442,377 bytes, archive SHA-256 a43f068a9e54df4e022c95e29eb1c1618b40a8fc5391166f7e6f1a6a0d6a8682; expires 2026-12-13 11:50:13 UTC.
+- Ollama package run: workflow 43418126506, four model artifacts plus helper lock, 7,728,830,482 bytes; earliest model artifact expiry 2026-12-13 11:36:20 UTC. Per-artifact SHA-256 values are in models/runtime-stack.lock.json.
+- Python gateway cache: workflow 43423610986, CPython 3.12/3.13/3.14, 80,097,141 compressed bytes; Ubuntu 24.04 x86_64 only; offline sync and pip-check passed; expires 2026-12-13 12:15:31 UTC.
+
+On an authenticated owner workstation or the verified target host:
+
+    gh run download 43420046411 --name alandi-external-model-cache-43420046411
+    gh run download 43418126506
+    gh run download 43423610986
+
+Verify extracted package inventories before use:
+
+    find . -name SHA256SUMS.local -print0 | while IFS= read -r -d '' f; do (cd "$(dirname "$f")" && sha256sum -c "$(basename "$f")"); done
+
+Choose the Python cache artifact matching the target CPython minor and use it only on Ubuntu 24.04 x86_64. The owner-supplied uncensored Qwen3.5-4B primary checkpoint is excluded from the external cache and must be supplied separately with its pinned SHA. The official Qwen3.5-4B base comparator is present in the Ollama artifact but is not an approved production selection. Do not install any model until the owner confirms the model lane and the actual host's disk/RAM/VRAM fit.
+
+**Retention:** Actions artifacts expire on 2026-12-13. Before expiry, move only required, licensed artifacts to an owner-controlled durable store or the verified target host. Do not place binaries in the Pages source tree.

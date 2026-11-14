@@ -190,31 +190,100 @@
   "acquisition": {
     "state": "VERIFIED_DOWNLOADED_NOT_INSTALLED",
     "external_cache": {
-      "workflow_run": 43417527347,
-      "artifact_name": "alandi-external-model-cache-43417527347",
-      "artifact_id": 14032083513,
-      "artifact_bytes": 6054440341,
+      "workflow_run": 43420046411,
+      "artifact_name": "alandi-external-model-cache-43420046411",
+      "artifact_id": 14033946209,
+      "artifact_bytes": 6054442377,
+      "artifact_sha256": "a43f068a9e54df4e022c95e29eb1c1618b40a8fc5391166f7e6f1a6a0d6a8682",
       "package_count": 10,
-      "expires_on": "2026-12-13"
+      "expires_on": "2026-12-13T11:50:13Z"
     },
     "ollama_registry": {
-      "workflow_run": 43417305393,
+      "workflow_run": 43418126506,
       "artifact_ids": [
-        14031837868,
-        14032317541,
-        14032427244,
-        14031799248,
-        14032207856
+        14033595112,
+        14033515626,
+        14032792732,
+        14032663412
+      ],
+      "artifacts": [
+        {
+          "id": 14032792732,
+          "name": "alandi-qwen35-base-4b-43418126506",
+          "size_bytes": 3324184144,
+          "sha256": "d66c97c2139d993a85a4ab4213fd1e7086c7a7aee08d6971fcb1faa699a3371a"
+        },
+        {
+          "id": 14032383874,
+          "name": "alandi-qwen35-helper-2b-43418126506",
+          "size_bytes": 1945791476,
+          "sha256": "6b1b95dc256a15bde30b691c14dbe38a488733d3130fac54557f86d43947be15"
+        },
+        {
+          "id": 14033515626,
+          "name": "alandi-qwen3-embedding-06b-q8-0-43418126506",
+          "size_bytes": 639156333,
+          "sha256": "fb9030432d515646370c4f471837541e03242bb19103e29bb6807c73030f0df5"
+        },
+        {
+          "id": 14032663412,
+          "name": "alandi-glm-ocr-q8-0-43418126506",
+          "size_bytes": 1819696477,
+          "sha256": "dd222da85d699e8de542e2bd252d5b501e5f1bbb5e331c4a3bd509a3360f9220"
+        },
+        {
+          "id": 14033595112,
+          "name": "alandi-ollama-helper-lock-43418126506",
+          "size_bytes": 2052,
+          "sha256": "f89e9802e27749c233391b6c2e19fcb1b74f67ec3eae07b57f84852c4438a0a8"
+        }
       ],
       "package_count": 4,
-      "artifact_bytes": 7728830475,
-      "expires_on": "2026-12-13"
+      "artifact_bytes": 7728830482,
+      "expires_on": "2026-12-13T11:36:20Z"
     },
-    "total_uploaded_artifact_bytes": 13783270816,
+    "total_uploaded_artifact_bytes": 13783272859,
     "owner_supplied_primary_checkpoint": {
       "status": "NOT_DOWNLOADED_OWNER_SUPPLIED",
       "size_bytes": 2707513696
     },
-    "target_installation": "NOT_STARTED_HOST_PLATFORM_NOT_VERIFIED"
+    "target_installation": "NOT_STARTED_HOST_PLATFORM_NOT_VERIFIED",
+    "python_runtime_cache": {
+      "workflow_run": 43423610986,
+      "artifacts": [
+        {
+          "id": 14035162009,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.12-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
+          "size_bytes": 26700700
+        },
+        {
+          "id": 14034589425,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.13-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
+          "size_bytes": 26694782
+        },
+        {
+          "id": 14034429641,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.14-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
+          "size_bytes": 26701659
+        }
+      ],
+      "artifact_ids": [
+        14035162009,
+        14034589425,
+        14034429641
+      ],
+      "artifact_bytes": 80097141,
+      "python_versions": [
+        "3.12",
+        "3.13",
+        "3.14"
+      ],
+      "target": "Ubuntu 24.04 x86_64",
+      "uv_version": "0.13.6",
+      "offline_sync_verified": true,
+      "pip_check_verified": true,
+      "expires_on": "2026-12-13T12:15:31Z"
+    },
+    "total_all_artifact_bytes": 13863370000
   }
 }
