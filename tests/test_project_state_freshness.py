@@ -13,6 +13,7 @@ from scripts.check_project_state_freshness import (
     validate_github_api_url,
     github_get_json,
     validate_handoff_policy,
+    legacy_orientation_files,
     validate_snapshot,
 )
 

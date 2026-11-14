@@ -3,16 +3,16 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-15",
   "checkpoint": {
-    "main_sha": "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9",
-    "main_commit_subject": "test: replace JWT decoder lambda with typed helper",
-    "main_commit_date": "2026-11-14",
+    "main_sha": "05b98dfe18886810cae0e14f950a2927e72d0337",
+    "main_commit_subject": "docs: consolidate NOW continuity and refresh Landing V2 checkpoint",
+    "main_commit_date": "2026-11-15",
     "last_functional_checkpoint_sha": "8e4edd83d50e6872852e7de8090934fbf6ae5f24",
     "last_functional_milestone": "Security hardening: fixed bounded RAG SQL placeholders with bound parameters; safe own-property chat-state mutation rejects dangerous keys; redundant dynamic SQLite PRAGMA removed. Four-panel UI remains the current published interface baseline.",
-    "main_quality_run": 43621379825,
-    "main_pages_deployment_run": 43621380121,
+    "main_quality_run": 43623253249,
+    "main_pages_deployment_run": 43623253308,
     "functional_parent_gateway_run": 43621379836,
     "functional_parent_quality_run": 43554105709,
-    "functional_parent_graphify_run": 43621379893,
+    "functional_parent_graphify_run": 43623253242,
     "functional_parent_pages_run": 43554105358,
     "open_pull_requests": [],
     "open_issues": [
@@ -261,23 +261,24 @@
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Direct main only, zero open PRs; issue #111 remains owner/environment gated.",
     "pr_check_policy": "No new PRs under explicit owner directive; deliver bounded verified commits directly to main.",
-    "note": "Functional product baseline remains 8e4edd83d50e6872852e7de8090934fbf6ae5f24. Test-only Ruff correction at 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9 has exact-main Gateway, Quality, Graphify and Pages PASS. Freshness is being reconciled atomically; Provenance is unverified. Model/runtime/OpenShell artifacts are SHA-verified in Actions, not installed. NOW.md is the only session checkpoint; no old PR is a default task.",
-    "last_volley": "V-2026-11-15-LANDING-V2-UPSTREAM-CHECKPOINT-001",
+    "note": "Current owner task is LANDING-V2-2026-001. Historical PR IDs in this snapshot are history only and are not active tasks. Functional product baseline remains 8e4edd83d50e6872852e7de8090934fbf6ae5f24. Current parent 05b98 has Provenance, Graphify and Pages PASS; Freshness and Ruff failed due a missing test import, corrected in this atomic commit. NOW.md is the only session checkpoint.",
+    "last_volley": "V-2026-11-15-LANDING-V2-CHECKPOINT-FIX-001",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
-    "main_quality_status": "PASS on exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Quality #43621379825 (7/7 jobs).",
-    "main_pages_status": "SUCCESS on exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Pages #43621380121.",
-    "main_graphify_status": "PASS on exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Graphify #43621379893.",
-    "main_freshness_run": 43621323351,
-    "main_freshness_status": "FAIL on prior parent 137bf621d7c9a7dd67e0af49fb3b54413bc722e8 because snapshot main SHA lagged; 19 deterministic unit tests passed. Atomic refresh based on 101e57 will rerun.",
+    "main_quality_status": "Ruff gate FAILED on parent 05b98 due missing legacy_orientation_files import in the new test; corrected in this atomic commit. Other Quality jobs were still running at checkpoint.",
+    "main_pages_status": "SUCCESS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Pages #43623253308.",
+    "main_graphify_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Graphify #43623253242.",
+    "main_freshness_run": 43623253330,
+    "main_freshness_status": "FAILED on exact parent 05b98: 20 tests passed, 1 NameError because legacy_orientation_files was not imported; corrected in this commit.",
     "main_provenance_run": null,
-    "main_provenance_status": "UNVERIFIED: no exact-main provenance run retrieved.",
+    "main_provenance_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Provenance #43623253304.",
     "owner_priority_summary": "LANDING-V2-2026-001 / K.1 items 1–14 plus K.2 = 15 priorities. Owner UI, four Functions panels, real Deep Research, durable model-backed AgentRun, Skill lifecycle, real Connectors, sandboxed Coder, installed voice, full RAG, ingestion/OCR/converters, mode matrix, efficient routing, observability/N2O and tested owner runbook remain governed by K.5.",
     "pr185_status": "PR #185 merged into main at f1fc73783a46bf38014acd0a8019914d5a3f14d4; model/runtime acquisition artifacts are staged in Actions, not installed.",
-    "main_gateway_status": "PASS on exact main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Gateway #43621379836 across Python 3.12/13/14."
+    "main_gateway_status": "PASS on previous exact parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Gateway #43621379836 across Python 3.12/13/14. No Gateway rerun on 05b98.",
+    "historical_pr_fields": "All pr131/pr152/pr154/pr155/pr174 and other PR-specific fields below are historical evidence only; no PR is open and none is a default continuation."
   },
-  "last_volley": "V-2026-11-14-OWNER-15-POINT-RESUME-AND-FRESHNESS-001",
+  "last_volley": "V-2026-11-15-LANDING-V2-CHECKPOINT-FIX-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -315,7 +316,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-15",
-    "checkpoint_parent_sha": "101e57d5a5efdbb291e0667df9e25e5fadd7e1f9",
+    "checkpoint_parent_sha": "05b98dfe18886810cae0e14f950a2927e72d0337",
     "merged_prs": [
       184,
       185
@@ -340,14 +341,15 @@
       "External artifact re-acquisition #43553056846 / artifact #14096889755: 6,054,444,756 bytes, SHA-256 dcf575b943493bff474e3bcabe92cc4c5882fa6ed99153577e8a02b633387d56; Ollama #43418126506 7,728,830,482 bytes; Python cache #43553056865 80,105,944 bytes. All temporary Actions artifacts, not installed.",
       "Four-panel Functions UI and 15-point K.5 status remain canonical. Connectors is an empty state; other functions have maturity boundaries recorded in K.5.",
       "Exact-main 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9: Gateway #43621379836 PASS (Python 3.12/13/14); Quality #43621379825 PASS (7 jobs); Graphify #43621379893 PASS; Pages #43621380121 SUCCESS. Ruff E731 regression fixed in gateway/tests/test_github_app.py.",
-      "OpenShell v0.1.8 acquisition #43616944431 succeeded; artifact #14122692509, 207,414,886 bytes, SHA-256 d99d484ec2465f713b91b93cc37bf18cd1ad73ebe90d48d5a10f55572a2a9543. External, Ollama and Python artifacts remain staged in Actions; none installed."
+      "OpenShell v0.1.8 acquisition #43616944431 succeeded; artifact #14122692509, 207,414,886 bytes, SHA-256 d99d484ec2465f713b91b93cc37bf18cd1ad73ebe90d48d5a10f55572a2a9543. External, Ollama and Python artifacts remain staged in Actions; none installed.",
+      "Parent 05b98dfe18886810cae0e14f950a2927e72d0337: Provenance #43623253304 PASS, Graphify #43623253242 PASS, Pages #43623253308 SUCCESS. Freshness #43623253330 and Ruff in Quality #43623253249 exposed missing test import; corrected in current atomic checkpoint."
     ],
     "freshness": {
-      "run": 43621323351,
-      "status": "Failed on prior main 137bf due stale snapshot SHA; 19 deterministic unit tests passed. Atomic refresh is based on parent 101e57 and will rerun."
+      "run": 43623253330,
+      "status": "Failed because test import missing (20 pass, 1 error); corrected in this commit, rerun pending."
     },
     "next": [
-      "Pass exact-head Freshness after this atomic state refresh; Provenance remains unverified.",
+      "Pass exact-head Freshness and Quality after the test import correction.",
       "Implement real model-backed AgentRun with typed profiles, worker lifecycle, model calls, live events, cancellation, budgets and independent verification.",
       "Inspect target host OS/architecture, disk, RAM/VRAM, kernel, container/VM support and network before installing OpenShell or models.",
       "Continue Deep Research, Skill lifecycle, real Connectors, full RAG, document/book/web parsing and converters, installed voice, mode matrix, efficient routing, cache/observability/N2O and tested owner runbook."
@@ -357,5 +359,24 @@
       "current_upstream": "FastAPI 0.163.0 (2026-11-14); Pydantic 2.14.3 (2026-11-05); pypdf 7.1.0 (2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8.",
       "decision": "FastAPI 0.163.0 held until 2026-11-21 by seven-day cooldown. Pydantic 2.14.3 is eligible for focused lock refresh + Gateway/document matrix. pypdf 7.1.0 already pinned. No dependency changes yet."
     }
-  }
+  },
+  "active_ui_pr": null,
+  "open_prs": "0 live open PRs.",
+  "owner_task": "LANDING-V2-2026-001: finish the existing 15-point programme; current owner prompts and next step are in NOW.md. No active PR; issue #111 is owner/environment gated.",
+  "main_gateway_run": 43621379836,
+  "main_quality_run": 43623253249,
+  "main_pages_deployment_run": 43623253308,
+  "main_freshness_run": 43623253330,
+  "main_provenance_run": 43623253304,
+  "main_graphify_run": 43623253242,
+  "main_external_acquisition_run": 43553056846,
+  "main_ollama_artifact_run": 43418126506,
+  "main_python_runtime_cache_run": 43553056865,
+  "python_runtime_cache_bytes": 80105944,
+  "main_quality_status": "Ruff gate FAILED on parent 05b98 due missing legacy_orientation_files import in the new test; corrected in this atomic commit. Other Quality jobs were still running at checkpoint.",
+  "main_pages_status": "SUCCESS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Pages #43623253308.",
+  "main_freshness_status": "FAILED on exact parent 05b98: 20 tests passed, 1 NameError because legacy_orientation_files was not imported; corrected in this commit.",
+  "main_provenance_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Provenance #43623253304.",
+  "main_graphify_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Graphify #43623253242.",
+  "main_gateway_status": "PASS on previous exact parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Gateway #43621379836 across Python 3.12/13/14. No Gateway rerun on 05b98."
 }

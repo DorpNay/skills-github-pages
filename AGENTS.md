@@ -14,6 +14,7 @@
 - At the start of every turn, append the latest owner task to NOW.md before implementation: complete message verbatim in OWNER REQUEST ARCHIVE; update CURRENT/NEXT. If it contains credentials, secrets or unnecessary sensitive personal data, redact only those spans and mark the redaction.
 - After every material step, append a dated JOURNAL entry with task ID, status, exact paths, branch/parent/resulting SHA, commands/check IDs and outcomes, limits, rollback and next action. Do not log private reasoning.
 - Read only task-relevant source/test/spec files after NOW. PROJECT_STATE, VOLLEY_LOG, registries, orchestrator and architecture maps are on-demand references, never a mandatory startup bundle.
+- Historical PR IDs in registries/snapshots are evidence only; never resume them unless the latest explicit owner request names the work and live GitHub confirms its current scope.
 - If a prior chat cannot be recovered, say so; never invent its task or resume a stale PR.
 
 ## Engineering

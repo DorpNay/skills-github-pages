@@ -12,13 +12,13 @@
 - **Authorization:** owner explicitly permits merges and plugin connections. This does not waive branch/CI/security checks or authorize deployment/destructive history changes.
 - **Canonical scope:** `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K; 15 items = K.1.1–K.1.14 + K.2; progress table K.5 updated in place only.
 - **Owner-only action guide:** `docs/PRE_LAUNCH_STACK_RU.md` §8. These are explicit owner/environment gates, not work to fake as completed.
-- **Live checkpoint:** `main` SHA `18da1a1f2c4568818fba136d50648c61a209bd74`; open PRs 0; open issue #111. This SHA contains the latest NOW owner-prompt record. No workflow runs associated with this commit were returned by the connector; CI is NOT VERIFIED for this SHA.
-- **Immediate NEXT:** audit manifest/lock/download artifacts against current upstream source versions; preserve large primary checkpoint exclusion; then start first bounded UI/code slice only after code/test inspection.
+- **Live checkpoint:** `main` SHA `05b98dfe18886810cae0e14f950a2927e72d0337` (parent of this atomic correction); 0 open PRs; issue #111 only. Provenance, Graphify and Pages passed on this SHA; Freshness failed on a test import, now corrected.
+- **Immediate NEXT:** rerun exact-head Freshness and Quality after the missing test import is fixed; then begin the first real model-backed AgentRun service slice.
 - **Status:** IN PROGRESS — Landing V2 delivery; orientation consolidated to NOW.md.
 - **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never select an old PR as a default; never revive stale tasks by default.
 - **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
 - **Last functional baseline SHA (PROJECT_STATE snapshot):** `8e4edd83d50e6872852e7de8090934fbf6ae5f24`.
-- **Live main SHA at this update:** `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9` (parent of this atomic state-refresh commit).
+- **Live main SHA at this update:** `05b98dfe18886810cae0e14f950a2927e72d0337` (parent of this atomic correction).
 - **Open PRs:** none
 - **Open issues:** #111
 - Open PRs: none
@@ -26,7 +26,7 @@
 - Routing invariant: never select an old PR as a default; route from the latest explicit owner request.
 - **Live facts:** GitHub API confirms main at checkpoint parent, zero open PRs, issue #111 only. Commit `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`: `feat(github): add allowlisted read-only App connector` (2026-11-14). No workflow runs returned for this exact SHA; exact-head CI is NOT VERIFIED.
 - **Prior-chat task:** not recovered. Do not infer it from old PRs, stale registry entries or historical checkpoints.
-- **NEXT:** pass exact-head Freshness on this atomic checkpoint; then implement the first real model-backed AgentRun service slice. Keep sandbox installation gated on actual host facts.
+- **NEXT:** verify Freshness and Quality on the corrected atomic checkpoint; then implement real model-backed AgentRun. No old PR is a default continuation.
 
 ## START PROTOCOL — five-second route
 
@@ -45,6 +45,10 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+
+- [2026-11-15] S-012 | IMPLEMENTED / CHECKS PENDING | Fixed Freshness/Ruff regression: imported legacy_orientation_files in tests/test_project_state_freshness.py; helper and legacy-file guard are in scripts/check_project_state_freshness.py. | Parent main 05b98dfe18886810cae0e14f950a2927e72d0337. | Freshness #43623253330 failed with 20 tests passing and 1 NameError (legacy_orientation_files import missing); Quality #43623253249 Ruff gate failed on the same undefined name, other jobs still running. Provenance #43623253304 PASS; Graphify #43623253242 PASS; Pages #43623253308 SUCCESS. | No product runtime behavior changed. | Run exact-head Freshness/Quality on this correction.
+- [2026-11-15] S-013 | FACT | Removed stale current routing from docs/PROJECT_STATE.yaml: current live queue is zero PRs and issue #111; historical PR records remain history only. | Parent 05b98dfe18886810cae0e14f950a2927e72d0337. | Current task is LANDING-V2-2026-001; latest owner prompt in NOW is authoritative. | Keep old PR IDs out of active sequence; continue K.5 only.
+
 
 - [2026-11-15] S-011 | VERIFIED | Fixed pre-existing Ruff E731 in `gateway/tests/test_github_app.py` with a typed helper. | Main commit `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9`. | Gateway #43621379836 PASS (Python 3.12/13/14); Quality #43621379825 PASS (7 jobs incl. Ruff, Security, Integrity, Context, Chromium, Jekyll and release contract); Graphify #43621379893 PASS; Pages #43621380121 SUCCESS — exact SHA. | Freshness #43621323351 failed on prior parent `137bf621d7c9a7dd67e0af49fb3b54413bc722e8` because snapshot lagged; all 19 checker tests passed. Provenance exact-main UNVERIFIED. | Complete atomic checkpoint and rerun Freshness.
 - [2026-11-15] S-010 | VERIFIED / UPSTREAM AUDIT | whisper.cpp v1.9.5 remains latest stable (2026-10-06); upstream HEAD `5922450fbce1ed9d1648babd0d5ac4520055b436` (2026-11-13) is an untagged CMake/Windows fix, not a new release. No official model named Whisper 3; large-v3/large-v3-turbo remain official names. Piper v1.8.0, Tesseract 5.5.4, Ollama v0.40.16 and OpenShell v0.1.8 are latest stable; pypdf 7.1.0 is current. FastAPI 0.163.0 (2026-11-14) is newer than lock 0.162.0 but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 (2026-11-05) is a lock-refresh candidate vs 2.14.1. | Official upstream release pages recorded in INTEL.md. | No dependency lock changed. Qwen3-ASR 0.6B remains staged challenger; 1.7B deferred pending host fit and same-audio RU/EN/TH eval. | Refresh Pydantic lock only after generated lock + gateway/document matrix; re-evaluate FastAPI after cooldown.
