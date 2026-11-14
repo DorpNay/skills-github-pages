@@ -1,0 +1,531 @@
+"""Durable, single-worker AgentRun executor backed by SQLite and encrypted payloads."""
+from __future__ import annotations
+
+import asyncio
+import hashlib
+import json
+import re
+import time
+from collections import OrderedDict
+from typing import Any
+
+import httpx
+
+try:
+    from .payloads import AgentPayloadError, AgentPayloadVault
+    from .store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
+except ImportError:  # supports "uvicorn app:app" from the gateway directory
+    from agent_runtime.payloads import AgentPayloadError, AgentPayloadVault
+    from agent_runtime.store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
+
+
+PROFILE_PROMPTS = {
+    "general": (
+        "You are aLandi General, a bounded task assistant. Work only with the request "
+        "and supplied context. You have no tools, web access, filesystem, shell or "
+        "external integrations. Never claim to have used them. Give a concise final "
+        "answer. Do not reveal private reasoning or hidden chain-of-thought."
+    ),
+    "coder": (
+        "You are aLandi Coder, a code-design specialist. Work only with code and context "
+        "supplied in the task. You cannot inspect or modify repositories, execute shell "
+        "commands, run tests or access files. Provide proposed code or a precise patch "
+        "plan, and state what has not been executed. Do not reveal private reasoning."
+    ),
+    "reviewer": (
+        "You are aLandi Reviewer. Review only the supplied material. Separate verified "
+        "facts from assumptions, identify concrete risks and propose minimal corrections. "
+        "You cannot access external sources or run tests. Do not reveal private reasoning."
+    ),
+    "researcher": (
+        "You are aLandi Research Analyst. Analyze only supplied sources and context. You "
+        "have no web/search tools; never invent citations or imply external research. "
+        "Identify evidence gaps explicitly. Do not reveal private reasoning."
+    ),
+}
+PROFILE_LABELS = {
+    "general": "General",
+    "coder": "Coder",
+    "reviewer": "Reviewer",
+    "researcher": "Research analyst",
+}
+
+
+class AgentRunBusy(AgentRunError):
+    """The durable queue has reached its admission limit."""
+
+
+class AgentRunUnavailable(AgentRunError):
+    """The worker has not started or is stopping."""
+
+
+class AgentRunWorker:
+    """One real local-model worker; task state and payloads survive process restarts."""
+
+    def __init__(
+        self,
+        store: AgentRunStore,
+        payload_vault: AgentPayloadVault,
+        client: httpx.AsyncClient,
+        *,
+        ollama_base_url: str,
+        allowed_models: tuple[str, ...],
+        inference_semaphore: asyncio.Semaphore,
+        context_tokens: int = 4096,
+        timeout_seconds: float = 120.0,
+        max_prompt_chars: int = 12_000,
+        max_output_tokens: int = 768,
+        max_output_bytes: int = 65_536,
+        max_pending_runs: int = 16,
+        poll_interval_seconds: float = 0.5,
+        lease_seconds: int = 180,
+        max_attempts: int = 2,
+    ):
+        if not 1 <= max_pending_runs <= 256:
+            raise ValueError("max_pending_runs must be between 1 and 256")
+        if not 0.05 <= poll_interval_seconds <= 10:
+            raise ValueError("poll_interval_seconds must be between 0.05 and 10")
+        if not 1 <= lease_seconds <= 3600:
+            raise ValueError("lease_seconds must be between 1 and 3600")
+        if not 1 <= max_attempts <= 3:
+            raise ValueError("max_attempts must be between 1 and 3")
+        self.store = store
+        self.payload_vault = payload_vault
+        self.client = client
+        self.ollama_base_url = ollama_base_url.rstrip("/")
+        self.allowed_models = tuple(allowed_models)
+        self.inference_semaphore = inference_semaphore
+        self.context_tokens = context_tokens
+        self.timeout_seconds = timeout_seconds
+        self.max_prompt_chars = max_prompt_chars
+        self.max_output_tokens = max_output_tokens
+        self.max_output_bytes = max_output_bytes
+        self.max_pending_runs = max_pending_runs
+        self.poll_interval_seconds = poll_interval_seconds
+        self.lease_seconds = lease_seconds
+        self.max_attempts = max_attempts
+        self.worker_id = "alandi-agent-worker-0"
+        self._runner: asyncio.Task | None = None
+        self._active: dict[str, asyncio.Task] = {}
+        self._known_idempotency: OrderedDict[str, str] = OrderedDict()
+        self._stopping = False
+        self._wake = asyncio.Event()
+
+    @staticmethod
+    def profiles() -> list[dict[str, Any]]:
+        return [
+            {
+                "id": profile_id,
+                "label": PROFILE_LABELS[profile_id],
+                "status": "configured",
+                "tools": [],
+                "filesystem": False,
+                "network": False,
+                "independent_process": False,
+            }
+            for profile_id in PROFILE_PROMPTS
+        ]
+
+    async def start(self) -> None:
+        if self._runner is not None and not self._runner.done():
+            return
+        self._stopping = False
+        self.payload_vault.prune_expired()
+        self._runner = asyncio.create_task(self._serve(), name="alandi-agent-run-worker")
+
+    def submit(
+        self,
+        *,
+        prompt: str,
+        idempotency_key: str,
+        scope_kind: str,
+        scope_id: str,
+        profile_id: str = "general",
+        model_id: str | None = None,
+    ) -> dict[str, Any]:
+        if self._stopping or self._runner is None or self._runner.done():
+            raise AgentRunUnavailable("AgentRun worker is unavailable")
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise AgentRunError("prompt must be non-empty text")
+        prompt = prompt.strip()
+        if len(prompt) > self.max_prompt_chars:
+            raise AgentRunError("prompt exceeds the configured size limit")
+        if profile_id not in PROFILE_PROMPTS:
+            raise AgentRunError("unknown agent profile")
+        selected_model = model_id or (self.allowed_models[0] if self.allowed_models else "")
+        if selected_model not in self.allowed_models:
+            raise AgentRunError("model is not in the configured allowlist")
+        if (not isinstance(idempotency_key, str)
+                or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}", idempotency_key)):
+            raise AgentRunError("a bounded Idempotency-Key is required")
+
+        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+        metadata = {"origin": "agent_api", "model_id": selected_model, "stage": profile_id}
+        run_args = {
+            "idempotency_key": idempotency_key,
+            "scope_kind": scope_kind,
+            "scope_id": scope_id,
+            "goal_ref": f"prompt-sha256:{prompt_hash}",
+            "metadata": metadata,
+        }
+        if idempotency_key in self._known_idempotency:
+            run = self.store.create_run(**run_args)
+            self._known_idempotency.move_to_end(idempotency_key)
+            return run
+        pending = self.store.list_runnable_runs(limit=self.max_pending_runs + 1)
+        if len(pending) >= self.max_pending_runs:
+            raise AgentRunBusy("AgentRun queue is full; retry after an active run completes")
+
+        run = self.store.create_run(**run_args)
+        self._remember_key(idempotency_key, run["run_id"])
+        if run["state"] in TERMINAL_RUN_STATES or run["state"] == "needs_human":
+            return run
+
+        input_record = json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":"))
+        try:
+            self.payload_vault.put(run_id=run["run_id"], kind="input", plaintext=input_record)
+            tasks = self.store.list_tasks(run_id=run["run_id"])
+            if not tasks:
+                self.store.enqueue_task(
+                    run_id=run["run_id"],
+                    task_key="model-completion",
+                    idempotency_key=f"model:{idempotency_key}",
+                    payload={
+                        "task_type": "model_completion",
+                        "model_id": selected_model,
+                        "worker_profile_id": profile_id,
+                        "max_output_tokens": self.max_output_tokens,
+                    },
+                    max_attempts=self.max_attempts,
+                )
+        except Exception as exc:
+            try:
+                current = self.store.get_run(run["run_id"])
+                if current["state"] in {"queued", "running"}:
+                    self.store.transition_run(
+                        run_id=run["run_id"], expected_state=current["state"], new_state="failed",
+                        event_type="run_failed", metadata={"reason_code": "payload_enqueue_failed"},
+                    )
+                self.payload_vault.delete_run(run_id=run["run_id"])
+            except Exception:
+                pass
+            raise AgentRunError("AgentRun could not persist its encrypted input or task") from exc
+        self._wake.set()
+        return self.store.get_run(run["run_id"])
+
+    def _remember_key(self, key: str, run_id: str) -> None:
+        self._known_idempotency[key] = run_id
+        self._known_idempotency.move_to_end(key)
+        while len(self._known_idempotency) > 512:
+            self._known_idempotency.popitem(last=False)
+
+    async def _serve(self) -> None:
+        while not self._stopping:
+            found_work = False
+            try:
+                runs = self.store.list_runnable_runs(limit=100)
+                for run in runs:
+                    if self._stopping:
+                        break
+                    run_id = run["run_id"]
+                    if run_id in self._active:
+                        continue
+                    task = asyncio.create_task(self._process_run(run_id), name=f"agent-run-{run_id}")
+                    self._active[run_id] = task
+                    try:
+                        claimed = await task
+                        found_work = found_work or claimed
+                    except asyncio.CancelledError:
+                        if self._stopping:
+                            raise
+                    finally:
+                        self._active.pop(run_id, None)
+                    if found_work:
+                        break
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                await asyncio.sleep(self.poll_interval_seconds)
+                continue
+            if not found_work:
+                self._wake.clear()
+                try:
+                    await asyncio.wait_for(self._wake.wait(), timeout=self.poll_interval_seconds)
+                except asyncio.TimeoutError:
+                    pass
+
+    async def _process_run(self, run_id: str) -> bool:
+        run = self.store.get_run(run_id)
+        if run["state"] in TERMINAL_RUN_STATES or run["state"] == "needs_human":
+            return False
+        tasks = self.store.list_tasks(run_id=run_id)
+        if not tasks:
+            return False
+        task = next((item for item in tasks if item.get("task_key") == "model-completion"), tasks[0])
+        if task["state"] == "succeeded":
+            self._finalize_success(run_id)
+            return True
+        if task["state"] == "failed":
+            self._finalize_failed(run_id, task)
+            return True
+        if run["state"] == "queued":
+            self.store.transition_run(
+                run_id=run_id, expected_state="queued", new_state="running",
+                event_type="run_started", metadata={"stage": "model_execution"},
+            )
+        claim = self.store.claim_task(
+            run_id=run_id, worker_id=self.worker_id, lease_seconds=self.lease_seconds
+        )
+        if claim is None:
+            return False
+
+        task = self.store.get_task(claim.task_id)
+        payload = self._json_object(task.get("payload", task.get("payload_json")))
+        model_id = payload.get("model_id", "")
+        profile_id = payload.get("worker_profile_id", "general")
+        if model_id not in self.allowed_models or profile_id not in PROFILE_PROMPTS:
+            self._fail_claim(run_id, claim, "worker_policy_rejected", retryable=False)
+            return True
+
+        started = time.monotonic()
+        try:
+            saved_output = self._read_output(run_id)
+            if saved_output is None:
+                input_raw = self.payload_vault.get(run_id=run_id, kind="input")
+                input_record = json.loads(input_raw)
+                prompt = input_record.get("prompt") if isinstance(input_record, dict) else None
+                if not isinstance(prompt, str) or not prompt.strip():
+                    raise AgentPayloadError("input payload has an invalid shape")
+                output_record = await self._generate(
+                    prompt=prompt, model_id=model_id, profile_id=profile_id, started=started
+                )
+                serialized = json.dumps(output_record, ensure_ascii=False, separators=(",", ":"))
+                try:
+                    self.payload_vault.put(run_id=run_id, kind="output", plaintext=serialized)
+                except AgentPayloadError:
+                    saved_output = self._read_output(run_id)
+                    if saved_output is None:
+                        raise
+                    output_record = saved_output
+            else:
+                output_record = saved_output
+
+            output_text = output_record["text"]
+            self.store.complete_task(
+                claim=claim,
+                result={
+                    "status": "succeeded",
+                    "output_bytes": len(output_text.encode("utf-8")),
+                    "token_count": output_record.get("token_count", 0),
+                    "duration_ms": output_record.get("duration_ms", 0),
+                    "stage": profile_id,
+                    "worker_id": self.worker_id,
+                },
+            )
+            self._finalize_success(run_id)
+            return True
+        except asyncio.CancelledError:
+            # Keep the lease and encrypted payload so another process can recover after expiry.
+            raise
+        except AgentPayloadError:
+            self._fail_claim(run_id, claim, "payload_unavailable", retryable=False)
+            self._transition_needs_human(run_id, "payload_unavailable")
+            return True
+        except asyncio.TimeoutError:
+            self._fail_claim(run_id, claim, "model_queue_timeout", retryable=True)
+            return True
+        except httpx.TimeoutException:
+            self._fail_claim(run_id, claim, "model_timeout", retryable=True)
+            return True
+        except httpx.HTTPStatusError as exc:
+            retryable = exc.response.status_code == 429 or exc.response.status_code >= 500
+            code = "model_not_found" if exc.response.status_code == 404 else "model_http_error"
+            self._fail_claim(run_id, claim, code, retryable=retryable)
+            return True
+        except httpx.HTTPError:
+            self._fail_claim(run_id, claim, "model_unavailable", retryable=True)
+            return True
+        except (ValueError, TypeError, KeyError):
+            self._fail_claim(run_id, claim, "invalid_model_response", retryable=False)
+            return True
+        except Exception:
+            self._fail_claim(run_id, claim, "agent_execution_error", retryable=False)
+            return True
+
+    @staticmethod
+    def _json_object(value: Any) -> dict[str, Any]:
+        if isinstance(value, str):
+            value = json.loads(value)
+        return value if isinstance(value, dict) else {}
+
+    def _read_output(self, run_id: str) -> dict[str, Any] | None:
+        try:
+            raw = self.payload_vault.get(run_id=run_id, kind="output")
+        except AgentPayloadError:
+            return None
+        record = self._json_object(raw)
+        text = record.get("text")
+        if not isinstance(text, str) or not text.strip():
+            raise AgentPayloadError("saved output payload has an invalid shape")
+        if len(text.encode("utf-8")) > self.max_output_bytes:
+            raise AgentPayloadError("saved output payload exceeds the size limit")
+        return record
+
+    async def _generate(
+        self, *, prompt: str, model_id: str, profile_id: str, started: float
+    ) -> dict[str, Any]:
+        request_body = {
+            "model": model_id,
+            "messages": [
+                {"role": "system", "content": PROFILE_PROMPTS[profile_id]},
+                {"role": "user", "content": prompt},
+            ],
+            "stream": False,
+            "think": False,
+            "keep_alive": "5m",
+            "options": {
+                "temperature": 0,
+                "num_ctx": self.context_tokens,
+                "num_predict": self.max_output_tokens,
+            },
+        }
+        acquired = False
+        try:
+            remaining = max(0.05, self.timeout_seconds - (time.monotonic() - started))
+            await asyncio.wait_for(self.inference_semaphore.acquire(), timeout=remaining)
+            acquired = True
+            remaining = max(0.05, self.timeout_seconds - (time.monotonic() - started))
+            response = await self.client.post(
+                f"{self.ollama_base_url}/api/chat", json=request_body, timeout=remaining
+            )
+            response.raise_for_status()
+        finally:
+            if acquired:
+                self.inference_semaphore.release()
+
+        payload = response.json()
+        message = payload.get("message") if isinstance(payload, dict) else None
+        if not isinstance(message, dict) or message.get("role") != "assistant":
+            raise AgentRunError("invalid model response")
+        if message.get("tool_calls"):
+            raise AgentRunError("tool calls are disabled for this worker")
+        output = message.get("content")
+        if not isinstance(output, str) or not output.strip():
+            raise AgentRunError("model returned empty output")
+        output = output.strip()
+        if len(output.encode("utf-8")) > self.max_output_bytes:
+            raise AgentRunError("model output exceeds the configured size limit")
+        token_count = payload.get("eval_count", 0)
+        if isinstance(token_count, bool) or not isinstance(token_count, int) or not 0 <= token_count <= 10_000_000:
+            token_count = 0
+        duration_ms = min(10_000_000, max(0, int((time.monotonic() - started) * 1000)))
+        return {
+            "text": output,
+            "model_id": model_id,
+            "profile_id": profile_id,
+            "token_count": token_count,
+            "duration_ms": duration_ms,
+        }
+
+    def _fail_claim(self, run_id: str, claim: Any, error_code: str, *, retryable: bool) -> None:
+        try:
+            self.store.fail_task(claim=claim, error_code=error_code, retryable=retryable)
+            task = self.store.get_task(claim.task_id)
+            if task["state"] == "failed":
+                current = self.store.get_run(run_id)
+                if current["state"] in {"queued", "running", "verifying"}:
+                    self.store.transition_run(
+                        run_id=run_id, expected_state=current["state"], new_state="failed",
+                        event_type="run_failed",
+                        metadata={"reason_code": error_code, "retryable": False},
+                    )
+        except AgentRunError:
+            pass
+
+    def _transition_needs_human(self, run_id: str, reason_code: str) -> None:
+        try:
+            current = self.store.get_run(run_id)
+            if current["state"] in {"queued", "running", "verifying"}:
+                self.store.transition_run(
+                    run_id=run_id, expected_state=current["state"], new_state="needs_human",
+                    event_type="run_needs_human", metadata={"reason_code": reason_code},
+                )
+        except AgentRunError:
+            pass
+
+    def _finalize_success(self, run_id: str) -> None:
+        current = self.store.get_run(run_id)
+        if current["state"] == "queued":
+            self.store.transition_run(
+                run_id=run_id, expected_state="queued", new_state="running",
+                event_type="run_started", metadata={"stage": "recovery"},
+            )
+            current = self.store.get_run(run_id)
+        if current["state"] == "running":
+            self.store.transition_run(
+                run_id=run_id, expected_state="running", new_state="verifying",
+                event_type="verification_started", metadata={"stage": "encrypted_output"},
+            )
+            current = self.store.get_run(run_id)
+        if current["state"] == "verifying":
+            self.store.transition_run(
+                run_id=run_id, expected_state="verifying", new_state="succeeded",
+                event_type="run_succeeded", metadata={"passed": True},
+            )
+
+    def _finalize_failed(self, run_id: str, task: dict[str, Any]) -> None:
+        current = self.store.get_run(run_id)
+        if current["state"] in {"queued", "running", "verifying"}:
+            self.store.transition_run(
+                run_id=run_id, expected_state=current["state"], new_state="failed",
+                event_type="run_failed",
+                metadata={"reason_code": task.get("error_code") or "task_failed", "retryable": False},
+            )
+
+    def cancel(self, run_id: str) -> dict[str, Any]:
+        current = self.store.get_run(run_id)
+        if current["state"] in TERMINAL_RUN_STATES:
+            return current
+        cancelled = self.store.cancel_run(run_id=run_id)
+        self.payload_vault.delete_run(run_id=run_id)
+        active = self._active.get(run_id)
+        if active is not None:
+            active.cancel()
+        self._wake.set()
+        return cancelled
+
+    def snapshot(self, run_id: str, *, after_event_id: int = 0, limit: int = 100) -> dict[str, Any]:
+        run = self.store.get_run(run_id)
+        tasks = self.store.list_tasks(run_id=run_id)
+        events = self.store.list_events(run_id=run_id, after_event_id=after_event_id, limit=limit)
+        output = None
+        output_available = False
+        output_expired = False
+        if run["state"] == "succeeded":
+            try:
+                record = self._read_output(run_id)
+                if record is not None:
+                    output = record["text"]
+                    output_available = True
+            except AgentPayloadError:
+                output_expired = True
+        return {
+            "run": run,
+            "tasks": tasks,
+            "events": events,
+            "output": output,
+            "output_available": output_available,
+            "output_expired": output_expired,
+            "queue_depth": len(self.store.list_runnable_runs(limit=self.max_pending_runs + 1)),
+            "active_runs": len(self._active),
+            "retention_seconds": self.payload_vault.retention_seconds,
+        }
+
+    async def stop(self) -> None:
+        self._stopping = True
+        for task in list(self._active.values()):
+            task.cancel()
+        if self._runner is not None:
+            self._runner.cancel()
+            await asyncio.gather(self._runner, return_exceptions=True)
+            self._runner = None
