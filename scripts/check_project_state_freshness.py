@@ -25,25 +25,20 @@ GITHUB_API_OPENER = build_opener(RejectRedirectHandler)
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / "docs/project-state-snapshot.json"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
-# A state refresh must update the human- and machine-readable checkpoints together.
-# The checker, its tests and workflow do not need artificial edits on every refresh.
-HANDOFF_PATHS = ("OLEDUE.md", "AGENTS.md")
+# A checkpoint refresh updates one compact session entrypoint and retained evidence.
+HANDOFF_PATHS = ("NOW.md", "AGENTS.md")
 REQUIRED_REFRESH_PATHS = {
-    "OLEDUE.md",
+    "NOW.md",
     "AGENTS.md",
-    "ORIENTER.md",
-    "project-reference/FILE_ORIENTER_RU.md",
     "docs/PROJECT_STATE.yaml",
     "docs/VOLLEY_LOG.md",
     "docs/project-state-snapshot.json",
 }
 DOC_PATHS = (
-    "ORIENTER.md",
-    "project-reference/FILE_ORIENTER_RU.md",
+    "NOW.md",
     "docs/PROJECT_STATE.yaml",
     "docs/VOLLEY_LOG.md",
 )
-
 
 def _positive_int_list(value: Any, label: str) -> list[int]:
     if not isinstance(value, list) or any(type(item) is not int or item < 1 for item in value):
@@ -150,23 +145,24 @@ def check_main_checkpoint(snapshot: dict[str, Any], live_commit: dict[str, Any],
     ]
 
 
-def validate_handoff_policy(oledue: str, agents: str) -> list[str]:
-    """Keep the session handoff owner-driven and prevent a hard-coded PR fallback."""
+def validate_handoff_policy(now: str, agents: str) -> list[str]:
+    """Require one owner-driven entrypoint and forbid stale PR fallback."""
     errors: list[str] = []
-    handoff = oledue.casefold()
-    if "latest explicit owner request" not in handoff:
-        errors.append("OLEDUE.md: latest explicit owner request must drive task routing")
-    if "do not default to any pr" not in handoff:
-        errors.append("OLEDUE.md: explicit no-default-PR rule is missing")
-    if "otherwise default to landing 2.0 in pr #131" in handoff or "default to landing 2.0 in pr #131" in handoff:
-        errors.append("OLEDUE.md: stale hard-coded PR #131 fallback is forbidden")
-    if "oledue.md" not in agents.casefold() or "`oledue`" not in agents.casefold():
-        errors.append("AGENTS.md: engineering entry protocol must point to OLEDUE.md and its trigger")
+    checkpoint = now.casefold()
+    instructions = agents.casefold()
+    if "latest explicit owner request" not in checkpoint:
+        errors.append("NOW.md: latest explicit owner request must drive task routing")
+    if "never select an old pr" not in checkpoint or "as a default" not in checkpoint:
+        errors.append("NOW.md: explicit no-default-PR rule is missing")
+    if "now.md" not in instructions or "oledue" not in instructions:
+        errors.append("AGENTS.md: mandatory NOW.md entrypoint and oledue trigger are required")
+    if any(name in instructions for name in ("orienter.md", "oledue.md", "file_orienter_ru.md")):
+        errors.append("AGENTS.md: legacy orientation files must not be part of the startup route")
     return errors
 
 
 def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
-    """Ensure the four human-facing state records refer to this exact snapshot."""
+    """Ensure NOW and retained machine/history records match this exact snapshot."""
     checkpoint = snapshot["checkpoint"]
     main_sha = checkpoint["main_sha"]
     prs = checkpoint["open_pull_requests"]
@@ -174,9 +170,8 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     contents: dict[str, str] = {}
     for relative in DOC_PATHS:
-        path = root / relative
         try:
-            contents[relative] = path.read_text(encoding="utf-8")
+            contents[relative] = (root / relative).read_text(encoding="utf-8")
         except OSError as exc:
             errors.append(f"{relative}: cannot read ({type(exc).__name__})")
             continue
@@ -190,31 +185,25 @@ def validate_local_docs(root: Path, snapshot: dict[str, Any]) -> list[str]:
         except OSError as exc:
             errors.append(f"{relative}: cannot read ({type(exc).__name__})")
     if all(path in handoff_contents for path in HANDOFF_PATHS):
-        errors.extend(validate_handoff_policy(handoff_contents["OLEDUE.md"], handoff_contents["AGENTS.md"]))
+        errors.extend(validate_handoff_policy(handoff_contents["NOW.md"], handoff_contents["AGENTS.md"]))
 
     state = contents.get("docs/PROJECT_STATE.yaml", "")
     if not re.search(rf'(?m)^\s+base_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
         errors.append("docs/PROJECT_STATE.yaml: root_orienter.base_main does not match snapshot main SHA")
     if not re.search(rf'(?m)^\s+verified_main:\s*["\']{re.escape(main_sha)}["\']\s*$', state):
         errors.append("docs/PROJECT_STATE.yaml: current_checkpoint.verified_main does not match snapshot main SHA")
-    for key, count in (
-        ("open_prs_at_checkpoint", len(prs)),
-        ("open_issues_at_checkpoint", len(issues)),
-    ):
+    for key, count in (("open_prs_at_checkpoint", len(prs)), ("open_issues_at_checkpoint", len(issues))):
         if not re.search(rf"(?m)^\s+{key}:\s*{count}\s*$", state):
             errors.append(f"docs/PROJECT_STATE.yaml: {key} must equal snapshot count {count}")
 
-    queue_marker = f"open PRs ({len(prs)}): {', '.join(f'#{number}' for number in prs)}"
-    if queue_marker not in contents.get("project-reference/FILE_ORIENTER_RU.md", ""):
-        errors.append("project-reference/FILE_ORIENTER_RU.md: exact open-PR snapshot marker is missing")
-    issue_marker = f"open issues ({len(issues)}): {', '.join(f'#{number}' for number in issues)}"
-    if issue_marker not in contents.get("project-reference/FILE_ORIENTER_RU.md", ""):
-        errors.append("project-reference/FILE_ORIENTER_RU.md: exact open-issue snapshot marker is missing")
+    pr_marker = f"Open PRs: {', '.join(f'#{number}' for number in prs) or 'none'}"
+    issue_marker = f"Open issues: {', '.join(f'#{number}' for number in issues) or 'none'}"
+    if pr_marker not in contents.get("NOW.md", ""):
+        errors.append("NOW.md: exact open-PR snapshot marker is missing")
+    if issue_marker not in contents.get("NOW.md", ""):
+        errors.append("NOW.md: exact open-issue snapshot marker is missing")
     if "V-2026-10-29-RESEARCH-APPLY-001" not in contents.get("docs/VOLLEY_LOG.md", ""):
         errors.append("docs/VOLLEY_LOG.md: missing latest report-application entry")
-    orienter = contents.get("ORIENTER.md", "")
-    if "**Current main SHA:**" not in orienter or "Open PR queue:" not in orienter:
-        errors.append("ORIENTER.md: current checkpoint or queue marker is missing")
     return errors
 
 
@@ -336,7 +325,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("PROJECT STATE FRESHNESS FAILED")
         for error in errors:
             print(f"- {error}")
-        print("Refresh OLEDUE.md, AGENTS.md, the snapshot, orienter, PROJECT_STATE.yaml and VOLLEY_LOG.md together; do not auto-rewrite state from CI.")
+        print("Refresh NOW.md, AGENTS.md, the snapshot, PROJECT_STATE.yaml and VOLLEY_LOG.md together; do not auto-rewrite state from CI.")
         return 1
 
     checkpoint = snapshot["checkpoint"]
