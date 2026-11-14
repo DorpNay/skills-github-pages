@@ -47,7 +47,8 @@ def _settings(private_key: str, **overrides) -> Settings:
 def _verify_app_jwt(request: httpx.Request, key: rsa.RSAPrivateKey) -> None:
     token = request.headers["Authorization"].removeprefix("Bearer ")
     header, payload, signature = token.split(".")
-    decode = lambda value: base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+    def decode(value: str) -> bytes:
+        return base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
     header_data = json.loads(decode(header))
     payload_data = json.loads(decode(payload))
     assert header_data == {"alg": "RS256", "typ": "JWT"}
