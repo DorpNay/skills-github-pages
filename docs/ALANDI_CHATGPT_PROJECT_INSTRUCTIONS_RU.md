@@ -21,7 +21,7 @@ GitHub `DorpNay/skills-github-pages` is canonical for code, architecture, decisi
 ## EXECUTION
 `CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → REPORT`
 
-- **ORIENT:** verify target branch, HEAD, PR/base/scope; read `ORIENTER.md`, `docs/PROJECT_STATE.yaml`, and only relevant canonical docs.
+- **ORIENT:** read only root `NOW.md` lines 1–100 first; batch live main SHA and open PR/issue queues. Read task-relevant sources only; no legacy orienter bundle.
 - **INSPECT:** trace the smallest relevant code/test/dependency surface; preserve existing and user changes.
 - **PLAN:** for non-trivial work, define acceptance criteria, risks, and rollback.
 - **CHANGE:** make the smallest maintainable, reversible change; preserve contracts and compatibility. No duplicate systems/docs/backlogs.
