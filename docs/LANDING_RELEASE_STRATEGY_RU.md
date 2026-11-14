@@ -21,8 +21,8 @@
 **Goal:** make main a trustworthy starting point for every future session and let the owner observe safe improvements on GitHub Pages.
 
 Tasks:
-1. Reconcile root `AGENTS.md`, `OLEDUE.md`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md`, `docs/PROJECT_STATE.yaml` and `docs/VOLLEY_LOG.md` once against live GitHub state; preserve one authoritative checkpoint.
-2. Make `OLEDUE.md` the self-contained fast handoff: one batched live-state read, one selected workstream, one canonical task register.
+1. Keep `NOW.md` as the only first-read checkpoint and append-only owner-request/action journal; reconcile its live SHA/queue against GitHub in one batch.
+2. Do not maintain separate OLEDUE/ORIENTER/FILE_ORIENTER handoffs or read a bundle of state files at startup.
 3. Batch independent GitHub reads: current main SHA, open PR/issue IDs, selected PR base/head/diff and exact-HEAD checks. Do not poll the same state repeatedly.
 4. Read detailed orientation, full project state and historical log only when a conflict, missing fact, system-wide task or history-dependent decision requires them.
 5. Keep one canonical task registry for Landing V1/V2 promotion; do not create a parallel backlog.
