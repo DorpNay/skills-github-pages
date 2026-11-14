@@ -6,12 +6,15 @@
 
 ## CURRENT
 
-- **Task ID:** `LANDING-2.0-2026-001`
+- **Task ID:** `LANDING-V2-2026-001`
 - **Owner task received:** 2026-11-15; full verbatim request appended below.
 - **Scope:** finish the 15-step Landing 2.0 plan, especially its final owner-action instructions; download/integrate all specified assets except the large model; audit/update modules against their authoritative external sources; unify product UI/UX and navigation; implement real model-backed agents and specialist tools; verify whole-system integrity and aLandi operation.
 - **Authorization:** owner explicitly permits merges and plugin connections. This does not waive branch/CI/security checks or authorize deployment/destructive history changes.
-- **Immediate NEXT:** locate exact `landing 2.0 2026 001` source and its 15-step list; read its final owner-action section before implementation.
-- **Status:** IN PROGRESS — consolidate orientation and continuity.
+- **Canonical scope:** `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K; 15 items = K.1.1–K.1.14 + K.2; progress table K.5 updated in place only.
+- **Owner-only action guide:** `docs/PRE_LAUNCH_STACK_RU.md` §8. These are explicit owner/environment gates, not work to fake as completed.
+- **Live checkpoint:** `main` SHA `18da1a1f2c4568818fba136d50648c61a209bd74`; open PRs 0; open issue #111. This SHA contains the latest NOW owner-prompt record. No workflow runs associated with this commit were returned by the connector; CI is NOT VERIFIED for this SHA.
+- **Immediate NEXT:** audit manifest/lock/download artifacts against current upstream source versions; preserve large primary checkpoint exclusion; then start first bounded UI/code slice only after code/test inspection.
+- **Status:** IN PROGRESS — Landing V2 delivery; orientation consolidated to NOW.md.
 - **Owner intent:** one fast entrypoint; preserve every owner request verbatim; record each material action/evidence; remove redundant orientation files; never revive stale PR/tasks by default.
 - **Repository / branch:** `DorpNay/skills-github-pages` / `main` (standing main-only policy).
 - **Checkpoint parent SHA:** `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`
@@ -19,7 +22,7 @@
 - **Open issues:** #111
 - **Live facts:** GitHub API confirms main at checkpoint parent, zero open PRs, issue #111 only. Commit `54ab1604bcc64f25a2edd4a24d08f06158ea1c08`: `feat(github): add allowlisted read-only App connector` (2026-11-14). No workflow runs returned for this exact SHA; exact-head CI is NOT VERIFIED.
 - **Prior-chat task:** not recovered. Do not infer it from old PRs, stale registry entries or historical checkpoints.
-- **NEXT:** finish this refactor; run focused freshness tests; inspect exact resulting main commit. Afterward continue only the latest explicit owner task recorded here.
+- **NEXT:** update current 15-point K.5 evidence after each verified milestone; keep issue #111 open until host/device gates are actually proven.
 
 ## START PROTOCOL — five-second route
 
@@ -38,6 +41,9 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+
+- [2026-11-15] S-006 | FACT | Resolved canonical task ID and source: `LANDING-V2-2026-001`, addendum §K; K.1.1–K.1.14 + K.2 = 15; status table K.5. Owner-only actions are in `docs/PRE_LAUNCH_STACK_RU.md` §8. | Live main `18da1a1f2c4568818fba136d50648c61a209bd74`; 0 open PRs; issue #111 open. | `OLEDUE.md`, `ORIENTER.md`, `project-reference/FILE_ORIENTER_RU.md` return 404 on live main; root `AGENTS.md` mandates NOW.md. No Actions runs returned for current main SHA. | Do not revive stale orienter pointers in older docs; use addendum K and owner §8 only as task-specific source. | Inspect artifacts/lock and revalidate upstream versions.
+
 
 - [2026-11-15] S-005 | IN PROGRESS | Owner started `LANDING-2.0-2026-001`; verbatim request captured below. | No implementation yet. | Authorization includes merges and plugin connections; all large-model downloads excluded. | First inspect exact 15-step plan and last owner-action instruction; establish current main SHA and focused task scope.
 
@@ -66,3 +72,5 @@ Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. 
 ```text
 Окей, раз тот чат не грузится еще раз: делаем , доводим до финализации и до ума landing 2.0 2026 001. 15 шагов в него включены, очень важны - конец списка там инструкция моих действий. Все скачиваем кроме большой модели, абсолютно все, собираем. Пере проверяем работоспособность и актуальность модулей. Например, вышел whisper 3, если он новее - качаем, внедряем. При проверке модулей, типа кодера - проверяем внешние источники из списка, подходящие по данной конкретной тематике, извлекаем лучшее, собираем идеально. Стараемся держать только main, на самом сайте не забудь про единую концепцию визуалов, кнопок, текста, анимации, размеров, движений, удвоений и тд. Минимизация текста, минималистичность, статусы, индикаторы, упрощение текстов и инструкций, систематизация и умная сортировка всего сайта, его функций и настроек, перепроверка логики включения, комбинаций, правильности смыслов режимов, типа быстро, дольше. Важно выдвигающееся меню функций, где агенты, глубокие исследования, и тд. Каждый с отдельным меню, агенты настоящие с моделями, не имитация, у них лучшие решения типа зарнесов, окна статуса из работы, разных режимов на выбор и способов настройки. Инструменты  типа конвертера файлов, считывателя сайтов и конвертации в кодинговый формат для удобства кодинга самого Ии-агента-кодера. Ноутбук. Все это пожалуйста в свой now тоже фиксируй, и каждый свой шаг. И в начале этого файла сам себе инструкции дай, чтоб точно не запутаться. Не забывай избавляться от рудиментов, проверять целостность всей системы и работоспособность aLandi. Даю добро на мерджи и подключение плагинов; кодекса, exa, и всего, что тебе нужно для эффективнейшей работы. @GitHub
 ```
+
+- [2026-11-15] S-007 | IN PROGRESS | Upstream audit started from `INTEL.md`, model manifest/lock and current release sources. | Current manifest and lock last updated 2026-11-13; INTEL review date 2026-11-04. | Existing model/runtime assets are recorded as downloaded in GitHub Actions, not installed on target host. | Compare current release tags/commits/licenses; do not claim target installation.
