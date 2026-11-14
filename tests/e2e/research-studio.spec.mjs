@@ -10,11 +10,11 @@ test('retired Research Studio stays absent while owner-approved Functions menu i
   const menu = page.locator('#functionsMenu');
   await expect(menu).toBeVisible();
   await page.locator('#functionsMenuSummary').click();
-  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(3);
+  await expect(menu.locator('.toolbar-menu-option')).toHaveCount(4);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
   await expect(menu.locator('[data-function="skills"]')).toBeVisible();
-  await expect(menu.locator('[data-function="connectors"]')).toHaveCount(0);
+  await expect(menu.locator('[data-function="connectors"]')).toBeVisible();
 });
 
 test('Functions menu opens Agents and Skills panels and Deep Research selects Thorough without sending', async ({ page }) => {
