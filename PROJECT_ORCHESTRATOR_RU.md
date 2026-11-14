@@ -8,7 +8,7 @@
 - **Knowledge cycle:** [docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md](docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md) — capture, verify, evaluate, promote/revise/defer/reject.
 - **Concise engineering loop:** [LOOP.md](LOOP.md) — execute, verify, record, rollback, handoff.
 - **Executor rules:** [AGENTS.md](AGENTS.md).
-- **Owner handoff / authority / routing:** [OLEDUE.md](OLEDUE.md).
+- **Only session checkpoint and owner-request journal:** [NOW.md](NOW.md).
 
 ## Single inventory of owner goals
 
@@ -40,11 +40,10 @@ External research records do not mean code/model weights were downloaded, licens
 ## Live state and navigation
 
 - **Current mutable truth:** GitHub main/PR/issues/workflow/deployment APIs, checked fresh at task start.
-- **Short checkpoint:** [ORIENTER.md](ORIENTER.md).
-- **Detailed path index:** [project-reference/FILE_ORIENTER_RU.md](project-reference/FILE_ORIENTER_RU.md).
+- **Only session checkpoint:** [NOW.md](NOW.md). Open detailed product documents below only when the active task requires them.
 - **Structured state:** [docs/PROJECT_STATE.yaml](docs/PROJECT_STATE.yaml).
 - **Machine checkpoint:** [docs/project-state-snapshot.json](docs/project-state-snapshot.json).
-- **Stage evidence / decisions:** [docs/VOLLEY_LOG.md](docs/VOLLEY_LOG.md).
+- **Historical stage evidence (on demand only):** [docs/VOLLEY_LOG.md](docs/VOLLEY_LOG.md). Current action journal and full owner requests are in [NOW.md](NOW.md).
 - **GitHub Pages publication evidence:** check exact main SHA's Pages deployment and the public URL with a cache-busting query; build/CI success alone is not deployment proof.
 
 ## Owner goal intake (mandatory, lightweight)
