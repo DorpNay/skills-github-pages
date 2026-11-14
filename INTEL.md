@@ -726,3 +726,18 @@ The following 103 distinct URL references were absent from the existing INTEL re
 - **Runtime:** https://github.com/ggml-org/whisper.cpp/releases lists v1.9.5 (2026-10-06) as latest stable in this review. Keep the existing pinned runtime until a newer stable release is checked against the build/API contract.
 - **Challenger:** https://github.com/QwenLM/Qwen3-ASR documents Qwen3-ASR-0.6B and 1.7B for 52 languages/dialects, plus ForcedAligner-0.6B; native Transformers support and torch.compile were announced 2026-06-26. Existing 0.6B artifact remains staged. The 1.7B model is a research candidate only; do not download or install before target-host resource fit and same-audio RU/EN/TH evaluation.
 - **Decision:** retain whisper.cpp + large-v3-turbo as baseline; evaluate Qwen3-ASR on the identical permissioned golden set. Compare WER/CER, language detection, timestamps, RTF, cold/warm latency, peak RSS/PSS, cancellation and license/provenance. No migration based on model age or parameter count alone.
+
+
+## 2026-11-14 — Coder sandbox upstream recheck
+
+- **Selected candidate:** OpenShell v0.1.8 (2026-11-10), Apache-2.0. Tag commit `f3d976590d3eb1379690a2abaf0f0e26c21d487d` has a GitHub-verified signature. Official release assets expose SHA-256 digests; the x86_64 Ubuntu package and its gateway/sandbox/supervisor/driver/prover components can be staged without installing them. Sources: https://github.com/NVIDIA/OpenShell/releases/tag/v0.1.8 and https://github.com/NVIDIA/OpenShell.
+- **Why this candidate:** policy-enforced filesystem, network and process boundaries plus endpoint-bound credential brokering and an audit trail. Keep arbitrary shell disabled until host compatibility, policy review and escape/isolation tests pass.
+- **Upgrade caveats:** v0.1.8 rejects filesystem policy paths traversing symlinks inside writable workspaces; static provider credentials require explicit placement metadata for non-Authorization destinations; Python SDK moved to ai-openshell/sdk-python. Review these before authoring policies.
+- **Alternatives:** gVisor remains the OCI application-kernel isolation option (https://gvisor.dev/docs/); OpenHands v1.38.0 is current upstream, but its no-sandbox mode runs the agent directly on the host with full filesystem access (https://github.com/OpenHands/OpenHands/releases/tag/v1.38.0 and https://github.com/OpenHands/OpenHands).
+- **Decision:** stage only the pinned Ubuntu 24.04 x86_64 OpenShell v0.1.8 assets as a temporary Actions artifact, SHA-256 verify every asset, and do not install until actual target OS/architecture, container/VM support, kernel, disk and RAM are measured. No Git LFS or multi-GB binaries in the Pages source tree.
+
+
+## 2026-11-14 — dependency refresh decision
+
+- pypdf 7.1.0 has a GitHub-verified signed release tag (2026-11-13) and includes the 7.0.1 image-buffer-size security fix. The project makes a narrow pypdf-only freshness-cutoff exception through 2026-11-14, retains the global seven-day cooldown, and maps LimitReachedError to HTTP 413.
+- pytest 9.2.0 and pytest-asyncio 1.4.1.post1 are selected after call-site/API review. pytest-asyncio 1.5.0 and FastAPI 0.162.7 remain in the seven-day cooldown; Pydantic 2.14.3 is expected to resolve in the regenerated lock. Exact Python matrix is pending.

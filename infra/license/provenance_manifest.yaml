@@ -126,7 +126,7 @@ artifacts:
   - id: pypdf-runtime
     kind: document_parser_runtime
     upstream: "https://github.com/py-pdf/pypdf"
-    source_version: "6.21.4"
+    source_version: "7.1.0; signed tag 42d8622cc6101d9b629af298194c5bead0aa28bd; security fix inherited from 7.0.1"
     license_spdx: "BSD-3-Clause"
     commercial_use: "allowed_with_license_notice"
     sha256: null

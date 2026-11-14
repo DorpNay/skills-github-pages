@@ -25,6 +25,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from pypdf import PdfReader
+from pypdf.errors import LimitReachedError
 from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
@@ -536,6 +537,8 @@ def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[
             text = "\n\n".join(parts)
         except HTTPException:
             raise
+        except LimitReachedError:
+            raise HTTPException(413, "PDF exceeds a parser safety limit") from None
         except Exception:
             raise HTTPException(400, "PDF could not be parsed") from None
         parser = "local-pypdf"

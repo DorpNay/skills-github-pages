@@ -288,3 +288,8 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 - `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a parallel source register because all 88 URLs are already in INTEL. Source candidate table links to the origin research docs and marks current-version review pending.
 - The Graphify UI Surface bridge is CI-only, deterministic and source-provenanced; no UI runtime code or model calls are introduced by the bridge.
 - SECURITY.md is now available for responsible disclosure. Jekyll title/description branding is updated while retaining `jekyll-github-metadata` and source archive exclusions.
+
+
+## 2026-11-14 — OpenShell sandbox candidate refresh
+
+OpenShell v0.1.8 (2026-11-10) is the current pinned sandbox candidate for Coder. Its tag commit is GitHub-signature verified and the release is Apache-2.0. The acquisition workflow stages only Ubuntu 24.04 x86_64 assets as a temporary Actions artifact with fixed SHA-256 and package/archive checks. It does not install or enable arbitrary shell. The owner host must first be checked for OS, architecture, Docker/Podman/VM support, kernel and resources. v0.1.8 migration caveats: symlink policy paths in writable workspaces fail closed; non-Authorization credential placement needs explicit metadata; Python SDK moved to ai-openshell/sdk-python. OpenHands v1.38.0 was rechecked but is not selected as a primary runtime; its unsandboxed mode grants host filesystem access.

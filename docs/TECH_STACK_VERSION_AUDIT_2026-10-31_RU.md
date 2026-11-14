@@ -89,3 +89,11 @@ Node 22 остаётся поддерживаемой maintenance-LTS линие
 - Semgrep 1.183.0: https://pypi.org/project/semgrep/
 - uv 0.13.6: https://pypi.org/project/uv/
 - uv per-package freshness policy: https://docs.astral.sh/uv/reference/settings/
+
+
+## Follow-up 2026-11-14 — targeted dependency refresh
+
+- **pypdf 7.1.0 adopted** after reviewing signed upstream tag 7.1.0 (2026-11-13). It includes the 7.0.1 security fix that computes image buffer sizes from actual bytes per pixel. The previous package-specific 2026-10-29 cutoff is moved to 2026-11-14 as a documented security exception; the global seven-day cooldown remains unchanged. Runtime code maps pypdf LimitReachedError to HTTP 413, with a regression test. Sources: https://github.com/py-pdf/pypdf/releases/tag/7.0.1 and https://github.com/py-pdf/pypdf/releases/tag/7.1.0.
+- **pytest 9.2.0** adopted after checking parametrize call sites; repository usage does not pass indirect/ids/scope positionally. **pytest-asyncio 1.4.1.post1** is selected because it removes the upper pytest bound; 1.5.0 remains inside the seven-day cooldown and is deferred.
+- **Pydantic 2.14.3** is expected to resolve through the universal uv lock after regeneration. **FastAPI 0.162.7** remains deferred until its seven-day release-age window closes (2026-11-20); the current gateway does not use async-yield dependencies affected by its cancellation-cleanup fix.
+- Lock regeneration and gateway matrix results are pending; do not call the dependency refresh VERIFIED until Python 3.12/13/14 and the six-layer offline evaluation pass on the exact lock SHA.

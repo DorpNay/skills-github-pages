@@ -6,6 +6,7 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 from pypdf import PdfWriter
+from pypdf.errors import LimitReachedError
 
 from gateway.app import Settings, create_app
 
@@ -104,6 +105,28 @@ def test_extracts_pdf_text_and_rejects_invalid_or_encrypted_pdf():
     assert "PDF evidence" in response.json()["text"]
     assert response.json()["parser"] == "local-pypdf"
     assert invalid.status_code == 400
+
+
+def test_pdf_parser_safety_limit_returns_413(monkeypatch):
+    import gateway.app as gateway_app
+
+    class LimitedPage:
+        def extract_text(self):
+            raise LimitReachedError("test parser safety limit")
+
+    class LimitedReader:
+        is_encrypted = False
+        pages = [LimitedPage()]
+
+    monkeypatch.setattr(gateway_app, "PdfReader", lambda *_args, **_kwargs: LimitedReader())
+    with client(config(document_extraction_enabled=True)) as app:
+        response = app.post(
+            "/v1/documents/extract?filename=limited.pdf",
+            content=pdf_bytes(),
+            headers=AUTH,
+        )
+    assert response.status_code == 413
+    assert response.json()["detail"] == "PDF exceeds a parser safety limit"
 
 
 def test_document_parser_runs_outside_event_loop_thread(monkeypatch):

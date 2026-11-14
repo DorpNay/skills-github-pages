@@ -195,3 +195,11 @@ Gateway baseline: Python 3.12+, FastAPI 0.162.0, httpx 0.28.1, Uvicorn 0.54.0, c
 ### 2026-11-14 Functions UI checkpoint
 
 The main Functions menu exposes four independent panels in the owner-defined order: Deep Research, Agents, Skills, Connectors. Exact-parent Quality #43552190729 passed 121/121 primary Chromium tests, 1/1 live-site smoke and 8/8 landing tests; Graphify #43552190747 and Pages #43552190545 passed on SHA 973a07e. Connectors remains a non-interactive empty state; the real registry/action requirement is still open. Deep Research is settings/navigation, Agents is the bounded same-model four-stage workflow, and Skills are chat-scoped instruction profiles. See the 15-point status table in addendum section K.5. Full runtime scope remains open.
+
+
+## Актуализация версий — 2026-11-14
+
+- PDF parser: pypdf 7.1.0 принят вместо 6.21.4 из-за security fix в 7.0.1 (image buffer size теперь рассчитывается по фактическим bytes-per-pixel). Добавлена обработка LimitReachedError → HTTP 413 и регрессионная проверка.
+- Test tooling: pytest 9.2.0 и pytest-asyncio 1.4.1.post1; 1.5.0 остаётся на семидневном cooldown.
+- FastAPI 0.162.7 пока не обновлён: релиз слишком свежий для общего cooldown, а затронутый cancellation cleanup yield-dependencies в текущем Gateway не используется.
+- Pydantic 2.14.3 должен быть закреплён обновлённым uv.lock после CI lock regeneration. До успешной матрицы Python 3.12/13/14 статус — CANDIDATE.
