@@ -1,6 +1,11 @@
 name: Acquire OpenShell sandbox runtime
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/acquire-openshell.yml"
+      - "infra/sandbox/openshell-v0.1.8-manifest.yaml"
   workflow_dispatch:
     inputs:
       release:
@@ -32,7 +37,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          version="${{ inputs.release }}"
+          version="${{ inputs.release || 'v0.1.8' }}"
           base="https://github.com/NVIDIA/OpenShell/releases/download/${version}"
           out="dist/openshell-${version}-ubuntu24.04-x86_64"
           mkdir -p "$out"
