@@ -3,11 +3,9 @@ name: Project State Freshness
 on:
   pull_request:
     paths:
-      - "OLEDUE.md"
-      - "PROJECT_ORCHESTRATOR_RU.md"
+      - "NOW.md"
       - "AGENTS.md"
-      - "ORIENTER.md"
-      - "project-reference/FILE_ORIENTER_RU.md"
+      - "PROJECT_ORCHESTRATOR_RU.md"
       - "docs/PROJECT_STATE.yaml"
       - "docs/VOLLEY_LOG.md"
       - "docs/project-state-snapshot.json"
@@ -17,11 +15,9 @@ on:
   push:
     branches: [main]
     paths:
-      - "OLEDUE.md"
-      - "PROJECT_ORCHESTRATOR_RU.md"
+      - "NOW.md"
       - "AGENTS.md"
-      - "ORIENTER.md"
-      - "project-reference/FILE_ORIENTER_RU.md"
+      - "PROJECT_ORCHESTRATOR_RU.md"
       - "docs/PROJECT_STATE.yaml"
       - "docs/VOLLEY_LOG.md"
       - "docs/project-state-snapshot.json"
