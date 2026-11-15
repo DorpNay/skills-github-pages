@@ -3744,6 +3744,7 @@ let agentRuntimeRefreshPromise = null;
         succeeded:english?'Completed':'Завершено',
         failed:english?'Failed':'Ошибка выполнения',
         cancelled:english?'Cancelled':'Отменено',
+        budget_exhausted:english?'Budget exhausted':'Лимит бюджета исчерпан',
         timed_out:english?'Timed out':'Время выполнения истекло'
       };
       return labels[state]|| (english?'Unknown run state':'Неизвестное состояние задания');
@@ -3981,7 +3982,7 @@ let agentRuntimeRefreshPromise = null;
     }
 
     async function observeAgentRuntimeRun(config,run,signal) {
-      const terminal=new Set(['succeeded','failed','cancelled','timed_out']);
+      const terminal=new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']);
       const deadline=Date.now()+120000;
       let terminalReached=false;
       try {
@@ -4018,7 +4019,10 @@ let agentRuntimeRefreshPromise = null;
           $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error)+' '+(getUiLanguage()==='en'?'Use Check to resume observation.':'Нажмите «Проверить», чтобы возобновить наблюдение.');
         }
       } finally {
-        if((terminalReached||signal.aborted)&&agentRuntimeActiveRun?.id===run.id) {
+        // A replaced observer no longer owns the active run. An observer aborted by
+        // "Check" must not clear the run after a replacement controller takes ownership.
+        const ownsCurrentObserver=agentRuntimePollController?.signal===signal;
+        if(ownsCurrentObserver&&(terminalReached||signal.aborted)&&agentRuntimeActiveRun?.id===run.id) {
           agentRuntimeActiveRun=null;
           agentRuntimePollController=null;
           $('agentRuntimeCancel').disabled=true;
@@ -4026,7 +4030,7 @@ let agentRuntimeRefreshPromise = null;
           $('agentRuntimeModel').disabled=false;
           $('agentRuntimePrompt').disabled=false;
           updateAgentRuntimeStartAvailability();
-        } else if(agentRuntimeActiveRun?.id===run.id) {
+        } else if(ownsCurrentObserver&&agentRuntimeActiveRun?.id===run.id) {
           $('agentRuntimeCancel').disabled=false;
         }
       }
@@ -4040,7 +4044,7 @@ let agentRuntimeRefreshPromise = null;
       try {
         const config=getAlandiGatewayConfig();
         const result=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{method:'DELETE'});
-        if(result.run?.state!=='cancelled'&&!['succeeded','failed','timed_out'].includes(result.run?.state)) {
+        if(result.run?.state!=='cancelled'&&!['succeeded','failed','budget_exhausted','timed_out'].includes(result.run?.state)) {
           throw new Error('agent-runtime-cancel-unconfirmed');
         }
         if(agentRuntimePollController)agentRuntimePollController.abort();

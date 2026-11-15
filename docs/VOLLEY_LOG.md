@@ -372,3 +372,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - TinyFish read-only smoke: public root loaded as aLandi v10.0, root containers were functional, no visible page/console errors; no build SHA in public markup. Its /landing/ navigation rendered app content but did not capture raw HTTP status, so the route status remains unverified.
 - This atomic child refreshes NOW.md, AGENTS.md, docs/PROJECT_STATE.yaml, docs/project-state-snapshot.json and this log. No product runtime changed.
 - Next: verify exact-head Freshness/Provenance/Quality/Pages; then implement AgentRun Task 2 using the existing authenticated single-worker API contracts and E2E acceptance, keeping the host worker flag disabled.
+
+## V-2026-11-15-AGENTRUN-OBSERVER-TERMINAL-REGRESSIONS-001 — targeted UI correctness
+
+- Exact functional parent `4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3`; 0 open PRs; issue #111. Quality #43733527394 SUCCESS incl. Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS; public root meta revision exact; `/landing/` HTTP 404.
+- A prior observer aborted by Check could clear the active run in `finally` after a replacement observer became current. The child adds a controller-identity guard before clearing or mutating the active run.
+- Gateway `TERMINAL_RUN_STATES` includes `budget_exhausted`; the browser terminal set and label omitted it. The child maps this state, stops polling and accepts it as terminal when DELETE races with budget exhaustion.
+- Added deterministic Chromium coverage for Check replacing a live observer and for `budget_exhausted` stopping polling and releasing Start.
+- No Gateway/API/schema/worker/host changes or new dependencies. Host `ALANDI_AGENT_RUNS_ENABLED` remains false; concurrency 1; tools/filesystem/shell/network remain disabled.
+- New child exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and public root verification pending.

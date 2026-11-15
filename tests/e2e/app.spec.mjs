@@ -2375,6 +2375,110 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   expect(idempotencyKey).toMatch(/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/);
 });
 
+test('AgentRun Check replaces the observer without detaching the active run', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  let statusReads = 0;
+  let postAttempts = 0;
+  let allowCompletion = false;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') {
+      postAttempts += 1;
+      return route.fulfill({ status: 202, json: {
+        run: { run_id: 'run-e2e-check', state: 'queued' },
+        status_url: '/v1/agent-runs/run-e2e-check',
+        events_url: '/v1/agent-runs/run-e2e-check/events'
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-check/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-check', events: [], next_after_event_id: 0, state: allowCompletion ? 'succeeded' : 'running'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-check' && route.request().method() === 'GET') {
+      statusReads += 1;
+      const state = allowCompletion ? 'succeeded' : 'running';
+      return route.fulfill({ json: {
+        run: { run_id: 'run-e2e-check', state },
+        output: allowCompletion ? 'Completed after observer refresh.' : null,
+        output_available: allowCompletion, events: []
+      } });
+    }
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#agentRuntimePrompt').fill('Keep observing this task after Check is pressed.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Выполняется');
+  const readsBeforeCheck = statusReads;
+  await page.locator('#agentRuntimeRefresh').click();
+  await expect.poll(() => statusReads, { timeout: 10000 }).toBeGreaterThanOrEqual(readsBeforeCheck + 2);
+  await expect(page.locator('#agentRuntimeStart')).toBeDisabled();
+  await expect(page.locator('#agentRuntimeCancel')).toBeEnabled();
+  allowCompletion = true;
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено', { timeout: 10000 });
+  await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
+  expect(postAttempts).toBe(1);
+});
+
+test('AgentRun treats budget_exhausted as a terminal state', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  let statusReads = 0;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') return route.fulfill({ status: 202, json: {
+      run: { run_id: 'run-e2e-budget', state: 'queued' },
+      status_url: '/v1/agent-runs/run-e2e-budget',
+      events_url: '/v1/agent-runs/run-e2e-budget/events'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-budget/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-budget', events: [], next_after_event_id: 0, state: 'budget_exhausted'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-budget' && route.request().method() === 'GET') {
+      statusReads += 1;
+      return route.fulfill({ json: {
+        run: { run_id: 'run-e2e-budget', state: 'budget_exhausted' },
+        output: null, output_available: false, events: []
+      } });
+    }
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#agentRuntimePrompt').fill('Finish with the configured budget boundary.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Лимит бюджета исчерпан');
+  await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
+  expect(statusReads).toBeGreaterThan(0);
+});
+
 test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {

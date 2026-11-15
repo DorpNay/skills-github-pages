@@ -36,7 +36,9 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-15)
 
-- Parent main: `2fb8ca69d91730dbf167158ae952ea7e361284c2`; Open PRs: none; Open issues: #111. NOW.md is authoritative for CURRENT/NEXT; reverify live refs before every change.
+- Parent main: `4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3`; Open PRs: none; Open issues: #111.
+- Quality #43733527394 SUCCESS including Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS; public root revision matches parent; /landing/ returns HTTP 404.
+- Next child adds regression tests/fixes for AgentRun observer replacement and backend `budget_exhausted` terminal handling. Do not enable host AgentRun or change the one-worker/no-tools/no-filesystem/no-network policy.
 
 ## OR-008 source and route policy
 
