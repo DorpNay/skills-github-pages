@@ -46,9 +46,9 @@ Files: index.md; tests/e2e/app.spec.mjs.
 Files: index.md; tests/e2e/app.spec.mjs.
 
 - [ ] Add E2E coverage for POST payload, scope, selected profile/model, event polling, final output and cancellation.
-- [ ] Implement POST with unique Idempotency-Key and explicit prompt only.
-- [ ] Poll status/events with bounded timeouts; render real transitions and output with textContent.
-- [ ] Implement DELETE cancellation and retain server-confirmed status.
+- [x] Implement POST with unique Idempotency-Key and explicit prompt only.
+- [x] Poll status/events with bounded timeouts; render real transitions and output with textContent.
+- [x] Implement DELETE cancellation and retain server-confirmed status.
 - [ ] Verify enabled flow and failure cases with mocked Gateway responses.
 
 ### Task 3: Record maturity and exact-head verification

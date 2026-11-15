@@ -3679,6 +3679,9 @@ permalink: /
       renderAgentConfiguration();
     }
 let agentRuntimeRefreshPromise = null;
+    let agentRuntimeReady = false;
+    let agentRuntimeActiveRun = null;
+    let agentRuntimePollController = null;
 
     function setAgentRuntimeCopy() {
       const english=getUiLanguage()==='en';
@@ -3699,6 +3702,7 @@ let agentRuntimeRefreshPromise = null;
     }
 
     function setAgentRuntimeUnavailable(message) {
+      agentRuntimeReady=false;
       $('agentRuntimeStatus').textContent=message;
       $('agentRuntimeProfile').disabled=true;
       $('agentRuntimeModel').disabled=true;
@@ -3721,8 +3725,90 @@ let agentRuntimeRefreshPromise = null;
       return select.options.length;
     }
 
-    function refreshAgentRunRuntime() {
+    function updateAgentRuntimeStartAvailability() {
+      $('agentRuntimeStart').disabled=!agentRuntimeReady
+        ||Boolean(agentRuntimeActiveRun)
+        ||$('agentRuntimePrompt').disabled
+        ||!$('agentRuntimePrompt').value.trim();
+    }
+
+    function agentRuntimeStatusText(state) {
+      const english=getUiLanguage()==='en';
+      const labels={
+        queued:english?'Queued':'В очереди',
+        running:english?'Running':'Выполняется',
+        verifying:english?'Verifying':'Проверка результата',
+        waiting_approval:english?'Waiting for approval':'Ожидает подтверждения',
+        needs_human:english?'Needs attention':'Требуется внимание',
+        succeeded:english?'Completed':'Завершено',
+        failed:english?'Failed':'Ошибка выполнения',
+        cancelled:english?'Cancelled':'Отменено',
+        timed_out:english?'Timed out':'Время выполнения истекло'
+      };
+      return labels[state]|| (english?'Unknown run state':'Неизвестное состояние задания');
+    }
+
+    function renderAgentRuntimeEvents(events) {
+      const list=$('agentRuntimeEvents');
+      for(const event of events) {
+        if(!event||!Number.isInteger(event.event_id)||event.event_id<0)continue;
+        if(list.querySelector('[data-event-id="'+event.event_id+'"]'))continue;
+        const item=document.createElement('li');
+        item.dataset.eventId=String(event.event_id);
+        const eventType=typeof event.event_type==='string'?event.event_type.slice(0,64):'event';
+        const stage=typeof event.metadata?.stage==='string'?event.metadata.stage.slice(0,80):'';
+        item.textContent=stage?eventType+' · '+stage:eventType;
+        list.appendChild(item);
+      }
+      while(list.children.length>100)list.firstElementChild.remove();
+      list.scrollTop=list.scrollHeight;
+    }
+
+    async function agentRuntimeFetch(config,path,options={}) {
+      const response=await fetch(config.baseUrl+path,{
+        ...options,
+        headers:{
+          Accept:'application/json',
+          Authorization:'Bearer '+config.key,
+          ...(options.headers||{})
+        },
+        cache:'no-store',
+        credentials:'omit'
+      });
+      const payload=await response.json().catch(()=>null);
+      if(!response.ok) {
+        const error=new Error('agent-runtime-http');
+        error.status=response.status;
+        throw error;
+      }
+      if(!payload||typeof payload!=='object')throw new Error('agent-runtime-invalid-response');
+      return payload;
+    }
+
+    function agentRuntimeErrorText(error) {
+      const english=getUiLanguage()==='en';
+      const status=Number.isInteger(error?.status)?error.status:0;
+      if(error?.name==='AbortError')return english?'The request timed out. The task text is preserved.':'Истекло время запроса. Текст задания сохранён.';
+      if(status===400)return english?'The task or selected options were rejected (400). Check the prompt and selections.':'Gateway отклонил задание или выбранные параметры (400). Проверьте текст и параметры.';
+      if(status===401)return english?'Gateway authentication failed (401). Check the configured key.':'Gateway отклонил ключ доступа (401). Проверьте настройки подключения.';
+      if(status===403)return english?'Gateway denied access (403).':'Gateway запретил доступ (403).';
+      if(status===404)return english?'The AgentRun record was not found (404).':'Запись AgentRun не найдена (404).';
+      if(status===409)return english?'This idempotency key conflicts with another request (409).':'Ключ идемпотентности уже использован для другого задания (409).';
+      if(status===429)return english?'The worker queue is full (429). Retry after an active run completes.':'Очередь worker заполнена (429). Повторите после завершения активного задания.';
+      if(status===503)return english?'AgentRun is unavailable or disabled on the Gateway (503).':'AgentRun недоступен или выключен на Gateway (503).';
+      return english?'The Gateway request failed. The task text is preserved.':'Запрос к Gateway не выполнен. Текст задания сохранён.';
+    }
+
+    async function refreshAgentRunRuntime() {
       if(agentRuntimeRefreshPromise)return agentRuntimeRefreshPromise;
+      if(agentRuntimeActiveRun) {
+        if(agentRuntimePollController)agentRuntimePollController.abort();
+        agentRuntimePollController=new AbortController();
+        $('agentRuntimeCancel').disabled=false;
+        const config=getAlandiGatewayConfig();
+        await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
+        return;
+      }
       setAgentRuntimeCopy();
       setAgentRuntimeUnavailable(getUiLanguage()==='en'
         ? 'Checking Gateway AgentRun capability…'
@@ -3732,42 +3818,30 @@ let agentRuntimeRefreshPromise = null;
       agentRuntimeRefreshPromise=(async()=>{
         try {
           const config=getAlandiGatewayConfig();
-          const headers={Accept:'application/json',Authorization:'Bearer '+config.key};
           const capabilityResponse=await fetch(config.baseUrl+'/capabilities',{
-            headers,cache:'no-store',credentials:'omit',signal:controller.signal
+            headers:{Accept:'application/json',Authorization:'Bearer '+config.key},
+            cache:'no-store',credentials:'omit',signal:controller.signal
           });
           const capabilities=await capabilityResponse.json().catch(()=>null);
           if(!capabilityResponse.ok) {
-            const error=new Error('capabilities');
-            error.status=capabilityResponse.status;
-            throw error;
+            const error=new Error('capabilities');error.status=capabilityResponse.status;throw error;
           }
           if(!capabilities||typeof capabilities!=='object'
-              ||typeof capabilities.agent_runs?.enabled!=='boolean') {
-            throw new Error('invalid-capability-response');
-          }
+              ||typeof capabilities.agent_runs?.enabled!=='boolean'
+              ||capabilities.agent_runs.worker_concurrency!==1
+              ||capabilities.agent_runs.tools_enabled!==false)throw new Error('invalid-capability-response');
           const english=getUiLanguage()==='en';
-          const concurrency=Number.isInteger(capabilities.agent_runs.worker_concurrency)
-            ? capabilities.agent_runs.worker_concurrency : 1;
           $('agentRuntimeCapabilities').textContent=english
-            ? 'One Gateway worker · concurrency '+concurrency+' · no tools, web, shell or filesystem access.'
-            : 'Один worker на Gateway · concurrency '+concurrency+' · без инструментов, веб-доступа, shell и доступа к файлам.';
+            ? 'One Gateway worker · concurrency 1 · no tools, web, shell or filesystem access.'
+            : 'Один worker на Gateway · concurrency 1 · без инструментов, веб-доступа, shell и доступа к файлам.';
           if(capabilities.agent_runs.enabled!==true) {
             setAgentRuntimeUnavailable(english
               ? 'AgentRun is disabled on the Gateway. The runtime can only be enabled by the host owner.'
               : 'AgentRun выключен на сервере. Включение возможно только владельцем Gateway.');
             return;
           }
-          const profileResponse=await fetch(config.baseUrl+'/agent-runs/profiles',{
-            headers,cache:'no-store',credentials:'omit',signal:controller.signal
-          });
-          const catalog=await profileResponse.json().catch(()=>null);
-          if(!profileResponse.ok) {
-            const error=new Error('profiles');
-            error.status=profileResponse.status;
-            throw error;
-          }
-          if(!catalog||!Array.isArray(catalog.profiles)||!catalog.profiles.length
+          const catalog=await agentRuntimeFetch(config,'/agent-runs/profiles',{signal:controller.signal});
+          if(!Array.isArray(catalog.profiles)||!catalog.profiles.length
               ||!Array.isArray(catalog.models)||!catalog.models.length
               ||catalog.worker_concurrency!==1||catalog.tools_enabled!==false
               ||catalog.filesystem_enabled!==false||catalog.network_enabled!==false
@@ -3787,12 +3861,14 @@ let agentRuntimeRefreshPromise = null;
             model=>model,model=>model
           );
           if(!profileCount||!modelCount)throw new Error('empty-runtime-catalog');
+          agentRuntimeReady=true;
+          $('agentRuntimeProfile').disabled=false;
+          $('agentRuntimeModel').disabled=false;
           $('agentRuntimePrompt').disabled=false;
-          // Task submission becomes enabled only after the separately tested run lifecycle lands.
-          $('agentRuntimeStart').disabled=true;
           $('agentRuntimeStatus').textContent=english
-            ? 'Gateway runtime is configured. '+profileCount+' role profiles, '+modelCount+' allowlisted models; task submission is not enabled yet.'
-            : 'Runtime Gateway настроен. Профилей: '+profileCount+', разрешённых моделей: '+modelCount+'; отправка задания пока отключена.';
+            ? 'Gateway runtime is configured. '+profileCount+' role profiles, '+modelCount+' allowlisted models.'
+            : 'Runtime Gateway настроен. Профилей: '+profileCount+', разрешённых моделей: '+modelCount+'.';
+          updateAgentRuntimeStartAvailability();
         } catch(error) {
           const english=getUiLanguage()==='en';
           const status=Number.isInteger(error?.status)?error.status:0;
@@ -3803,8 +3879,7 @@ let agentRuntimeRefreshPromise = null;
           else if(status===503)message=english?'AgentRun worker is unavailable or disabled (503).':'Worker AgentRun недоступен или выключен (503).';
           else if(status===429)message=english?'Gateway is rate limiting capability checks (429).':'Gateway ограничивает частоту запросов (429).';
           else if(error?.message==='invalid-capability-response'
-              ||error?.message==='invalid-runtime-catalog'
-              ||error?.message==='empty-runtime-catalog')
+              ||error?.message==='invalid-runtime-catalog'||error?.message==='empty-runtime-catalog')
             message=english?'Gateway returned an invalid or incomplete AgentRun capability contract.':'Gateway вернул неполный или некорректный контракт AgentRun.';
           else message=english
             ? 'Connect the aLandi Gateway in Settings before checking AgentRun.'
@@ -3816,6 +3891,152 @@ let agentRuntimeRefreshPromise = null;
       })().finally(()=>{agentRuntimeRefreshPromise=null;});
       return agentRuntimeRefreshPromise;
     }
+
+    async function startAgentRuntimeRun() {
+      if(!agentRuntimeReady||agentRuntimeActiveRun)return;
+      const prompt=$('agentRuntimePrompt').value.trim();
+      if(!prompt) {
+        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'Enter a task first.':'Сначала введите задание.';
+        updateAgentRuntimeStartAvailability();return;
+      }
+      if(prompt.length>12000) {
+        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The task is too long (12,000 characters maximum).':'Задание слишком длинное (максимум 12 000 символов).';
+        return;
+      }
+      const chat=getCurrentChat();
+      if(!chat||typeof chat.id!=='string'||!chat.id||chat.id.length>160) {
+        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The current conversation scope is unavailable.':'Не удалось определить область текущего чата.';
+        return;
+      }
+      let config;
+      try {config=getAlandiGatewayConfig();}
+      catch(error) {$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);return;}
+      const key=(globalThis.crypto?.randomUUID?.()||('run-'+Date.now()+'-'+Math.random().toString(36).slice(2))).slice(0,200);
+      const requestController=new AbortController();
+      const requestTimeout=window.setTimeout(()=>requestController.abort(),12000);
+      $('agentRuntimeStart').disabled=true;
+      $('agentRuntimeCancel').disabled=true;
+      $('agentRuntimeProfile').disabled=true;
+      $('agentRuntimeModel').disabled=true;
+      $('agentRuntimePrompt').disabled=true;
+      $('agentRuntimeEvents').replaceChildren();
+      $('agentRuntimeOutput').textContent='';
+      $('agentRuntimeOutput').classList.add('hidden');
+      $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'Submitting task…':'Отправляем задание…';
+      try {
+        const created=await agentRuntimeFetch(config,'/agent-runs',{
+          method:'POST',signal:requestController.signal,
+          headers:{'Content-Type':'application/json','Idempotency-Key':key},
+          body:JSON.stringify({
+            prompt,
+            scope_kind:'conversation',
+            scope_id:chat.id,
+            profile_id:$('agentRuntimeProfile').value,
+            model_id:$('agentRuntimeModel').value
+          })
+        });
+        const runId=created.run?.run_id;
+        if(typeof runId!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(runId))throw new Error('agent-runtime-invalid-run-id');
+        agentRuntimeActiveRun={id:runId,afterEventId:0,startedAt:Date.now()};
+        agentRuntimePollController=new AbortController();
+        $('agentRuntimeCancel').disabled=false;
+        $('agentRuntimeStatus').textContent=agentRuntimeStatusText(created.run.state||'queued');
+        await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
+      } catch(error) {
+        if(error?.name!=='AbortError')$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);
+        if(!agentRuntimeActiveRun) {
+          $('agentRuntimeProfile').disabled=false;
+          $('agentRuntimeModel').disabled=false;
+          $('agentRuntimePrompt').disabled=false;
+          agentRuntimeReady=true;
+          updateAgentRuntimeStartAvailability();
+        }
+      } finally {
+        window.clearTimeout(requestTimeout);
+      }
+    }
+
+    async function observeAgentRuntimeRun(config,run,signal) {
+      const terminal=new Set(['succeeded','failed','cancelled','timed_out']);
+      const deadline=Date.now()+120000;
+      let terminalReached=false;
+      try {
+        while(Date.now()<deadline&&!signal.aborted&&agentRuntimeActiveRun?.id===run.id) {
+          const events=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id)+'/events?after_event_id='+run.afterEventId+'&limit=100',{signal});
+          if(Array.isArray(events.events)) {
+            renderAgentRuntimeEvents(events.events);
+            if(Number.isInteger(events.next_after_event_id))run.afterEventId=Math.max(run.afterEventId,events.next_after_event_id);
+          }
+          const snapshot=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{signal});
+          const state=snapshot.run?.state;
+          $('agentRuntimeStatus').textContent=agentRuntimeStatusText(state);
+          if(snapshot.output_available===true&&typeof snapshot.output==='string') {
+            $('agentRuntimeOutput').textContent=snapshot.output.slice(0,65536);
+            $('agentRuntimeOutput').classList.remove('hidden');
+          } else if(snapshot.output_expired===true) {
+            $('agentRuntimeOutput').textContent=getUiLanguage()==='en'?'The output has expired from secure storage.':'Срок хранения результата истёк.';
+            $('agentRuntimeOutput').classList.remove('hidden');
+          }
+          if(terminal.has(state)){terminalReached=true;return;}
+          await new Promise((resolve,reject)=>{
+            const onAbort=()=>{window.clearTimeout(timer);reject(new DOMException('Aborted','AbortError'));};
+            const timer=window.setTimeout(()=>{signal.removeEventListener('abort',onAbort);resolve();},500);
+            signal.addEventListener('abort',onAbort,{once:true});
+          });
+        }
+        if(!signal.aborted&&agentRuntimeActiveRun?.id===run.id) {
+          $('agentRuntimeStatus').textContent=getUiLanguage()==='en'
+            ? 'Observation window expired. The run may continue on the Gateway; use Check to resume observation.'
+            : 'Окно наблюдения завершено. Задание может продолжаться на Gateway; нажмите «Проверить», чтобы продолжить наблюдение.';
+        }
+      } catch(error) {
+        if(error?.name!=='AbortError'&&agentRuntimeActiveRun?.id===run.id) {
+          $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error)+' '+(getUiLanguage()==='en'?'Use Check to resume observation.':'Нажмите «Проверить», чтобы возобновить наблюдение.');
+        }
+      } finally {
+        if((terminalReached||signal.aborted)&&agentRuntimeActiveRun?.id===run.id) {
+          agentRuntimeActiveRun=null;
+          agentRuntimePollController=null;
+          $('agentRuntimeCancel').disabled=true;
+          $('agentRuntimeProfile').disabled=false;
+          $('agentRuntimeModel').disabled=false;
+          $('agentRuntimePrompt').disabled=false;
+          updateAgentRuntimeStartAvailability();
+        } else if(agentRuntimeActiveRun?.id===run.id) {
+          $('agentRuntimeCancel').disabled=false;
+        }
+      }
+    }
+
+    async function cancelAgentRuntimeRun() {
+      const run=agentRuntimeActiveRun;
+      if(!run)return;
+      $('agentRuntimeCancel').disabled=true;
+      $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'Requesting cancellation…':'Отправляем запрос на отмену…';
+      try {
+        const config=getAlandiGatewayConfig();
+        const result=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{method:'DELETE'});
+        if(result.run?.state!=='cancelled'&&!['succeeded','failed','timed_out'].includes(result.run?.state)) {
+          throw new Error('agent-runtime-cancel-unconfirmed');
+        }
+        if(agentRuntimePollController)agentRuntimePollController.abort();
+        $('agentRuntimeStatus').textContent=agentRuntimeStatusText(result.run.state);
+      } catch(error) {
+        $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);
+        $('agentRuntimeCancel').disabled=false;
+        return;
+      }
+      agentRuntimeActiveRun=null;
+      agentRuntimePollController=null;
+      $('agentRuntimeProfile').disabled=false;
+      $('agentRuntimeModel').disabled=false;
+      $('agentRuntimePrompt').disabled=false;
+      updateAgentRuntimeStartAvailability();
+    }
+
+    $('agentRuntimePrompt').addEventListener('input',updateAgentRuntimeStartAvailability);
+    $('agentRuntimeProfile').addEventListener('change',updateAgentRuntimeStartAvailability);
+    $('agentRuntimeModel').addEventListener('change',updateAgentRuntimeStartAvailability);
 
     function renderResearchConfiguration() {
       const chat=getCurrentChat(); if(!chat)return;
@@ -5558,6 +5779,8 @@ let agentRuntimeRefreshPromise = null;
           case 'open-search-mode-settings': closeFunctionPanel();$('searchModeMenu').open=true;$('searchModeSummary').focus();break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
           case 'refresh-agent-runtime': await refreshAgentRunRuntime();break;
+          case 'agent-run-start': await startAgentRuntimeRun();break;
+          case 'agent-run-cancel': await cancelAgentRuntimeRun();break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;

@@ -2357,7 +2357,9 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   await expect(page.locator('#agentRuntimeModel')).toBeEnabled();
   await page.locator('#agentRuntimeProfile').selectOption('coder');
   await page.locator('#agentRuntimeModel').selectOption('qwen3.5:4b');
+  await expect(page.locator('#agentRuntimeStart')).toBeDisabled();
   await page.locator('#agentRuntimePrompt').fill('Review only this explicitly supplied task.');
+  await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
   await expect(page.locator('#agentRuntimeEvents')).toContainText('run_started');
