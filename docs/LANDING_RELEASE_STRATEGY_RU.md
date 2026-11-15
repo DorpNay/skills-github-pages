@@ -1,5 +1,6 @@
 # Landing V1 stability and V2 promotion plan
 
+> **Статус на 2026-11-15 — SUPERSEDED:** отдельный публичный `/landing/` выведен из продукта по актуальному контракту владельца. Единственная публичная точка входа — корневое приложение `index.md`; исторические записи ниже сохраняются как архив решений и доказательств, а не как текущая инструкция по публикации. CI и Pages должны проверять только корневой клиент.\n\n
 **Created:** 2026-11-04  
 **Owner direction:** keep the public main branch as the stable, observable Landing 1.0 baseline while allowing carefully selected quality improvements; develop the substantial Landing 2.0 package in PR #131 and promote only independently verified slices.  
 **Status:** IN PROGRESS — V1 baseline preserved; independent V1 landing, orientation, N₂O knowledge, source triage, model artifact and Python reliability slices are merged. Landing 2.0 audit and repository hygiene remain active; each further promotion still requires evidence and an explicit recorded decision.
