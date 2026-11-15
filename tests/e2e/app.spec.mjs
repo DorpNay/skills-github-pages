@@ -2467,7 +2467,7 @@ test('AgentRun reuses the idempotency key after an ambiguous network failure', a
   await page.locator('#functionsMenu [data-function="agents"]').click();
   await page.locator('#agentRuntimePrompt').fill('Retry this exact task safely.');
   await page.locator('#agentRuntimeStart').click();
-  await expect(page.locator('#agentRuntimeStatus')).toContainText('Gateway request failed');
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Запрос к Gateway не выполнен');
   await expect(page.locator('#agentRuntimePrompt')).toHaveValue('Retry this exact task safely.');
   await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
   await page.locator('#agentRuntimeStart').click();
