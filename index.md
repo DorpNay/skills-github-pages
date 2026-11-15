@@ -295,6 +295,7 @@ permalink: /
     .project-nav-select { display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;min-height:40px;padding:0 8px;border-radius:8px;text-align:left;font-size:12px;color:var(--ui-text); }
     .project-nav-count { flex-shrink:0;color:var(--ui-text-muted);font-size:10px;font-variant-numeric:tabular-nums; }
     .project-nav-settings { display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:9px;color:var(--ui-text-muted);font-size:22px;line-height:1; }
+    .project-row-menu summary.project-nav-settings { flex:0 0 44px;width:44px;height:44px; }
     .project-nav-settings:hover,.project-row-menu[open] .project-nav-settings { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-row-menu-panel button { min-height:40px; }
     @media (max-width:640px) { .project-row-menu-panel button { min-height:44px; } }
