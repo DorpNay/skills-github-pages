@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-15",
   "checkpoint": {
-    "main_sha": "888c2d59bee23cc31ebc00a2b0189e61705f5aa7",
-    "main_commit_subject": "fix(projects): preserve chat ownership on project creation",
+    "main_sha": "c7d9c44295e16d8b603dda96cdf0e408cd828dc5",
+    "main_commit_subject": "fix(projects): keep filters independent from active chat",
     "main_commit_date": "2026-11-15T14:49:14Z",
     "last_functional_checkpoint_sha": "ee925bfa2e093e1077b9a859f83ad134ea2fecfc",
     "last_functional_milestone": "Project/chat navigation with separate project-create modal, project filter/back, persistent create rows and `⋯` project settings; empty global prompt with legacy normalization; Tavily settings UI removed while chat-scoped search remains; `/landing/` and exclusive CSS removed. Same-origin Notebook/Research/Workspace routes remain specified, not implemented. Production multi-agent, Deep Research, offline runtime and target-host installation remain unverified.",
-    "main_quality_run": 43726435103,
-    "main_pages_deployment_run": 43726434326,
+    "main_quality_run": 43727091701,
+    "main_pages_deployment_run": 43727090926,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -182,9 +182,9 @@
         "checks": "Exact-head Quality #43402260210, Gateway #43402260215, Graphify #43402260236, Freshness #43402260242, Provenance #43402260337 and Dead Code #43402260315 passed; model/runtime manifests and acquisition workflows merged."
       }
     ],
-    "main_provenance_run": 43726435111,
-    "main_freshness_run": 43726435150,
-    "main_graphify_run": 43726435074,
+    "main_provenance_run": 43727091650,
+    "main_freshness_run": 43727091644,
+    "main_graphify_run": 43727091641,
     "owner_task": "PR #174 repairs the published Functions menu contract; Voice source crosswalk is complete (VOICE2 aliases mapped, VOICE-TRACK-010/VOICE-011…018 and AUDIO-GEN-001…009 atomized); repeated LAUNCH release/device references cross-linked. Main registry: 599 stable rows; addendum: 128 stable rows; both unique and share only REGISTRY-002. Remaining: V1/LAUNCH description-level crosswalk, MENU-008 native VoiceOver, FIX-008 static Tailwind/vendor hardening, GATE-001 fine-grained capability evidence. Issue #111 remains owner/environment gated; 62 direct action refs are pinned, 14 nested upstream refs remain mutable.",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
@@ -218,11 +218,11 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "Quality #43726435103 FAILED on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7: 121/123 Chromium tests passed; two failures show project/personal filter selection must preserve active chat. Non-Chromium jobs passed.",
-    "main_pages_status": "Pages #43726434326 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; public root metadata reports exact 888c2d5 revision; /landing/ and retired CSS return 404.",
-    "main_freshness_status": "Freshness #43726435150 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
-    "main_provenance_status": "Provenance #43726435111 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
-    "main_graphify_status": "Graphify #43726435074 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
+    "main_quality_status": "Quality #43727091701 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; all 7 jobs succeeded, including real Chromium browser regression tests.",
+    "main_pages_status": "Pages #43727090926 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; public root metadata reports exact c7d9c44; /landing/ and retired CSS return 404.",
+    "main_freshness_status": "Freshness #43727091644 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
+    "main_provenance_status": "Provenance #43727091650 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
+    "main_graphify_status": "Graphify #43727091641 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -247,7 +247,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-15-PROJECT-FILTER-ONLY-010",
+    "last_volley": "V-2026-11-15-AGENT-RUN-UI-PLAN-011",
     "owner_priority_task": "LANDING-V2-2026-001",
     "owner_priority_summary": "LANDING-V2-2026-001 / Section K in the existing addendum. Required: owner-designed UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real AgentRun and live status; mandatory local-file Coder workspace and desired GitHub repository access; installed Whisper/ASR, TTS, VAD/audio with target-device RU/EN/TH tests; full RAG; safe document/book/web/image parsing, OCR and converters; mode-combination tests; lean conditional model routing; cache, observability and N₂O in main; complete tested VPS runbook. Current model/runtime/database and weight selection is an evidence task, not yet frozen.",
     "main_external_acquisition_run": 43420046411,
@@ -257,8 +257,8 @@
     "python_runtime_cache_bytes": 81549321,
     "publication": {
       "root_url": "https://dorpnay.github.io/skills-github-pages/",
-      "root_revision": "888c2d59bee23cc31ebc00a2b0189e61705f5aa7",
-      "pages_run": 43726434326,
+      "root_revision": "c7d9c44295e16d8b603dda96cdf0e408cd828dc5",
+      "pages_run": 43727090926,
       "landing_route_status": 404,
       "landing_source_absent": true
     },
@@ -269,24 +269,25 @@
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Direct main only, zero open PRs; issue #111 remains owner/environment gated. Owner authorizes direct main commits/merges and Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
-    "note": "Parent main 888c2d59bee23cc31ebc00a2b0189e61705f5aa7. Pages #43726434326, Freshness #43726435150, Provenance #43726435111 and Graphify #43726435074 passed; public root exact revision 888c2d5 and /landing/ retired routes 404. Quality #43726435103 passed 121/123 Chromium tests; two failures were caused by the new auto-switch behavior on project/personal filter selection, which contradicted active-chat-preservation tests. Current commit restores filter-only behavior while retaining the separate project creation ownership fix. AgentRun backend API exists as a feature-off single-worker prototype; UI not wired; no tools/filesystem/network.",
-    "last_volley": "V-2026-11-15-PROJECT-FILTER-ONLY-010",
+    "note": "Exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5. Quality #43727091701 SUCCESS (7/7 jobs incl. Chromium); Freshness #43727091644, Provenance #43727091650, Graphify #43727091641 and Pages #43727090926 SUCCESS; public root exact c7d9c44. Project filters are filter-only and preserve active chat; project creation preserves prior chat ownership. Existing AgentRun API is an authenticated encrypted single-worker local-model prototype, concurrency 1, feature-off by default, with no tools/filesystem/network; browser UI remains blueprint-only.",
+    "last_volley": "V-2026-11-15-AGENT-RUN-UI-PLAN-011",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
-    "main_quality_status": "Quality #43726435103 FAILED on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7: 121/123 Chromium tests passed; two failures show project/personal filter selection must preserve active chat. Non-Chromium jobs passed.",
-    "main_pages_status": "Pages #43726434326 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; public root metadata reports exact 888c2d5 revision; /landing/ and retired CSS return 404.",
-    "main_graphify_status": "Graphify #43726435074 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
-    "main_freshness_run": 43726435150,
-    "main_freshness_status": "Freshness #43726435150 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
-    "main_provenance_run": 43726435111,
-    "main_provenance_status": "Provenance #43726435111 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7.",
+    "main_quality_status": "Quality #43727091701 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; all 7 jobs succeeded, including real Chromium browser regression tests.",
+    "main_pages_status": "Pages #43727090926 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; public root metadata reports exact c7d9c44; /landing/ and retired CSS return 404.",
+    "main_graphify_status": "Graphify #43727091641 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
+    "main_freshness_run": 43727091644,
+    "main_freshness_status": "Freshness #43727091644 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
+    "main_provenance_run": 43727091650,
+    "main_provenance_status": "Provenance #43727091650 SUCCESS on exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5.",
     "owner_priority_summary": "LANDING-V2-2026-001: 15 priorities governed by K.5/K.6. Highest priority: orthogonal function/mode semantics, genuine selectable Agents and Deep Research workflows, owner-defined sidebar/project/chat UX, unified settings/buttons/status, progressive Skills/tool/search loading, local-first files/Notebook/converters, offline helper-model kit excluding largest model, and tested owner runbook.",
     "pr185_status": "PR #185 merged into main at f1fc73783a46bf38014acd0a8019914d5a3f14d4; model/runtime acquisition artifacts are staged in Actions, not installed.",
-    "main_gateway_status": "Not triggered; no Gateway code changed in this project/filter UI correction.",
+    "main_gateway_status": "Not triggered; no Gateway backend changed in this browser-only plan/test setup.",
     "historical_pr_fields": "All PR-specific fields are history only; no PR is open and none is a default continuation.",
     "open_issues": "Issue #111 only.",
-    "main_graphify_run": 43726435074
+    "main_graphify_run": 43727091641,
+    "main_quality_run": 43727091701
   },
   "last_volley": "V-2026-11-15-LANDING-V2-CHECKPOINT-FIX-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
@@ -326,7 +327,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-15",
-    "checkpoint_parent_sha": "888c2d59bee23cc31ebc00a2b0189e61705f5aa7",
+    "checkpoint_parent_sha": "c7d9c44295e16d8b603dda96cdf0e408cd828dc5",
     "merged_prs": [
       184,
       185
@@ -356,17 +357,18 @@
       "Exact parent d9bb5ef: Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium tests. Artifact #14164458184 identified selector/helper/accordion/sidebar-state test-contract issues; current commit corrects them without removing assertions.",
       "Exact parent add961cb: Pages #43723996242, Freshness #43723996564, Provenance #43723996545 and Graphify #43723996491 passed. Quality #43723996573 had 117/123 Chromium tests pass; six failures all share one helper assertion expecting identity matrix instead of settled transform none. Current commit fixes that expectation.",
       "Exact parent 9db8588: Pages #43724680667, Freshness #43724681291, Provenance #43724681306 and Graphify #43724681388 passed; Quality #43724681318 passed 122/123 Chromium tests and exposed project creation reassigning an existing chat. Current commit creates a project-owned chat and preserves existing chat ownership.",
-      "Exact parent 888c2d5: Pages #43726434326, Freshness #43726435150, Provenance #43726435111 and Graphify #43726435074 passed; Quality #43726435103 passed 121/123 Chromium tests. Two failures showed filters must not switch active chat; current commit restores filter-only semantics while preserving project-create ownership fix."
+      "Exact parent 888c2d5: Pages #43726434326, Freshness #43726435150, Provenance #43726435111 and Graphify #43726435074 passed; Quality #43726435103 passed 121/123 Chromium tests. Two failures showed filters must not switch active chat; current commit restores filter-only semantics while preserving project-create ownership fix.",
+      "Exact main c7d9c44: Quality #43727091701 (7/7 jobs incl. Chromium), Freshness #43727091644, Provenance #43727091650, Graphify #43727091641 and Pages #43727090926 passed; public root revision exact c7d9c44."
     ],
     "freshness": {
       "run": 43623253330,
       "status": "Failed because test import missing (20 pass, 1 error); corrected in this commit, rerun pending."
     },
     "next": [
-      "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify and Pages after restoring filter-only semantics.",
-      "Wire the browser Agents panel to the existing authenticated AgentRun API; keep host flag disabled until encryption-key backup and host acceptance are verified.",
-      "Specify true multi-agent capability grants and Deep Research 2.0 evidence workflow separately from the existing single-worker prototype.",
-      "Specify same-origin Notebook/Research/Workspace shared-data contracts, route reload behavior and offline/storage boundaries before implementation."
+      "Verify the new feature-off AgentRun UI acceptance test fails on unchanged browser UI.",
+      "Implement capability-gated AgentRun profile/model selection, explicit prompt-only submission, real status/events/output/cancel.",
+      "Keep host feature flag off; tools/filesystem/network disabled; one worker only.",
+      "Then specify true multi-agent capability grants and same-origin Notebook/Research/Workspace contracts."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -392,5 +394,6 @@
   "main_freshness_status": "FAILED on exact parent 05b98: 20 tests passed, 1 NameError because legacy_orientation_files was not imported; corrected in this commit.",
   "main_provenance_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Provenance #43623253304.",
   "main_graphify_status": "PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337; Graphify #43623253242.",
-  "main_gateway_status": "PASS on previous exact parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Gateway #43621379836 across Python 3.12/13/14. No Gateway rerun on 05b98."
+  "main_gateway_status": "PASS on previous exact parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9; Gateway #43621379836 across Python 3.12/13/14. No Gateway rerun on 05b98.",
+  "owner_request": "OR-2026-11-15-010"
 }

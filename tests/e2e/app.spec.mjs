@@ -2284,6 +2284,26 @@ test('clearing a non-active project chat preserves the active chat and both proj
   expect(persisted.projects.map(project=>project.id).sort()).toEqual(['project-alpha','project-beta']);
 });
 
+test('Agents panel reports the disabled AgentRun capability without offering a runnable control', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  await page.route('https://gateway.example.test/v1/capabilities', route => route.fulfill({
+    status: 200, contentType: 'application/json',
+    body: JSON.stringify({ agent_runs: { enabled: false, worker_concurrency: 1, tools_enabled: false } })
+  }));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('выключен');
+  await expect(page.locator('#agentRuntimeStart')).toBeDisabled();
+});
+
 test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
