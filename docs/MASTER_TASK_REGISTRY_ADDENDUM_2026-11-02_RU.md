@@ -400,18 +400,18 @@ This is the single 15-point progress view for LANDING-V2-2026-001. Status is evi
 
 | # | Canonical requirement | Current status | Remaining acceptance evidence |
 |---:|---|---|---|
-| 1 | K.1.1 Owner-designed UI | **PARTIAL** | Four-panel navigation is implemented; remaining V1 owner UI, responsive/accessibility and manual device checks remain open |
-| 2 | K.1.2 Functions menu | **UI IMPLEMENTED / CAPABILITIES PARTIAL** | Four independent entries pass exact-main E2E; each backend must expose only real handlers and states |
-| 3 | K.1.3 Deep Research | **SPECIFIED / NOT IMPLEMENTED** | Resumable source/evidence workflow, citation validation, contradiction handling and report export |
-| 4 | K.1.4 Agents and orchestration | **PROTOTYPE / STORE SAFETY TESTED** | SQLite AgentRun store has typed payload/metadata, idempotency, leases, terminal fencing and offline tests; no model worker, scheduler, API integration or live event stream yet |
+| 1 | K.1.1 Owner-designed UI | **NOT OWNER-ACCEPTED / REDESIGN REQUIRED** | Current sidebar, project/chat navigation and creation/edit flows do not match OR-2026-11-15-005; implement exact K.6 layout, responsive/accessibility and interaction contract |
+| 2 | K.1.2 Functions menu | **PARTIAL / IA REWORK REQUIRED** | Four entries exist but are not final; implement multiple real Agent execution choices and a separate Deep Research method selector backed by capability/status contracts |
+| 3 | K.1.3 Deep Research | **SPECIFIED / PANEL NOT ACCEPTED** | Replace mixed navigation panel with distinct research workflows, durable/resumable state, source/evidence ledger, citation validation, contradiction handling, bounded budgets and report/Notebook export |
+| 4 | K.1.4 Agents and orchestration | **MODEL-BACKED SINGLE-WORKER PROTOTYPE / CI VERIFIED** | Feature-off encrypted AgentRun API and one allowlisted Ollama worker exist with bounded input/output/time/concurrency, profiles, status/events/cancel and offline tests; real host acceptance, independent workers/subagents, sandbox and full durable scheduler/checkpoints remain |
 | 5 | K.1.5 Skills | **IMPLEMENTED BASELINE / LIFECYCLE OPEN** | Chat-scoped instruction profiles exist; versioned Skill intake, provenance, tests, review, enable/disable and rollback remain |
 | 6 | K.1.6 Connectors | **OAUTH FOUNDATION / CONNECTOR NOT IMPLEMENTED** | Provider-bound PKCE exists; read-only GitHub App registry, short-lived credentials, real handlers, revoke and audit remain |
 | 7 | K.1.7 Local coding workspace | **PARTIAL / SANDBOX ARTIFACT STAGED** | Browser Local workspace exists; OpenShell v0.1.8 Ubuntu 24.04 x86_64 assets verified in Actions #43616944431; not installed. Host fit, sandbox wiring and real GitHub repository access remain |
 | 8 | K.1.8 Voice | **ARTIFACTS VERIFIED / INSTALL NOT STARTED** | whisper.cpp v1.9.5 + large-v3-turbo, Qwen3-ASR-0.6B challenger, Silero VAD and Piper RU/EN voices are staged; no separate official Whisper 3. Install, API wiring, interruption path and RU/EN/TH target-device tests remain; no approved Thai voice |
 | 9 | K.1.9 Full RAG | **PARTIAL** | SQLite FTS5 + lexical baseline exists; hybrid vector retrieval, fusion/reranking and permissioned RU/EN/TH eval remain |
-| 10 | K.1.10 Documents, scanners and converters | **PARTIAL** | Bounded PDF/DOCX/XLSX extraction exists; GLM-OCR/Tesseract assets are staged but OCR is not installed/wired. EPUB/book/web intake, site scanner, Notebook source workflow and conversion fixtures remain |
-| 11 | K.1.11 Modes and feature logic | **PARTIAL** | Some modes and toggles exist; full compatibility, persistence, concurrency and cancellation matrix remains |
-| 12 | K.1.12 Efficiency | **SPECIFIED / MEASUREMENT OPEN** | Direct main-model path is default policy; helper routing must beat main-only baseline on measured quality/latency/cost |
+| 10 | K.1.10 Documents, scanners and converters | **PARTIAL** | Bounded PDF/DOCX/XLSX extraction exists; OCR assets are staged but not installed/wired. Finish file/site/book/EPUB conversion, website reader/scanner, coder-format conversion, dedicated Notebook source/collection/evidence workflow and fixtures |
+| 11 | K.1.11 Modes and feature logic | **HIGH-PRIORITY / PARTIAL** | Define orthogonal semantics for effort, web scope, execution strategy, task skill, model/provider, context and output; add pairwise/compatibility/persistence/concurrency/cancellation/offline matrix |
+| 12 | K.1.12 Efficiency | **SPECIFIED / MEASUREMENT OPEN** | Progressive disclosure for Skills and tool schemas, compact capability registry, selective retrieval and minimal web-search hints; measure prompt/context tokens, latency, quality and cost against direct main-model baseline |
 | 13 | K.1.13 Cache, observability and N₂O | **PARTIAL** | Cache layers and N₂O operating documents exist; production traces, redacted metrics, event audit and invalidation/bypass evidence remain |
 | 14 | K.1.14 Operator runbook | **SPECIFIED / NOT HOST-VERIFIED** | `docs/PRE_LAUNCH_STACK_RU.md` §8 is the owner-only action list. Actual host install, backup/restore, first completion, troubleshooting and rollback must be exercised |
 | 15 | K.2 Model/runtime/storage decision pack | **UPSTREAM RECHECKED / LOCK REFRESH PENDING** | FastAPI 0.163.0 newer but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is an eligible lock candidate vs 2.14.1; pypdf 7.1.0 already current. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16 and OpenShell 0.1.8 are latest stable. Final model/resource selection remains open |
@@ -419,3 +419,99 @@ This is the single 15-point progress view for LANDING-V2-2026-001. Status is evi
 **Verified in this checkpoint:** exact main `101e57d5a5efdbb291e0667df9e25e5fadd7e1f9`: Gateway #43621379836 PASS (Python 3.12/13/14), Quality #43621379825 PASS (7 jobs), Graphify #43621379893 PASS, Pages #43621380121 SUCCESS. Freshness #43621323351 on prior parent failed only because snapshot SHA lagged; 19 unit tests passed; atomic refresh reruns. External #43553056846, Ollama #43418126506, Python cache #43553056865 and OpenShell #43616944431 artifacts are SHA-verified in Actions, not installed. No exact-main Provenance run retrieved. These checks do not prove target-host installation or live VPS/Tunnel/Ollama.
 
 **Artifact policy:** keep model weights out of the GitHub Pages source tree and Git LFS. Use pinned Actions artifacts as temporary staging, then move required, licensed files to an owner-controlled durable store or verified target host. The owner-supplied primary checkpoint remains excluded.
+
+## K.6 Binding owner acceptance contract — OR-2026-11-15-005
+
+**Authority:** this section captures the owner's detailed 2026-11-15 requirements. It expands K.1.1–K.1.14 and K.2 without creating a second backlog. K.5 remains the sole 15-point progress/status table. If an older UI note or panel description conflicts with this owner override, K.6 wins. A visible control is not a working capability.
+
+### K.6.1 Release outcome and scope
+- Deliver one coherent aLandi application at canonical Pages root `/`: https://dorpnay.github.io/skills-github-pages/. Every authorized push to `main` publishes the current application. No separate marketing/presentation page is part of the deliverable.
+- Remove the redundant tracked `/landing/` Jekyll route (`landing/index.html`) and its stylesheet (`assets/css/landing.css`) after auditing inbound links. Keep the root app and Pages publication path only.
+- Finish the existing 15-point programme in `main`, excluding the largest/owner-supplied primary model. Auxiliary artifacts require current version, license, provenance, checksum, compatibility, storage and resource checks.
+- Prepare repository/UI/runtime before asking the owner for host-only actions. At completion, produce one concise runbook with exact commands, expected results, rollback and only owner-controlled actions from PRE_LAUNCH_STACK_RU.md §8.
+- Keep the static client useful without hosted AI for local data/offline-safe operations. Remote inference and external services are optional. Never claim browser code can silently read arbitrary files or run a local model without a compatible runtime.
+
+### K.6.2 Function and mode logic — highest product priority
+- Define one capability/mode model with independent dimensions: effort/budget (Fast/Thorough), web scope (Off/Standard/Expanded), execution strategy (single model/specialist workflow/multi-agent/sandboxed coding), task skill, model/provider, context/data scope and output preference. No selector may silently change another dimension.
+- Build a compatibility matrix for pairs and combinations: persistence, defaults, provider support, offline behavior, concurrency, cancellation, retries and error state. Disable invalid combinations with a concise reason; never silently rewrite them.
+- Keep direct main-model path as default. Routing/classification must be lightweight and measurable. Do not prepend large instructions, all skill bodies, all tool schemas or broad web results to every request.
+- Capability status must come from the real runtime: available, configured, running, waiting for API/approval, completed, failed, cancelled or offline/unavailable. No decorative animation as progress.
+- Every button action is one click/press. Sound/voice controls must not require double-click. Standardize pressed/disabled/loading/success/error/cancel behavior and prevent duplicate submissions.
+
+### K.6.3 Agents, multi-agent execution and Coder
+- Agents is not one hard-coded pipeline. Offer several genuinely working, selectable approaches. Evaluate: one specialist agent; sequential role team; parallel specialist subagents with isolated context; coordinator plus focused worker threads; reviewer/verification pass; sandboxed coding agent. Expose only methods whose runtime, model routing and permissions exist.
+- Configure role/profile, model per worker where supported, skills, sources, project/chat/file scope, allowed tools, read/write/execute/network permissions, approval policy, token/time/output budgets, concurrency, retry, pause/resume/cancel and artifacts. A role name or saved blueprint is not an independent worker.
+- Real orchestration requires durable run state, task graph/dependencies, isolated worker context, bounded fan-out, queue/leases/checkpoints, retries, event stream, cancellation, audit and recovery. Sandbox must isolate compute from credentials and use a narrow workspace manifest. No broad host filesystem/shell grant by default.
+- Reuse proven harness concepts: explicit harness loop, scoped tools, progressive skills, controlled sandbox/workspace, externalized state/checkpoint/rehydration, isolated subagents, tracing and evals. Compare OpenAI Agents SDK, Agents API, LangChain Deep Agents and Cloudflare/Temporal patterns; choose only components compatible with existing stack, license, offline/privacy and host constraints.
+- Coder requires an actual bounded workspace: explicit repository/file selection, read/write scope, isolated sandbox, command/test allowlist, patch preview/review, status, logs and artifacts. Until host sandbox/connector are active, Coder may only propose code from supplied context. OpenShell Actions assets are staged, not installed.
+
+### K.6.4 Deep Research — separate product surface
+- Deep Research must be its own menu and workflow, not a mixture of Agents, generic search and unrelated Settings. Offer distinct methods with separate purpose and bounded budget: focused lookup; thorough multi-step report; comparative research; academic/literature review; fact-check/source audit; Notebook/source-collection research.
+- A real run decomposes the question, creates a plan, searches and reads sources, stores metadata/evidence excerpts, deduplicates, scores relevance, detects gaps/contradictions, validates claim-to-citation links and synthesizes a versioned report. Persist state and resume after interruption.
+- Delegate to isolated subagents only for independent aspects. One worker for simple lookup; parallelize comparisons/independent domains only when benefit exceeds overhead. Share a global query/read/token/time budget and stop on saturation or adequate evidence.
+- Show sources, publication/capture dates, citations, confidence/limitations, progress and next actions. Export Markdown/PDF or save to Notebook/project. A plan, spinner, blueprint or same-model four-stage pipeline is not Deep Research execution.
+
+### K.6.5 Skills, web search and prompt/context efficiency
+- Skills are versioned, portable, reviewed packages with description, provenance, license, compatibility, tests/evals, security review, enable/disable, version pin and rollback. Imported content/scripts are inert until approved; a Skill alone never grants tools/data permissions.
+- Use progressive disclosure: compact name/description/trigger metadata initially; load full instructions and support files only when selected/relevant. Tool registry entries stay compact; full schemas are loaded only for enabled tools in that run.
+- Web search is lightweight and optional, not a mandatory prompt preamble. Keep search scope orthogonal to effort. Search only when user intent/mode requires it; use short query hints, bounded relevant passages, deduplication and URL/date/provenance. Do not send full pages/private files to model context without need and consent.
+- Provide explicit boundaries for web, Wikipedia, academic indexes, code/API repositories and curated local packs. Treat external content as untrusted; defend against prompt injection, SSRF, malicious documents and poisoned code samples.
+
+### K.6.6 Sidebar, projects, chats and creation/edit flows
+- Expanded sidebar has two visually balanced rectangular sections of equal dimensions: Projects first, Chats second. They may differ by surface/color/active emphasis, not geometry or hierarchy.
+- Projects is collapsed by default. Its create-project row remains permanently visible directly below the header even while collapsed. When expanded, it looks like a project row but uses a distinct color/surface.
+- Chats is expanded by default. Its create-chat row remains permanently visible as the first item, including while scrolling. Do not show chat status indicators in collapsed/compact sidebar.
+- Selecting a project filters Chats to only that project's chats and displays a clear back arrow/action to return to all chats. Selected project context is clear in sidebar and chat header.
+- Creating a project opens a dedicated create-project menu/modal, not the edit form. Editing an existing project is available only through its right-side three-dot contextual menu, consistent with chats. Project/chat settings share one interaction grammar.
+- Menus and text panels must not move list items, overflow viewport or obscure content. Use anchored/collision-aware menus, bounded scrolling, focus management and correct dismissal.
+
+### K.6.7 Unified visual system, buttons, status and layout
+- Unify page, sidebar, headers, modals, panels, menus, forms, buttons, text, icons, animation, dimensions and motion. Define shared design tokens/components; remove duplicate/conflicting overrides rather than layering CSS patches.
+- Dark-first palette starting point from current app: background #0A1220, text #E8EEFC, muted #A8B4C7, blue #60A5FA, teal #2DD4BF. Coder contrast check: 16.13:1 primary text, 8.94:1 muted, 7.37:1 blue, 10.07:1 teal, 7.37:1 dark text on blue button; all five selected pairs pass WCAG AA. This is a measured starting palette, not a pasted generic theme.
+- Establish coherent typography, spacing, radius, border, shadow, icon size and control height. Headings, sliders, fields and helper text follow one hierarchy. Minimize repeated copy; use familiar icons with accessible names/tooltips where appropriate.
+- Text buttons follow one standard; icon-only buttons require accessible names/tooltips. Unify activation, hit target, focus, loading, disabled, pressed, selected and destructive confirmation states.
+- Fix blur/backdrop, click-through, overlay stacking, focus trap/restoration, scroll lock, sticky headers, safe areas, viewport sizing and z-index collisions. No page/menu drift when text menus open.
+- Status belongs near active task/output and objectively distinguishes model thinking, API wait, tool execution, approval, success, failure and cancellation. Keep idle indicators out of left sidebar; show only when expanded/relevant.
+- Chat header title clearly identifies conversation and project scope. Memory controls are quieter/compact; memory panel uses concise labels, clear grouping and minimal copy.
+- Verify keyboard, screen reader, reduced motion and responsive behavior at 320/390px, tablet and desktop. Aim for 44×44 CSS px touch targets and meet WCAG 2.2 focus/contrast/target-size requirements.
+
+### K.6.8 Settings and systematization
+- Rebuild Settings into intuitive priority groups: provider/model; chat behavior/modes; search/research; tools/permissions/connectors; local files/offline package; appearance/accessibility; memory/privacy/storage/backup; advanced diagnostics. Keep chat/project settings scoped and avoid duplicate global controls.
+- Remove obsolete Twilio tools and Twilio web-search controls from Settings/UI, along with dead/duplicate settings. Do not add Twilio back as a generic search provider; keep only real, used, approved integration settings.
+- Reduce text blocks to concise labels/helper/status. Put advanced controls behind progressive disclosure. Keep headings, sliders, fields and helper text on a consistent scale.
+- Memory settings are discreet in the main UI; internal hierarchy is minimal and clear about source/scope, user control, export and deletion. Never imply remote storage when data is local.
+
+### K.6.9 Files, Notebook, converters and local knowledge packs
+- Provide a dedicated Notebook workspace for source collections, documents, websites, notes, citations, extracted tables/images, transformations, search, chat-with-source and saved research reports. Notebook is not a chat preset.
+- Provide file conversion/extraction, website reader/scanner, book/EPUB/web intake, OCR/scanned-document path, and conversion of supplied material into a clean Coder package (file tree, source map, instructions, dependency/license notes, selected excerpts and fixtures).
+- Use explicit file/folder pickers and permission state. Browser code cannot silently read arbitrary paths; persistent folder access varies by browser. Distinguish one-time upload, retained local source, OPFS-owned data and future desktop/companion watcher.
+- Use suitable embedded stores, not redundant databases: IndexedDB for structured metadata/records/sync state; OPFS for larger app-owned files/artifacts/indexes; Cache API for app shell/static assets; optional SQLite/WASM only when justified. Define migrations, quotas, eviction, export/backup and recovery.
+- Curate small text-heavy code/API/AI example packs for offline retrieval. Pin upstream URL/commit/version, license, checksum, allowlisted files, update date and search index. Prefer selected docs/examples and structured retrieval over indiscriminate full-repository clones. Never silently execute imported code.
+
+### K.6.10 Offline behavior and optional device model package
+- Define online/degraded/offline behavior. Preserve local chats, projects, notes, selected files, Notebook records and cached app shell. Queue only safely replayable actions; mark remote inference/search/connectors unavailable and never imply a request was sent.
+- Offer an opt-in offline kit in Settings: one modest model plus a few small helper models, including Coder helper and local voice ASR/TTS assets where device/runtime supports them. Exclude the largest/owner primary model. Show exact size, storage estimate, runtime/device requirements, license, checksum, quality limits and uninstall/update controls before download.
+- Download/verify artifacts atomically; handle quota exhaustion, interruption/resume, checksum mismatch, eviction, migration and user deletion. Keep model weights outside GitHub Pages source and Git LFS.
+- Distinguish model download/cache from inference. Browser execution requires supported WASM/WebGPU/ONNX/runtime; otherwise use explicitly installed local companion or owner server. Verify real offline chat, Coder and voice on target devices before claiming availability.
+
+### K.6.11 Reliability, independence and release acceptance
+- Test network-offline, slow/intermittent network, provider timeout, 401/403/429/5xx, model unavailable, quota reached, stale permissions, reload during run, cancellation, duplicate clicks and browser restart. Local data must remain readable/exportable.
+- Verify project/chat CRUD, contextual menus, project filtering, create rows while collapsed, back navigation, no duplicates, no accidental data loss and migration from current localStorage.
+- Add E2E for every mode combination, Agent/Research option, Settings grouping, memory controls, single-click buttons, overlays/blur, keyboard navigation, mobile viewport and no-overflow assertions.
+- Exact-main CI must pass Gateway, Quality/Chromium, Freshness, Graphify, license/provenance and Pages as applicable. After Pages success, fetch canonical root and assert alandi-build-revision equals published commit SHA. Only public app route is `/` after `/landing/` removal.
+- No final-ready claim until K.5 is complete except the intentionally excluded largest model and owner-only host/device actions. Final runbook must make remaining owner actions short, exact and testable.
+
+### K.6.12 Research sources and adaptation rules
+Research window: 2026-05-15 through 2026-11-15. These are architecture/UX references, not proof of aLandi implementation. Recheck current versions, licenses and availability before importing code/dependencies.
+1. OpenAI Agents SDK, The next evolution of the Agents SDK (2026-11-13): model-native harness, MCP tools, progressive skill disclosure, sandbox workspaces, externalized run state, snapshot/rehydration and isolated subagents. https://openai.com/index/the-next-evolution-of-the-agents-sdk/
+2. OpenAI Agents API (2026-09-10): managed cloud runtime built on Codex harness; compare but do not adopt automatically because aLandi prioritizes owner-controlled/offline operation. https://openai.com/index/introducing-the-agents-api/
+3. LangChain Deep Agents: task planning, isolated-context research subagents, full-source fetching, citation synthesis and report verification. https://docs.langchain.com/oss/python/deepagents/deep-research
+4. Temporal + Braintrust (2026-06-03): durable execution, evidence pipeline, tracing, evals and recovery for long-running research. https://temporal.io/blog/how-to-build-deep-research-agents-using-temporal-and-braintrust
+5. Microsoft Agent Framework Skills: portable SKILL.md and progressive disclosure; compact descriptions, load full skill only when needed. https://learn.microsoft.com/en-us/agent-framework/agents/skills
+6. MDN Storage quotas/eviction: IndexedDB/Cache/OPFS share browser-managed quotas; best-effort data may be evicted; persistent storage is separate and not guaranteed. https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria
+7. MDN OPFS: origin-private app-owned files, worker access, quota limits and deletion when site data is cleared. https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system
+8. Anthropic Projects redesigned (2026-09-17): coordinator, project threads, shared context/library and scoped worker sessions. https://claude.com/resources/articles/projects-redesigned
+9. W3C WCAG 2.2 and WAI-ARIA APG: contrast, focus, predictable navigation, target size and keyboard behavior. https://www.w3.org/TR/WCAG22/ and https://www.w3.org/WAI/ARIA/apg/
+10. Existing repo specs: docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md; docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md; docs/AGENT_ORCHESTRATION_RESEARCH_RU.md; docs/DEEP_RESEARCH_2_EXTERNAL_RESEARCH_2026-10-31_RU.md; docs/OUTPUT_LIMITS_AND_AGENT_ORCHESTRATION_AUDIT_2026-10-31_RU.md; docs/PRE_LAUNCH_STACK_RU.md §8.
+
+**Implementation rule:** borrow tested concepts and small license-compatible components; do not import whole platforms or increase every request's prompt/context by default. Measure against the direct-model baseline and preserve owner-controlled data boundaries.

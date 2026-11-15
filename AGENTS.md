@@ -24,3 +24,5 @@
 - Use official primary sources and version-relevant Context7 docs when external/API contracts matter.
 - Report WHERE branch/PR/HEAD · WHAT changed · CHECKS exact commands/results/SHA · OPEN limits · NEXT one action.
 - Russian conversation; technical identifiers/code/artifacts retain native language.
+
+- Task-scoped publication authorization (2026-11-15): the owner explicitly authorizes direct commits to main and the automatic GitHub Pages deployment caused by those pushes for LANDING-V2-2026-001. This does not authorize VPS/host deployment, paid provisioning, secret handling or unrelated external actions.

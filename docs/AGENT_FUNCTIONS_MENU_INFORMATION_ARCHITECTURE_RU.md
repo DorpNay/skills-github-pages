@@ -3,6 +3,12 @@
 **Дата:** 2026-11-08  
 **Контекст:** owner-directed PR #169, с сохранением проверенных UX-контрактов из PR #131. Документ — спецификация и карта управления; кроме текущего UI-среза §0, перечисленные будущие runtime-функции не считаются реализованными.
 
+
+
+## 0.1 Binding owner override — 2026-11-15
+
+The four-panel UI described in §0 is an implementation snapshot, not the final accepted design. The owner requires several real selectable Agent execution methods and a separate Deep Research method selector, not one fixed four-stage pipeline or navigation links to unrelated features. The full contract is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6 and supersedes conflicting descriptions below. A saved Team Blueprint or same-model sequential pipeline is not an independent multi-agent runtime.
+
 ## 0. Verified Functions UI on main — 2026-11-13
 
 **Source snapshot:** main parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`. The top-level Functions menu now has four independent entry points, in owner-defined order: **Deep Research, Agents, Skills and Connectors**. The Connectors entry opens the existing independent empty-state panel; it does not claim a connector is registered or connected. Exact-head Quality/Chromium and Freshness are required for this new main commit.

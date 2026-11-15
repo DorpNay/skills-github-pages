@@ -323,3 +323,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 
 
 | V-2026-11-15-LANDING-V2-CHECKPOINT-FIX-001 | 2026-11-15 | Correct the freshness test import and remove stale PR routing from active machine state | Parent main 05b98dfe18886810cae0e14f950a2927e72d0337; 0 open PRs / issue #111. Provenance #43623253304 PASS, Graphify #43623253242 PASS, Pages #43623253308 SUCCESS. Freshness #43623253330 failed with 20 tests passing and 1 NameError (legacy_orientation_files import missing); Quality #43623253249 Ruff gate failed on the same undefined test helper, other jobs still running. Import corrected in this checkpoint. | IMPLEMENTED / VERIFICATION PENDING. No product runtime behavior changed. Historical PR IDs are retained only as history; current task is LANDING-V2-2026-001 in NOW.md. | Re-run exact-head Freshness/Quality; then implement model-backed AgentRun. |
+
+## V-2026-11-15-LANDING-V2-OWNER-REQUIREMENTS-001 — owner acceptance contract and research
+
+- Owner source: NOW.md / OR-2026-11-15-005, preserved verbatim. Full acceptance contract is docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6; K.5 remains the sole 15-point status table.
+- Parent evidence: main 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; 0 open PRs; issue #111. Gateway #43696995842 PASS across Python 3.12/13/14; Quality #43696995891 SUCCESS 7/7 incl. Chromium; Graphify #43696995875 SUCCESS; Pages #43696995516 SUCCESS.
+- Published-site evidence: canonical root and tracked /landing/ both served revision 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a. /landing/ is committed Jekyll source and automatically included in Pages; owner says it is unnecessary, so remove after inbound-reference audit and publish only root app.
+- Research applied: OpenAI Agents SDK harness/sandbox/checkpoint patterns; LangChain Deep Agents isolated subagent/evidence workflow; Temporal/Braintrust durable execution/evals/traces; Microsoft Agent Skills progressive disclosure; MDN IndexedDB/OPFS/quota behavior; Claude Projects coordinator/thread model; W3C WCAG 2.2/ARIA. Full URLs and adaptation boundaries are in K.6.12.
+- Design evidence: Coder contrast check passed five selected dark-surface pairs using existing app palette anchors #0A1220/#E8EEFC/#A8B4C7/#60A5FA/#2DD4BF. This is a measured starting point, not an implemented global system.
+- Tool availability: Superpowers, Coder, Firecrawl, TinyFish, GitHub and Context7 are available. No Codex-specific plugin was found; OpenAI Agents SDK docs were used as research, not claimed Codex execution.
+- Next: implement function/mode matrix and real Agent/Deep Research choices, then sidebar/project/chat UI; remove /landing/ after inbound-reference audit. Keep host/device actions for final runbook.

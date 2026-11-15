@@ -124,3 +124,7 @@ Studio — отдельное рабочее окно для составлен�
 - [WCAG 2.2: Target Size Minimum](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html) и [Focus Appearance](https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html) — нормативный минимум интерактивной цели и видимость фокуса.
 
 Чужой код не переносится напрямую: aLandi сохраняет статическую архитектуру и существующую модель состояния.
+
+## Owner override — 2026-11-15
+
+This document preserves earlier semantic findings, but current binding requirements are in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6. Prioritize the full function/mode compatibility matrix and distinct real Agent/Deep Research choices. Remove obsolete Twilio tools and Twilio web-search controls from Settings; eliminate duplicate controls and long explanatory text. Reorganize Settings by task and priority, keep web scope orthogonal to effort, make sound actions single-click and keep memory controls discreet. K.6 wins if this historical design conflicts.

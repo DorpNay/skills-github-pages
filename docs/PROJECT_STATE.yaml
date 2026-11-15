@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-13"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Current parent main 05b98dfe18886810cae0e14f950a2927e72d0337; 0 open PRs; issue #111 only. Active task LANDING-V2-2026-001 is in NOW.md. Model/runtime artifacts are staged in Actions, not installed."
+    status: "Active task LANDING-V2-2026-001; detailed owner acceptance is K.6. Parent main 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; 0 open PRs; issue #111 only. Automatic Pages deployment is authorized for this task; root app is canonical and /landing/ is to be removed."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Do not select a historical PR or registry row by default; create a PR only if the owner changes the current main-only policy. Never merge/deploy without explicit authorization and exact-head checks."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 05b98dfe18886810cae0e14f950a2927e72d0337; 0 open PRs; issue #111 only. Provenance #43623253304 PASS, Graphify #43623253242 PASS and Pages #43623253308 SUCCESS. Freshness #43623253330 failed on a missing test import (20 passed, 1 error); import corrected in this atomic checkpoint. Quality #43623253249 Ruff gate failed on the same import; rerun after correction."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; 0 open PRs; issue #111 only. Gateway #43696995842 PASS, Quality #43696995891 SUCCESS 7/7, Graphify #43696995875 SUCCESS and Pages #43696995516 SUCCESS on exact parent SHA."
     branch: "main"
-    base_main: "05b98dfe18886810cae0e14f950a2927e72d0337"
+    base_main: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact parent main 05b98dfe18886810cae0e14f950a2927e72d0337: Provenance #43623253304 PASS; Graphify #43623253242 PASS; Pages #43623253308 SUCCESS. Freshness #43623253330 failed due missing helper import (fixed here); Quality #43623253249 Ruff gate failed on same issue. Gateway #43621379836 PASS on previous parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9 (Python 3.12/13/14)."
+    exact_head_checks: "Exact parent main 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a: Gateway #43696995842 PASS (Python 3.12/13/14); Quality #43696995891 SUCCESS 7/7 incl. Chromium; Graphify #43696995875 SUCCESS; Pages #43696995516 SUCCESS. Freshness is triggered by this atomic state refresh."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Verify exact-head Freshness and Quality on this correction; then implement real model-backed AgentRun. Do not use historical PR records as a task queue."
+    next: "After this state refresh passes exact-head Freshness, implement the owner-priority mode/function matrix and distinct Agent/Deep Research choices; then rebuild sidebar/project/chat flows and unified settings/UI."
 
 
 
@@ -46,7 +46,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-14-OWNER-15-POINT-RESUME-AND-FRESHNESS-001"
+  last_volley: "V-2026-11-15-LANDING-V2-OWNER-REQUIREMENTS-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -298,21 +298,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "05b98dfe18886810cae0e14f950a2927e72d0337"
-  last_main_action: "Atomic NOW/state refresh at 05b98dfe18886810cae0e14f950a2927e72d0337 exposed a missing helper import in the new freshness test; corrected in this commit. Provenance #43623253304 PASS, Graphify #43623253242 PASS, Pages #43623253308 SUCCESS."
-  last_functional_checkpoint: "8e4edd83d50e6872852e7de8090934fbf6ae5f24"
-  main_quality: "Quality #43623253249 on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337: Ruff gate FAILED due missing legacy_orientation_files test import (corrected here); other jobs still running at checkpoint."
-  main_freshness: "Freshness #43623253330 FAILED on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337: 20 tests passed, 1 NameError because legacy_orientation_files was not imported; corrected in this commit."
-  main_graphify: "Graphify #43623253242 PASS on exact SHA 05b98dfe18886810cae0e14f950a2927e72d0337."
-  main_gateway: "Lite Gateway Tests #43621379836 PASS on previous exact parent 101e57d5a5efdbb291e0667df9e25e5fadd7e1f9 across Python 3.12/13/14; no Gateway rerun on docs/test-only parent 05b98."
-  main_provenance: "Provenance #43623253304 PASS on exact parent 05b98dfe18886810cae0e14f950a2927e72d0337."
-  main_pages: "Pages #43623253308 SUCCESS on exact SHA 05b98dfe18886810cae0e14f950a2927e72d0337."
-  merged_prs: "185 model/runtime artifact pack; 184 Browser Local Coder workspace; 176 unique Coder research appendix ported directly to main."
+  verified_main: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
+  last_main_action: "Owner request OR-2026-11-15-005 captured verbatim; K.6 expands existing 15-point registry. Parent main checks: Gateway #43696995842 PASS, Quality #43696995891 SUCCESS 7/7 incl. Chromium, Graphify #43696995875 SUCCESS, Pages #43696995516 SUCCESS. Root and /landing/ both published this revision."
+  last_functional_checkpoint: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
+  main_quality: "Quality #43696995891 SUCCESS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; 7/7 jobs incl. Chromium."
+  main_freshness: "Not triggered on parent because state paths were unchanged. This atomic refresh changes all required state paths and must pass exact-head Freshness."
+  main_graphify: "Graphify #43696995875 SUCCESS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a."
+  main_gateway: "Lite Gateway Tests #43696995842 PASS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a across Python 3.12/13/14."
+  main_provenance: "No exact-head provenance run retrieved for parent 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; run if current changed paths trigger it."
+  main_pages: "Pages #43696995516 SUCCESS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; root and /landing/ returned matching revision. /landing/ is tracked and scheduled for removal by owner request."
+  merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
-  open_issues: "Issue #111 only; owner-controlled release gates."
+  open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
-  runtime_boundary: "External cache #43553056846: 6,054,444,756 bytes; Ollama #43418126506: 7,728,830,482 bytes; Python cache #43553056865: 80,105,944 bytes; OpenShell #43616944431 artifact #14122692509: 207,414,886 bytes, SHA-256 d99d484ec2465f713b91b93cc37bf18cd1ad73ebe90d48d5a10f55572a2a9543. All are verified Actions artifacts, not installed. Owner primary checkpoint excluded; target host/resources and RU/EN/TH device quality remain unverified."
-  next: "Verify exact-head Freshness and Quality after this correction. Then implement real model-backed AgentRun and status events; continue Deep Research, Skills, real Connectors, document/web/book conversion, RAG and voice. Install sandbox/models only after host facts."
+  runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
+  next: "Implement function/mode compatibility matrix and distinct Agent/Deep Research choices; then owner-defined sidebar/project/chat flows and unified settings/UI. Remove /landing/ after inbound-reference audit. Continue real Skills, Connectors, sandbox, Notebook, converters, RAG, voice and offline kit under K.5/K.6."
 
 
 v1_ui_finalization:
