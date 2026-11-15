@@ -41,7 +41,9 @@ The prior gateway baseline passed 37 tests and the deterministic six-layer smoke
 | EV-MEM-006 | Authenticated structured-memory API | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; routes, flags, store and API tests removed; retired paths now return 404. |
 | EV-MEM-007 | Browser-to-server project memory bridge | retired server-memory graph | **RETIRED BY OWNER 2026-11-07**; UI, actions and per-chat server-memory state removed. Browser-local project notes remain. |
 | EV-RAG-003 | Citations | gateway/tests/test_coder_packet.py | quote equals source[start:end], source SHA matches, malformed offsets rejected | CI pending |
-| EV-RAG-004 | Evidence ledger | gateway/tests/test_coder_packet.py | scope isolation, source/page/offset/hash retained | CI pending |
+| EV-RAG-004 | Evidence ledger | gateway/tests/test_coder_packet.py | scope isolation, source/page/offset/hash retained | CI pending exact-head recheck |
+| EV-RAG-005 | Scoped claim assessment records | gateway/tests/test_coder_packet.py + gateway/tests/test_app.py | same-scope source_quote IDs only; claim ID unique within run; assessment/relation consistency; deterministic retry; reviewer_mode=same-model only | CI pending exact-head |
+| EV-RAG-006 | Contradiction record integrity | gateway/tests/test_coder_packet.py + gateway/tests/test_app.py | claim IDs and text match same-run records; contradiction evidence is a subset of claim-linked source quotes; cross-scope/unknown references rejected; referenced records cannot be deleted | CI pending exact-head |
 | EV-TOOLS-002 | JSON Schema | gateway/tests/test_coder_packet.py | rejects invalid types, unknown keys, remote refs and oversized bodies | CI pending |
 | EV-TOOLS-001 | Read-only DAG | gateway/tests/test_coder_packet.py | cycles fail; read-only work bounded; mutation requires ticket | CI pending |
 | EV-SEC-001 | SSRF | gateway/tests/test_coder_packet.py | private/loopback/link-local/metadata IP and mixed DNS answer set rejected | CI pending |

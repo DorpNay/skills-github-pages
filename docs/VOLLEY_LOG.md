@@ -441,3 +441,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773; no Gateway source changes.
 - Next: exact-child Provenance/Freshness/Quality/Pages and published revision; only then resume Deep Research 2.0 implementation.
 
+
+
+## V-2026-11-16-DEEP-RESEARCH-CLAIM-LEDGER-001 — typed claim and contradiction evidence backend
+
+- Parent main `82378d2990bb8fddaf0f5223135519357dd8fa1d`; 0 open PRs; issue #111. Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium and release contract); Pages #43760139103 SUCCESS; Freshness #43760139562 PASS; Provenance #43760139586 PASS; public revision exact. Graphify #43759158498 PASS on code/test parent 2185; Gateway #43738728923 PASS on gateway-bearing parent 5773; no Gateway changes on parent 82378.
+- This implementation adds typed `claim` and `contradiction` records to the existing SQLite EvidenceLedger (no migration), authenticated write routes, deterministic idempotent IDs, same-scope source quote checks, claim-ID uniqueness within a run, exact claim-text and linked-evidence validation, same-model-only reviewer mode, and HTTP 409 deletion protection for referenced records.
+- New unit/API gates: EV-RAG-005/006. Exact-head Gateway/Quality/Freshness/Provenance/Pages and public revision pending on the implementation commit.
+- Exa Search/Contents and Firecrawl Search/Scrape official references were revalidated from the existing INTEL inventory (490 unique URLs); no new URL rows, provider keys, paid calls, or runtime adapters.
+- Next: connect Research Trace to the new endpoints with source excerpts, structured same-model claim review, contradiction rendering and explicit-save persistence; then provider adapters and resumable run state.
+

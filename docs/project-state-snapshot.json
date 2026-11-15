@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "005ca06d0c44dc674cf9d1e65fa2a351ca1665be",
-    "main_commit_subject": "chore(state): checkpoint verified Chromium repair",
-    "main_commit_date": "2026-11-15T20:43:03Z",
+    "main_sha": "82378d2990bb8fddaf0f5223135519357dd8fa1d",
+    "main_commit_subject": "fix(state): validate checkpoint YAML and refresh provenance",
+    "main_commit_date": "2026-11-15T20:48:33Z",
     "last_functional_checkpoint_sha": "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3",
     "last_functional_milestone": "AgentRun observer ownership and budget_exhausted terminal handling passed exact-head Quality on 4514f69. The test-only child added RED contracts for scoped EvidenceLedger persistence; this implementation child wires the existing ledger into authenticated Gateway routes and explicit Research Trace save. Exact checks pending.",
-    "main_quality_run": 43759639759,
-    "main_pages_deployment_run": 43759638725,
+    "main_quality_run": 43760139648,
+    "main_pages_deployment_run": 43760139103,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -182,8 +182,8 @@
         "checks": "Exact-head Quality #43402260210, Gateway #43402260215, Graphify #43402260236, Freshness #43402260242, Provenance #43402260337 and Dead Code #43402260315 passed; model/runtime manifests and acquisition workflows merged."
       }
     ],
-    "main_provenance_run": 43759639668,
-    "main_freshness_run": 43759639581,
+    "main_provenance_run": 43760139586,
+    "main_freshness_run": 43760139562,
     "main_graphify_run": 43759158498,
     "owner_task": "OR-2026-11-15-012",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
@@ -219,10 +219,10 @@
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
     "main_quality_status": "SUCCESS: 133/133 local Chromium; 1/1 published-site Chromium; release contract passed on exact parent.",
-    "main_pages_status": "SUCCESS: canonical and cache-busted published client report alandi-build-revision 005ca06d0c44dc674cf9d1e65fa2a351ca1665be.",
-    "main_freshness_status": "SUCCESS on exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be.",
-    "main_provenance_status": "FAILED: three unclosed quoted YAML scalars in current_checkpoint (main_quality, main_graphify, main_pages); corrected in this child.",
-    "main_graphify_status": "SUCCESS on exact code/test parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.",
+    "main_pages_status": "SUCCESS: canonical and cache-busted published client report alandi-build-revision 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+    "main_freshness_status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+    "main_provenance_status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+    "main_graphify_status": "SUCCESS on code/test parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -247,7 +247,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-16-CHROMIUM-133-PASS-YAML-CORRECTION",
+    "last_volley": "V-2026-11-16-DEEP-RESEARCH-CLAIM-LEDGER-001",
     "owner_priority_task": "LANDING-V2-2026-001",
     "owner_priority_summary": "LANDING-V2-2026-001 / Section K in the existing addendum. Required: owner-designed UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real AgentRun and live status; mandatory local-file Coder workspace and desired GitHub repository access; installed Whisper/ASR, TTS, VAD/audio with target-device RU/EN/TH tests; full RAG; safe document/book/web/image parsing, OCR and converters; mode-combination tests; lean conditional model routing; cache, observability and N₂O in main; complete tested VPS runbook. Current model/runtime/database and weight selection is an evidence task, not yet frozen.",
     "main_external_acquisition_run": 43420046411,
@@ -257,12 +257,12 @@
     "python_runtime_cache_bytes": 81549321,
     "publication": {
       "root_url": "https://dorpnay.github.io/skills-github-pages/",
-      "root_revision": "005ca06d0c44dc674cf9d1e65fa2a351ca1665be",
-      "pages_run": 43759638725,
-      "revision_verification": "Pages #43759638725 SUCCESS; canonical and cache-busted client meta matched exact parent SHA 005ca06d0c44dc674cf9d1e65fa2a351ca1665be."
+      "root_revision": "82378d2990bb8fddaf0f5223135519357dd8fa1d",
+      "pages_run": 43760139103,
+      "revision_verification": "Pages #43760139103 SUCCESS; canonical and cache-busted client meta matched exact parent SHA 82378d2990bb8fddaf0f5223135519357dd8fa1d."
     },
     "owner_request": "OR-2026-11-16-001",
-    "main_gateway_status": "No Gateway workflow triggered on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be (no gateway files changed); last relevant #43738728923 PASS on 5773."
+    "main_gateway_status": "No Gateway workflow triggered on 82378 (no Gateway files changed); last relevant #43738728923 PASS on 5773."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -290,7 +290,7 @@
     "main_quality_run": 43733527394,
     "owner_request": "OR-2026-11-15-014"
   },
-  "last_volley": "V-2026-11-16-CHROMIUM-133-PASS-YAML-CORRECTION",
+  "last_volley": "V-2026-11-16-DEEP-RESEARCH-CLAIM-LEDGER-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -328,7 +328,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "005ca06d0c44dc674cf9d1e65fa2a351ca1665be",
+    "checkpoint_parent_sha": "82378d2990bb8fddaf0f5223135519357dd8fa1d",
     "merged_prs": [
       184,
       185
@@ -365,46 +365,52 @@
       "Exact parent 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4: AgentRun observer ownership and budget_exhausted terminal handling implemented; Quality #43734885113, Graphify #43734885253, Provenance #43734885239 and Pages #43734884518 passed. Freshness #43734885156 passed 21/21 tests and exposed one incorrect documentation-only interpretation flag, corrected in this state refresh. UI source review and project-filter/active-chat-header E2E regression are included.",
       "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. Quality #43735565023 had 130 Chromium passes and one strict-mode selector failure in the new project-context regression; narrowed locator to .chat-row in this child.",
       "Test-first parent be7337cbc5e839747b3fe7377ac5a9a27a35a24b: Gateway #43737581208 failed the intentionally missing EvidenceLedger routes; Freshness #43737581194 found the expected stale snapshot; Graphify #43737581219 and Pages #43737580201 passed. This child implements the contract and refreshes the checkpoint atomically.",
-      "Exact parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb: Gateway #43738527999 had one outdated capabilities fixture failure while new EvidenceLedger API tests passed; Freshness #43738528040 SUCCESS; Provenance #43738528019 failed on stale YAML next-list residue; Graphify #43738528011 and Pages #43738527399 SUCCESS. This child fixes both issues."
+      "Exact parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb: Gateway #43738527999 had one outdated capabilities fixture failure while new EvidenceLedger API tests passed; Freshness #43738528040 SUCCESS; Provenance #43738528019 failed on stale YAML next-list residue; Graphify #43738528011 and Pages #43738527399 SUCCESS. This child fixes both issues.",
+      "Exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d: Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium); Pages #43760139103, Freshness #43760139562 and Provenance #43760139586 PASS; public revision exact."
     ],
     "freshness": {
-      "run": 43759639581,
-      "status": "SUCCESS on exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be"
+      "run": 43760139562,
+      "status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d"
     },
     "next": [
-      "Corrected direct state refresh based on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be; verify exact-child Provenance, Freshness, Quality, Pages and public revision.",
-      "After all gates pass, implement bounded claim-to-evidence and contradiction records with explicit evidence IDs, scope isolation and honest same-model reviewer labeling."
+      "Verify exact-head Gateway, Quality, Freshness, Provenance, Pages and public revision for the typed claim/contradiction backend.",
+      "Connect Research Trace to the new APIs: pass captured source excerpts to the same-model critic, validate/render structured claims and contradictions, and persist only on explicit save.",
+      "After UI integration, implement Exa/Firecrawl provider adapters and resumable research run state; do not claim independent verification until a separate reviewer runtime exists."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
       "current_upstream": "FastAPI 0.163.0 (2026-11-14); Pydantic 2.14.3 (2026-11-05); pypdf 7.1.0 (2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8.",
       "decision": "FastAPI 0.163.0 held until 2026-11-21 by seven-day cooldown. Pydantic 2.14.3 is eligible for focused lock refresh + Gateway/document matrix. pypdf 7.1.0 already pinned. No dependency changes yet."
+    },
+    "provenance": {
+      "run": 43760139586,
+      "status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d"
     }
   },
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
   "owner_task": "LANDING-V2-2026-001: finish the existing 15-point programme; current owner prompts and next step are in NOW.md. No active PR; issue #111 is owner/environment gated.",
   "main_gateway_run": 43738728923,
-  "main_quality_run": 43759639759,
-  "main_pages_deployment_run": 43759638725,
-  "main_freshness_run": 43759639581,
-  "main_provenance_run": 43759639668,
+  "main_quality_run": 43760139648,
+  "main_pages_deployment_run": 43760139103,
+  "main_freshness_run": 43760139562,
+  "main_provenance_run": 43760139586,
   "main_graphify_run": 43759158498,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
   "main_quality_status": "SUCCESS: 133/133 local Chromium; 1/1 published-site Chromium; release contract passed on exact parent.",
-  "main_pages_status": "SUCCESS: canonical and cache-busted published client report alandi-build-revision 005ca06d0c44dc674cf9d1e65fa2a351ca1665be.",
-  "main_freshness_status": "SUCCESS on exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be.",
-  "main_provenance_status": "FAILED on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be because three quoted YAML scalars were missing closing quotes; corrected in this child.",
-  "main_graphify_status": "SUCCESS on exact code/test parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.",
-  "main_gateway_status": "No Gateway workflow triggered on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be (no gateway files changed); last relevant #43738728923 PASS on 5773.",
+  "main_pages_status": "SUCCESS: canonical and cache-busted published client report alandi-build-revision 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+  "main_freshness_status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+  "main_provenance_status": "SUCCESS on exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d.",
+  "main_graphify_status": "SUCCESS on code/test parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.",
+  "main_gateway_status": "No Gateway workflow triggered on 82378 (no Gateway files changed); last relevant #43738728923 PASS on 5773.",
   "owner_request": "OR-2026-11-16-001",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "005ca06d0c44dc674cf9d1e65fa2a351ca1665be",
-    "pages_run": 43759638725,
-    "revision_verification": "Pages #43759638725 SUCCESS; canonical and cache-busted client meta matched exact parent SHA 005ca06d0c44dc674cf9d1e65fa2a351ca1665be."
+    "root_revision": "82378d2990bb8fddaf0f5223135519357dd8fa1d",
+    "pages_run": 43760139103,
+    "revision_verification": "Pages #43760139103 SUCCESS; canonical and cache-busted client meta matched exact parent SHA 82378d2990bb8fddaf0f5223135519357dd8fa1d."
   }
 }

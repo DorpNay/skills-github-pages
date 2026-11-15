@@ -36,11 +36,11 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`; 0 open PRs; issue #111. Quality #43759639759 PASS: 133/133 local Chromium tests, 1/1 published-site Chromium test and release contract. Pages #43759638725 SUCCESS; Freshness #43759639581 SUCCESS.
-- Published canonical and cache-busted client report `alandi-build-revision=005ca06d0c44dc674cf9d1e65fa2a351ca1665be`.
-- Provenance #43759639668 FAILED only because three double-quoted `current_checkpoint` scalars (`main_quality`, `main_graphify`, `main_pages`) lacked closing quotes. This child corrects the YAML and refreshes all five checkpoint files. Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773; no relevant source changes.
-- All 14 original Chromium failures remain closed through test-only changes in `tests/e2e/app.spec.mjs`; no production behavior or dependencies changed.
-- Next: verify exact-child Provenance/Freshness/Quality/Pages and public revision; then continue Deep Research 2.0 claim-to-evidence/contradiction work.
+- Parent main `82378d2990bb8fddaf0f5223135519357dd8fa1d`; 0 open PRs; issue #111. Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium and release contract); Pages #43760139103 SUCCESS; Freshness #43760139562 PASS; Provenance #43760139586 PASS.
+- Published canonical and cache-busted client report `alandi-build-revision=82378d2990bb8fddaf0f5223135519357dd8fa1d`.
+- Graphify #43759158498 PASS on code/test parent 2185. Gateway #43738728923 PASS on gateway-bearing parent 5773; no Gateway code changed on 82378.
+- Current implementation slice adds typed claim/contradiction EvidenceLedger records and authenticated routes, deterministic idempotency, same-scope/run source linkage, same-model-only reviewer mode and deletion conflict protection. No schema migration or dependency. Exact-head CI pending.
+- Next: connect Research Trace to the new endpoints; pass captured source excerpts to the same-model critic, validate/render structured claims and contradictions, and persist only on explicit save. Provider adapters and resumable research runs remain open.
 
 ## Targeted UI source review — 2026-11-16
 

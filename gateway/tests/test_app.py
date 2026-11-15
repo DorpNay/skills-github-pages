@@ -814,6 +814,58 @@ def test_rag_evidence_api_records_exact_quote_deduplicates_and_isolates_scope(tm
     assert isolated.json()["evidence"] == []
 
 
+
+def test_rag_claim_and_contradiction_apis_are_scoped_idempotent_and_protect_sources(tmp_path):
+    config = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    first_source = _research_evidence_payload()
+    second_source = {**first_source, "source_id": "trace-evidence-1-S2",
+                     "source_uri": "https://example.test/research-evidence-2", "chunk_id": "S2"}
+    with client_for(config) as client:
+        assert client.post("/v1/rag/evidence/claims", json={}).status_code == 401
+        source_a = client.post("/v1/rag/evidence", headers=headers, json=first_source)
+        source_b = client.post("/v1/rag/evidence", headers=headers, json=second_source)
+        evidence_a, evidence_b = source_a.json()["evidence_id"], source_b.json()["evidence_id"]
+        common = {"scope": "conversation", "scope_id": "chat-evidence-1", "confidence": 0.9,
+                  "reviewer_mode": "same-model", "reviewer_model": "test-model", "run_id": "trace-evidence-1"}
+        claim_a_payload = {**common, "claim_id": "C1", "claim_text": "Source A reports 2025.",
+            "assessment": "supported", "evidence_ids": [evidence_a], "relations": {evidence_a: "supports"},
+            "rationale": "The exact excerpt supports the claim."}
+        claim_b_payload = {**common, "claim_id": "C2", "claim_text": "Source B reports 2026.",
+            "assessment": "supported", "evidence_ids": [evidence_b], "relations": {evidence_b: "supports"},
+            "rationale": "The exact excerpt supports the claim."}
+        claim_a = client.post("/v1/rag/evidence/claims", headers=headers, json=claim_a_payload)
+        claim_a_repeat = client.post("/v1/rag/evidence/claims", headers=headers, json=claim_a_payload)
+        claim_b = client.post("/v1/rag/evidence/claims", headers=headers, json=claim_b_payload)
+        contradiction_payload = {**common, "contradiction_id": "X1",
+            "claims": [{"claim_id": "C1", "text": claim_a_payload["claim_text"]},
+                       {"claim_id": "C2", "text": claim_b_payload["claim_text"]}],
+            "evidence_ids": [evidence_a, evidence_b], "kind": "temporal",
+            "explanation": "The sources report different years."}
+        contradiction = client.post("/v1/rag/evidence/contradictions", headers=headers, json=contradiction_payload)
+        contradiction_repeat = client.post("/v1/rag/evidence/contradictions", headers=headers, json=contradiction_payload)
+        wrong_scope = client.post("/v1/rag/evidence/claims", headers=headers,
+            json={**claim_a_payload, "scope_id": "another-chat"})
+        unknown_claim = client.post("/v1/rag/evidence/contradictions", headers=headers,
+            json={**contradiction_payload, "claims": [{"claim_id": "C1", "text": "A."},
+                                                       {"claim_id": "C99", "text": "Unknown."}]})
+        listing = client.get("/v1/rag/evidence", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+        blocked_delete = client.delete(f"/v1/rag/evidence/{evidence_a}", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+    assert source_a.status_code == source_b.status_code == 201
+    assert claim_a.status_code == claim_a_repeat.status_code == claim_b.status_code == 201
+    assert claim_a.json()["evidence_id"] == claim_a_repeat.json()["evidence_id"]
+    assert contradiction.status_code == contradiction_repeat.status_code == 201
+    assert contradiction.json()["evidence_id"] == contradiction_repeat.json()["evidence_id"]
+    assert wrong_scope.status_code == unknown_claim.status_code == 400
+    assert blocked_delete.status_code == 409
+    records = listing.json()["evidence"]
+    assert {item["evidence_kind"] for item in records} == {"source_quote", "claim", "contradiction"}
+    assert len(records) == 5
+
+
+
 def test_rag_evidence_api_rejects_query_urls_and_invalid_spans(tmp_path):
     config = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
     headers = {"Authorization": f"Bearer {API_KEY}"}

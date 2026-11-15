@@ -238,3 +238,21 @@
 - **Boundaries:** Keep the Quick/Thorough selector and web-search scope selector independently visible and authoritative. Deep Research must not silently change web-search scope, provider, permissions or data scope. Skills do not grant tools/data permissions. The agent-team size/scenario fields are a saved blueprint until a durable independent-agent runtime is implemented. Connector presence does not authorize external actions; each action uses least privilege, scoped approval and auditable outcomes. Research Studio remains retired; this menu is not its replacement modal.
 - **Acceptance:** RU/EN labels; four separate top-level entries; Agents and Skills open their existing configuration panels; Deep Research selects Thorough and closes without sending a user request; Connectors lists only registered providers with real status/scopes/actions and truthful empty/error states; no fake connected state; mobile layout remains overflow-free. Exact-head Quality/Chromium and permission-boundary tests required before merge.
 - **Rollback:** remove the four Functions menu entry points and their focused E2E tests without altering underlying per-chat workflow/profile state or connector registry data.
+
+
+## D-023 — Typed claim and contradiction records in the existing EvidenceLedger
+
+- **Date:** 2026-11-16
+- **Status:** PROPOSED — backend implementation is included in the current feature-gated change; exact-head CI pending; Research Trace integration remains a separate step.
+- **Problem:** exact source-quote capture is not sufficient to represent which claim an excerpt supports, contradicts or qualifies, nor to preserve a contradiction between claims.
+- **Evidence:** the existing `evidence_records` schema already permits `claim` and `contradiction` kinds; the Deep Research 2.0 plan requires retrievable source links and explicit contradictions. The current critic is a stage in the same selected model run, not an independent model.
+- **Decision:** reuse the existing SQLite `evidence_records` table without a migration. Add authenticated `POST /v1/rag/evidence/claims` and `POST /v1/rag/evidence/contradictions` operations. Claim records must reference source-quote IDs in the same scope; claim IDs are unique within a research run; contradiction records must match existing claim text and may reference only source evidence already linked to those claims. Use deterministic idempotent record IDs. Restrict `reviewer_mode` to `same-model` until a genuinely independent reviewer exists. Prevent deletion of source quotes or claims while derived records reference them (HTTP 409). Existing RAG enablement and API authentication remain authoritative.
+- **Alternatives:** new relational tables/migration; storing claims as ordinary source quotes; graph database; automatic semantic contradiction detection. Deferred because the current table supports typed records and the project has no measured need for another storage system.
+- **Assumptions:** source quotes are saved before claims; claim IDs are stable within one run; the existing Gateway scope and authentication contracts remain unchanged.
+- **Affected files:** `gateway/rag/evidence_ledger.py`, `gateway/app.py`, `gateway/tests/test_coder_packet.py`, `gateway/tests/test_app.py`.
+- **Risks:** reviewer assessments and confidence are model-generated and not calibrated; same-model review is not independent; SQLite remains a single-writer store; UI is not yet connected to the new endpoints.
+- **Acceptance:** unit/API tests prove scope isolation, exact source-quote linkage, status/relation consistency, claim-ID uniqueness, contradiction claim-text/evidence linkage, idempotent retry, authentication and deletion conflict behavior; exact-head Gateway/Quality/Provenance/Freshness pass.
+- **Kill criteria:** any cross-scope link, unknown source ID accepted, duplicate claim ID ambiguity, contradiction referencing unrelated evidence, or deletion that leaves a dangling reference.
+- **Rollback:** revert the implementation commit; keep `ALANDI_RAG_ENABLED=false`. No schema migration is required.
+- **Owner / merge SHA:** owner retains final acceptance; implementation commit SHA and CI evidence pending.
+

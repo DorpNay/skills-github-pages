@@ -975,9 +975,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             )
             app.state.rag_store.initialize()
             try:
-                from .rag.evidence_ledger import EvidenceLedger
+                from .rag.evidence_ledger import EvidenceLedger, EvidenceLedgerConflictError
             except ImportError:  # supports "uvicorn app:app" from the gateway directory
-                from rag.evidence_ledger import EvidenceLedger
+                from rag.evidence_ledger import EvidenceLedger, EvidenceLedgerConflictError
             app.state.evidence_ledger = EvidenceLedger(config.rag_path)
             app.state.evidence_ledger.initialize()
         if config.agent_runs_enabled:
@@ -1452,6 +1452,79 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         return JSONResponse({"status": "recorded", "evidence_id": evidence_id},
                             status_code=201, headers={"Cache-Control": "no-store"})
 
+
+    @app.post("/v1/rag/evidence/claims")
+    async def rag_add_claim_assessment(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = getattr(request.app.state, "evidence_ledger", None)
+        if store is None:
+            raise HTTPException(503, "RAG evidence ledger is disabled")
+        body = await read_limited_body(request, min(config.max_body_bytes, 128 * 1024))
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        required = {"scope", "scope_id", "claim_id", "claim_text", "assessment", "confidence",
+                    "evidence_ids", "relations", "rationale", "reviewer_mode", "run_id"}
+        optional = {"reviewer_model", "metadata"}
+        if not isinstance(payload, dict) or not required.issubset(payload) or set(payload) - required - optional:
+            raise HTTPException(400, "Expected a bounded scoped claim assessment with explicit evidence IDs")
+        try:
+            evidence_id = store.add_claim_assessment(
+                scope=payload["scope"], scope_id=payload["scope_id"], claim_id=payload["claim_id"],
+                claim_text=payload["claim_text"], assessment=payload["assessment"],
+                confidence=payload["confidence"], evidence_ids=payload["evidence_ids"],
+                relations=payload["relations"], rationale=payload["rationale"],
+                reviewer_mode=payload["reviewer_mode"], run_id=payload["run_id"],
+                reviewer_model=payload.get("reviewer_model"), metadata=payload.get("metadata"),
+            )
+        except EvidenceLedgerConflictError as exc:
+            raise HTTPException(409, str(exc)) from None
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG claim assessment write failed")
+            raise HTTPException(503, "RAG evidence ledger is unavailable") from None
+        return JSONResponse({"status": "recorded", "claim_id": payload["claim_id"], "evidence_id": evidence_id},
+                            status_code=201, headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/rag/evidence/contradictions")
+    async def rag_add_contradiction(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = getattr(request.app.state, "evidence_ledger", None)
+        if store is None:
+            raise HTTPException(503, "RAG evidence ledger is disabled")
+        body = await read_limited_body(request, min(config.max_body_bytes, 128 * 1024))
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        required = {"scope", "scope_id", "contradiction_id", "claims", "evidence_ids", "kind",
+                    "explanation", "confidence", "reviewer_mode", "run_id"}
+        optional = {"status", "reviewer_model", "metadata"}
+        if not isinstance(payload, dict) or not required.issubset(payload) or set(payload) - required - optional:
+            raise HTTPException(400, "Expected a bounded scoped contradiction record with linked claims and evidence IDs")
+        try:
+            evidence_id = store.add_contradiction_record(
+                scope=payload["scope"], scope_id=payload["scope_id"],
+                contradiction_id=payload["contradiction_id"], claims=payload["claims"],
+                evidence_ids=payload["evidence_ids"], kind=payload["kind"],
+                explanation=payload["explanation"], status=payload.get("status", "open"),
+                confidence=payload["confidence"], reviewer_mode=payload["reviewer_mode"],
+                run_id=payload["run_id"], reviewer_model=payload.get("reviewer_model"),
+                metadata=payload.get("metadata"),
+            )
+        except EvidenceLedgerConflictError as exc:
+            raise HTTPException(409, str(exc)) from None
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG contradiction write failed")
+            raise HTTPException(503, "RAG evidence ledger is unavailable") from None
+        return JSONResponse({"status": "recorded", "contradiction_id": payload["contradiction_id"],
+                             "evidence_id": evidence_id}, status_code=201,
+                            headers={"Cache-Control": "no-store"})
+
     @app.get("/v1/rag/evidence")
     async def rag_list_evidence(request: Request, scope: str, scope_id: str, limit: int = Query(100, ge=1, le=500),
                                 authorization: str | None = Header(default=None)) -> JSONResponse:
@@ -1478,6 +1551,8 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "RAG evidence ledger is disabled")
         try:
             deleted = store.delete_evidence(evidence_id=evidence_id, scope=scope, scope_id=scope_id)
+        except EvidenceLedgerConflictError as exc:
+            raise HTTPException(409, str(exc)) from None
         except (ValueError, TypeError) as exc:
             raise HTTPException(400, str(exc)) from None
         except sqlite3.Error:

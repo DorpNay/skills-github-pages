@@ -874,10 +874,20 @@ The live TinyFish audit confirmed persistent project-create and new-chat rows, n
 ### Findings and decision
 
 - Current browser research uses a four-stage same-model pipeline and stores the trace in localStorage; this is a structured workflow, not independent multi-agent research.
-- gateway/rag/evidence_ledger.py already hashes source text, stores exact Unicode offsets/quote snippets and scopes evidence to conversation/project/global. The class is not yet wired to authenticated Gateway routes.
+- gateway/rag/evidence_ledger.py hashes source text, stores exact Unicode offsets/quote snippets and scopes evidence to conversation/project/global. Authenticated POST/GET/DELETE quote routes are wired; the current backend slice adds typed claim/contradiction records and authenticated write routes. Research Trace UI integration is still pending.
 - rag_enabled is false by default. Evidence persistence must be explicit and user-triggered; a configured remote Gateway must never receive excerpts silently.
 - Exa and Firecrawl are complementary adapters (search/metadata vs extraction/interaction), not reasons to add multiple overlapping search libraries. API keys, cost accounting, remote-processing consent and rate limits belong in Gateway configuration.
 - Do not use FastAPI BackgroundTasks for resumable research. Reuse existing persistent AgentRun/SQLite patterns or a clearly bounded research-specific state store; do not create a second checkpoint system without demonstrated need.
 - A hash and exact quote span prove capture integrity, not semantic entailment between a claim and the source. Claim-to-citation support, contradictions and confidence require separate structured records and validation.
 
 Decision: reuse the existing SQLite EvidenceLedger, add authenticated scoped API operations and explicit trace persistence first. Defer LangGraph/Deep Agents SDK adoption pending measured need, compatibility/license review and an adapter comparison. No dependency, paid service, model or host setting changed.
+
+
+## Deep Research 2.0 — provider and evidence-contract revalidation (2026-11-16)
+
+- The official Exa Search and Contents references and Firecrawl Search and Scrape references are already present in this register; the existing inventory contains 490 unique URLs. No duplicate source rows or new URL inventory were needed.
+- Exa remains the discovery/metadata adapter candidate; its Contents API is a separate explicit-URL extraction step. Firecrawl Search can combine discovery with scraping, while Scrape is a single-page extraction operation; browser interaction is a distinct endpoint.
+- These APIs are complementary, not a reason to add overlapping search libraries. Runtime adapters, provider credentials, per-provider budgets, remote-processing consent, rate limits, timeouts, retries and provenance are not implemented by this evidence-ledger backend change.
+- No provider keys were read, no paid provider requests were made, and no provider was marked configured or live. The Research Trace critic remains same-model until a separate verifier runtime is implemented.
+- UI design sources (Apple HIG, W3C APG/WCAG, GitHub Primer, Microsoft Fluent and Singapore Government Design System) remain in the existing source inventory; no new UI dependency was adopted.
+

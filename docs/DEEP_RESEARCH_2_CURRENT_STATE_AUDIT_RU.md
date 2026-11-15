@@ -139,3 +139,18 @@
 **VERIFIED BY TEST CONTRACT (pending exact-head CI):** authenticated writes, exact quote/hash, Unicode offsets, deduplication, scope isolation, scoped deletion, disabled capability, and no automatic upload.
 
 **NOT IMPLEMENTED YET:** semantic claim-to-citation entailment, contradiction ledger and resolution, durable/resumable research-run state, independent multi-provider search/fetch adapters, budget/cost accounting across providers, and Notebook/report export. Exact quote integrity is not semantic support verification.
+
+
+## 8. Claim and contradiction persistence — 2026-11-16
+
+**Backend maturity:** IMPLEMENTED IN THIS CHANGE / EXACT-HEAD CI PENDING.
+
+- Reuses the existing `evidence_records` table; no new table or migration.
+- Adds typed `claim` and `contradiction` records with deterministic idempotent IDs.
+- Enforces same-scope source-quote references, claim-ID uniqueness within a research run, exact claim-text matching and contradiction evidence restricted to the claims' linked source quotes.
+- Enforces `reviewer_mode=same-model`; this is not independent verification and model confidence is not calibrated.
+- Prevents deleting source quotes or claims while derived records reference them.
+- New authenticated Gateway routes remain behind the existing RAG-enabled gate; RAG remains disabled by default.
+
+**Still open:** Research Trace has not yet passed source excerpts into the critic, structured claim review is not yet produced or rendered, and the UI does not yet persist claims/contradictions through these endpoints. Exa/Firecrawl runtime adapters, durable resumable research runs and Notebook/report export remain unimplemented. The existing same-model pipeline must not be described as an independent agent team.
+

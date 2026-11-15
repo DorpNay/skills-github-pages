@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from gateway.rag.citations import CitationManager
-from gateway.rag.evidence_ledger import EvidenceLedger, EvidenceLedgerError
+from gateway.rag.evidence_ledger import EvidenceLedger, EvidenceLedgerError, EvidenceLedgerConflictError
 from gateway.security.approval_gates import ApprovalError, ApprovalRegistry, canonical_action_digest
 from gateway.security.ssrf_protection import SSRFRejected, validate_resolved_destination
 from gateway.tools.dag_engine import DAGError, RegisteredTool, ToolDAG, ToolNode
@@ -225,6 +225,108 @@ def test_evidence_ledger_stores_scoped_provenance_and_exact_quote(tmp_path):
         ledger.add_quote(scope="global", scope_id="wrong", source_id="doc-2",
             source_uri="https://example.test/source", source_text=text, chunk_id="c",
             start_offset=0, end_offset=3)
+
+
+def test_evidence_ledger_records_scoped_claims_and_contradictions_idempotently(tmp_path):
+    ledger = EvidenceLedger(tmp_path / "evidence.sqlite3")
+    ledger.initialize()
+    source_text = "Source A says the service launched in 2025."
+    start = source_text.index("launched in 2025")
+    source_a = ledger.add_quote(scope="conversation", scope_id="chat-1", source_id="s1",
+        source_uri="https://example.test/a", source_text=source_text, chunk_id="S1",
+        start_offset=start, end_offset=len(source_text), claim_text="Source A launch date.")
+    source_text_b = "Source B says the service launched in 2026."
+    start_b = source_text_b.index("launched in 2026")
+    source_b = ledger.add_quote(scope="conversation", scope_id="chat-1", source_id="s2",
+        source_uri="https://example.test/b", source_text=source_text_b, chunk_id="S2",
+        start_offset=start_b, end_offset=len(source_text_b), claim_text="Source B launch date.")
+    source_text_c = "Source C is unrelated context."
+    source_c = ledger.add_quote(scope="conversation", scope_id="chat-1", source_id="s3",
+        source_uri="https://example.test/c", source_text=source_text_c, chunk_id="S3",
+        start_offset=0, end_offset=len(source_text_c))
+
+    common = {"scope": "conversation", "scope_id": "chat-1", "confidence": 0.9,
+              "reviewer_mode": "same-model", "reviewer_model": "test-model",
+              "run_id": "trace-1", "metadata": {"trace_id": "trace-1"}}
+    claim_a_text = "Source A reports launch in 2025."
+    claim_b_text = "Source B reports launch in 2026."
+    claim_a = ledger.add_claim_assessment(**common, claim_id="C1",
+        claim_text=claim_a_text, assessment="supported",
+        evidence_ids=[source_a], relations={source_a: "supports"}, rationale="Exact source quote supports the claim.")
+    assert ledger.add_claim_assessment(**common, claim_id="C1",
+        claim_text=claim_a_text, assessment="supported",
+        evidence_ids=[source_a], relations={source_a: "supports"}, rationale="Exact source quote supports the claim.") == claim_a
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_claim_assessment(**common, claim_id="C1", claim_text="Changed claim text.",
+            assessment="supported", evidence_ids=[source_a], relations={source_a: "supports"},
+            rationale="Changed payload.")
+    claim_b = ledger.add_claim_assessment(**common, claim_id="C2",
+        claim_text=claim_b_text, assessment="supported",
+        evidence_ids=[source_b], relations={source_b: "supports"}, rationale="Exact source quote supports the claim.")
+    contradiction_args = {"scope": "conversation", "scope_id": "chat-1", "confidence": 0.9,
+        "reviewer_mode": "same-model", "reviewer_model": "test-model", "run_id": "trace-1"}
+    contradiction = ledger.add_contradiction_record(**contradiction_args, contradiction_id="X1",
+        claims=[{"claim_id": "C1", "text": claim_a_text}, {"claim_id": "C2", "text": claim_b_text}],
+        evidence_ids=[source_a, source_b], kind="temporal",
+        explanation="The sources report different launch years.", status="open")
+    assert ledger.add_contradiction_record(**contradiction_args, contradiction_id="X1",
+        claims=[{"claim_id": "C1", "text": claim_a_text}, {"claim_id": "C2", "text": claim_b_text}],
+        evidence_ids=[source_a, source_b], kind="temporal",
+        explanation="The sources report different launch years.", status="open") == contradiction
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_contradiction_record(**contradiction_args, contradiction_id="X2",
+            claims=[{"claim_id": "C1", "text": "Forged claim text."}, {"claim_id": "C2", "text": claim_b_text}],
+            evidence_ids=[source_a, source_b], kind="temporal", explanation="Mismatch.", status="open")
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_contradiction_record(**contradiction_args, contradiction_id="X3",
+            claims=[{"claim_id": "C1", "text": claim_a_text}, {"claim_id": "C2", "text": claim_b_text}],
+            evidence_ids=[source_a, source_c], kind="temporal", explanation="Unlinked source.", status="open")
+
+    records = ledger.list_evidence(scope="conversation", scope_id="chat-1")
+    by_id = {item["evidence_id"]: item for item in records}
+    assert by_id[claim_a]["evidence_kind"] == "claim"
+    assert by_id[claim_a]["metadata"]["assessment"] == "supported"
+    assert by_id[claim_a]["metadata"]["reviewer_mode"] == "same-model"
+    assert by_id[contradiction]["evidence_kind"] == "contradiction"
+    assert by_id[contradiction]["metadata"]["claim_ids"] == ["C1", "C2"]
+    assert by_id[claim_b]["metadata"]["run_id"] == "trace-1"
+    with pytest.raises(EvidenceLedgerConflictError):
+        ledger.delete_evidence(evidence_id=source_a, scope="conversation", scope_id="chat-1")
+    with pytest.raises(EvidenceLedgerConflictError):
+        ledger.delete_evidence(evidence_id=claim_a, scope="conversation", scope_id="chat-1")
+    assert ledger.delete_evidence(evidence_id=contradiction, scope="conversation", scope_id="chat-1")
+    assert ledger.delete_evidence(evidence_id=claim_a, scope="conversation", scope_id="chat-1")
+    assert ledger.delete_evidence(evidence_id=source_a, scope="conversation", scope_id="chat-1")
+
+
+def test_evidence_ledger_rejects_cross_scope_or_unverified_claim_links(tmp_path):
+    ledger = EvidenceLedger(tmp_path / "evidence.sqlite3")
+    ledger.initialize()
+    source_text = "Exact evidence sentence."
+    source_id = ledger.add_quote(scope="conversation", scope_id="chat-a", source_id="s1",
+        source_uri="https://example.test/source", source_text=source_text, chunk_id="S1",
+        start_offset=0, end_offset=len(source_text))
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_claim_assessment(scope="conversation", scope_id="chat-b", claim_id="C1",
+            claim_text="A claim.", assessment="supported", confidence=0.8,
+            evidence_ids=[source_id], relations={source_id: "supports"}, rationale="Reason.",
+            reviewer_mode="same-model", run_id="trace-b")
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_claim_assessment(scope="conversation", scope_id="chat-a", claim_id="C1",
+            claim_text="A claim.", assessment="supported", confidence=0.8,
+            evidence_ids=[source_id], relations={source_id: "context"}, rationale="Reason.",
+            reviewer_mode="independent", run_id="trace-a")
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_claim_assessment(scope="conversation", scope_id="chat-a", claim_id="C1",
+            claim_text="A claim.", assessment="supported", confidence=0.8,
+            evidence_ids=[source_id], relations={source_id: "context"}, rationale="Reason.",
+            reviewer_mode="same-model", run_id="trace-a")
+    with pytest.raises(EvidenceLedgerError):
+        ledger.add_claim_assessment(scope="conversation", scope_id="chat-a", claim_id="C2",
+            claim_text="A claim.", assessment="supported", confidence=10 ** 1000,
+            evidence_ids=[source_id], relations={source_id: "supports"}, rationale="Reason.",
+            reviewer_mode="same-model", run_id="trace-a")
+
 
 
 @pytest.mark.asyncio
