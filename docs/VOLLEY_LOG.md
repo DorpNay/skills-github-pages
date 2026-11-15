@@ -343,3 +343,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - UI acceptance gaps remain: create-project action opens `projectSettingsModal`; no dedicated `projectCreateModal`; no `chatScopeBackButton`; `renderChatList()` filters only unassigned chats; obsolete `searchToolsSettings`/Tavily field remain.
 - This record is followed by one atomic direct-main refresh of `NOW.md`, `AGENTS.md`, `docs/project-state-snapshot.json`, `docs/PROJECT_STATE.yaml` and this log. No product source changed in this refresh.
 - Next: verify exact-head Freshness and Quality on the refresh commit; then implement dedicated project creation and project-scoped Chats in TDD slices. Keep `/landing/` until all inbound source references are audited.
+
+
+## V-2026-11-15-LANDING-V2-PAGES-STUDIOS-001 — Pages continuity and studio route decision gate
+
+- Owner request OR-2026-11-15-007 is archived verbatim in NOW.md. Preserve the automatic GitHub Pages publication of the canonical root application; evaluate separate Notebook/Research/Workspace surfaces only where they improve focus without fragmenting the product.
+- Exact main SHA: ee925bfa2e093e1077b9a859f83ad134ea2fecfc; 0 open PRs; issue #111 remains open.
+- Exact-SHA evidence: Pages #43718883625 SUCCESS; Graphify #43718884625 SUCCESS; Quality #43718884394 IN_PROGRESS, Chromium pending. Public root page metadata reports the exact revision. Public /landing/ returns 404; tracked landing/index.html is absent.
+- Source inventory: INTEL.md consolidates 257 distinct URLs. The count is a curated inventory snapshot, not a claim that every source was rechecked in this step. This step rechecked official GitHub Pages custom-domain guidance and MDN same-origin/IndexedDB/Service Worker behavior.
+- Architecture implication: a same-origin path (e.g. /notebook/) can share origin-scoped browser storage with root code when the data contract is deliberately shared; a custom subdomain is a separate origin and needs explicit API/message/sync boundaries. A subdomain also needs an owner-controlled domain and DNS. Do not confuse a path route with a DNS subdomain.
+- No product code changed. Local browser DOM/interaction audit on this exact SHA remains pending; Quality Chromium is still running. Continue K.5 in the existing registry; no parallel backlog.

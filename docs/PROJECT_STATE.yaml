@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; detailed owner acceptance is K.6 plus OR-2026-11-15-006 in K.6.8. Parent main 5b6d4d54a2dc9b81ae5a656ce357c26441c8d52f; 0 open PRs; issue #111 only. Owner authorizes direct main commits/merges and automatic Pages publication for this task; root app is canonical and /landing/ is to be removed after inbound-reference audit."
+    status: "Active task LANDING-V2-2026-001; owner acceptance is K.6 plus OR-2026-11-15-006 and OR-2026-11-15-007. Live main ee925bfa2e093e1077b9a859f83ad134ea2fecfc; 0 open PRs; issue #111 open. Pages #43718883625 SUCCESS and Graphify #43718884625 SUCCESS; Quality #43718884394 still in progress. Root app is canonical; /landing/ source is absent and public route returns 404. Same-origin studio routes are an architecture candidate, not yet implemented.
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,9 +16,9 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main e0e90b4b038127ef0dc22c768a9b749f53ad7652; 0 open PRs; issue #111 open. Quality #43714877561 was in progress; Freshness #43714877492 failed on stale metadata; Pages #43714877166 succeeded on exact parent SHA."
+    status: "NOW.md is the sole first-read checkpoint. Parent main ee925bfa2e093e1077b9a859f83ad134ea2fecfc; 0 open PRs; issue #111 open. Pages #43718883625 SUCCESS; Graphify #43718884625 SUCCESS; Quality #43718884394 IN_PROGRESS with Chromium E2E pending."
     branch: "main"
-    base_main: "e0e90b4b038127ef0dc22c768a9b749f53ad7652"
+    base_main: "ee925bfa2e093e1077b9a859f83ad134ea2fecfc"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
