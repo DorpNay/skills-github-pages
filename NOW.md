@@ -7,23 +7,23 @@
 ## CURRENT
 
 - **Task ID:** LANDING-V2-2026-001.
-- **Owner task received:** 2026-11-15. Requests OR-2026-11-15-003, OR-2026-11-15-004, OR-2026-11-15-005, execution authorization OR-2026-11-15-006, Pages/studio architecture OR-2026-11-15-007, continuity/source-coverage OR-2026-11-15-008, execution continuation OR-2026-11-15-009, long-cycle continuation OR-2026-11-15-010 and exact-text correction OR-2026-11-15-011 are archived verbatim below.
+- **Owner task received:** 2026-11-15. Requests OR-2026-11-15-003 through OR-2026-11-15-011, plus continuation OR-2026-11-15-012, are archived verbatim below.
 - **Scope:** finish the existing 15-point programme in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K/K.5. K.6 in that same file is the binding detailed owner acceptance contract; no parallel backlog. The largest/owner-supplied primary model remains excluded.
 - **Authorization:** owner explicitly authorizes direct commits to main, connected tools/plugins/skills needed for this task, and automatic GitHub Pages deployment on every main push. This is task-scoped; it does not authorize VPS/host deployment, paid provisioning, secret handling, destructive data operations, force-push, rebase/reset or history rewriting.
 - **Canonical tracker:** one 15-row K.5 status table plus K.6 detailed acceptance contract in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md.
-- **Live parent checkpoint:** main e5051690aa5e6d4e6cd2e59ca04bed4478761fda; Open PRs: none; Open issues: #111. Pages #43728928234 SUCCESS and public root revision exact e5051690; Freshness #43728929559 SUCCESS; Provenance #43728929628 FAILED because two PROJECT_STATE YAML strings lacked closing quotes; Graphify #43728929688 SUCCESS; Quality #43728929561 still in progress at checkpoint capture.
-- **Public publication:** Pages #43728928234 SUCCESS; live root serves exact revision e5051690aa5e6d4e6cd2e59ca04bed4478761fda (HTTP 200); `/landing/` and `assets/css/landing.css` return HTTP 404.
+- **Live parent checkpoint:** main 90fef0cdb2a50a3561f1145dbf1800345145480f; Open PRs: none; Open issues: #111. Pages run #43729961062 SUCCESS, Graphify #43729961270 SUCCESS; Quality #43729961271 still running (Chromium in progress). Freshness/Provenance exact-head checks are not yet observed on this SHA.
+- **Public publication:** Pages #43729961062 SUCCESS for 90fef0cdb2a50a3561f1145dbf1800345145480f; deployed root HTML revision has not yet been rechecked against this SHA. Prior exact-root evidence for e5051690 is historical only. `/landing/` removal/public-root acceptance remains tracked in K.6.
 - **Handoff:** OLEDUE.md, ORIENTER.md and legacy FILE_ORIENTER files are absent. NOW.md is the sole session/task checkpoint.
-- **K.5 status:** the capability-gated AgentRun panel is published and checks authenticated `/v1/capabilities`; it loads profiles/models only when the host advertises AgentRun enabled, validates the single-worker/no-tools/no-filesystem/no-network contract, and keeps Start disabled pending Task 2. Host feature flag remains false; no task execution UI, POST, poll, cancel or transcript access yet. The exact parent e505 commit has Freshness/Graphify/Pages success, Provenance YAML parse failure, Quality in progress.
+- **K.5 status:** Four-panel Functions UI exists. AgentRun panel fetches authenticated capabilities/profiles and reports the single-worker/no-tools/no-filesystem/no-network contract. Task 2 E2E acceptance is now present for POST/idempotency, status/events/output escaping, DELETE cancellation and bounded errors; current UI still hard-disables Start, so Task 2 is not implemented/accepted. Host feature flag remains false.
 - **Priority order:** (1) preserve full owner contract and accurate K.5 status; (2) correct function/mode semantics and design real Agent/Deep Research choices and efficient invocation; (3) implement owner-defined sidebar, project/chat flows and unified visual/interaction system; (4) implement and verify runtime capabilities, Skills, Connectors, coding sandbox, Notebook, files/converters, RAG, voice and offline package; (5) complete autonomy/reliability/evals/observability; (6) prepare final owner runbook.
 - **External source coverage:** INTEL.md contains 450 distinct URL strings (528 occurrences; inventory snapshot 2026-11-04). This pass rechecked targeted official/primary material for GitHub Pages, same-origin browser storage, OpenAI Agents SDK v0.24.0, LangGraph, FastAPI lifespan, Playwright actionability and MDN IndexedDB/OPFS/storage constraints. The full 450-source inventory is not claimed as freshly revalidated.
 - **Model/artifact boundary:** exclude the largest/owner primary model. Auxiliary artifacts require version, license, checksum and compatibility checks. Actions artifacts are staged, not installed on the target host. No target-host, native-device or offline inference claim without acceptance tests.
 - **Owner-only actions:** retain PRE_LAUNCH_STACK_RU.md §8 and deliver a concise final instruction set only after repository/UI/runtime preparation. It must contain only truly owner-controlled steps: host/budget/domain/DNS/credentials/SSH, sanitized host facts, microphone/speaker/device tests and personal backup-restore verification.
-- **Immediate NEXT:** repair the two missing closing quotes in PROJECT_STATE and refresh NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG atomically as a direct child of e5051690. Re-run exact-head Provenance, Freshness, Quality/Chromium, Graphify and Pages. Then add Task 2 RED tests for POST, idempotency, status/events, output escaping, cancellation and error states.
+- **Immediate NEXT:** finish exact-head Quality/Chromium on 90fef0c; review the actual failure report (if any). Then implement Task 2 against the existing authenticated AgentRun API: POST with idempotency key and explicit prompt/scope only; bounded status/event polling; safe text output; server-confirmed DELETE cancellation; preserve prompt on errors. Refresh canonical state/checkpoint and rerun exact-head gates.
 - **Status:** IN PROGRESS — owner-priority Landing 2.0 delivery.
 - **Routing invariant:** latest explicit owner request wins; otherwise resume CURRENT/NEXT. Never select an old PR as a default; historical PRs are evidence only.
 - **Repository / branch:** DorpNay/skills-github-pages / main; direct-main baseline.
-- **Last oriented checkpoint:** main e5051690aa5e6d4e6cd2e59ca04bed4478761fda; 0 open PRs; issue #111 open. Pages #43728928234 SUCCESS; Freshness #43728929559 SUCCESS; Graphify #43728929688 SUCCESS; Provenance #43728929628 failed YAML parsing on two unterminated strings; Quality #43728929561 still running. Public root exact e5051690.
+- **Last oriented checkpoint:** main 90fef0cdb2a50a3561f1145dbf1800345145480f; 0 open PRs; issue #111 open. Pages #43729961062 SUCCESS; Graphify #43729961270 SUCCESS; Quality #43729961271 in progress. Public root exact-SHA verification pending.
 - **No claim:** CI and Pages success do not prove VPS/Ollama installation, credentials, independent multi-agent execution, local sandbox, device voice or offline inference.
 
 ## START PROTOCOL — five-second route
@@ -172,4 +172,11 @@ Owner re-sent the complete LANDING-V2-2026-001 request by quoting OR-2026-11-15-
 
 ```text
 Инструкции на месте, но дальше работать по долгому 🙏🏻
+```
+
+### OR-2026-11-15-012 — continuation and request for high-quality end-to-end implementation
+
+```text
+Now Md Делаем так, как будет быстрее для быстрейшего лендинга со всеми функциями запрашиваемыми мной, в рабочем и эффективном состоянии, но в реализациях инструментов мне не нужны поверхностные решения, так как куча источников с гениальными вещами, мне не нужен детский на их фоне инструмент, это касается и агентов и глубокого исследования и других удобств 
+. Продолжай реализацию большими шагами, по многу действий, подключай все инструменты, кодер, экса, файруроул, контекст7, тайнифиш, суперпауэрс, киты, терминал, скиллы, коннекторы и всё возможное для скорейшего доведения до идеала нашего стека лендинга. Внешние источники по списку не забывай и все детали, что я упоминал. И инструкции на месте. Летсгоу 🙏🏻
 ```
