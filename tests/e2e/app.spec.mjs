@@ -3363,3 +3363,128 @@ test('settings and function panels close on backdrop click without leaving a sta
   await expect(summary).toBeFocused();
   await expect(page.locator('#chatBox')).toBeVisible();
 });
+
+
+test('owner sidebar contract: balanced Projects and Chats sections, persistent create rows, quiet memory', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+
+  const positions = await page.locator('#sidebar').evaluate(sidebar => [
+    sidebar.querySelector('#projectPanel'),
+    sidebar.querySelector('#chatSection'),
+    sidebar.querySelector('#memoryPanel')
+  ].map(el => Array.prototype.indexOf.call(sidebar.children, el)));
+  expect(positions.every(Number.isInteger)).toBe(true);
+  expect(positions).toEqual([...positions].sort((a, b) => a - b));
+
+  const projectOrder = await page.locator('#projectPanel').evaluate(panel => {
+    const header = panel.querySelector('#projectNavToggle');
+    const create = panel.querySelector('[data-action="open-project-create"]');
+    return Boolean(header && create && (header.compareDocumentPosition(create) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(projectOrder).toBe(true);
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
+  await expect(page.locator('#memoryPanel')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
+});
+
+test('project creation is a separate modal and never opens the project editor', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const opener = page.locator('#projectPanel [data-action="open-project-create"]');
+  await opener.click();
+
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  await expect(page.locator('#projectCreateNameInput')).toBeFocused();
+  await page.locator('#projectCreateNameInput').fill('Owner Create Flow');
+  await page.locator('#projectCreateInstructionsInput').fill('Created in a dedicated dialog.');
+  await page.locator('#projectCreateMemoryScopeSelect').selectOption('project-and-global');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await expect(page.locator('#projectSettingsModal')).toBeHidden();
+  const saved = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const project = projects.find(item => item.name === 'Owner Create Flow');
+    return { project, activeChat: chats.find(item => item.id === localStorage.getItem('ai_current_chat_v87')) };
+  });
+  expect(saved.project?.instructions).toBe('Created in a dedicated dialog.');
+  expect(saved.project?.memoryScope).toBe('project-and-global');
+  expect(saved.activeChat?.projectId).toBe(saved.project?.id);
+});
+
+test('selecting a project filters the Chats section and the back arrow restores all chats', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+
+  async function createProject(name) {
+    await page.locator('#projectPanel [data-action="open-project-create"]').click();
+    await page.locator('#projectCreateNameInput').fill(name);
+    await page.locator('#projectCreateModal [data-action="create-project"]').click();
+    return page.evaluate(projectName => {
+      const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+      return projects.find(item => item.name === projectName)?.id;
+    }, name);
+  }
+
+  const alphaId = await createProject('Alpha Filter');
+  await page.locator('#chatSection [data-action="new-chat"]').click();
+  const alphaChatIds = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').filter(chat => chat.projectId === id).map(chat => chat.id), alphaId);
+  expect(alphaChatIds.length).toBeGreaterThanOrEqual(2);
+
+  const betaId = await createProject('Beta Filter');
+  const betaChatIds = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').filter(chat => chat.projectId === id).map(chat => chat.id), betaId);
+  expect(betaChatIds.length).toBe(1);
+
+  const projectList = page.locator('#projectNavigationList');
+  if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
+  await projectList.locator('[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
+  await expect(page.locator('#chatScopeBackButton')).toBeVisible();
+  let visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
+  expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
+  await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
+
+  await projectList.locator('[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
+  visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
+  expect(visibleIds.sort()).toEqual([...betaChatIds].sort());
+
+  await page.locator('#chatScopeBackButton').click();
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
+  visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
+  const allIds = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').map(chat => chat.id));
+  expect(visibleIds.sort()).toEqual([...allIds].sort());
+});
+
+test('project editing is available through the right-side three-dot action only', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Editable Project');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  const projectId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(p => p.name === 'Editable Project')?.id);
+  const list = page.locator('#projectNavigationList');
+  if (await list.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
+  const row = list.locator('[data-project-id="' + projectId + '"]');
+  await expect(row.locator('[data-action="open-project-settings"]')).toContainText('⋯');
+  await row.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+  await expect(page.locator('#projectSettingsModal #saveProjectSubmit')).toBeVisible();
+  await expect(page.locator('#projectSettingsModal #createProjectSubmit')).toHaveCount(0);
+});
+
+test('obsolete Tavily Tools and Web Search settings are removed while web scope remains a chat function', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await expect(page.locator('#searchToolsSettings')).toHaveCount(0);
+  await expect(page.locator('#tavilyKey')).toHaveCount(0);
+  await expect(page.locator('#searchModeSummary')).toBeVisible();
+});
+
