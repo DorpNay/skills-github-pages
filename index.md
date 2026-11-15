@@ -854,8 +854,14 @@ permalink: /
       mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
+    const LEGACY_PROMPT_PLACEHOLDER = 'Свои правила для всех запросов';
     // Keep the user-editable global system prompt empty unless the user supplies instructions.
     const DEFAULT_SYSTEM = '';
+    function normalizeUserSystemPrompt(value) {
+      return typeof value !== 'string' || value === LEGACY_DEFAULT_SYSTEM || value === LEGACY_PROMPT_PLACEHOLDER
+        ? DEFAULT_SYSTEM
+        : value;
+    }
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
     const DEFAULT_MODEL = 'gemini-3.8-flash';
     const PROVIDERS = {
@@ -2786,7 +2792,9 @@ permalink: /
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
       populateModelPresets(provider,$('modelName').value);
       const savedPrompt = safeGet(STORAGE.systemPrompt);
-      $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
+      const normalizedPrompt = normalizeUserSystemPrompt(savedPrompt);
+      $('systemPromptInput').value = normalizedPrompt;
+      if (savedPrompt !== null && normalizedPrompt !== savedPrompt) safeSet(STORAGE.systemPrompt, normalizedPrompt);
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
       $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
@@ -3006,7 +3014,7 @@ permalink: /
           [STORAGE.multiAgent, String(settings.multiAgent === true)],
           [STORAGE.offline, String(settings.offline === true)],
           [STORAGE.crossProviderFallback, String(settings.crossProviderFallback === true)],
-          [STORAGE.systemPrompt, String(settings.systemPrompt || DEFAULT_SYSTEM)],
+          [STORAGE.systemPrompt, normalizeUserSystemPrompt(settings.systemPrompt)],
           ...(settings.provider === 'cloudflare' ? [[STORAGE.cloudflareAccountId, settings.cloudflareAccountId]] : []),
           [STORAGE.searchMode, nextChatSettings.searchMode],
           ...(nextReadability ? [[READABILITY_STORAGE_KEY, JSON.stringify(nextReadability)]] : [])
@@ -3057,7 +3065,7 @@ permalink: /
         $('modelSearch').value = '';
         $('baseUrl').value = baseUrl;
         $('modelName').value = settings.model.trim();
-        $('systemPromptInput').value = String(settings.systemPrompt || DEFAULT_SYSTEM);
+        $('systemPromptInput').value = normalizeUserSystemPrompt(settings.systemPrompt);
         $('toggleSearch').checked = settings.search !== false;
         $('toggleMultiAgent').checked = settings.multiAgent === true;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
@@ -4276,7 +4284,7 @@ permalink: /
       }
       if(requestProjectContext)requestProjectContext+='\nКонец контекста выбранных проектов. Учитывай его только для текущего сообщения и продолжай соблюдать системные ограничения.';
       const configuredPrompt = safeGet(STORAGE.systemPrompt);
-      const activePrompt = (!configuredPrompt || configuredPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : configuredPrompt;
+      const activePrompt = normalizeUserSystemPrompt(configuredPrompt);
       const taskSkill = promptOverride ? '' : await loadTaskSkill(latestUserMessage, mode, useMultiAgent, signal, chat.skillPreset || 'auto', chat);
       let systemPrompt = `Сегодня: ${new Date().toLocaleDateString('ru-RU')}. ${activePrompt}${projectInstructionContext}${requestProjectContext}${privateMemoryContext}${memoryContext}${projectMemoryContext}`;
       if (mode === 'deep') systemPrompt += '\nРЕЖИМ ТЩАТЕЛЬНОЙ РАБОТЫ: проверь существенные предположения, объясни неопределённость и предпочитай проверяемые выводы. Избегай лишних шагов.';
@@ -4567,7 +4575,7 @@ permalink: /
       setBusy(true);
       const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
       const provider=safeGet(STORAGE.provider)||'alandi',model=safeGet(STORAGE.model)||(PROVIDERS[safeGet(STORAGE.provider)||'alandi']?.models?.[0]?.[0]||DEFAULT_MODEL),workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
-      const configuredPrompt=safeGet(STORAGE.systemPrompt),activeConfiguredPrompt=(!configuredPrompt||configuredPrompt===LEGACY_DEFAULT_SYSTEM)?DEFAULT_SYSTEM:configuredPrompt;
+      const configuredPrompt=safeGet(STORAGE.systemPrompt),activeConfiguredPrompt=normalizeUserSystemPrompt(configuredPrompt);
       const configuredPromptFingerprint=await makeCacheKey(activeConfiguredPrompt);
       activeRunStartedAt=Date.now();activeRunTelemetry={schemaVersion:1,provider,model,workflow,mode,webSearchEnabled:useSearch,multiAgentEnabled:useMultiAgent,crossProviderFallbackEnabled:safeGet(STORAGE.crossProviderFallback)==='true',startedAt:new Date(activeRunStartedAt).toISOString(),configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:configuredPromptFingerprint.startsWith('fnv-')?'fnv1a-fallback':'sha-256',routes:[],attempts:[]};lastSuccessfulRoute=null;
       safeSet(STORAGE.search, String(useSearch));
