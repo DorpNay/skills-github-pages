@@ -68,6 +68,19 @@ These are source checks, not provider-account tests. No provider was called, no 
 - These docs are platform reference checks. Browser E2E uses mocked API endpoints; no real provider or private gateway is called.
 
 
+## Sidebar, disclosure and contextual action patterns — reviewed 2026-11-15
+
+This review is scoped to the aLandi Projects/Chats sidebar and project-row actions; it is not a full revalidation of the external URL inventory.
+
+- **Apple Human Interface Guidelines — Sidebars:** sidebars are for navigation between top-level areas/collections; use disclosure controls to manage vertical space and allow hiding/showing the sidebar when useful. Adaptation: retain two explicit Projects/Chats collections and independent disclosure; keep create actions in their group header area rather than hiding them with the list. https://developer.apple.com/design/human-interface-guidelines/sidebars
+- **W3C WAI-ARIA Authoring Practices — Disclosure:** use a real button to show/hide controlled content, expose aria-expanded accurately and preserve Enter/Space activation. Adaptation: native buttons with aria-controls/aria-expanded; do not turn the project list into an ARIA tree/menu without implementing the full keyboard interaction contract. https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
+- **GitHub Primer — ActionMenu:** an action menu is a trigger plus an overlay containing action-list items; it can be opened from a button/icon button or a contextual list-item action. Adaptation: reuse the existing fixed-position chat action-list overlay for project rows; retain normal button semantics and Escape/outside dismissal. https://primer.style/product/components/action-menu/
+- **Microsoft Fluent 2 — Drawer:** reserve modal overlays for focused tasks; avoid stacking multiple modal drawers and use a lighter popover for brief contextual information/actions. Adaptation: project row actions stay in an anchored non-modal overlay; editing remains the existing single project dialog. https://fluent2.microsoft.design/components/web/react/core/drawer/usage
+- **Singapore Government Design System — Sidebar:** supports fixed header/footer slots around a scrollable navigation region, active item state and responsive scrim behavior; keep keyboard content in normal tab order. Adaptation: preserve the fixed create-chat row and independent scroll region, and avoid adding custom arrow-key navigation until a complete list/tree pattern is implemented. https://designsystem.tech.gov.sg/components/sidebar
+
+**Implementation boundary:** these are interaction-pattern references, not a mandate to import React libraries. aLandi remains the existing HTML/CSS/JavaScript client. No third-party UI dependency was added.
+
+
 ## Consolidated external source inventory (snapshot: 2026-11-04)
 
 This is the single navigational inventory for external upstreams referenced by the curated project source lists. The original catalogs remain the evidence/context records; this table deduplicates exact URLs and records where each reference was found. A link is **not** an adoption, license approval, verified current state, or download authorization. Recheck upstream version, exact artifact/model/voice license, checksum, redistribution terms and relevance before obtaining or shipping files.

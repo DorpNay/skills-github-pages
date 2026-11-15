@@ -294,8 +294,10 @@ permalink: /
     .project-nav-item.is-active { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-nav-select { display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;min-height:40px;padding:0 8px;border-radius:8px;text-align:left;font-size:12px;color:var(--ui-text); }
     .project-nav-count { flex-shrink:0;color:var(--ui-text-muted);font-size:10px;font-variant-numeric:tabular-nums; }
-    .project-nav-settings { display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:9px;color:var(--ui-text-muted);font-size:22px;line-height:1; }
-    .project-nav-settings:hover { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-nav-settings { display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:9px;color:var(--ui-text-muted);font-size:22px;line-height:1; }
+    .project-nav-settings:hover,.project-row-menu[open] .project-nav-settings { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-row-menu-panel button { min-height:40px; }
+    @media (max-width:640px) { .project-row-menu-panel button { min-height:44px; } }
     #projectCreateModal section { background:var(--ui-surface); }
     @media (max-width:380px) { .sidebar-main-section { height:clamp(220px,34vh,280px); } }
     #chatBox, #memoryBox { color:var(--ui-text); }
@@ -2332,8 +2334,8 @@ permalink: /
       renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
-    function exportProjectBundle(){
-      const project=getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
+    function exportProjectBundle(projectId=null){
+      const project=projectId?projects.find(item=>item.id===projectId):getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memoryScope:project.memoryScope||'project-only',memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
       const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -2373,38 +2375,8 @@ permalink: /
         showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
       }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
     }
-    function createChatRow(chat,compact=false) {
-      const active=chat.id===currentChatId,item=document.createElement('div');item.dataset.chatId=chat.id;
-      item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
-      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';
-      const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
-      const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
-      const panel=document.createElement('div');panel.className='chat-row-menu-panel';
-      const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
-      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['export-chat',english?'Export chat':'Экспортировать чат'],['import-chats',english?'Import chats…':'Импортировать чаты…'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
-      actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
-      menu.append(summary,panel);
-      const positionMenu=()=>{
-        if(!menu.open)return;
-        const anchor=summary.getBoundingClientRect(),viewportWidth=window.visualViewport?.width||window.innerWidth,viewportHeight=window.visualViewport?.height||window.innerHeight;
-        const width=panel.offsetWidth||190,height=panel.offsetHeight,margin=8,gap=5;
-        const left=Math.max(margin,Math.min(anchor.right-width,viewportWidth-width-margin));
-        const fitsBelow=anchor.bottom+gap+height<=viewportHeight-margin;
-        const top=fitsBelow?anchor.bottom+gap:Math.max(margin,anchor.top-height-gap);
-        panel.style.left=left+'px';panel.style.top=top+'px';menu.dataset.placement=fitsBelow?'below':'above';
-      };
-      const stopTrackingMenu=()=>{
-        window.removeEventListener('resize',positionMenu);
-        window.removeEventListener('scroll',positionMenu,true);
-        panel.style.left='';panel.style.top='';delete menu.dataset.placement;
-      };
-      menu.addEventListener('toggle',()=>{
-        if(menu.open){
-          positionMenu();requestAnimationFrame(positionMenu);
-          window.addEventListener('resize',positionMenu);
-          window.addEventListener('scroll',positionMenu,true);
-        }else stopTrackingMenu();
-      });
+    function bindPositionedActionMenu(menu,trigger,panel) {
+      bindPositionedActionMenu(menu,summary,panel);
       item.append(open,menu);return item;
     }
     function renderProjectNavigation() {
@@ -2426,12 +2398,22 @@ permalink: /
         const count=document.createElement('span');
         count.className='project-nav-count';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
         select.appendChild(count);
-        const settings=document.createElement('button');
-        settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;
-        settings.className='project-nav-settings';settings.textContent='⋯';
-        settings.setAttribute('aria-label',english?'Project settings for '+project.name:'Настройки проекта '+project.name);
-        settings.title=english?'Project settings':'Настройки проекта';
-        row.append(select,settings);list.appendChild(row);
+        const menu=document.createElement('details');menu.className='chat-row-menu project-row-menu shrink-0';
+        const trigger=document.createElement('summary');trigger.className='project-nav-settings';trigger.textContent='⋯';
+        trigger.setAttribute('aria-label',english?'Project actions for '+project.name:'Действия проекта '+project.name);
+        trigger.title=trigger.getAttribute('aria-label');
+        const panel=document.createElement('div');panel.className='chat-row-menu-panel project-row-menu-panel';
+        const actions=[
+          ['select-project-filter',english?'Open project':'Открыть проект'],
+          ['new-chat-in-project',english?'New chat in project':'Новый чат в проекте'],
+          ['open-project-settings',english?'Edit project':'Редактировать проект'],
+          ['export-project',english?'Export project':'Экспортировать проект']
+        ];
+        actions.forEach(([action,label])=>{
+          const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.projectId=project.id;button.textContent=label;panel.appendChild(button);
+        });
+        menu.append(trigger,panel);bindPositionedActionMenu(menu,trigger,panel);
+        row.append(select,menu);list.appendChild(row);
       }
       if(!projects.length){
         const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';
@@ -4102,11 +4084,11 @@ let agentRuntimeRefreshPromise = null;
     }
     document.addEventListener('click', (event) => {
       const toolbarMenus = ['searchModeMenu','functionsMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
-      const chatMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
-      if (!toolbarMenus.length && !chatMenus.length) return;
+      const actionMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
+      if (!toolbarMenus.length && !actionMenus.length) return;
       if (event.target.closest('#searchModeMenu, #functionsMenu, #languageMenu, .chat-row-menu')) return;
       toolbarMenus.forEach(menu => { menu.open = false; });
-      chatMenus.forEach(menu => { menu.open = false; });
+      actionMenus.forEach(menu => { menu.open = false; });
       event.preventDefault();
       event.stopImmediatePropagation();
     }, true);
@@ -5835,7 +5817,10 @@ let agentRuntimeRefreshPromise = null;
             requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
-          case 'select-project-filter': selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+          case 'select-project-filter': {
+            control.closest('.chat-row-menu')?.removeAttribute('open');
+            selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+          }
           case 'clear-project-filter': selectedProjectFilterId=null;renderProjectNavigation();renderChatList();event.preventDefault();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -5852,7 +5837,9 @@ let agentRuntimeRefreshPromise = null;
             $('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});$('chatNavToggle').focus();break;
           }
           case 'open-project-settings': {
-            projectSettingsOpener=control;
+            const projectMenu=control.closest('.project-row-menu');
+            projectSettingsOpener=projectMenu?.querySelector('summary')||control;
+            projectMenu?.removeAttribute('open');
             creatingProject=false;selectedProjectForSettingsId=projects.some(project=>project.id===control.dataset.projectId)?control.dataset.projectId:null;
             $('projectManagerDetails').open=true;renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
           }
@@ -5862,7 +5849,7 @@ let agentRuntimeRefreshPromise = null;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
           case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
           case 'add-helper-memory-suggestion': addHelperMemorySuggestion(Number(control.dataset.suggestionIndex));break;
-           case 'export-project': exportProjectBundle();break;
+           case 'export-project': control.closest('.chat-row-menu')?.removeAttribute('open');exportProjectBundle(control.dataset.projectId||null);break;
           case 'import-project': $('importProjectFile').click();break;
           case 'voice-chat-preview': await startVoiceConversation(); break;
           case 'voice-message-preview': await startVoiceMessageRecording(); break;
@@ -5880,7 +5867,7 @@ let agentRuntimeRefreshPromise = null;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
-          case 'new-chat-in-project': createNewChatInProject(control.dataset.projectId);break;
+          case 'new-chat-in-project': control.closest('.chat-row-menu')?.removeAttribute('open');createNewChatInProject(control.dataset.projectId);break;
           case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': if(voiceConversationActive)stopVoiceConversation(false);switchChat(control.dataset.chatId); break;

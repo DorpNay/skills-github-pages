@@ -3762,7 +3762,7 @@ test('project filter preserves active chat context and project header follows th
 
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
-  await expect(page.locator('#chatList [data-chat-id="chat-beta"]')).toBeVisible();
+  await expect(page.locator('#chatList .chat-row[data-chat-id="chat-beta"]')).toBeVisible();
   // A navigation filter is not an instruction to switch or reassign the active chat.
   await expect(page.locator('#activeChatTitle')).toHaveText('Alpha chat');
   await expect(page.locator('#activeProjectTitle')).toHaveText('Alpha project');
@@ -3791,11 +3791,60 @@ test('project editing is available through the right-side three-dot action only'
   const list = page.locator('#projectNavigationList');
   if (await list.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   const row = list.locator('[data-project-id="' + projectId + '"]');
-  await expect(row.locator('[data-action="open-project-settings"]')).toContainText('⋯');
-  await row.locator('[data-action="open-project-settings"]').click();
+  const trigger = row.locator('summary[aria-label="Действия проекта Editable Project"]');
+  await expect(trigger).toBeVisible();
+  const before = await row.boundingBox();
+  await trigger.click();
+  const menu = row.locator('.project-row-menu-panel');
+  await expect(menu).toBeVisible();
+  await expect(menu.locator('button[data-action="select-project-filter"]')).toHaveText('Открыть проект');
+  await expect(menu.locator('button[data-action="new-chat-in-project"]')).toHaveText('Новый чат в проекте');
+  await expect(menu.locator('button[data-action="open-project-settings"]')).toHaveText('Редактировать проект');
+  await expect(menu.locator('button[data-action="export-project"]')).toHaveText('Экспортировать проект');
+  const geometry = await page.evaluate(() => {
+    const panel = document.querySelector('.project-row-menu[open] .project-row-menu-panel');
+    const rect = panel.getBoundingClientRect();
+    return { position: getComputedStyle(panel).position, left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: innerWidth, height: innerHeight };
+  });
+  expect(geometry.position).toBe('fixed');
+  expect(geometry.left).toBeGreaterThanOrEqual(0);
+  expect(geometry.top).toBeGreaterThanOrEqual(0);
+  expect(geometry.right).toBeLessThanOrEqual(geometry.width);
+  expect(geometry.bottom).toBeLessThanOrEqual(geometry.height);
+  const after = await row.boundingBox();
+  expect(Math.abs((after?.x||0)-(before?.x||0))).toBeLessThanOrEqual(0.5);
+  expect(Math.abs((after?.y||0)-(before?.y||0))).toBeLessThanOrEqual(0.5);
+  await page.keyboard.press('Escape');
+  await expect(row.locator('.project-row-menu')).not.toHaveAttribute('open', '');
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await menu.locator('[data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
   await expect(page.locator('#projectSettingsModal #saveProjectSubmit')).toBeVisible();
   await expect(page.locator('#projectSettingsModal #createProjectSubmit')).toHaveCount(0);
+});
+
+test('project action menu exports the selected project without switching the active chat', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project=(id,name)=>({id,name,description:'',instructions:'',memoryScope:'project-only',memory:[],createdAt:'',updatedAt:''});
+    const chat=(id,title,projectId)=>({id,title,projectId,projectMemoryEnabled:false,messages:[]});
+    localStorage.setItem('ai_projects_v1',JSON.stringify([project('project-alpha','Alpha export'),project('project-beta','Beta export')]));
+    localStorage.setItem('ai_chats_v87',JSON.stringify([chat('chat-alpha','Alpha chat','project-alpha'),chat('chat-beta','Beta chat','project-beta')]));
+    localStorage.setItem('ai_current_chat_v87','chat-alpha');
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const list=page.locator('#projectNavigationList');
+  if(await list.evaluate(element=>element.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
+  const beta=list.locator('[data-project-id="project-beta"]');
+  await beta.locator('summary[aria-label="Действия проекта Beta export"]').click();
+  const downloadPromise=page.waitForEvent('download');
+  await beta.locator('.project-row-menu-panel [data-action="export-project"]').click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toBe('alandi-project-beta-export.json');
+  await expect(page.locator('#activeChatTitle')).toHaveText('Alpha chat');
+  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('ai_current_chat_v87'))).toBe('chat-alpha');
 });
 
 test('obsolete Tavily Tools and Web Search settings are removed while web scope remains a chat function', async ({ page }) => {
