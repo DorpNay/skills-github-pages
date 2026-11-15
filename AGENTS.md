@@ -36,11 +36,11 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `2185a35a9a9a488fa8929814a0eee384302c3b2d`; 0 open PRs; open issue #111. Quality #43759158457 PASS: 133/133 local Chromium tests, 1/1 published-site Chromium test and published release contract. Graphify #43759158498 PASS on exact parent.
-- Published GitHub Pages root and cache-busted client both report `alandi-build-revision=2185a35a9a9a488fa8929814a0eee384302c3b2d`.
-- Freshness #43758513805 on prior parent bac0 failed because checkpoint files still referenced 5773; 21 deterministic freshness tests passed. Provenance #43758513891 passed on bac0 after the PROJECT_STATE YAML scalar correction. Gateway #43738728923 passed on 5773; no Gateway source changes since.
-- All 14 original Chromium failures are now resolved through test-only changes in `tests/e2e/app.spec.mjs`: project row/filter scoping, opening the native disclosure before menu actions, modal-scoped export, reopening the sidebar before back navigation and the Research Trace v3 assertion. Production behavior and dependencies are unchanged.
-- Next: commit the direct state refresh for all five required checkpoint files with parent `2185a35a9a9a488fa8929814a0eee384302c3b2d`; rerun exact-head Freshness, Provenance, Quality, Pages and published revision. Then continue Deep Research 2.0 claim/evidence and contradiction work.
+- Parent main `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`; 0 open PRs; issue #111. Quality #43759639759 PASS: 133/133 local Chromium tests, 1/1 published-site Chromium test and release contract. Pages #43759638725 SUCCESS; Freshness #43759639581 SUCCESS.
+- Published canonical and cache-busted client report `alandi-build-revision=005ca06d0c44dc674cf9d1e65fa2a351ca1665be`.
+- Provenance #43759639668 FAILED only because three double-quoted `current_checkpoint` scalars (`main_quality`, `main_graphify`, `main_pages`) lacked closing quotes. This child corrects the YAML and refreshes all five checkpoint files. Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773; no relevant source changes.
+- All 14 original Chromium failures remain closed through test-only changes in `tests/e2e/app.spec.mjs`; no production behavior or dependencies changed.
+- Next: verify exact-child Provenance/Freshness/Quality/Pages and public revision; then continue Deep Research 2.0 claim-to-evidence/contradiction work.
 
 ## Targeted UI source review — 2026-11-16
 

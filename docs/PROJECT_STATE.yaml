@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 2185a35a9a9a488fa8929814a0eee384302c3b2d; 0 open PRs; issue #111. Quality #43759158457 PASS 133/133 local Chromium + 1/1 published Chromium and release contract; Graphify #43759158498 PASS. Freshness #43758513805 failed on prior parent bac0 because snapshot still referenced 5773; Provenance #43758513891 passed on bac0. Gateway #43738728923 passed on 5773; no Gateway source changes since. Direct five-file state refresh is required."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 005ca06d0c44dc674cf9d1e65fa2a351ca1665be; 0 open PRs; issue #111. Quality #43759639759 PASS 133/133 local Chromium + 1/1 published Chromium; Pages #43759638725 and Freshness #43759639581 PASS. Provenance #43759639668 failed due three missing YAML closing quotes in current_checkpoint; this child corrects them. Graphify #43759158498 passed on 2185; Gateway #43738728923 passed on 5773; no relevant source changes."
     branch: "main"
-    base_main: "2185a35a9a9a488fa8929814a0eee384302c3b2d"
+    base_main: "005ca06d0c44dc674cf9d1e65fa2a351ca1665be"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
     exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Create the direct five-file state refresh from parent 2185a35a9a9a488fa8929814a0eee384302c3b2d; rerun exact-head Freshness, Provenance, Quality, Pages and published revision; then continue Deep Research 2.0 claim/evidence verification."
+    next: "Create the corrected direct five-file state refresh from parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be; rerun exact-head Provenance, Freshness, Quality, Pages and published revision; then continue Deep Research 2.0 claim/evidence verification."
 
 
 
@@ -298,21 +298,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "2185a35a9a9a488fa8929814a0eee384302c3b2d"
-  last_main_action: "Exact parent 2185a35a9a9a488fa8929814a0eee384302c3b2d: Quality #43759158457 SUCCESS (133/133 local Chromium, 1/1 published-site Chromium, published release contract PASS); Graphify #43759158498 SUCCESS. Public root revision matches parent. Freshness #43758513805 on prior bac0 failed because snapshot still referenced 5773; this direct state-refresh child updates the five checkpoint files. Provenance #43758513891 PASS on bac0; Gateway #43738728923 PASS on 5773, no gateway code changed."
+  verified_main: "005ca06d0c44dc674cf9d1e65fa2a351ca1665be"
+  last_main_action: "Exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be: Quality #43759639759 SUCCESS (133/133 local Chromium, 1/1 published-site Chromium, release contract PASS); Pages #43759638725 and Freshness #43759639581 SUCCESS. Public revision matches parent. Provenance #43759639668 failed due three unclosed double-quoted YAML scalars; this child closes them. Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773, no relevant source changes."
   last_functional_checkpoint: "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3"
-  main_quality: "Quality #43759158457 SUCCESS: 133/133 local Chromium tests; 1/1 published-site Chromium; published release contract PASS on exact parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.
-  main_freshness: "Freshness #43758513805 on prior bac0 FAILED because checkpoint snapshot still referenced 5773; 21 deterministic tests passed. This direct state-refresh child aligns all five checkpoint files to 2185a35a9a9a488fa8929814a0eee384302c3b2d; exact-child run pending."
-  main_graphify: "Graphify #43759158498 SUCCESS on exact parent 2185a35a9a9a488fa8929814a0eee384302c3b2d.
-  main_gateway: "No Gateway workflow triggered on exact parent 2185a35a9a9a488fa8929814a0eee384302c3b2d because no gateway files changed; last relevant Gateway #43738728923 PASS on 5773."
-  main_provenance: "Provenance #43758513891 SUCCESS on bac0 after YAML scalar correction; no PROJECT_STATE content changes since bac0; exact state-refresh child rerun pending."
-  main_pages: "Quality published release contract #43759158457 SUCCESS; canonical and cache-busted published client both report alandi-build-revision 2185a35a9a9a488fa8929814a0eee384302c3b2d.
+  main_quality: "Quality #43759639759 SUCCESS: 133/133 local Chromium; 1/1 published-site Chromium; release contract PASS on exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be."
+  main_freshness: "Freshness #43759639581 SUCCESS on exact parent 005ca06d0c44dc674cf9d1e65fa2a351ca1665be; this child updates all five checkpoint files to that parent."
+  main_graphify: "Graphify #43759158498 SUCCESS on exact code/test parent 2185a35a9a9a488fa8929814a0eee384302c3b2d."
+  main_gateway: "No Gateway workflow triggered on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be because no gateway files changed; last relevant Gateway #43738728923 PASS on 5773."
+  main_provenance: "Provenance #43759639668 FAILED on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be due missing closing quotes in main_quality, main_graphify and main_pages scalars; this child corrects them; exact-child rerun pending."
+  main_pages: "Pages #43759638725 SUCCESS; canonical and cache-busted published client report alandi-build-revision 005ca06d0c44dc674cf9d1e65fa2a351ca1665be."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
   runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
-  next: "Commit direct state refresh with all five checkpoint files based on 2185a35a9a9a488fa8929814a0eee384302c3b2d; rerun exact-head Freshness/Provenance/Quality/Pages and published revision; then start Deep Research 2.0 claim-to-evidence/contradiction vertical slice."
+  next: "Verify exact-child Provenance, Freshness, Quality, Pages and public revision; then begin the bounded Deep Research 2.0 claim-to-evidence/contradiction slice."
 
 
 v1_ui_finalization:
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-16"
-  checkpoint_parent_sha: "2185a35a9a9a488fa8929814a0eee384302c3b2d"
+  checkpoint_parent_sha: "005ca06d0c44dc674cf9d1e65fa2a351ca1665be"
   open_prs: []
   open_issues: [111]
   completed:
@@ -601,5 +601,5 @@ current_execution_checkpoint:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
-  next: ["Direct state-refresh commit: align NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md to parent 2185a35a9a9a488fa8929814a0eee384302c3b2d; rerun exact-head Freshness/Provenance/Quality/Pages.","After exact-child verification, implement bounded claim-to-evidence and contradiction records; preserve explicit evidence IDs, scope isolation and same-model reviewer labeling."]
+  next: ["Corrected direct state refresh based on 005ca06d0c44dc674cf9d1e65fa2a351ca1665be; verify exact-child Provenance, Freshness, Quality, Pages and public revision.","After all gates pass, implement bounded claim-to-evidence and contradiction records with explicit evidence IDs, scope isolation and honest same-model reviewer labeling."]
 

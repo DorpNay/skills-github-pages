@@ -432,3 +432,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Freshness #43758513805 on bac0 failed because the checkpoint still referenced 5773; 21 deterministic freshness tests passed. Provenance #43758513891 passed on bac0 after the YAML scalar correction. Gateway #43738728923 remains the last relevant pass on 5773; no Gateway files changed. This child updates the five checkpoint files to parent `2185a35a9a9a488fa8929814a0eee384302c3b2d`.
 - Next: exact-child Freshness/Provenance/Quality/Pages and published revision; then implement the bounded claim-to-evidence and contradiction vertical slice.
 
+
+
+## V-2026-11-16-CHROMIUM-133-PASS-YAML-CORRECTION — YAML provenance correction and checkpoint refresh
+
+- Parent main `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`; 0 open PRs; issue #111. Quality #43759639759 SUCCESS: 133/133 local Chromium, 1/1 published-site Chromium and release contract; Pages #43759638725 SUCCESS; Freshness #43759639581 SUCCESS; public root revision matched parent.
+- Provenance #43759639668 FAILED because three quoted scalars in `docs/PROJECT_STATE.yaml` lacked closing quotes: `main_quality`, `main_graphify` and `main_pages`. No source/code or evidence manifest issue was reported. This child closes all three and refreshes all five checkpoint files to parent `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`.
+- Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773; no Gateway source changes.
+- Next: exact-child Provenance/Freshness/Quality/Pages and published revision; only then resume Deep Research 2.0 implementation.
+
