@@ -100,7 +100,7 @@ class GraphifyUiSurfaceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / "index.md").write_text(
-                '<style>\n#chatNavToggle[aria-expanded="true"] { color: teal; }\n</style>\n'
+                '<style>\n#chatNavToggle { color: teal; }\n</style>\n'
                 '<button id="chatNavToggle" class="chat-section-summary"></button>\n',
                 encoding="utf-8",
             )
