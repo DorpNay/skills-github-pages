@@ -2365,7 +2365,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   await expect(page.locator('#agentRuntimeOutput img')).toHaveCount(0);
   expect(submitted).toEqual({
     prompt: 'Review only this explicitly supplied task.',
-    scope_kind: 'chat',
+    scope_kind: 'conversation',
     scope_id: scope.chatId,
     profile_id: 'coder',
     model_id: 'qwen3.5:4b'
