@@ -36,11 +36,11 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; open issue #111. Gateway #43738728923 PASS across Python 3.12/13/14. Quality #43738728922 FAIL: 121/133 Chromium passed, 12 failed. Freshness #43738728942 PASS; Provenance #43738728997 PASS; Graphify #43738728920 PASS; Pages #43738728149 SUCCESS.
-- Public root `https://dorpnay.github.io/skills-github-pages/` returned HTTP 200; `alandi-build-revision` exactly matched `5773e12c7c05db29e5956aed18ce1da13a6f9780`.
-- Diagnostic artifact #14172036136: seven strict-mode selector failures (duplicate project filter actions / unscoped project descendants), four timeouts (tests clicked project settings controls inside a collapsed native disclosure), one stale Research Trace schema expectation (expected v2, implementation is v3). No production defect is established by these failures.
-- This child corrects only `tests/e2e/app.spec.mjs`: scope project filter controls to `.project-nav-select`, project containers to `.project-nav-item`, open the disclosure trigger before selecting contextual actions, and expect Research Trace v3. No production behavior or dependencies changed.
-- Next: rerun exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision; after green Chromium, resume claim-to-citation validation, contradiction records, durable resumable research and bounded Exa/Firecrawl adapters.
+- Parent main `2185a35a9a9a488fa8929814a0eee384302c3b2d`; 0 open PRs; open issue #111. Quality #43759158457 PASS: 133/133 local Chromium tests, 1/1 published-site Chromium test and published release contract. Graphify #43759158498 PASS on exact parent.
+- Published GitHub Pages root and cache-busted client both report `alandi-build-revision=2185a35a9a9a488fa8929814a0eee384302c3b2d`.
+- Freshness #43758513805 on prior parent bac0 failed because checkpoint files still referenced 5773; 21 deterministic freshness tests passed. Provenance #43758513891 passed on bac0 after the PROJECT_STATE YAML scalar correction. Gateway #43738728923 passed on 5773; no Gateway source changes since.
+- All 14 original Chromium failures are now resolved through test-only changes in `tests/e2e/app.spec.mjs`: project row/filter scoping, opening the native disclosure before menu actions, modal-scoped export, reopening the sidebar before back navigation and the Research Trace v3 assertion. Production behavior and dependencies are unchanged.
+- Next: commit the direct state refresh for all five required checkpoint files with parent `2185a35a9a9a488fa8929814a0eee384302c3b2d`; rerun exact-head Freshness, Provenance, Quality, Pages and published revision. Then continue Deep Research 2.0 claim/evidence and contradiction work.
 
 ## Targeted UI source review — 2026-11-16
 

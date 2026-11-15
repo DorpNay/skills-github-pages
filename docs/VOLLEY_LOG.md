@@ -423,3 +423,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Public Pages root returned HTTP 200 and `alandi-build-revision` exactly matched parent SHA `5773e12c7c05db29e5956aed18ce1da13a6f9780`.
 - Next: verify all exact-head gates on the resulting test correction commit and verify its published root revision; then resume the next Deep Research 2.0 vertical slice.
 
+
+
+## V-2026-11-16-CHROMIUM-133-PASS-STATE-REFRESH — Chromium green and exact state refresh preparation
+
+- Parent main `2185a35a9a9a488fa8929814a0eee384302c3b2d`; 0 open PRs; issue #111. Quality #43759158457 SUCCESS: 133/133 local Chromium tests, 1/1 published-site Chromium test and published release contract; canonical and cache-busted Pages revision match exact parent. Graphify #43759158498 SUCCESS.
+- The remaining two failures from the 131/133 run were test-contract issues: the export button selector matched the hidden row-menu action and the visible modal action; the chat-scope back button lives in the sidebar, which closes after chat selection. Scoped export to `#projectSettingsModal` and reopened the sidebar with the existing helper. No production changes.
+- Freshness #43758513805 on bac0 failed because the checkpoint still referenced 5773; 21 deterministic freshness tests passed. Provenance #43758513891 passed on bac0 after the YAML scalar correction. Gateway #43738728923 remains the last relevant pass on 5773; no Gateway files changed. This child updates the five checkpoint files to parent `2185a35a9a9a488fa8929814a0eee384302c3b2d`.
+- Next: exact-child Freshness/Provenance/Quality/Pages and published revision; then implement the bounded claim-to-evidence and contradiction vertical slice.
+
