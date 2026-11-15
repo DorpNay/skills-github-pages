@@ -147,6 +147,29 @@ test('legacy placeholder text is migrated out of the global prompt setting', asy
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
 });
 
+test('global prompt saves explicit owner text and persists an intentional clear', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+
+  await page.locator('#editSystemPrompt').click();
+  await page.locator('#systemPromptInput').fill('Only my explicit global instructions.');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('Only my explicit global instructions.');
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#systemPromptInput')).toHaveValue('Only my explicit global instructions.');
+
+  await page.locator('#editSystemPrompt').click();
+  await page.locator('#systemPromptInput').fill('');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#systemPromptInput')).toHaveValue('');
+});
+
 test('sidebar order puts Projects and Chats first and keeps memory discreet', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -604,6 +627,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(profile.version).toBe(1);
   expect(profile.settings.provider).toBe('groq');
   expect(profile.settings.model).toBe('openai/gpt-oss-120b');
+  expect(profile.settings.systemPrompt).toBe('');
   expect(profile.settings.crossProviderFallback).toBe(true);
   expect(profile.settings.readability).toEqual({ fontSize:18, lineHeight:1.8, contrast:'high' });
   expect(json).not.toContain('e2e-private-provider-secret-value');
