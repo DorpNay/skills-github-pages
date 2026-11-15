@@ -3728,6 +3728,58 @@ test('selecting a project filters the Chats section and the back arrow restores 
   expect(visibleIds.sort()).toEqual([...allIds].sort());
 });
 
+test('project filter preserves active chat context and project header follows the selected chat', async ({ page }) => {
+  await page.addInitScript(() => {
+    const project = (id, name) => ({
+      id, name, description: '', instructions: '', memoryScope: 'project-only',
+      memory: [], createdAt: '', updatedAt: ''
+    });
+    const chat = (id, title, projectId) => ({
+      id, title, projectId, projectMemoryEnabled: false, messages: []
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify([
+      project('project-alpha', 'Alpha project'),
+      project('project-beta', 'Beta project')
+    ]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      chat('chat-alpha', 'Alpha chat', 'project-alpha'),
+      chat('chat-beta', 'Beta chat', 'project-beta')
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-alpha');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#activeChatTitle')).toHaveText('Alpha chat');
+  await expect(page.locator('#activeProjectTitle')).toBeVisible();
+  await expect(page.locator('#activeProjectTitle')).toHaveText('Alpha project');
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const projectList = page.locator('#projectNavigationList');
+  if (await projectList.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  await projectList.locator('[data-action="select-project-filter"][data-project-id="project-beta"]').click();
+
+  await expect(page.locator('#chatScopeBackButton')).toBeVisible();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
+  await expect(page.locator('#chatList [data-chat-id="chat-beta"]')).toBeVisible();
+  // A navigation filter is not an instruction to switch or reassign the active chat.
+  await expect(page.locator('#activeChatTitle')).toHaveText('Alpha chat');
+  await expect(page.locator('#activeProjectTitle')).toHaveText('Alpha project');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe('chat-alpha');
+
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="chat-beta"]').click();
+  await expect(page.locator('#activeChatTitle')).toHaveText('Beta chat');
+  await expect(page.locator('#activeProjectTitle')).toBeVisible();
+  await expect(page.locator('#activeProjectTitle')).toHaveText('Beta project');
+
+  await page.locator('#chatScopeBackButton').click();
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
+  await expect(page.locator('#activeChatTitle')).toHaveText('Beta chat');
+  await expect(page.locator('#activeProjectTitle')).toHaveText('Beta project');
+});
+
 test('project editing is available through the right-side three-dot action only', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();

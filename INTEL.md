@@ -806,3 +806,32 @@ Rechecked versioned primary sources:
 4. Recheck Notebook/studio UI patterns and accessibility before implementing same-origin routes.
 
 **Status:** source review recorded; same-origin studio routes remain SPECIFIED/PROPOSED; no SDK, model, package, custom domain or DNS changes made.
+
+
+## UI interaction patterns — targeted primary-source review, 2026-11-15
+
+This pass rechecked official design-system and accessibility guidance against the existing vanilla HTML/CSS/JavaScript client. The purpose is to reuse mature interaction contracts, not import a React component stack.
+
+### Primary sources checked
+
+- Apple Human Interface Guidelines — [Sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars): sidebars are for top-level areas/collections; disclosure grouping controls vertical density; hiding the sidebar can give the content more room.
+- Apple Human Interface Guidelines — [Disclosure controls](https://developer.apple.com/design/human-interface-guidelines/disclosure-controls): keep frequent/essential controls visible and disclose advanced details only when relevant; disclosure direction must match expanded/collapsed state and labels must describe what is hidden.
+- W3C WAI-ARIA Authoring Practices — [Disclosure pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/): use a real button; Enter/Space toggles it; aria-expanded reflects visible state and aria-controls identifies the controlled region.
+- W3C WCAG 2.2 — [2.4.11 Focus Not Obscured (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html): a focused component must remain at least partially visible; sticky headers and non-modal overlays are common failure sources.
+- GitHub Primer — [ActionMenu](https://primer.style/product/components/action-menu/) and [guidelines](https://primer.style/product/components/action-menu/guidelines/): compose quick actions from a trigger, ActionList and overlay; use section titles/dividers for hierarchy; avoid form inputs inside action menus; do not mix icon/no-icon rows arbitrarily.
+- Microsoft Fluent 2 — [Drawer usage](https://fluent2.microsoft.design/components/web/react/core/drawer/usage): distinguish inline and overlay drawers; modal overlays should block background interaction; avoid stacking multiple overlay drawers; prefer a popover/tooltip for short contextual information and a dialog for confirmation.
+- Singapore Government Design System — [Sidebar](https://designsystem.tech.gov.sg/components/sidebar): fixed upper/lower slots around a scrollable navigation region; active states, collapse variants, scrim behavior and normal tab order; keyboard navigation should remain predictable.
+
+### aLandi application
+
+- Keep Projects and Chats as equal-sized sibling panels. Projects starts collapsed; its create action stays visible. Chats starts expanded; the create-chat action stays above the independently scrollable list.
+- Filtering by project changes only the visible Chats list. It must not switch the active chat or mutate chat ownership. The explicit back action restores all chats.
+- The project label in the chat header is derived from the active chat, not from the currently selected navigation filter. Selecting a chat in a project updates the label; changing the filter alone does not.
+- Context menus remain overlays anchored to their trigger, collision-aware and bounded by the visual viewport. Keep focus visible and preserve the first outside tap as dismissal rather than activating an underlying control.
+- Retain the existing vanilla implementation and CSS tokens. Supabase/shadcn examples are useful as structural references (sticky header/content/footer, group action slots), not as a reason to add React, Radix or another runtime dependency.
+
+### Evidence and limits
+
+The live TinyFish audit confirmed persistent project-create and new-chat rows, non-shifting context overlays, absence of noisy chat status dots and the mobile off-canvas sidebar. Its report that no back navigation or project header existed is not supported by source: chatScopeBackButton, renderChatList(), activeProjectTitle and renderActiveChat() already implement those behaviors. The audit did not select a project chat to test the header. Existing Chromium tests already assert the back flow and equal panel heights; this pass adds a direct regression for filter-only semantics and the active-chat project label. The audit's statement that both sections are expanded by default also conflicts with source: Projects has aria-expanded=false and a hidden list; Chats has aria-expanded=true.
+
+**Decision:** adopt interaction semantics and layout constraints only; no component package, dependency, remote UI service or external code was added. Source checks are not a full-market audit and do not establish native iOS/VoiceOver behavior.

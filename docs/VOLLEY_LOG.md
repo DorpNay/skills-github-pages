@@ -381,3 +381,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Added deterministic Chromium coverage for Check replacing a live observer and for `budget_exhausted` stopping polling and releasing Start.
 - No Gateway/API/schema/worker/host changes or new dependencies. Host `ALANDI_AGENT_RUNS_ENABLED` remains false; concurrency 1; tools/filesystem/shell/network remain disabled.
 - New child exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and public root verification pending.
+
+## V-2026-11-15-UI-SIDEBAR-PROJECT-CONTEXT-001 — evidence-led sidebar contract
+
+- Owner request OR-2026-11-15-013 is archived verbatim in NOW.md. Exact parent main 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4; 0 open PRs; issue #111.
+- Parent Quality #43734885113 SUCCESS (built-app Chromium and published-site release contract); Graphify #43734885253 SUCCESS; Provenance #43734885239 SUCCESS; Pages #43734884518 SUCCESS. Freshness #43734885156 passed 21/21 tests but failed one snapshot interpretation assertion; this state refresh records the parent as functional, not documentation-only.
+- TinyFish read-only audit confirmed persistent project-create and new-chat rows, non-shifting context overlays, absence of noisy chat status dots and mobile off-canvas sidebar. Its claims that back navigation/project header were absent are contradicted by source and existing E2E: chatScopeBackButton, renderChatList(), activeProjectTitle and renderActiveChat() already implement them. The audit did not select a project chat to test the header.
+- Rechecked official UI sources: Apple HIG Sidebars/Disclosure, W3C ARIA Disclosure and WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer, Singapore Government Design System Sidebar. Adapted interaction rules only; no framework or dependency imported. Full source analysis in INTEL.md.
+- Added E2E test proving project filter is navigation-only, active chat/project header stay unchanged until explicit chat selection, and the header follows the selected project chat after switching back to all chats.
+- No runtime behavior, Gateway, model, permission or host setting changed in the UI test slice. AgentRun host flag remains off; no native iOS/VoiceOver verification.
+- Next: exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision; then Deep Research 2.0.

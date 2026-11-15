@@ -36,9 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-15)
 
-- Parent main: `4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3`; Open PRs: none; Open issues: #111.
+- Parent main: `78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4`; Open PRs: none; Open issues: #111. Quality #43734885113, Graphify #43734885253, Provenance #43734885239 and Pages #43734884518 passed; Freshness #43734885156 failed only on snapshot interpretation after 21/21 unit tests passed.
 - Quality #43733527394 SUCCESS including Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS; public root revision matches parent; /landing/ returns HTTP 404.
 - Next child adds regression tests/fixes for AgentRun observer replacement and backend `budget_exhausted` terminal handling. Do not enable host AgentRun or change the one-worker/no-tools/no-filesystem/no-network policy.
+
+## Targeted UI source review — 2026-11-15
+
+Apple HIG Sidebars/Disclosure, W3C ARIA Disclosure + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidebar were rechecked. Reuse disclosure semantics, visible focus, fixed navigation slots, anchored action overlays and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.
 
 ## OR-008 source and route policy
 
