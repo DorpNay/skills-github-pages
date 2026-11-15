@@ -138,6 +138,16 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
+test('legacy placeholder text is migrated out of the global prompt setting', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_system_prompt', 'Свои правила для всех запросов');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#systemPromptInput')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
+});
+
 test('sidebar order keeps memory above projects and omits the removed Research Studio shortcut', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
