@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb; 0 open PRs; issue #111. Gateway #43738527999 failed one stale capabilities fixture (new API tests passed); Quality #43738528161 IN_PROGRESS; Freshness #43738528040 SUCCESS; Provenance #43738528019 failed on stale YAML list residue; Graphify #43738528011 and Pages #43738527399 SUCCESS. This child fixes the fixture and YAML."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 5773e12c7c05db29e5956aed18ce1da13a6f9780; 0 open PRs; issue #111. Gateway #43738728923 PASS; Quality #43738728922 FAILED 12/133 Chromium (121 passed); Freshness #43738728942, Provenance #43738728997, Graphify #43738728920 and Pages #43738728149 PASS/SUCCESS. Public root HTTP 200 matches parent SHA. This child corrects test locators/menu state and Research Trace v3 expectation."
     branch: "main"
-    base_main: "9bee2d979c3a9d91d252d09c0abbd605dfce22cb"
+    base_main: "5773e12c7c05db29e5956aed18ce1da13a6f9780"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
     exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Run exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision after fixing the capabilities fixture and YAML list residue."
+    next: "Run exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and public revision after correcting project-row locators, collapsed menu interactions and Research Trace v3 assertion."
 
 
 
@@ -297,22 +297,22 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-11-15"
-  verified_main: "9bee2d979c3a9d91d252d09c0abbd605dfce22cb"
-  last_main_action: "EvidenceLedger API and explicit Research Trace save implemented on 9bee2d979c3a9d91d252d09c0abbd605dfce22cb. Gateway had one stale capabilities fixture failure while new evidence API tests passed; Provenance failed on YAML next-list residue; this child fixes both."
+  date: "2026-11-16"
+  verified_main: "5773e12c7c05db29e5956aed18ce1da13a6f9780"
+  last_main_action: "Exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780: Gateway #43738728923 PASS; Quality #43738728922 ran 133 Chromium tests (121 pass, 12 fail); Freshness #43738728942, Provenance #43738728997, Graphify #43738728920 and Pages #43738728149 PASS/SUCCESS. Diagnostic artifact #14172036136 identified duplicate project selectors, collapsed disclosure menu actions and a stale Research Trace v2 assertion. This child fixes only E2E tests."
   last_functional_checkpoint: "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3"
-  main_quality: "Quality #43738528161 was IN_PROGRESS at last poll; rerun on this fixture/YAML correction child."
-  main_freshness: "Freshness #43738528040 SUCCESS on exact parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb."
-  main_graphify: "Graphify #43738528011 SUCCESS on exact parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb; rerun on this child."
-  main_gateway: "Gateway #43738527999 failed only the legacy capabilities response fixture; 266 other tests including new evidence routes passed. This child adds the expected disabled-RAG capability field."
-  main_provenance: "Provenance #43738528019 failed because old next-list items remained after a YAML flow-list replacement; this child removes the stale items."
-  main_pages: "Pages #43738527399 SUCCESS on exact parent; this child triggers a new deployment."
+  main_quality: "Quality #43738728922 FAILED: 121/133 Chromium tests passed; 12 failures are diagnosed and corrected in this child; exact-child rerun pending."
+  main_freshness: "Freshness #43738728942 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
+  main_graphify: "Graphify #43738728920 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
+  main_gateway: "Gateway #43738728923 SUCCESS across Python 3.12/13/14; gateway contract/security and offline eval passed on exact parent."
+  main_provenance: "Provenance #43738728997 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
+  main_pages: "Pages #43738728149 SUCCESS; public root HTTP 200 and alandi-build-revision matches exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
   runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
-  next: "Run exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and Firecrawl revision; then continue semantic claim-to-citation, contradiction records and resumable research."
+  next: "Rerun exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and public revision after the test-only selector/menu/schema correction; then continue Deep Research 2.0."
 
 
 v1_ui_finalization:
@@ -579,8 +579,8 @@ model_stack_artifact_checkpoint_2026_11_13:
   target_install_state: "NOT_INSTALLED; target host and service access not available in this session."
 
 current_execution_checkpoint:
-  date: "2026-11-15"
-  checkpoint_parent_sha: "9bee2d979c3a9d91d252d09c0abbd605dfce22cb"
+  date: "2026-11-16"
+  checkpoint_parent_sha: "5773e12c7c05db29e5956aed18ce1da13a6f9780"
   open_prs: []
   open_issues: [111]
   completed:
@@ -601,5 +601,5 @@ current_execution_checkpoint:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
-  next: ["Run exact-head Gateway (Python 3.12/3.13/3.14), Quality/Chromium, Freshness, Provenance, Graphify, Pages and Firecrawl revision.","Continue semantic claim-to-citation validation and contradiction evidence.","Implement durable resumable research runs and bounded Exa/Firecrawl provider adapters after persistence/cost contracts are measured."]
+  next: ["Correct project row/filter selectors and disclosure-menu test interactions; update Research Trace expectation to v3; rerun exact-head gates and public revision.","After Chromium is green, continue Deep Research 2.0 claim-to-citation validation, contradiction records, durable resumable state and bounded Exa/Firecrawl adapters."]
 

@@ -29,8 +29,9 @@ async function openProjectSettingsForId(page, projectId) {
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
     await page.locator('#projectNavToggle').click();
   }
-  const row = page.locator('#projectNavigationList [data-project-id="' + projectId + '"]');
-  await row.locator('[data-action="open-project-settings"]').click();
+  const row = page.locator('#projectNavigationList .project-nav-item[data-project-id="' + projectId + '"]');
+  await row.locator('summary[aria-label^="Действия проекта"]').click();
+  await row.locator('.project-row-menu-panel [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
   const expectedProjectName = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === id)?.name || '', projectId);
   expect(expectedProjectName).not.toBe('');
@@ -771,7 +772,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await expect(traceButton).toBeVisible();
   const traceId = await traceButton.getAttribute('data-trace-id');
   const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
-  expect(trace.schemaVersion).toBe(2);
+  expect(trace.schemaVersion).toBe(3);
   expect(trace.run.workflow).toBe('research');
   expect(trace.run.mode).toBe('fast');
   expect(trace.run.webSearchEnabled).toBe(false);
@@ -1285,7 +1286,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
 
   await ensureSidebarOpen(page);
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="'+betaId+'"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="'+betaId+'"]').click();
   let chatRow=page.locator('#chatList [data-chat-id="'+betaChatId+'"]');
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
@@ -1293,11 +1294,11 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await page.locator('[data-action="chat-action-save"]').click();
 
   await ensureSidebarOpen(page);
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="'+alphaId+'"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="'+alphaId+'"]').click();
   const alphaRow=page.locator('#chatList [data-chat-id="'+alphaChatId+'"]');
   await alphaRow.locator('[data-action="switch-chat"]').click();
   await ensureSidebarOpen(page);
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="'+alphaId+'"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="'+alphaId+'"]').click();
   const activeAlphaRow=page.locator('#chatList [data-chat-id="'+alphaChatId+'"]');
   await activeAlphaRow.locator('summary[aria-label="Действия чата"]').click();
   await activeAlphaRow.locator('[data-action="chat-project"]').click();
@@ -1971,7 +1972,7 @@ test('sidebar separates project selection from the shared Chats list', async ({ 
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open','');
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-alpha"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="project-alpha"]').click();
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(1);
   await expect(page.locator('#chatList')).toContainText('Alpha project chat');
   await expect(page.locator('#chatList')).not.toContainText('Personal chat');
@@ -2085,14 +2086,14 @@ test('request-only project context is sent once and does not change the active c
   await expect(page.locator('#composerPopoverScrim')).toBeHidden();
   await sidebarToggle.click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-beta"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="project-beta"]').click();
   await page.locator('#chatList [data-action="switch-chat"][data-chat-id="chat-beta"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).not.toBeChecked();
   await dismissComposerPopoverWithOutsideTap(page,'#contextPickerButton');
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-alpha"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="project-alpha"]').click();
   await page.locator('#chatList [data-action="switch-chat"][data-chat-id="chat-alpha"]').click();
   await page.locator('#contextPickerButton').click();
   await expect(page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]')).toBeChecked();
@@ -2206,8 +2207,9 @@ test('project memory scope edits the selected project, not the active chat proje
     await page.locator('#projectNavToggle').click();
   }
 
-  const betaGroup = page.locator('#projectNavigationList [data-project-id="project-beta"]');
-  await betaGroup.locator('[data-action="open-project-settings"]').click();
+  const betaGroup = page.locator('#projectNavigationList .project-nav-item[data-project-id="project-beta"]');
+  await betaGroup.locator('summary[aria-label^="Действия проекта"]').click();
+  await betaGroup.locator('.project-row-menu-panel [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
 
@@ -2225,8 +2227,9 @@ test('project memory scope edits the selected project, not the active chat proje
   if (await page.locator('#projectNavigationList').evaluate(el => el.classList.contains('hidden'))) {
     await page.locator('#projectNavToggle').click();
   }
-  const reloadedBeta = page.locator('#projectNavigationList [data-project-id="project-beta"]');
-  await reloadedBeta.locator('[data-action="open-project-settings"]').click();
+  const reloadedBeta = page.locator('#projectNavigationList .project-nav-item[data-project-id="project-beta"]');
+  await reloadedBeta.locator('summary[aria-label^="Действия проекта"]').click();
+  await reloadedBeta.locator('.project-row-menu-panel [data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsStatus')).toContainText('Beta project');
   await expect(page.locator('#projectMemoryScopeSelect')).toHaveValue('project-and-global');
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
@@ -2243,7 +2246,7 @@ test('clear history preserves the chat and other project data', async ({ page })
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-alpha"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="project-alpha"]').click();
   const alphaRow=page.locator('#chatList [data-chat-id="chat-alpha"]');
   await alphaRow.locator('summary[aria-label="Действия чата"]').click();
   page.on('dialog',dialog=>dialog.accept());
@@ -2268,7 +2271,7 @@ test('clearing a non-active project chat preserves the active chat and both proj
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
-  await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-beta"]').click();
+  await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="project-beta"]').click();
   const betaRow=page.locator('#chatList .chat-row[data-chat-id="chat-beta"]');
   await betaRow.locator('summary[aria-label="Действия чата"]').click();
   page.on('dialog',dialog=>dialog.accept());
@@ -3710,14 +3713,14 @@ test('selecting a project filters the Chats section and the back arrow restores 
 
   const projectList = page.locator('#projectNavigationList');
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
-  await projectList.locator('[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
+  await projectList.locator('.project-nav-select[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   let visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
 
-  await projectList.locator('[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
+  await projectList.locator('.project-nav-select[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
   visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...betaChatIds].sort());
 
@@ -3758,7 +3761,7 @@ test('project filter preserves active chat context and project header follows th
   if (await projectList.evaluate(element => element.classList.contains('hidden'))) {
     await page.locator('#projectNavToggle').click();
   }
-  await projectList.locator('[data-action="select-project-filter"][data-project-id="project-beta"]').click();
+  await projectList.locator('.project-nav-select[data-action="select-project-filter"][data-project-id="project-beta"]').click();
 
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
   await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
@@ -3790,7 +3793,7 @@ test('project editing is available through the right-side three-dot action only'
   await ensureSidebarOpen(page);
   const list = page.locator('#projectNavigationList');
   if (await list.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
-  const row = list.locator('[data-project-id="' + projectId + '"]');
+  const row = list.locator('.project-nav-item[data-project-id="' + projectId + '"]');
   const trigger = row.locator('summary[aria-label="Действия проекта Editable Project"]');
   await expect(trigger).toBeVisible();
   const before = await row.boundingBox();

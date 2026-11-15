@@ -34,15 +34,17 @@
 The owner explicitly authorizes direct commits/merges to `main`, required connected tools/plugins/skills, and automatic GitHub Pages publication for this task. This does not authorize force-push, rebase/reset, history rewriting, destructive user-data actions, VPS deployment, paid provisioning or secret handling.
 
 
-## Exact live checkpoint (2026-11-15)
+## Exact live checkpoint (2026-11-16)
 
-- State-refresh parent: `9bee2d979c3a9d91d252d09c0abbd605dfce22cb`; Open PRs: none; Open issues: #111. Gateway #43738527999 had one outdated capabilities fixture failure while the new EvidenceLedger API tests passed; Quality #43738528161 was in progress; Freshness #43738528040 passed; Provenance #43738528019 caught leftover YAML list items; Graphify #43738528011 and Pages #43738527399 passed.
-- This child updates the legacy capabilities fixture for the new disabled-RAG field and removes the stale YAML list residue. The scoped EvidenceLedger API and explicit Research Trace v3 save remain implemented; exact-head checks are pending.
-- Next: verify Gateway Python 3.12/3.13/3.14, Quality/Chromium, Freshness, Provenance, Graphify, Pages and exact published revision. Continue claim-to-citation support, contradictions, durable resumability and bounded Exa/Firecrawl adapters only after the vertical slice is green.
+- Parent main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; open issue #111. Gateway #43738728923 PASS across Python 3.12/13/14. Quality #43738728922 FAIL: 121/133 Chromium passed, 12 failed. Freshness #43738728942 PASS; Provenance #43738728997 PASS; Graphify #43738728920 PASS; Pages #43738728149 SUCCESS.
+- Public root `https://dorpnay.github.io/skills-github-pages/` returned HTTP 200; `alandi-build-revision` exactly matched `5773e12c7c05db29e5956aed18ce1da13a6f9780`.
+- Diagnostic artifact #14172036136: seven strict-mode selector failures (duplicate project filter actions / unscoped project descendants), four timeouts (tests clicked project settings controls inside a collapsed native disclosure), one stale Research Trace schema expectation (expected v2, implementation is v3). No production defect is established by these failures.
+- This child corrects only `tests/e2e/app.spec.mjs`: scope project filter controls to `.project-nav-select`, project containers to `.project-nav-item`, open the disclosure trigger before selecting contextual actions, and expect Research Trace v3. No production behavior or dependencies changed.
+- Next: rerun exact-head Gateway, Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision; after green Chromium, resume claim-to-citation validation, contradiction records, durable resumable research and bounded Exa/Firecrawl adapters.
 
-## Targeted UI source review — 2026-11-15
+## Targeted UI source review — 2026-11-16
 
-Apple HIG Sidebars/Disclosure, W3C ARIA Disclosure + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidebar were rechecked. Reuse disclosure semantics, visible focus, fixed navigation slots, anchored action overlays and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.
+Official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav were rechecked. Reuse disclosure semantics, focus return, Escape/Tab/outside dismissal, shallow navigation, visible focus and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.
 
 ## OR-008 source and route policy
 

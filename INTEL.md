@@ -835,6 +835,15 @@ This pass rechecked official design-system and accessibility guidance against th
 - Microsoft Fluent 2 — [Drawer usage](https://fluent2.microsoft.design/components/web/react/core/drawer/usage): distinguish inline and overlay drawers; modal overlays should block background interaction; avoid stacking multiple overlay drawers; prefer a popover/tooltip for short contextual information and a dialog for confirmation.
 - Singapore Government Design System — [Sidebar](https://designsystem.tech.gov.sg/components/sidebar): fixed upper/lower slots around a scrollable navigation region; active states, collapse variants, scrim behavior and normal tab order; keyboard navigation should remain predictable.
 
+### Primary-source recheck — 2026-11-16
+
+- Apple HIG — [Sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars) and [Disclosure controls](https://developer.apple.com/design/human-interface-guidelines/disclosure-controls.md): keep primary/high-frequency controls visible; use clearly labelled disclosure for secondary actions; the indicator must reflect expanded/collapsed state.
+- W3C APG — [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) and [Menu Button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/): Enter/Space toggle disclosure; expose popup state and controlled region; opening an action menu moves focus into it and Escape returns focus to the trigger. Do not apply `role="menu"` to ordinary navigation unless the complete menu keyboard model is implemented.
+- W3C WCAG 2.2 — [2.4.11 Focus Not Obscured (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html): keyboard focus must not be entirely hidden by author-created content; sticky headers and non-modal overlays are common risks.
+- GitHub Primer — [ActionMenu](https://primer.style/product/components/action-menu/) / [Action menu guidance](https://primer.github.io/design/components/action-menu/): clear trigger and concise text labels; focus enters the first item; arrow keys navigate; Escape, Tab/Shift+Tab and outside click dismiss; focus returns to trigger; minimum target is 24×24 CSS px.
+- Microsoft Fluent 2 — [Drawer usage](https://fluent2.microsoft.design/components/web/react/core/drawer/usage): use inline/overlay drawers for supplemental content, but prefer popovers for short contextual actions and dialogs for confirmation; avoid stacking modal surfaces.
+- Singapore Government Design System — [Sidenav](https://www.designsystem.tech.gov.sg/components/sidenav): keep hierarchy shallow, group related links under expandable parents, expose active/expanded states and preserve predictable keyboard order; do not leave focusable descendants inside visually collapsed sections.
+
 ### aLandi application
 
 - Keep Projects and Chats as equal-sized sibling panels. Projects starts collapsed; its create action stays visible. Chats starts expanded; the create-chat action stays above the independently scrollable list.

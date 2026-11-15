@@ -412,3 +412,14 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Parent implementation 9bee2d979c3a9d91d252d09c0abbd605dfce22cb; 0 open PRs; issue #111. Gateway #43738527999 failed one legacy capabilities fixture because the new disabled-RAG object was absent; the new EvidenceLedger API tests passed. Freshness #43738528040 SUCCESS. Provenance #43738528019 failed because stale block-list entries remained below the new flow-style next array. Graphify #43738528011 and Pages #43738527399 SUCCESS.
 - This child adds the expected disabled RAG/EvidenceLedger capabilities to the existing fixture and removes the stale YAML list residue. No production behavior changed in this correction.
 - Exact-head Gateway/Quality/Freshness/Provenance/Graphify/Pages and Firecrawl revision smoke rerun after this correction.
+
+
+## V-2026-11-16-CHROMIUM-PROJECT-MENU-BASELINE-001 — exact-head Chromium regression analysis and test correction
+
+- Parent main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; issue #111. Gateway #43738728923 PASS (Python 3.12/13/14); Quality #43738728922 ran 133 Chromium tests: 121 passed, 12 failed; Freshness #43738728942 PASS; Provenance #43738728997 PASS; Graphify #43738728920 PASS; Pages #43738728149 SUCCESS.
+- Downloaded and inspected Playwright diagnostic artifact #14172036136. Seven failures were strict-mode violations caused by duplicated `data-action="select-project-filter"` descendants; four timeouts came from clicking hidden project-settings controls before opening the row's native disclosure; one trace test still expected schema v2 although the implementation emits v3.
+- Test-only correction: use `.project-nav-item` as the unique project-row container, `.project-nav-select` for the navigation filter, open the row disclosure before invoking its scoped menu action, and expect Research Trace schema v3. Assertions remain; no production code, dependencies, runtime flags or host configuration changed.
+- Rechecked official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button and WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav. Reusable findings recorded in INTEL.md; no UI framework or dependency adopted.
+- Public Pages root returned HTTP 200 and `alandi-build-revision` exactly matched parent SHA `5773e12c7c05db29e5956aed18ce1da13a6f9780`.
+- Next: verify all exact-head gates on the resulting test correction commit and verify its published root revision; then resume the next Deep Research 2.0 vertical slice.
+

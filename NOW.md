@@ -7,23 +7,23 @@
 ## CURRENT
 
 - **Task ID:** LANDING-V2-2026-001.
-- **Owner task received:** 2026-11-15. Requests OR-2026-11-15-003 through OR-2026-11-15-014 are archived verbatim below.
+- **Owner task received:** 2026-11-16. Requests OR-2026-11-15-003 through OR-2026-11-15-014 and OR-2026-11-16-001 are archived verbatim below.
 - **Scope:** finish the existing 15-point programme in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K/K.5. K.6 in that same file is the binding detailed owner acceptance contract; no parallel backlog. The largest/owner-supplied primary model remains excluded.
 - **Authorization:** owner explicitly authorizes direct commits to main, connected tools/plugins/skills needed for this task, and automatic GitHub Pages deployment on every main push. This is task-scoped; it does not authorize VPS/host deployment, paid provisioning, secret handling, destructive data operations, force-push, rebase/reset or history rewriting.
 - **Canonical tracker:** one 15-row K.5 status table plus K.6 detailed acceptance contract in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md.
-- **Live parent checkpoint:** main `9bee2d979c3a9d91d252d09c0abbd605dfce22cb`; 0 open PRs; issue #111. Gateway #43738527999 failed one old capabilities fixture (new evidence API tests passed); Quality #43738528161 IN_PROGRESS; Freshness #43738528040 SUCCESS; Provenance #43738528019 failed on stale YAML list residue; Graphify #43738528011 and Pages #43738527399 SUCCESS. This child fixes the fixture and YAML.
-- **Public publication:** Pages #43738527399 SUCCESS on exact parent; corrected-child deployment and Firecrawl revision smoke pending.
+- **Live parent checkpoint:** main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; issue #111. Gateway #43738728923 PASS (Python 3.12/13/14); Quality #43738728922 FAIL (121/133 Chromium; 12 failures); Freshness #43738728942 PASS; Provenance #43738728997 PASS; Graphify #43738728920 PASS; Pages #43738728149 SUCCESS.
+- **Public publication:** Pages #43738728149 SUCCESS; canonical root returned HTTP 200 and `alandi-build-revision` exactly matches `5773e12c7c05db29e5956aed18ce1da13a6f9780`.
 - **Handoff:** OLEDUE.md, ORIENTER.md and legacy FILE_ORIENTER files are absent. NOW.md is the sole session/task checkpoint.
 - **K.5 status:** Deep Research is PARTIAL: scoped EvidenceLedger API + explicit trace save implemented; claim-citation verification, contradictions, resumable runs, independent provider adapters and export remain open.
 - **Priority order:** (1) preserve full owner contract and accurate K.5 status; (2) correct function/mode semantics and design real Agent/Deep Research choices and efficient invocation; (3) implement owner-defined sidebar, project/chat flows and unified visual/interaction system; (4) implement and verify runtime capabilities, Skills, Connectors, coding sandbox, Notebook, files/converters, RAG, voice and offline package; (5) complete autonomy/reliability/evals/observability; (6) prepare final owner runbook.
-- **External source coverage:** INTEL.md contains the curated upstream inventory; historical counts are snapshots, not fresh validation of every URL. This pass rechecked Apple HIG Sidebars/Disclosure, W3C ARIA Disclosure + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidebar. The full inventory is not claimed as freshly revalidated.
+- **External source coverage:** INTEL.md remains the curated register, not a claim that all URLs are freshly validated. On 2026-11-16 rechecked official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav. No UI framework/dependency adopted.
 - **Model/artifact boundary:** exclude the largest/owner primary model. Auxiliary artifacts require version, license, checksum and compatibility checks. Actions artifacts are staged, not installed on the target host. No target-host, native-device or offline inference claim without acceptance tests.
 - **Owner-only actions:** retain PRE_LAUNCH_STACK_RU.md §8 and deliver a concise final instruction set only after repository/UI/runtime preparation. It must contain only truly owner-controlled steps: host/budget/domain/DNS/credentials/SSH, sanitized host facts, microphone/speaker/device tests and personal backup-restore verification.
-- **Immediate NEXT:** verify exact-head Gateway (Python 3.12/3.13/3.14), Quality/Chromium, Freshness, Provenance, Graphify, Pages and Firecrawl revision. If green, continue semantic claim-to-citation verification, contradiction records, resumable research state and bounded Exa/Firecrawl adapters.
+- **Immediate NEXT:** correct the 12 Chromium regressions in `tests/e2e/app.spec.mjs` without changing production behavior unless a product defect is independently demonstrated; scope project row/filter locators, open the collapsed contextual menu before using its actions, update the Research Trace v3 assertion, then rerun all exact-head gates. After green Chromium, continue Deep Research 2.0 claim-to-citation verification, contradiction records, resumable state and bounded Exa/Firecrawl adapters.
 - **Status:** IN PROGRESS — owner-priority Landing 2.0 delivery.
 - **Routing invariant:** latest explicit owner request wins; otherwise resume CURRENT/NEXT. Never select an old PR as a default; historical PRs are evidence only.
 - **Repository / branch:** DorpNay/skills-github-pages / main; direct-main baseline.
-- **Last oriented checkpoint:** main `9bee2d979c3a9d91d252d09c0abbd605dfce22cb`; 0 open PRs; issue #111. New EvidenceLedger API tests passed; one old capability fixture and Provenance YAML residue are being corrected. Freshness, Graphify and Pages passed.
+- **Last oriented checkpoint:** main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; issue #111. Gateway, Freshness, Provenance, Graphify and Pages passed; Quality's 12 Chromium failures are diagnosed from the Actions artifact. Public root revision matches this SHA.
 - **No claim:** CI and Pages success do not prove VPS/Ollama installation, credentials, independent multi-agent execution, local sandbox, device voice or offline inference.
 
 ## START PROTOCOL — five-second route
@@ -43,6 +43,7 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+- [2026-11-16] S-038 | TEST-ONLY FIX IMPLEMENTED / EXACT-HEAD CI PENDING | Parent main `5773e12c7c05db29e5956aed18ce1da13a6f9780`; 0 open PRs; issue #111. Gateway #43738728923 PASS across Python 3.12/13/14; Quality #43738728922 ran 133 Chromium tests: 121 passed, 12 failed. Artifact #14172036136 and all failure contexts/traces were inspected: seven strict-mode failures from duplicated project filter actions / broad project-row locators; four timeouts from attempting to click project settings actions while the native row disclosure menu remained collapsed; one stale Research Trace schema expectation (v2 vs implemented v3). Freshness #43738728942, Provenance #43738728997, Graphify #43738728920 and Pages #43738728149 PASS. Public root HTTP 200; `alandi-build-revision` exactly matches parent SHA. This child scopes tests to `.project-nav-item` / `.project-nav-select`, opens the row disclosure before menu actions and expects trace schema v3; no production behavior or dependencies changed. Rechecked official Apple HIG, W3C APG/WCAG, Primer, Fluent 2 and SGDS UI guidance; findings added to INTEL.md. | Next: verify exact-head gates on this child and public revision; then continue Deep Research 2.0.
 - [2026-11-15] S-037 | CORRECTION / EXACT-HEAD VERIFICATION PENDING | Parent implementation `9bee2d979c3a9d91d252d09c0abbd605dfce22cb`; 0 open PRs; issue #111. Fixed the legacy Gateway capabilities fixture to include disabled RAG/EvidenceLedger flags, and removed stale block-list entries left after converting PROJECT_STATE.next to a YAML flow list. The API-specific evidence tests passed on the parent; Gateway had one unrelated fixture failure, Freshness passed, Provenance caught YAML residue, Graphify/Pages passed. | Next: rerun all exact-head gates and published revision.
 - [2026-11-15] S-036 | IMPLEMENTED / EXACT-HEAD VERIFICATION PENDING | Parent test contract `be7337cbc5e839747b3fe7377ac5a9a27a35a24b`; 0 open PRs; issue #111. Wired existing SQLite EvidenceLedger into Gateway lifecycle and authenticated scoped POST/GET/DELETE API; added exact quote/hash, idempotent write and scoped delete; capability reports RAG status. Research Trace v3 now carries chat scope/capture timestamps and offers explicit user-initiated Gateway save for excerpts <=360 chars; no full page or automatic upload. Unicode offsets use code-point length. Updated K.5 row 3 to PARTIAL. | Next: exact-head Gateway/Quality/Chromium/Freshness/Provenance/Graphify/Pages and public revision; then claims/citations, contradictions, resumability and provider adapters.
 - [2026-11-15] S-035 | RED TESTS ADDED / IMPLEMENTATION NOT STARTED | Parent main `ea9582f42a13edf95a9cfe5f7a41dbb06d959e86`; 0 open PRs; issue #111. Rechecked Exa Search/Contents, Firecrawl Search/Scrape, LangChain Deep Agents subagents, LangGraph persistence, FastAPI BackgroundTasks/Lifespan and Context7 FastAPI docs. Current research remains a four-stage same-model pipeline with localStorage trace; EvidenceLedger already stores exact source hashes/quotes but is not wired to Gateway routes. Added Gateway/E2E acceptance tests for scoped writes, exact quote/hash, idempotent retry, deletion, capability reporting and explicit trace-to-Gateway save. No production code/dependencies changed. | Next: observe RED on exact main; implement via existing SQLite ledger and authenticated Gateway; preserve local trace if Gateway unavailable.
@@ -202,4 +203,101 @@ Now Md Делаем так, как будет быстрее для быстре
 
 ```text
 Продолжим
+```
+
+
+### OR-2026-11-16-001 — broad continuation and execution authorization
+
+```text
+@Поиск @Exa @Code @Coder @Superpowers @Firecrawl @TinyFish @Context7 @Vercel @Twilio Developer Kit @stark AI Developer 
+
+Твое последнее сообщение; 
+
+Дружок, есть хорошие новости! 😁 Работа движется, и я наконец поймал конкретный узкий участок, который сейчас мешает ускориться.
+
+Но честно: новый пакет изменений от меня пока не записан в GitHub. Я провёл повторную сверку актуального репозитория, внешних источников и CI, чтобы не строить следующий этап на устаревшем состоянии.
+
+Текущее состояние
+
+aLandi / main
+
+Рабочая ветка
+
+5773e12c
+
+HEAD · 16 ноября, последний опубликованный checkpoint в GitHub
+
+GitHub Pages
+
+PASS
+
+Gateway tests
+
+PASS
+
+Freshness / Provenance
+
+PASS
+
+Graphify
+
+PASS
+
+Chromium
+
+121 PASS / 12 FAIL
+
+Все перечисленные результаты относятся к одному проверенному HEAD.
+
+Что обнаружил
+
+1. Проектное меню уже реализовано.
+
+Поправлю своё предыдущее предположение: актуальная версия содержит отдельное контекстное меню проекта. Это подтверждено кодом и новым E2E-тестом.
+
+2. Сейчас проблема в регрессионных проверках.
+
+12 ошибок Chromium. В частности:
+
+* несколько тестов используют неоднозначные локаторы, поскольку элементы проекта имеют повторяющиеся data-project-id;
+* тест проектного меню не ограничивает поиск непосредственно контейнером строки;
+* остальные падения требуют отдельного разбора, прежде чем менять production-код.
+
+Не собираюсь отключать тесты ради зелёной галочки.
+
+Внешние источники
+
+Повторно изучены официальные решения:
+
+* Apple Human Interface Guidelines — Sidebars.
+* W3C ARIA — Disclosure.
+* GitHub Primer — ActionMenu.
+* Microsoft Fluent 2 — Drawer.
+* Singapore Government Design System — Sidebar.
+* WCAG 2.2 — Focus Not Obscured.
+
+В INTEL.md уже 474 уникальных URL. Их не нужно собирать заново: нужно извлекать лучшие решения по конкретной задаче.
+
+Что делаю следующим большим пакетом
+
+* Закрытие Chromium
+    Разобрать все 12 падений, исправить реальные ошибки и тестовые локаторы, добиться зелёного exact-HEAD CI.
+* Deep Research 2.0
+    Независимые источники, проверка утверждений по цитатам, противоречия, возобновляемые исследования, Exa и Firecrawl как реальные провайдеры.
+* Инструментарный интерфейс
+    Единая система функций, режимов, агентов, проектов, исследований и подключаемых инструментов.
+* Агентная инфраструктура
+    Реальные execution-контракты, изоляция, передача задач, управление инструментами и восстановление.
+* Остальной стек
+    Skills, Connectors, Coder, Notebook, RAG, документы, конвертеры, голос, автономность и evals.
+
+Мой принцип: не делать очередную красивую оболочку вокруг нескольких API. Собираем серьёзную инструментальную ИИ-систему, используя сильные существующие разработки вместо изобретения слабых аналогов.
+
+И самое главное — никаких фиктивных возможностей, отключённых проверок и объявлений о готовности там, где ещё нет работающей реализации.
+
+Го дальше. 🚀
+
+Мой последний запрос:
+
+Отлично, продолжаем так же большими шагами по много действий, не забывай проверять внешние источники из списка в контексте прорабатываемых вещей, в первую очередь решения по UI, интерфейсу, чтобы в каких-то деталях брать готовые гениальные решения и не тратить на них время, сконцентрировавшись на сборке инструментарного ии монстра @Поиск  и плагины подключай все, что нужно, даю добро на использование сервисов, если нужно - параллель с собой задачи в терминале, чтобы успевать в 2 раза больше. Гооо
 ```

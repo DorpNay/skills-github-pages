@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-15",
+  "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "9bee2d979c3a9d91d252d09c0abbd605dfce22cb",
-    "main_commit_subject": "feat(research): persist scoped source evidence from trace",
-    "main_commit_date": "2026-11-15T16:59:20Z",
+    "main_sha": "5773e12c7c05db29e5956aed18ce1da13a6f9780",
+    "main_commit_subject": "fix(research): align capability fixture and state checkpoint",
+    "main_commit_date": "2026-11-15T17:01:20Z",
     "last_functional_checkpoint_sha": "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3",
     "last_functional_milestone": "AgentRun observer ownership and budget_exhausted terminal handling passed exact-head Quality on 4514f69. The test-only child added RED contracts for scoped EvidenceLedger persistence; this implementation child wires the existing ledger into authenticated Gateway routes and explicit Research Trace save. Exact checks pending.",
-    "main_quality_run": 43738528161,
-    "main_pages_deployment_run": 43738527399,
+    "main_quality_run": 43738728922,
+    "main_pages_deployment_run": 43738728149,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -182,9 +182,9 @@
         "checks": "Exact-head Quality #43402260210, Gateway #43402260215, Graphify #43402260236, Freshness #43402260242, Provenance #43402260337 and Dead Code #43402260315 passed; model/runtime manifests and acquisition workflows merged."
       }
     ],
-    "main_provenance_run": 43735565027,
-    "main_freshness_run": 43735565149,
-    "main_graphify_run": 43735565011,
+    "main_provenance_run": 43738728997,
+    "main_freshness_run": 43738728942,
+    "main_graphify_run": 43738728920,
     "owner_task": "OR-2026-11-15-012",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
@@ -218,11 +218,11 @@
     "first_v1_candidate_checks": "PR #139 exact HEAD d76be1d59ed832fa638e419b542151dba277c143 passed Quality #41966180071, Freshness #41966180096, Provenance #41966180157 and Graphify #41966180042. Squash merged at main SHA 2e11849d409a51009693af95ac3ecbf1f057a3fc; post-merge main Quality #41967234442, Pages #41967233832, Freshness #41967234558, Provenance #41967234535, Graphify #41967234708 all PASS. Production CSS and landing HTML fetched.",
     "first_v1_candidate_css_delivery_assertion": "HTTP 200 and text/css",
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
-    "main_quality_status": "success including Chromium",
-    "main_pages_status": "Pages #43728928234 SUCCESS on exact parent e5051690aa5e6d4e6cd2e59ca04bed4478761fda; public root exact e5051690; /landing/ and retired CSS return 404.",
-    "main_freshness_status": "failed only because snapshot SHA lagged live main; 21/21 unit tests passed",
-    "main_provenance_status": "Provenance #43728929628 FAILED because docs/PROJECT_STATE.yaml status scalars at lines 6 and 19 lacked closing quotes; no artifact provenance mismatch.",
-    "main_graphify_status": "success",
+    "main_quality_status": "FAILED: 121/133 Chromium tests passed; 12 failures diagnosed from artifact #14172036136; test-only correction in this child.",
+    "main_pages_status": "SUCCESS; public root HTTP 200 and alandi-build-revision exactly matches parent SHA 5773e12c7c05db29e5956aed18ce1da13a6f9780.",
+    "main_freshness_status": "SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.",
+    "main_provenance_status": "SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.",
+    "main_graphify_status": "SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
     "first_v1_candidate_merge_status": "squash-merged at 2e11849d409a51009693af95ac3ecbf1f057a3fc after explicit owner authorization",
@@ -247,22 +247,22 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-15-AGENTRUN-OBSERVER-TERMINAL-REGRESSIONS-001",
+    "last_volley": "V-2026-11-16-CHROMIUM-PROJECT-MENU-BASELINE-001",
     "owner_priority_task": "LANDING-V2-2026-001",
     "owner_priority_summary": "LANDING-V2-2026-001 / Section K in the existing addendum. Required: owner-designed UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real AgentRun and live status; mandatory local-file Coder workspace and desired GitHub repository access; installed Whisper/ASR, TTS, VAD/audio with target-device RU/EN/TH tests; full RAG; safe document/book/web/image parsing, OCR and converters; mode-combination tests; lean conditional model routing; cache, observability and N₂O in main; complete tested VPS runbook. Current model/runtime/database and weight selection is an evidence task, not yet frozen.",
     "main_external_acquisition_run": 43420046411,
     "main_ollama_artifact_run": 43418126506,
-    "main_gateway_run": 43421709910,
+    "main_gateway_run": 43738728923,
     "main_python_runtime_cache_run": 43423610986,
     "python_runtime_cache_bytes": 81549321,
     "publication": {
       "root_url": "https://dorpnay.github.io/skills-github-pages/",
-      "root_revision": "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3",
-      "pages_run": 43733527693,
-      "landing_route_status": "HTTP 404 at exact parent 4514f69",
-      "landing_source_absent": true
+      "root_revision": "5773e12c7c05db29e5956aed18ce1da13a6f9780",
+      "pages_run": 43738728149,
+      "revision_verification": "HTTP 200; alandi-build-revision meta exactly matched parent SHA 5773e12c7c05db29e5956aed18ce1da13a6f9780."
     },
-    "owner_request": "OR-2026-11-15-011"
+    "owner_request": "OR-2026-11-16-001",
+    "main_gateway_status": "SUCCESS across Python 3.12/13/14 on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780."
   },
   "interpretation": {
     "last_main_commit_is_documentation_only": false,
@@ -290,7 +290,7 @@
     "main_quality_run": 43733527394,
     "owner_request": "OR-2026-11-15-014"
   },
-  "last_volley": "V-2026-11-15-DEEP-RESEARCH-EVIDENCE-LEDGER-001",
+  "last_volley": "V-2026-11-16-CHROMIUM-PROJECT-MENU-BASELINE-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -327,8 +327,8 @@
     "target_install_state": "NOT_INSTALLED; target host and service access not available in this session."
   },
   "current_execution_checkpoint": {
-    "date": "2026-11-15",
-    "checkpoint_parent_sha": "9bee2d979c3a9d91d252d09c0abbd605dfce22cb",
+    "date": "2026-11-16",
+    "checkpoint_parent_sha": "5773e12c7c05db29e5956aed18ce1da13a6f9780",
     "merged_prs": [
       184,
       185
@@ -368,13 +368,12 @@
       "Exact parent 9bee2d979c3a9d91d252d09c0abbd605dfce22cb: Gateway #43738527999 had one outdated capabilities fixture failure while new EvidenceLedger API tests passed; Freshness #43738528040 SUCCESS; Provenance #43738528019 failed on stale YAML next-list residue; Graphify #43738528011 and Pages #43738527399 SUCCESS. This child fixes both issues."
     ],
     "freshness": {
-      "run": 43623253330,
-      "status": "Failed because test import missing (20 pass, 1 error); corrected in this commit, rerun pending."
+      "run": 43738728942,
+      "status": "SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780"
     },
     "next": [
-      "Run exact-head Gateway (Python 3.12/3.13/3.14), Quality/Chromium, Freshness, Provenance, Graphify, Pages and Firecrawl revision.",
-      "Continue semantic claim-to-citation validation and contradiction evidence.",
-      "Implement durable resumable research runs and bounded Exa/Firecrawl provider adapters after persistence/cost contracts are measured."
+      "Correct project row/filter selectors and disclosure-menu test interactions; update Research Trace expectation to v3; rerun exact-head gates and public revision.",
+      "After Chromium is green, continue Deep Research 2.0 claim-to-citation validation, contradiction records, durable resumable state and bounded Exa/Firecrawl adapters."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -385,27 +384,27 @@
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
   "owner_task": "LANDING-V2-2026-001: finish the existing 15-point programme; current owner prompts and next step are in NOW.md. No active PR; issue #111 is owner/environment gated.",
-  "main_gateway_run": 43738527999,
-  "main_quality_run": 43738528161,
-  "main_pages_deployment_run": 43738527399,
-  "main_freshness_run": 43738528040,
-  "main_provenance_run": 43738528019,
-  "main_graphify_run": 43738528011,
+  "main_gateway_run": 43738728923,
+  "main_quality_run": 43738728922,
+  "main_pages_deployment_run": 43738728149,
+  "main_freshness_run": 43738728942,
+  "main_provenance_run": 43738728997,
+  "main_graphify_run": 43738728920,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "IN_PROGRESS at last poll; rerun after capabilities fixture and YAML correction.",
-  "main_pages_status": "SUCCESS on exact parent; new deployment pending.",
+  "main_quality_status": "FAILED: 121/133 Chromium tests passed; 12 failures diagnosed and test-only correction is included in this child.",
+  "main_pages_status": "SUCCESS on exact parent; public root HTTP 200 and revision meta matches 5773e12c7c05db29e5956aed18ce1da13a6f9780.",
   "main_freshness_status": "SUCCESS on exact parent.",
-  "main_provenance_status": "FAILED because old next-list YAML items remained after flow-list replacement; this child removes the residue.",
+  "main_provenance_status": "SUCCESS on exact parent.",
   "main_graphify_status": "SUCCESS on exact parent.",
-  "main_gateway_status": "FAILED one legacy capabilities fixture did not include the new disabled RAG capability object; new EvidenceLedger API tests passed.",
-  "owner_request": "OR-2026-11-15-014",
+  "main_gateway_status": "SUCCESS across Python 3.12/13/14 on exact parent.",
+  "owner_request": "OR-2026-11-16-001",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "9bee2d979c3a9d91d252d09c0abbd605dfce22cb",
-    "pages_run": 43738527399,
-    "revision_verification": "Pages deployment succeeded on exact parent; exact Firecrawl revision smoke pending after correction child."
+    "root_revision": "5773e12c7c05db29e5956aed18ce1da13a6f9780",
+    "pages_run": 43738728149,
+    "revision_verification": "HTTP 200; alandi-build-revision meta exactly matched parent SHA 5773e12c7c05db29e5956aed18ce1da13a6f9780."
   }
 }
