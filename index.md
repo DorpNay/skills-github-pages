@@ -132,8 +132,8 @@ permalink: /
     button,input,textarea,select { border-radius:var(--ui-radius-sm); }
     .settings-surface { border-radius:22px!important; }
     .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
-    .settings-subpanel > summary::marker,#searchToolsSettings > summary::marker { color:var(--ui-tiffany); }
-    .settings-subpanel[open] > summary,#searchToolsSettings[open] > summary { border-bottom:1px solid var(--ui-border); background:var(--ui-tiffany-soft); }
+    .settings-subpanel > summary::marker { color:var(--ui-tiffany); }
+    .settings-subpanel[open] > summary { border-bottom:1px solid var(--ui-border); background:var(--ui-tiffany-soft); }
     .cloud-card { background:radial-gradient(ellipse at 95% 0%,rgba(104,232,208,.13),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:rgba(104,232,208,.34)!important; box-shadow:0 18px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.04); }
     .cloud-card input { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
     .cloud-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 16px rgba(239,68,68,.45); }
@@ -619,8 +619,7 @@ permalink: /
         <label for="readingContrast" class="block text-xs"><span data-i18n="readingContrastLabel">Контраст цветовой схемы</span><select id="readingContrast" class="advanced-control mt-1 w-full rounded border border-gray-700 bg-gray-900"><option value="standard" data-i18n="readingContrastStandard">Стандартный</option><option value="high" data-i18n="readingContrastHigh">Повышенный</option></select></label>
         <p id="readingSettingsStatus" class="text-xs" role="status" aria-live="polite" data-i18n="readingSettingsSaved">Настройки читаемости сохраняются на этом устройстве.</p>
       </section>
-<details id="searchToolsSettings" class="rounded-xl border border-gray-700"><summary class="cursor-pointer select-none px-3 py-2.5 text-xs font-semibold">Инструменты и веб-поиск</summary><div class="px-3 pb-3 space-y-2"><div class="flex gap-2"><input type="password" id="tavilyKey" aria-label="Ключ Tavily" autocomplete="off" class="min-w-0 flex-1 p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" placeholder="ключ Tavily"><button type="button" data-action="paste-tavily-key" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Вставить ключ Tavily">↓</button></div></div></details>
-       <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
+<label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
        <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
@@ -1556,7 +1555,7 @@ permalink: /
       setOptions('uiLanguage',['RU','EN']);
       setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
       setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
-      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',cloudBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',cloudModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',cloudApiKey:en?'Access key':'Ключ доступа',tavilyKey:en?'Tavily key':'ключ Tavily'};
+      const fieldTexts={customSkillName:en?'Custom skill name':'Название своего навыка',customSkillInstructions:en?'Instructions for this task':'Свои инструкции для задачи',customSkillOutput:en?'Custom output format (optional)':'Свой формат результата (необязательно)',agentTeamCustomScenario:en?'Describe the team scenario':'Опиши сценарий команды',agentCustomRoles:en?'Roles and responsibilities, one per line':'Роли и обязанности, по одной на строку',cloudBaseUrl:en?'My server URL · https://…/v1':'URL моего сервера · https://…/v1',cloudModel:en?'Gateway model · exact model ID':'Модель gateway · точный ID',cloudApiKey:en?'Access key':'Ключ доступа'};
       Object.entries(fieldTexts).forEach(([id,value])=>{const field=$(id);if(field)field.placeholder=value;});
       const labels={skillGoalSelect:en?'Task type':'Тип задачи',skillOutputSelect:en?'Output format':'Формат результата',agentTeamSize:en?'Team size · blueprint':'Размер команды · blueprint',agentTeamScenario:en?'Scenario':'Сценарий',agentRolePreset:en?'Roles':'Роли',uiLanguage:en?'Language':'Язык',uiMotion:en?'Motion':'Анимация',composerPosition:en?'Composer':'Поле ввода'};
       Object.entries(labels).forEach(([id,value])=>{const field=$(id),label=field?.closest('label');if(label?.firstChild?.nodeType===Node.TEXT_NODE)label.firstChild.textContent=value+' ';});
@@ -2786,7 +2785,6 @@ permalink: /
       applyProviderPreset(provider,true);
       $('modelName').value=safeGet(STORAGE.model)||$('modelName').value;
       populateModelPresets(provider,$('modelName').value);
-      $('tavilyKey').value = safeGet(STORAGE.tavilyKey) || '';
       const savedPrompt = safeGet(STORAGE.systemPrompt);
       $('systemPromptInput').value = (!savedPrompt || savedPrompt === LEGACY_DEFAULT_SYSTEM) ? DEFAULT_SYSTEM : savedPrompt;
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
@@ -3125,7 +3123,6 @@ permalink: /
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
       const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
-      const tavilyKey = $('tavilyKey').value.trim();
       const provider=currentProvider();
       let parsed=null;
       if(baseUrl){
@@ -3146,7 +3143,7 @@ permalink: /
         safeSet(STORAGE.provider,provider),safeSet(STORAGE.baseUrl,baseUrl),
         ...(provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]),
         ...(enteredApiKey?[safeSet(providerKeyStorage(provider),enteredApiKey)]:[]),
-        safeSet(STORAGE.model,model),safeSet(STORAGE.tavilyKey,tavilyKey),
+        safeSet(STORAGE.model,model),
         safeSet(STORAGE.crossProviderFallback,String($('allowCrossProviderFallback').checked)),
         safeSet(STORAGE.composerPosition, applyComposerPosition($('composerPosition').value)),
         safeSet(STORAGE.systemPrompt,$('systemPromptInput').value.trim()||DEFAULT_SYSTEM)
@@ -5385,7 +5382,6 @@ permalink: /
           case 'toggle-theme-cycle': toggleHomeTheme();break;
           case 'paste-provider-key': await pasteIntoField('apiKey');break;
           case 'paste-aservi-key': await pasteIntoField('cloudApiKey');break;
-          case 'paste-tavily-key': await pasteIntoField('tavilyKey');break;
           case 'connect-alandi-aservi': await connectAlandiAServi();break;
           case 'attach-text-file': {
             const menu=$('attachmentMenu'),open=menu.classList.contains('hidden');hideVoiceMenu();closeComposerPopovers();if(open){menu.classList.remove('hidden');$('attachTextButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();}break;

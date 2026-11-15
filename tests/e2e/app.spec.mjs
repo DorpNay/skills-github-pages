@@ -417,13 +417,8 @@ test('provider keys, Tavily key, and model settings remain isolated across switc
   await expect(page.locator('#apiKey')).toHaveValue('e2e-groq-placeholder-not-a-real-key');
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-  await openAdditionalSettings(page);
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
-  await page.locator('#tavilyKey').fill('e2e-tavily-placeholder-not-a-real-key');
-  await page.locator('[data-action="save-settings"]').click();
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-tavily-placeholder-not-a-real-key'));
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-tavily-placeholder-not-a-real-key');
-  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
 
   await page.reload();
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
@@ -594,8 +589,7 @@ test('settings profile exports portable preferences but never API secrets', asyn
 
   await openAdditionalSettings(page);
   await page.locator('#allowCrossProviderFallback').check();
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
-  await page.locator('#tavilyKey').fill('e2e-private-search-secret-value');
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-private-search-secret-value'));
   await page.locator('#readingFontSize').evaluate(element => { element.value = '18'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingLineHeight').evaluate(element => { element.value = '1.8'; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); });
   await page.locator('#readingContrast').selectOption('high');
@@ -628,9 +622,7 @@ test('settings profile import restores preferences while preserving existing pro
   await page.locator('[data-action="save-settings"]').click();
 
   await openAdditionalSettings(page);
-  if (!(await page.locator('#searchToolsSettings').evaluate(el => el.open))) await page.locator('#searchToolsSettings > summary').click();
-  await page.locator('#tavilyKey').fill('e2e-preserved-tavily-secret');
-  await page.locator('[data-action="save-settings"]').click();
+  await page.evaluate(() => localStorage.setItem('ai_tavily_key', 'e2e-preserved-tavily-secret'));
 
   const profile = {
     format: 'ai-mobile-agent-settings',
@@ -665,7 +657,6 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
   await expect(page.locator('#readingContrast')).toHaveValue('high');
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
-  await expect(page.locator('#tavilyKey')).toHaveValue('e2e-preserved-tavily-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
 });
