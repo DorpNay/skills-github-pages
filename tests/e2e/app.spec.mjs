@@ -1260,7 +1260,7 @@ test('project instructions, project memory, and project bundles stay scoped to t
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('#projectMemoryToggle').check();
   const alphaDownloadPromise=page.waitForEvent('download');
-  await page.locator('[data-action="export-project"]').click();
+  await page.locator('#projectSettingsModal [data-action="export-project"]').click();
   const alphaDownload=await alphaDownloadPromise;
   expect(alphaDownload.suggestedFilename()).toMatch(/^alandi-project-.*\.json$/);
   const alphaPath=await alphaDownload.path();
@@ -3776,6 +3776,7 @@ test('project filter preserves active chat context and project header follows th
   await expect(page.locator('#activeProjectTitle')).toBeVisible();
   await expect(page.locator('#activeProjectTitle')).toHaveText('Beta project');
 
+  await ensureSidebarOpen(page);
   await page.locator('#chatScopeBackButton').click();
   await expect(page.locator('#chatScopeBackButton')).toBeHidden();
   await expect(page.locator('#chatList .chat-row')).toHaveCount(2);
