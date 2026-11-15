@@ -848,3 +848,27 @@ This pass rechecked official design-system and accessibility guidance against th
 The live TinyFish audit confirmed persistent project-create and new-chat rows, non-shifting context overlays, absence of noisy chat status dots and the mobile off-canvas sidebar. Its report that no back navigation or project header existed is not supported by source: chatScopeBackButton, renderChatList(), activeProjectTitle and renderActiveChat() already implement those behaviors. The audit did not select a project chat to test the header. Existing Chromium tests already assert the back flow and equal panel heights; this pass adds a direct regression for filter-only semantics and the active-chat project label. The audit's statement that both sections are expanded by default also conflicts with source: Projects has aria-expanded=false and a hidden list; Chats has aria-expanded=true.
 
 **Decision:** adopt interaction semantics and layout constraints only; no component package, dependency, remote UI service or external code was added. Source checks are not a full-market audit and do not establish native iOS/VoiceOver behavior.
+
+## Deep Research 2.0 — targeted primary-source review, 2026-11-15
+
+### Primary sources checked
+
+- Exa Search API: https://docs.exa.ai/reference/search — one request can discover relevant results and optionally return content/highlights; responses expose title, URL, published date, author, text/highlights and cost fields.
+- Exa Contents API: https://docs.exa.ai/reference/get-contents — fetches page contents, summaries and metadata for explicit URLs; cached content can fall back to live crawling.
+- Firecrawl Search API: https://docs.firecrawl.dev/api-reference/endpoint/search — combines search and scraping; full Markdown can be requested through scrape options; supports site/filetype and research-category filters.
+- Firecrawl Scrape API: https://docs.firecrawl.dev/api-reference/endpoint/scrape — extracts a single page; dynamic browser interactions are a separate Interact endpoint, not implicit in basic scraping.
+- LangChain Deep Agents — Subagents: https://docs.langchain.com/oss/python/deepagents/subagents — subagents isolate context and specialized instructions; synchronous subagents block the supervisor; avoid delegation for simple tasks when overhead exceeds benefit.
+- LangGraph Persistence: https://docs.langchain.com/oss/python/langgraph/persistence — checkpointers persist thread-scoped run state; stores hold cross-thread application data; in-memory savers do not survive process restarts.
+- FastAPI Background Tasks: https://fastapi.tiangolo.com/tutorial/background-tasks/ and Lifespan: https://fastapi.tiangolo.com/advanced/events/ — BackgroundTasks run after the response but are not a durable queue; lifespan is the correct lifecycle boundary for shared workers/resources.
+- Context7 FastAPI docs were queried for lifespan and long-running task guidance; no framework-version upgrade or dependency was made.
+
+### Findings and decision
+
+- Current browser research uses a four-stage same-model pipeline and stores the trace in localStorage; this is a structured workflow, not independent multi-agent research.
+- gateway/rag/evidence_ledger.py already hashes source text, stores exact Unicode offsets/quote snippets and scopes evidence to conversation/project/global. The class is not yet wired to authenticated Gateway routes.
+- rag_enabled is false by default. Evidence persistence must be explicit and user-triggered; a configured remote Gateway must never receive excerpts silently.
+- Exa and Firecrawl are complementary adapters (search/metadata vs extraction/interaction), not reasons to add multiple overlapping search libraries. API keys, cost accounting, remote-processing consent and rate limits belong in Gateway configuration.
+- Do not use FastAPI BackgroundTasks for resumable research. Reuse existing persistent AgentRun/SQLite patterns or a clearly bounded research-specific state store; do not create a second checkpoint system without demonstrated need.
+- A hash and exact quote span prove capture integrity, not semantic entailment between a claim and the source. Claim-to-citation support, contradictions and confidence require separate structured records and validation.
+
+Decision: reuse the existing SQLite EvidenceLedger, add authenticated scoped API operations and explicit trace persistence first. Defer LangGraph/Deep Agents SDK adoption pending measured need, compatibility/license review and an adapter comparison. No dependency, paid service, model or host setting changed.

@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import os
 import tempfile
@@ -767,3 +768,100 @@ def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path
     raw_db = (tmp_path / "agent-runs.sqlite3").read_bytes()
     assert b"Review the supplied patch." not in raw_db
     assert b"Persistent answer." not in raw_db
+
+
+def _research_evidence_payload():
+    source_text = "Context before. The exact evidence sentence. Context after."
+    quote = "The exact evidence sentence."
+    start = source_text.index(quote)
+    return {
+        "scope": "conversation",
+        "scope_id": "chat-evidence-1",
+        "source_id": "trace-evidence-1-S1",
+        "source_uri": "https://example.test/research-evidence",
+        "source_text": source_text,
+        "chunk_id": "S1",
+        "start_offset": start,
+        "end_offset": start + len(quote),
+        "section": "Evidence fixture",
+        "claim_text": "A claim explicitly linked to the captured quote.",
+        "confidence": 0.75,
+        "metadata": {"capture_kind": "tool_excerpt", "trace_id": "trace-evidence-1"},
+    }
+
+
+def test_rag_evidence_api_records_exact_quote_deduplicates_and_isolates_scope(tmp_path):
+    config = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    payload = _research_evidence_payload()
+    with client_for(config) as client:
+        assert client.post("/v1/rag/evidence", json=payload).status_code == 401
+        first = client.post("/v1/rag/evidence", headers=headers, json=payload)
+        second = client.post("/v1/rag/evidence", headers=headers, json=payload)
+        listing = client.get("/v1/rag/evidence", headers=headers,
+                             params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+        isolated = client.get("/v1/rag/evidence", headers=headers,
+                              params={"scope": "conversation", "scope_id": "another-chat"})
+    assert first.status_code == second.status_code == 201
+    assert first.json()["evidence_id"] == second.json()["evidence_id"]
+    assert listing.status_code == isolated.status_code == 200
+    records = listing.json()["evidence"]
+    assert len(records) == 1
+    assert records[0]["quote_text"] == "The exact evidence sentence."
+    assert records[0]["source_sha256"] == hashlib.sha256(payload["source_text"].encode("utf-8")).hexdigest()
+    assert records[0]["claim_text"] == payload["claim_text"]
+    assert records[0]["metadata"] == payload["metadata"]
+    assert isolated.json()["evidence"] == []
+
+
+def test_rag_evidence_api_rejects_query_urls_and_invalid_spans(tmp_path):
+    config = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    payload = _research_evidence_payload()
+    with client_for(config) as client:
+        query_url = client.post("/v1/rag/evidence", headers=headers,
+            json={**payload, "source_uri": "https://example.test/research-evidence?token=must-not-echo"})
+        invalid_span = client.post("/v1/rag/evidence", headers=headers,
+            json={**payload, "start_offset": 0, "end_offset": len(payload["source_text"]) + 1})
+    assert query_url.status_code == 400
+    assert "must-not-echo" not in query_url.text
+    assert invalid_span.status_code == 400
+
+
+def test_rag_evidence_api_deletes_only_within_the_requested_scope(tmp_path):
+    config = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    payload = _research_evidence_payload()
+    with client_for(config) as client:
+        created = client.post("/v1/rag/evidence", headers=headers, json=payload)
+        evidence_id = created.json()["evidence_id"]
+        wrong_scope = client.delete(f"/v1/rag/evidence/{evidence_id}", headers=headers,
+            params={"scope": "conversation", "scope_id": "another-chat"})
+        still_present = client.get("/v1/rag/evidence", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+        deleted = client.delete(f"/v1/rag/evidence/{evidence_id}", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+        absent = client.get("/v1/rag/evidence", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+    assert created.status_code == 201
+    assert wrong_scope.status_code == 404
+    assert len(still_present.json()["evidence"]) == 1
+    assert deleted.status_code == 200
+    assert deleted.json()["status"] == "deleted"
+    assert absent.json()["evidence"] == []
+
+
+def test_rag_evidence_capability_is_explicit_and_disabled_by_default(tmp_path):
+    enabled = settings(rag_enabled=True, rag_path=str(tmp_path / "rag.sqlite3"))
+    headers = {"Authorization": f"Bearer {API_KEY}"}
+    with client_for(enabled) as client:
+        capabilities = client.get("/v1/capabilities", headers=headers)
+    with client_for(settings()) as client:
+        disabled = client.get("/v1/capabilities", headers=headers)
+        unavailable = client.get("/v1/rag/evidence", headers=headers,
+            params={"scope": "conversation", "scope_id": "chat-evidence-1"})
+    assert capabilities.status_code == disabled.status_code == 200
+    assert capabilities.json()["rag"] == {"enabled": True, "evidence_ledger": True}
+    assert disabled.json()["rag"] == {"enabled": False, "evidence_ledger": False}
+    assert unavailable.status_code == 503
+
