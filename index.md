@@ -275,10 +275,13 @@ permalink: /
     }
     #sidebar { overflow-y:auto; overscroll-behavior:contain; }
     #sidebar > :not(#chatList) { flex-shrink:0; }
-    .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;height:clamp(220px,32vh,300px);min-height:220px;margin:8px 12px;padding:10px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface); }
+    .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;height:clamp(220px,30vh,280px);min-height:220px;max-height:280px;margin:8px 12px;padding:10px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface); }
     #projectNavigation { display:flex;flex:1;flex-direction:column;min-height:0;gap:8px; }
     #projectNavigationList { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; }
     #chatSection { min-height:220px; }
+    #chatNavToggle { display:flex;align-items:center;justify-content:space-between;width:100%;min-height:40px;padding:0 10px;border-radius:10px;text-align:left; }
+    #chatNavigationContent { display:flex;flex:1;flex-direction:column;min-height:0;gap:6px; }
+    #chatNavigationContent.hidden { display:none; }
     #chatSection > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
     #sidebar #chatList { flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto; }
     #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:8px 12px; }
@@ -456,19 +459,21 @@ permalink: /
       <div id="projectNavigationList" class="hidden space-y-1.5" aria-label="Список проектов"></div>
       <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
     </section>
-    <details id="chatSection" open class="sidebar-main-section chat-main-section">
-      <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
-        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
-      </summary>
-      <div class="chat-primary-actions">
-        <button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="chat-create-row">＋ Новый чат</button>
-        <button type="button" id="chatScopeBackButton" data-action="clear-project-filter" class="chat-scope-back hidden">← Все чаты</button>
-        <button type="button" id="projectlessNavButton" data-action="projectless-nav" class="project-nav-unassigned" aria-label="Показать чаты без проекта">
-          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
-        </button>
+    <section id="chatSection" class="sidebar-main-section chat-main-section" aria-label="Чаты">
+      <button id="chatNavToggle" type="button" data-action="toggle-chat-navigation" aria-expanded="true" aria-controls="chatNavigationContent" class="chat-section-summary text-sm font-semibold">
+        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span class="flex items-center gap-2"><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span><span id="chatNavChevron" aria-hidden="true">⌃</span></span>
+      </button>
+      <button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="chat-create-row">＋ Новый чат</button>
+      <div id="chatNavigationContent" class="chat-nav-content">
+        <div class="chat-primary-actions">
+          <button type="button" id="chatScopeBackButton" data-action="clear-project-filter" class="chat-scope-back hidden">← Все чаты</button>
+          <button type="button" id="projectlessNavButton" data-action="projectless-nav" class="project-nav-unassigned" aria-label="Показать чаты без проекта">
+            <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+          </button>
+        </div>
+        <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
       </div>
-      <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
-    </details>
+    </section>
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl p-2 space-y-2" aria-label="Настройки памяти">
       <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
@@ -5420,10 +5425,14 @@ permalink: /
             const list=$('projectNavigationList'),open=list.classList.toggle('hidden')===false;
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
+          case 'toggle-chat-navigation': {
+            const content=$('chatNavigationContent'),open=content.classList.toggle('hidden')===false;
+            $('chatNavToggle').setAttribute('aria-expanded',String(open));$('chatNavChevron').textContent=open?'⌃':'⌄';break;
+          }
           case 'projectless-nav': {
             selectedProjectFilterId='';renderProjectNavigation();renderChatList();
-            $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
-            $('chatSection').querySelector('summary')?.focus();break;
+            $('chatNavigationContent').classList.remove('hidden');$('chatNavToggle').setAttribute('aria-expanded','true');$('chatNavChevron').textContent='⌃';
+            $('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});$('chatNavToggle').focus();break;
           }
           case 'open-project-settings': {
             projectSettingsOpener=control;
