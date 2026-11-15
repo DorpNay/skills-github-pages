@@ -185,11 +185,11 @@ def collect_css(root: Path):
     index_path = root / "index.md"
     if index_path.is_file():
         source = read_text(index_path)
-        for match in re.finditer(r"<style\\b[^>]*>([\\s\\S]*?)</style\\s*>", source, re.IGNORECASE):
+        for match in re.finditer(r"<style\b[^>]*>([\s\S]*?)</style\s*>", source, re.IGNORECASE):
             css = match.group(1)
             if not css.strip():
                 continue
-            line_offset = source.count("\\n", 0, match.start(1))
+            line_offset = source.count("\n", 0, match.start(1))
             collect(css, index_path.relative_to(root).as_posix(), line_offset)
 
     return records
