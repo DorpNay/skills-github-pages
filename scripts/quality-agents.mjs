@@ -325,8 +325,12 @@ const suites = {
     }],
     ['global system prompt is opt-in and legacy prompt migrates', () => {
       includes("const DEFAULT_SYSTEM = '';", 'The global system prompt must be empty by default.');
-      includes('LEGACY_DEFAULT_SYSTEM', 'Legacy prompt migration guard is missing.');
-      includes('configuredPrompt === LEGACY_DEFAULT_SYSTEM', 'Legacy saved prompt must migrate automatically.');
+      includes('function normalizeUserSystemPrompt(value)', 'A single normalizer must own legacy and empty prompt handling.');
+      includes('const normalized = value.trim()', 'Whitespace-only owner prompts must normalize to empty.');
+      includes('normalized === LEGACY_DEFAULT_SYSTEM || normalized === LEGACY_PROMPT_PLACEHOLDER', 'Both legacy built-in and placeholder prompt values must migrate to empty.');
+      includes('if (savedPrompt !== null && normalizedPrompt !== savedPrompt) safeSet(STORAGE.systemPrompt, normalizedPrompt)', 'Legacy prompt values must be migrated in persistent storage.');
+      includes('const activePrompt = normalizeUserSystemPrompt(configuredPrompt)', 'Provider requests must use the normalized owner prompt.');
+      includes('normalizeUserSystemPrompt(settings.systemPrompt)', 'Settings import must use the same prompt normalization.');
     }],
     ['tool loop fails closed at its configured boundary', () => {
       includes('round === maxToolRounds', 'Tool-call boundary must be checked against the active mode budget.');

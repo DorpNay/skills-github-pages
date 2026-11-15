@@ -147,6 +147,16 @@ test('legacy placeholder text is migrated out of the global prompt setting', asy
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
 });
 
+test('legacy built-in assistant instructions are migrated out of the global prompt', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_system_prompt', 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#systemPromptInput')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
+});
+
 test('global prompt saves explicit owner text and persists an intentional clear', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();

@@ -858,9 +858,11 @@ permalink: /
     // Keep the user-editable global system prompt empty unless the user supplies instructions.
     const DEFAULT_SYSTEM = '';
     function normalizeUserSystemPrompt(value) {
-      return typeof value !== 'string' || value === LEGACY_DEFAULT_SYSTEM || value === LEGACY_PROMPT_PLACEHOLDER
+      if (typeof value !== 'string') return DEFAULT_SYSTEM;
+      const normalized = value.trim();
+      return normalized === LEGACY_DEFAULT_SYSTEM || normalized === LEGACY_PROMPT_PLACEHOLDER
         ? DEFAULT_SYSTEM
-        : value;
+        : normalized;
     }
     const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai';
     const DEFAULT_MODEL = 'gemini-3.8-flash';
