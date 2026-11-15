@@ -4650,8 +4650,8 @@ let agentRuntimeRefreshPromise = null;
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика:\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null,traceCreatedAt=new Date().toISOString();
       const researchMessages = workChat.messages.slice(researchStart);
-      const sources = collectResearchEvidence(researchMessages);
-      const researchTrace={schemaVersion:2,id:traceId,createdAt:traceCreatedAt,provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
+      const sources = collectResearchEvidence(researchMessages).map(source => ({ ...source, capturedAt: traceCreatedAt }));
+      const researchTrace={schemaVersion:3,id:traceId,createdAt:traceCreatedAt,chatId:String(chat?.id||''),scope:'conversation',provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -5686,9 +5686,127 @@ let agentRuntimeRefreshPromise = null;
       }
       if (shownSources) evidenceSection.appendChild(sourceList);
       else { const empty = document.createElement('p'); empty.className = 'text-gray-400 text-xs'; empty.textContent = 'В этом запуске не удалось сохранить распознанные HTTPS-ссылки из результатов инструментов.'; evidenceSection.appendChild(empty); }
+
+      const persistableSources = (Array.isArray(trace.sources) ? trace.sources : [])
+        .filter(source => normalizeResearchEvidenceUrl(source?.url) && typeof source?.excerpt === 'string' && source.excerpt.trim());
+      if (trace.chatId && persistableSources.length) {
+        const controls = document.createElement('div'); controls.className = 'mt-3 space-y-2';
+        const note = document.createElement('p'); note.className = 'text-gray-400 text-xs leading-relaxed';
+        note.textContent = 'Передаются только выдержки до 360 символов, а не полные страницы. Сохранение произойдёт только после вашего нажатия.';
+        const status = document.createElement('p'); status.id = 'traceEvidenceStatus'; status.className = 'text-gray-300 text-xs';
+        status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
+        status.textContent = trace.evidenceLedger?.status === 'saved'
+          ? 'Ранее сохранено выдержек: ' + Number(trace.evidenceLedger.saved || 0) + '.'
+          : 'Не сохранено в Gateway.';
+        const save = document.createElement('button'); save.type = 'button'; save.id = 'persistTraceEvidenceButton';
+        save.dataset.action = 'persist-trace-evidence';
+        save.className = 'rounded-lg border border-cyan-700 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400';
+        save.textContent = trace.evidenceLedger?.status === 'saved' ? 'Повторить сохранение в Gateway' : 'Сохранить выдержки в Gateway';
+        controls.append(note, status, save); evidenceSection.appendChild(controls);
+      } else if (shownSources) {
+        const legacy = document.createElement('p'); legacy.className = 'mt-2 text-gray-500 text-xs';
+        legacy.textContent = 'Для старого журнала сохранение недоступно: нет идентификатора разговора или точных выдержек.';
+        evidenceSection.appendChild(legacy);
+      }
       host.appendChild(evidenceSection);
       $('traceModal').classList.remove('hidden');
     }
+
+    async function persistTraceEvidence(button) {
+      if (!activeTrace || typeof activeTrace.chatId !== 'string' || !activeTrace.chatId) {
+        throw new Error('Для сохранения доказательств нужен идентификатор разговора.');
+      }
+      const trigger = button || $('persistTraceEvidenceButton');
+      const status = $('traceEvidenceStatus');
+      const controller = new AbortController();
+      let timedOut = false;
+      const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 60000);
+      if (trigger) trigger.disabled = true;
+      try {
+        const config = getAlandiGatewayConfig();
+        if (status) status.textContent = 'Проверяю возможности Gateway…';
+        const headers = { Accept: 'application/json', Authorization: 'Bearer ' + config.key };
+        const capabilityResponse = await fetch(config.baseUrl + '/capabilities', {
+          method: 'GET', headers, cache: 'no-store', credentials: 'omit', signal: controller.signal
+        });
+        const capabilities = await capabilityResponse.json().catch(() => null);
+        if (!capabilityResponse.ok) throw new Error('Gateway не подтвердил доступность возможностей (HTTP ' + capabilityResponse.status + ').');
+        if (!capabilities?.rag?.enabled || !capabilities?.rag?.evidence_ledger) {
+          throw new Error('Evidence Ledger отключён на выбранном Gateway. Локальный журнал сохранён.');
+        }
+        const sources = (Array.isArray(activeTrace.sources) ? activeTrace.sources : [])
+          .slice(0, MAX_RESEARCH_EVIDENCE);
+        let saved = 0, skipped = 0, failed = 0;
+        const evidenceIds = [];
+        for (let offset = 0; offset < sources.length; offset += 4) {
+          const batch = sources.slice(offset, offset + 4);
+          const outcomes = await Promise.all(batch.map(async (source, batchIndex) => {
+            const sourceUrl = normalizeResearchEvidenceUrl(source?.url);
+            if (!sourceUrl) return { status: 'skipped' };
+            let parsed;
+            try { parsed = new URL(sourceUrl); } catch (_) { return { status: 'skipped' }; }
+            if (parsed.search || parsed.hash) return { status: 'skipped' };
+            const excerpt = String(source?.excerpt || '').replace(/\s+/g, ' ').trim().slice(0, 360);
+            if (!excerpt) return { status: 'skipped' };
+            const sourceKey = String(source?.id || ('S' + (offset + batchIndex + 1))).slice(0, 40);
+            const payload = {
+              scope: 'conversation',
+              scope_id: String(activeTrace.chatId).slice(0, 160),
+              source_id: (String(activeTrace.id || 'trace').slice(0, 100) + '-' + sourceKey).slice(0, 160),
+              source_uri: sourceUrl,
+              source_text: excerpt,
+              chunk_id: sourceKey.slice(0, 160),
+              start_offset: 0,
+              end_offset: Array.from(excerpt).length,
+              section: String(source?.title || '').slice(0, 256),
+              metadata: {
+                capture_kind: 'tool_excerpt',
+                trace_id: String(activeTrace.id || '').slice(0, 64),
+                source_label: String(source?.source || '').slice(0, 80),
+                tool: String(source?.tool || '').slice(0, 80),
+                title: String(source?.title || '').slice(0, 180),
+                captured_at: String(source?.capturedAt || activeTrace.createdAt || '').slice(0, 40),
+                provider: String(activeTrace.provider || '').slice(0, 120),
+                model: String(activeTrace.model || '').slice(0, 160)
+              }
+            };
+            try {
+              const response = await fetch(config.baseUrl + '/rag/evidence', {
+                method: 'POST',
+                headers: { ...headers, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload), cache: 'no-store', credentials: 'omit',
+                signal: controller.signal
+              });
+              const result = await response.json().catch(() => null);
+              if (!response.ok || typeof result?.evidence_id !== 'string') return { status: 'failed' };
+              return { status: 'saved', evidenceId: result.evidence_id };
+            } catch (_) { return { status: 'failed' }; }
+          }));
+          for (const outcome of outcomes) {
+            if (outcome.status === 'saved') { saved++; evidenceIds.push(outcome.evidenceId); }
+            else if (outcome.status === 'skipped') skipped++;
+            else failed++;
+          }
+        }
+        activeTrace.evidenceLedger = {
+          status: failed ? (saved ? 'partial' : 'failed') : (saved ? 'saved' : 'empty'),
+          saved, skipped, failed, evidenceIds, scope: 'conversation',
+          scopeId: String(activeTrace.chatId), savedAt: new Date().toISOString()
+        };
+        safeSet('ai_research_trace_' + activeTrace.id, JSON.stringify(activeTrace));
+        if (status) status.textContent = 'Сохранено: ' + saved + '; пропущено: ' + skipped + '; ошибок: ' + failed + '.';
+        if (failed) showToast('Часть выдержек не сохранена. Повтор безопасен: одинаковые записи дедуплицируются.', 'error');
+        else showToast('Доказательные выдержки сохранены в Gateway.');
+        return activeTrace.evidenceLedger;
+      } catch (error) {
+        if (status) status.textContent = (timedOut ? 'Истекло время ожидания. ' : 'Сохранение не завершено: ') + String(error?.message || 'Gateway недоступен.').slice(0, 180);
+        throw error;
+      } finally {
+        clearTimeout(timer);
+        if (trigger) trigger.disabled = false;
+      }
+    }
+
     function closeTrace() { $('traceModal').classList.add('hidden'); }
     function downloadTrace() {
       if (!activeTrace) return;
@@ -5965,6 +6083,7 @@ let agentRuntimeRefreshPromise = null;
           case 'retry': await retryLastMessage(); break;
           case 'copy-code': case 'download-code': case 'run-python': await handleCodeAction(control); break;
           case 'open-trace': { const raw=safeGet('ai_research_trace_'+control.dataset.traceId); if(!raw) throw new Error('Журнал не найден: возможно, локальные данные очищены.'); showTrace(JSON.parse(raw)); break; }
+          case 'persist-trace-evidence': await persistTraceEvidence(control); break;
           case 'close-trace': closeTrace(); break;
           case 'download-trace': downloadTrace(); break;
           case 'download-trace-json': downloadTraceJson(); break;

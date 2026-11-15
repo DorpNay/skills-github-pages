@@ -144,15 +144,15 @@ test('research trace explicitly persists captured excerpts to the scoped Gateway
   await page.route('https://example.test/research-evidence', async route => {
     await route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' },
       contentType: 'text/html',
-      body: '<html><head><title>Evidence Fixture</title></head><body>The retrieved page contains a unique evidence sentence for this regression test.</body></html>' });
+      body: '<html><head><title>Evidence Fixture</title></head><body>🌱 The retrieved page contains a unique evidence sentence for this regression test.</body></html>' });
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.evaluate(() => {
     document.getElementById('cloudBaseUrl').value = 'https://gateway.example.test/v1';
     document.getElementById('cloudApiKey').value = 'gateway-test-key';
   });
-  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
   await page.locator('#baseUrl').fill('https://api.example.test/v1');
@@ -183,7 +183,7 @@ test('research trace explicitly persists captured excerpts to the scoped Gateway
   expect(evidencePosts[0].source_uri).toBe('https://example.test/research-evidence');
   expect(evidencePosts[0].source_text).toBe(trace.sources[0].excerpt);
   expect(evidencePosts[0].start_offset).toBe(0);
-  expect(evidencePosts[0].end_offset).toBe(evidencePosts[0].source_text.length);
+  expect(evidencePosts[0].end_offset).toBe(Array.from(evidencePosts[0].source_text).length);
   expect(evidencePosts[0].metadata.trace_id).toBe(trace.id);
   expect(evidencePosts[0].metadata.capture_kind).toBe('tool_excerpt');
 });

@@ -771,7 +771,7 @@ def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path
 
 
 def _research_evidence_payload():
-    source_text = "Context before. The exact evidence sentence. Context after."
+    source_text = "Context before 🌱. The exact evidence sentence. Context after."
     quote = "The exact evidence sentence."
     start = source_text.index(quote)
     return {

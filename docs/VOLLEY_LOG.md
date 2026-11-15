@@ -398,3 +398,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Corrected only the test locator to target the unique .chat-row container; assertions and production code are unchanged.
 - Exact parent Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. Quality release-contract job was skipped after the Chromium failure; public exact-revision verification must be repeated after Quality passes.
 - Next: exact-child Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision.
+
+## V-2026-11-15-DEEP-RESEARCH-EVIDENCE-LEDGER-001 — scoped evidence persistence
+
+- Parent test contract: be7337cbc5e839747b3fe7377ac5a9a27a35a24b; 0 open PRs; issue #111. Gateway #43737581208 was RED because the new routes were intentionally absent; Quality #43737581226 was still running; Freshness #43737581194 found the expected stale snapshot; Graphify #43737581219 and Pages #43737580201 passed.
+- Implemented in this child: existing EvidenceLedger initialization behind rag_enabled; authenticated POST/GET/DELETE /v1/rag/evidence; exact quote/hash/Unicode offsets; idempotent writes; scope-bound deletion; RAG capability advertisement.
+- Research Trace schema v3 stores chat ID and capture timestamps. Explicit Save to Gateway sends only <=360-character excerpts after user action; it does not upload full pages automatically. Remote Gateway must advertise RAG/EvidenceLedger. Evidence remains conversation-scoped.
+- K.5 Deep Research status is PARTIAL, not complete. Semantic claim-to-citation verification, contradictions, resumable state, independent Exa/Firecrawl adapters, budget accounting and Notebook/export remain open.
+- Exact-head CI and public revision verification are pending on this implementation commit. No dependency, paid service, host setting or model changed.

@@ -125,3 +125,17 @@
 - Functions menu now has three current actions: Agents/structured analysis, Deep Research settings panel, Skills/task profile. Research Studio is retired. The Deep Research panel reports Quick/Thorough, current Web search breadth and pipeline state; it navigates to existing controls rather than implementing an independent research runtime.
 - **Not verified/implemented by this delta:** the 12-stage Deep Research 2.0 state machine, durable/resumable run storage, source refresh, evidence ledger enforcement, contradiction resolution, exact claim-to-citation checks, independent parallel workers and production source connectors. These remain SPECIFIED/DEFERRED pending code/tests/evals.
 - Existing Gateway/RAG/memory notes in the historical audit remain subject to fresh exact-main code/test audit. PR #169 E2E was authored; exact-head Quality/Chromium outcome must be checked before marking the menu VERIFIED.
+
+## 2026-11-15 — Evidence Ledger vertical slice implemented
+
+**IMPLEMENTED (exact-head checks pending on this commit):**
+
+- Gateway initializes the existing SQLite EvidenceLedger only when RAG is enabled; the default remains disabled.
+- Authenticated API: POST /v1/rag/evidence writes scoped source quotes; GET lists records within an explicit scope; DELETE removes only a record in the matching scope. Responses are no-store; body/source/metadata sizes are bounded.
+- Evidence writes store the source SHA-256 and exact Unicode quote offsets, not the full page body. Duplicate retries with the same scope/source/hash/chunk/span/claim return the same evidence ID under a SQLite write transaction.
+- Research Trace schema v3 records the conversation ID and capture timestamp. The trace modal exposes an explicit Save to Gateway action; it sends only bounded excerpts (max 360 characters), no full page, and only after the user clicks. URLs with query strings are skipped by the save path. Save status and evidence IDs remain in the local trace.
+- Evidence is conversation-scoped by default, not silently promoted to project scope. The user-configured Gateway must advertise RAG and EvidenceLedger capability. RAG remains disabled by default.
+
+**VERIFIED BY TEST CONTRACT (pending exact-head CI):** authenticated writes, exact quote/hash, Unicode offsets, deduplication, scope isolation, scoped deletion, disabled capability, and no automatic upload.
+
+**NOT IMPLEMENTED YET:** semantic claim-to-citation entailment, contradiction ledger and resolution, durable/resumable research-run state, independent multi-provider search/fetch adapters, budget/cost accounting across providers, and Notebook/report export. Exact quote integrity is not semantic support verification.

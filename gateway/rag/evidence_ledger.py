@@ -1,4 +1,4 @@
-"""Append-only-per-evidence SQLite ledger scoped to conversation/project/global records."""
+"""Scoped SQLite evidence ledger with exact quote hashes, idempotent writes and scoped deletion."""
 from __future__ import annotations
 
 import json
@@ -58,6 +58,8 @@ class EvidenceLedger:
                     ON evidence_records(scope, scope_id, recorded_at DESC);
                 CREATE INDEX IF NOT EXISTS idx_evidence_source
                     ON evidence_records(scope, scope_id, source_id, source_sha256);
+                CREATE INDEX IF NOT EXISTS idx_evidence_identity
+                    ON evidence_records(scope, scope_id, source_id, source_sha256, chunk_id, start_offset, end_offset);
             """)
             db.commit()
         if self.path != ":memory:":
@@ -72,17 +74,20 @@ class EvidenceLedger:
             raise EvidenceLedgerError("invalid evidence scope")
         if (scope == "global") != (scope_id == "global"):
             raise EvidenceLedgerError("global scope must use scope_id='global'; other scopes cannot")
-        if not isinstance(source_id, str) or not source_id or len(source_id) > 256:
-            raise EvidenceLedgerError("source_id is required")
+        if not isinstance(source_id, str) or not source_id or len(source_id) > 160:
+            raise EvidenceLedgerError("source_id must be non-empty text of at most 160 characters")
         parsed = urlsplit(source_uri) if isinstance(source_uri, str) else None
         if parsed is None or parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
             raise EvidenceLedgerError("source_uri must be a clean HTTPS citation URL")
         if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1:
             raise EvidenceLedgerError("confidence must be between 0 and 1")
-        metadata = metadata or {}
+        if metadata is None:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise EvidenceLedgerError("metadata must be a bounded JSON object")
         try:
             metadata_json = json.dumps(metadata, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
-            if not isinstance(metadata, dict) or len(metadata_json.encode("utf-8")) > 16_384:
+            if len(metadata_json.encode("utf-8")) > 16_384:
                 raise EvidenceLedgerError("metadata must be a bounded JSON object")
             citation = self.citations.create(document_id=source_id, chunk_id=chunk_id, source_uri=source_uri,
                 source_text=source_text, start_offset=start_offset, end_offset=end_offset,
@@ -93,6 +98,16 @@ class EvidenceLedger:
             raise EvidenceLedgerError("claim_text must be bounded text")
         evidence_id = uuid.uuid4().hex
         with closing(self._connect()) as db:
+            db.execute("BEGIN IMMEDIATE")
+            existing = db.execute("""SELECT evidence_id FROM evidence_records
+                WHERE scope=? AND scope_id=? AND source_id=? AND source_uri=? AND source_sha256=?
+                  AND chunk_id=? AND start_offset=? AND end_offset=? AND claim_text IS ?
+                ORDER BY recorded_at DESC, evidence_id LIMIT 1""",
+                (scope, scope_id, source_id, source_uri, citation.source_sha256, chunk_id,
+                 start_offset, end_offset, claim_text)).fetchone()
+            if existing:
+                db.commit()
+                return str(existing["evidence_id"])
             db.execute("""INSERT INTO evidence_records
                 (evidence_id, scope, scope_id, evidence_kind, source_id, source_uri, source_sha256, chunk_id,
                  page_number, section, start_offset, end_offset, quote_text, claim_text, confidence, recorded_at, metadata_json)
@@ -104,7 +119,7 @@ class EvidenceLedger:
         return evidence_id
 
     def list_evidence(self, *, scope: str, scope_id: str, limit: int = 100) -> list[dict[str, Any]]:
-        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id:
+        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
             raise EvidenceLedgerError("invalid evidence scope")
         if (scope == "global") != (scope_id == "global"):
             raise EvidenceLedgerError("invalid global scope ID")
@@ -119,3 +134,19 @@ class EvidenceLedger:
             item["metadata"] = json.loads(item.pop("metadata_json"))
             records.append(item)
         return records
+
+    def delete_evidence(self, *, evidence_id: str, scope: str, scope_id: str) -> bool:
+        if not isinstance(evidence_id, str) or not evidence_id or len(evidence_id) > 64:
+            raise EvidenceLedgerError("invalid evidence ID")
+        if scope not in {"conversation", "project", "global"} or not isinstance(scope_id, str) or not scope_id or len(scope_id) > 160:
+            raise EvidenceLedgerError("invalid evidence scope")
+        if (scope == "global") != (scope_id == "global"):
+            raise EvidenceLedgerError("invalid global scope ID")
+        with closing(self._connect()) as db:
+            cursor = db.execute(
+                "DELETE FROM evidence_records WHERE evidence_id=? AND scope=? AND scope_id=?",
+                (evidence_id, scope, scope_id),
+            )
+            db.commit()
+        return cursor.rowcount == 1
+

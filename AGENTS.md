@@ -36,9 +36,9 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-15)
 
-- Parent main: `2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa`; Open PRs: none; Open issues: #111. Parent Quality #43735565023 had 130 pass / 1 strict-locator test failure; Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. The selector-only fix is this child; exact gates pending.
-- Quality #43733527394 SUCCESS including Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS; public root revision matches parent; /landing/ returns HTTP 404.
-- Next child adds regression tests/fixes for AgentRun observer replacement and backend `budget_exhausted` terminal handling. Do not enable host AgentRun or change the one-worker/no-tools/no-filesystem/no-network policy.
+- State-refresh parent: `be7337cbc5e839747b3fe7377ac5a9a27a35a24b`; Open PRs: none; Open issues: #111. Test-only RED checkpoint: Gateway #43737581208 failed because the evidence API did not exist yet; Quality #43737581226 was in progress; Freshness #43737581194 found the expected stale snapshot; Graphify #43737581219 and Pages #43737580201 passed.
+- This direct child implements the scoped EvidenceLedger API, idempotent quote persistence/deletion, capability reporting and explicit Research Trace v3 excerpt save. No raw page body is uploaded; no save occurs until the user clicks. RAG remains disabled by default. Exact-head CI is pending.
+- Next: verify Gateway Python 3.12/3.13/3.14, Quality/Chromium, Freshness, Provenance, Graphify, Pages and exact published revision. Then continue claim-to-citation support, contradiction records, durable resumability and bounded Exa/Firecrawl adapters. No new SDK/dependency or paid service.
 
 ## Targeted UI source review — 2026-11-15
 
@@ -47,3 +47,7 @@ Apple HIG Sidebars/Disclosure, W3C ARIA Disclosure + WCAG 2.2 Focus Not Obscured
 ## OR-008 source and route policy
 
 Use `INTEL.md` as the external-source register. It contains 450 distinct URL strings / 528 occurrences (full inventory snapshot 2026-11-04); revalidate only sources relevant to the active subsystem, record checked date/version/license, and do not bulk-import dependencies or models. For Notebook/Research/Workspace, prefer same-origin Pages paths with an explicit shared-data contract before considering subdomains. A subdomain is a separate origin and requires owner-controlled DNS plus an authenticated API/sync design. No domain/DNS change is authorized by this note.
+
+## Targeted Deep Research source review — 2026-11-15
+
+Exa Search/Contents, Firecrawl Search/Scrape, LangChain Deep Agents Subagents, LangGraph Persistence, FastAPI BackgroundTasks/Lifespan and Context7 FastAPI docs were checked. Search and extraction should remain separate adapters; isolated subagents are justified only for independent work; in-memory savers are not durable; FastAPI BackgroundTasks are not a persistent queue. Reuse the existing SQLite EvidenceLedger and AgentRun persistence patterns before adding LangGraph/Deep Agents SDK dependencies. Full findings and URLs are in INTEL.md.

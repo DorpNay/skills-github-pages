@@ -937,6 +937,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         app.state.semaphore = asyncio.Semaphore(config.max_inflight_requests)
         app.state.delta_store = None
         app.state.rag_store = None
+        app.state.evidence_ledger = None
         app.state.oauth_vault = None
         app.state.github_app_connector = None
         app.state.agent_run_store = None
@@ -973,6 +974,12 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 config.rag_path, max_chunk_chars=config.rag_max_chunk_chars
             )
             app.state.rag_store.initialize()
+            try:
+                from .rag.evidence_ledger import EvidenceLedger
+            except ImportError:  # supports "uvicorn app:app" from the gateway directory
+                from rag.evidence_ledger import EvidenceLedger
+            app.state.evidence_ledger = EvidenceLedger(config.rag_path)
+            app.state.evidence_ledger.initialize()
         if config.agent_runs_enabled:
             app.state.agent_run_store = AgentRunStore(config.agent_runs_path)
             app.state.agent_run_store.initialize()
@@ -1066,6 +1073,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             },
             "documents": {"extraction": config.document_extraction_enabled},
             "connectors": {"github_app": config.github_app_enabled},
+            "rag": {"enabled": config.rag_enabled, "evidence_ledger": config.rag_enabled},
             "agent_runs": {"enabled": config.agent_runs_enabled, "worker_concurrency": 1, "tools_enabled": False},
         }, headers={"Cache-Control": "no-store"})
 
@@ -1402,6 +1410,82 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "RAG index is unavailable") from None
         return JSONResponse({"status": "indexed", "chunks": inserted},
                             headers={"Cache-Control": "no-store"})
+
+
+    @app.post("/v1/rag/evidence")
+    async def rag_add_evidence(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = getattr(request.app.state, "evidence_ledger", None)
+        if store is None:
+            raise HTTPException(503, "RAG evidence ledger is disabled")
+        body = await read_limited_body(request, min(config.max_body_bytes, 512 * 1024))
+        try:
+            payload = json.loads(body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
+        required = {"scope", "scope_id", "source_id", "source_uri", "source_text",
+                    "chunk_id", "start_offset", "end_offset"}
+        optional = {"page_number", "section", "claim_text", "confidence", "metadata"}
+        if not isinstance(payload, dict) or not required.issubset(payload) or set(payload) - required - optional:
+            raise HTTPException(400, "Expected scoped source text, URI, chunk and exact offsets; unexpected fields are rejected")
+        source_text = payload.get("source_text")
+        max_source_chars = min(config.rag_max_chunk_chars, 100_000)
+        if not isinstance(source_text, str) or not source_text or len(source_text) > max_source_chars:
+            raise HTTPException(400, "source_text must be non-empty and within the configured evidence limit")
+        if "metadata" in payload and not isinstance(payload["metadata"], dict):
+            raise HTTPException(400, "metadata must be a JSON object")
+        try:
+            evidence_id = store.add_quote(
+                scope=payload["scope"], scope_id=payload["scope_id"],
+                source_id=payload["source_id"], source_uri=payload["source_uri"],
+                source_text=source_text, chunk_id=payload["chunk_id"],
+                start_offset=payload["start_offset"], end_offset=payload["end_offset"],
+                page_number=payload.get("page_number"), section=payload.get("section"),
+                claim_text=payload.get("claim_text"), confidence=payload.get("confidence", 1.0),
+                metadata=payload.get("metadata"),
+            )
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG evidence write failed")
+            raise HTTPException(503, "RAG evidence ledger is unavailable") from None
+        return JSONResponse({"status": "recorded", "evidence_id": evidence_id},
+                            status_code=201, headers={"Cache-Control": "no-store"})
+
+    @app.get("/v1/rag/evidence")
+    async def rag_list_evidence(request: Request, scope: str, scope_id: str, limit: int = Query(100, ge=1, le=500),
+                                authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = getattr(request.app.state, "evidence_ledger", None)
+        if store is None:
+            raise HTTPException(503, "RAG evidence ledger is disabled")
+        try:
+            records = store.list_evidence(scope=scope, scope_id=scope_id, limit=limit)
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG evidence listing failed")
+            raise HTTPException(503, "RAG evidence ledger is unavailable") from None
+        return JSONResponse({"evidence": records, "count": len(records)},
+                            headers={"Cache-Control": "no-store"})
+
+    @app.delete("/v1/rag/evidence/{evidence_id}")
+    async def rag_delete_evidence(evidence_id: str, request: Request, scope: str, scope_id: str,
+                                  authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = getattr(request.app.state, "evidence_ledger", None)
+        if store is None:
+            raise HTTPException(503, "RAG evidence ledger is disabled")
+        try:
+            deleted = store.delete_evidence(evidence_id=evidence_id, scope=scope, scope_id=scope_id)
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG evidence deletion failed")
+            raise HTTPException(503, "RAG evidence ledger is unavailable") from None
+        if not deleted:
+            raise HTTPException(404, "Evidence record not found in the requested scope")
+        return JSONResponse({"status": "deleted"}, headers={"Cache-Control": "no-store"})
 
     @app.delete("/v1/rag/documents/{document_id}")
     async def rag_delete_document(document_id: str, request: Request, scope: str, scope_id: str,
