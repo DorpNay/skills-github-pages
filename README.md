@@ -1,13 +1,13 @@
 # aLandi
 
 
-## Публичная страница и запуск
+## Публичное приложение и запуск
 
-- [Предварительный лендинг aLandi](https://dorpnay.github.io/skills-github-pages/landing/) — отдельная статическая страница после merge и успешного Pages deployment; [исходник](landing/index.html). Она не заменяет рабочий клиент на главной странице.
+- [Открыть aLandi](https://dorpnay.github.io/skills-github-pages/) — единственный публичный интерфейс проекта. GitHub Pages автоматически публикует актуальный корневой клиент после изменений в `main`; revision и browser smoke проверяются CI.
 - [Первый стек и предпусковой чек-лист](docs/PRE_LAUNCH_STACK_RU.md) — рекомендуемая конфигурация и пошаговые gates владельца перед VPS/Tunnel и закрытым пилотом.
 - [Карта потоков данных и вводные для Privacy Notice](docs/LAUNCH_PRIVACY_REVIEW_RU.md) — внутренний checklist перед публикацией политики; это ещё не готовый юридический документ.
 
-**Статус:** PR #121 merged at `f4d880f` (первый бесплатный лендинг V1 и клиентский UX), PR #122 merged at `fd4f0a1` (Gateway liveness/readiness). Exact-head CI обоих PR прошёл. Post-merge Pages deployment на точном merge commit отдельно не подтверждён; считать публикацию проверенной можно только после успешного Pages deployment и smoke фактического URL.
+**Статус:** корневой `index.md` — единственный публичный клиент. Отдельный `/landing/` выведен из публикации; исторические решения и CI-свидетельства о нём остаются в журнале, но не являются активным маршрутом. Каждый push в `main` запускает Pages deployment; актуальность проверяется по `alandi-build-revision` и опубликованному Chromium smoke.
 
 ## Объединённый backlog первого бесплатного релиза
 
