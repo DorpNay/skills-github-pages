@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a; 0 open PRs; issue #111 open. Exact-head CI for this SHA has not yet been retrieved; previous SHA checks do not transfer."
+    status: "NOW.md is the sole first-read checkpoint. Parent main e0e90b4b038127ef0dc22c768a9b749f53ad7652; 0 open PRs; issue #111 open. Quality #43714877561 was in progress; Freshness #43714877492 failed on stale metadata; Pages #43714877166 succeeded on exact parent SHA."
     branch: "main"
-    base_main: "8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a"
+    base_main: "e0e90b4b038127ef0dc22c768a9b749f53ad7652"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "No exact-head CI results retrieved for current checkpoint 8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a. fetch_commit_workflow_runs only returns PR-triggered runs and returned none; combined status returned no contexts. Historical CI IDs are not evidence for this SHA."
+    exact_head_checks: "Exact parent main e0e90b4b038127ef0dc22c768a9b749f53ad7652: Pages #43714877166 SUCCESS; Quality #43714877561 was IN_PROGRESS at inspection; Freshness #43714877492 FAILED because state files still recorded 8de8bf6 and NOW.md omitted the exact issue queue marker. 21 freshness unit tests passed. Corrected in the following atomic state-refresh commit; verify its exact-head reruns."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
     next: "Resolve global prompt live/source mismatch first: inspect native DOM and script initialization, then test fresh profile, legacy migration, save/clear and profile round-trip. Next implement orthogonal modes/real Agent and Deep Research workflows, owner sidebar/project/chat flows, unified Settings and broader runtime slices. Verify exact HEAD and Pages after each push."
 
@@ -298,11 +298,11 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
-  last_main_action: "Owner request OR-2026-11-15-005 captured verbatim; K.6 expands existing 15-point registry. Parent main checks: Gateway #43696995842 PASS, Quality #43696995891 SUCCESS 7/7 incl. Chromium, Graphify #43696995875 SUCCESS, Pages #43696995516 SUCCESS. Root and /landing/ both published this revision."
+  verified_main: "e0e90b4b038127ef0dc22c768a9b749f53ad7652"
+  last_main_action: "Owner requests OR-2026-11-15-005 and OR-2026-11-15-006 recorded; K.6.8 now specifies the empty global prompt. Parent e0e90b4: Pages #43714877166 SUCCESS; Quality #43714877561 in progress; Freshness #43714877492 failed on stale metadata and missing issue marker. Root and /landing/ both returned exact e0e90b4 after Pages completed."
   last_functional_checkpoint: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
-  main_quality: "Quality #43696995891 SUCCESS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; 7/7 jobs incl. Chromium."
-  main_freshness: "Not triggered on parent because state paths were unchanged. This atomic refresh changes all required state paths and must pass exact-head Freshness."
+  main_quality: "Quality #43714877561 was IN_PROGRESS on exact parent e0e90b4b038127ef0dc22c768a9b749f53ad7652 at last inspection; final result must be retrieved."
+  main_freshness: "Freshness #43714877492 FAILED on exact parent e0e90b4: 21 unit tests PASS; freshness guard found stale root_orienter.base_main and missing exact NOW marker Open issues: #111. Corrected by following atomic refresh."
   main_graphify: "Graphify #43696995875 SUCCESS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a."
   main_gateway: "Lite Gateway Tests #43696995842 PASS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a across Python 3.12/13/14."
   main_provenance: "No exact-head provenance run retrieved for parent 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a; run if current changed paths trigger it."

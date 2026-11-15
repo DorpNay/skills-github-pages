@@ -333,3 +333,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Design evidence: Coder contrast check passed five selected dark-surface pairs using existing app palette anchors #0A1220/#E8EEFC/#A8B4C7/#60A5FA/#2DD4BF. This is a measured starting point, not an implemented global system.
 - Tool availability: Superpowers, Coder, Firecrawl, TinyFish, GitHub and Context7 are available. No Codex-specific plugin was found; OpenAI Agents SDK docs were used as research, not claimed Codex execution.
 - Next: implement function/mode matrix and real Agent/Deep Research choices, then sidebar/project/chat UI; remove /landing/ after inbound-reference audit. Keep host/device actions for final runbook.
+
+
+## V-2026-11-15-LANDING-V2-STATE-REFRESH-002 — exact-main state and queue reconciliation
+
+- Exact parent main: `e0e90b4b038127ef0dc22c768a9b749f53ad7652`; open PRs: none; open issue: #111.
+- Exact-parent CI: Freshness #43714877492 failed after 21/21 unit tests passed; the integration guard found stale `root_orienter.base_main` (`8de8bf6`) and missing exact `Open issues: #111` marker. Quality #43714877561 was still in progress at inspection. Pages #43714877166 succeeded; Firecrawl verified root and `/landing/` both returned exact revision `e0e90b4` (HTTP 200).
+- Prompt acceptance: `DEFAULT_SYSTEM = ''`; live root markup contains an empty `<textarea>` with placeholder only and `readonly` until explicit edit. Existing E2E covers empty default and legacy placeholder migration. The earlier TinyFish value report was an accessibility-tree serialization, not reliable raw DOM evidence.
+- UI acceptance gaps remain: create-project action opens `projectSettingsModal`; no dedicated `projectCreateModal`; no `chatScopeBackButton`; `renderChatList()` filters only unassigned chats; obsolete `searchToolsSettings`/Tavily field remain.
+- This record is followed by one atomic direct-main refresh of `NOW.md`, `AGENTS.md`, `docs/project-state-snapshot.json`, `docs/PROJECT_STATE.yaml` and this log. No product source changed in this refresh.
+- Next: verify exact-head Freshness and Quality on the refresh commit; then implement dedicated project creation and project-scoped Chats in TDD slices. Keep `/landing/` until all inbound source references are audited.
