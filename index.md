@@ -222,7 +222,8 @@ permalink: /
     .project-nav-chats { padding:0 6px 6px 13px;display:grid;gap:4px; }
     #chatSection { border-color:var(--ui-border);background:color-mix(in srgb,var(--ui-surface) 60%,transparent); }
     .chat-section-summary { color:var(--ui-text); }
-    #chatSection[open] .chat-section-summary { border-bottom:1px solid var(--ui-border);color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    #chatNavToggle[aria-expanded="true"] { border-bottom:1px solid var(--ui-border);color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    #chatNavToggle[aria-expanded="false"] { color:var(--ui-text);background:transparent; }
     #chatList { min-height:5rem;max-height:min(38vh,420px); }
     #chatList.is-empty::after { content:attr(data-empty-label);display:block;padding:12px;color:var(--ui-text-muted);font-size:11px; }
     #projectNavigationList .chat-row { min-height:38px; }
