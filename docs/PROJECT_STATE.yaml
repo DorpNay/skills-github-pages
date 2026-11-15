@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 5b6d4d54a2dc9b81ae5a656ce357c26441c8d52f; 0 open PRs; issue #111 open. Exact-head workflow evidence for this SHA has not yet been retrieved; previous SHA checks do not transfer."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a; 0 open PRs; issue #111 open. Exact-head CI for this SHA has not yet been retrieved; previous SHA checks do not transfer."
     branch: "main"
-    base_main: "5b6d4d54a2dc9b81ae5a656ce357c26441c8d52f"
+    base_main: "8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact parent main 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a: Gateway #43696995842 PASS (Python 3.12/13/14); Quality #43696995891 SUCCESS 7/7 incl. Chromium; Graphify #43696995875 SUCCESS; Pages #43696995516 SUCCESS. Freshness is triggered by this atomic state refresh."
+    exact_head_checks: "No exact-head CI results retrieved for current checkpoint 8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a. fetch_commit_workflow_runs only returns PR-triggered runs and returned none; combined status returned no contexts. Historical CI IDs are not evidence for this SHA."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Add regression coverage for the already-present empty global prompt default, legacy-default migration and profile round-trip; then implement orthogonal modes/real Agent and Deep Research workflows, owner sidebar/project/chat flows, unified Settings and broader runtime slices. Verify exact HEAD and Pages after each push."
+    next: "Resolve global prompt live/source mismatch first: inspect native DOM and script initialization, then test fresh profile, legacy migration, save/clear and profile round-trip. Next implement orthogonal modes/real Agent and Deep Research workflows, owner sidebar/project/chat flows, unified Settings and broader runtime slices. Verify exact HEAD and Pages after each push."
 
 
 
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "5b6d4d54a2dc9b81ae5a656ce357c26441c8d52f"
+  checkpoint_parent_sha: "8de8bf63bfdf5333329c7efdac3ecd9c16e7bb9a"
   open_prs: []
   open_issues: [111]
   completed:
@@ -589,7 +589,7 @@ current_execution_checkpoint:
     - "External artifact #43420046411 verified: 6,054,442,377 bytes, archive SHA-256 a43f068a9e54df4e022c95e29eb1c1618b40a8fc5391166f7e6f1a6a0d6a8682. Ollama artifacts #43418126506 verified: 7,728,830,482 bytes. Combined 13,783,272,859 bytes; expire 2026-12-13."
     - "Python runtime cache #43423610986 passed offline sync and pip-check for CPython 3.12/3.13/3.14 on Ubuntu 24.04 x86_64; three artifacts total 80,097,141 compressed bytes."
     - "15 owner priorities are tracked in the existing K.5 status table; no parallel backlog."
-    - "Global editable prompt is already coded as empty by default (DEFAULT_SYSTEM = empty); legacy built-in default migrates to empty. E2E currently checks fresh default only; add migration, explicit save/clear and profile round-trip coverage."
+    - "Source inspection: DEFAULT_SYSTEM is empty and legacy built-in default is intended to migrate to empty; existing E2E checks fresh default only. Live browser acceptance contradicted this: systemPromptInput surfaced 28-char placeholder text, localStorage key null, meta revision not found. Browser automation returned a non-native textbox serialization, so native DOM value is not conclusively established. Resolve source/runtime/DOM mismatch; add migration, explicit save/clear and profile round-trip tests."
   dependency_audit:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
