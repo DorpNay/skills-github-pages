@@ -391,3 +391,10 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Added E2E test proving project filter is navigation-only, active chat/project header stay unchanged until explicit chat selection, and the header follows the selected project chat after switching back to all chats.
 - No runtime behavior, Gateway, model, permission or host setting changed in the UI test slice. AgentRun host flag remains off; no native iOS/VoiceOver verification.
 - Next: exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision; then Deep Research 2.0.
+
+## V-2026-11-15-UI-SIDEBAR-PROJECT-CONTEXT-002 — strict locator correction
+
+- Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa; 0 open PRs; issue #111. Quality #43735565023 ran 131 Chromium tests: 130 passed, one new project-filter/active-chat-header test failed because the broad data-chat-id locator matched nested nodes (9 matches), not because the UI behavior was wrong.
+- Corrected only the test locator to target the unique .chat-row container; assertions and production code are unchanged.
+- Exact parent Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. Quality release-contract job was skipped after the Chromium failure; public exact-revision verification must be repeated after Quality passes.
+- Next: exact-child Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision.

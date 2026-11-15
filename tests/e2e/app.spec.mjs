@@ -2269,7 +2269,7 @@ test('clearing a non-active project chat preserves the active chat and both proj
   await page.locator('[data-action="toggle-sidebar"]').click();
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   await page.locator('#projectNavigationList [data-action="select-project-filter"][data-project-id="project-beta"]').click();
-  const betaRow=page.locator('#chatList [data-chat-id="chat-beta"]');
+  const betaRow=page.locator('#chatList .chat-row[data-chat-id="chat-beta"]');
   await betaRow.locator('summary[aria-label="Действия чата"]').click();
   page.on('dialog',dialog=>dialog.accept());
   await betaRow.locator('[data-action="chat-clear"][data-chat-id="chat-beta"]').click();

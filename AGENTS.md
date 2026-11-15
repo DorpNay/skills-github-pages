@@ -36,7 +36,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-15)
 
-- Parent main: `78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4`; Open PRs: none; Open issues: #111. Quality #43734885113, Graphify #43734885253, Provenance #43734885239 and Pages #43734884518 passed; Freshness #43734885156 failed only on snapshot interpretation after 21/21 unit tests passed.
+- Parent main: `2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa`; Open PRs: none; Open issues: #111. Parent Quality #43735565023 had 130 pass / 1 strict-locator test failure; Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. The selector-only fix is this child; exact gates pending.
 - Quality #43733527394 SUCCESS including Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS; public root revision matches parent; /landing/ returns HTTP 404.
 - Next child adds regression tests/fixes for AgentRun observer replacement and backend `budget_exhausted` terminal handling. Do not enable host AgentRun or change the one-worker/no-tools/no-filesystem/no-network policy.
 

@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-013. Parent main 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4; 0 open PRs; issue #111 open. Quality #43734885113 SUCCESS incl. Chromium; Graphify #43734885253 SUCCESS; Provenance #43734885239 SUCCESS; Pages #43734884518 SUCCESS. Freshness #43734885156 failed only on snapshot interpretation after 21/21 unit tests passed. UI-source review and project-context E2E are in this child."
+    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-013. Parent main 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa; 0 open PRs; issue #111 open. Quality #43735565023: 130 Chromium pass / 1 strict locator failure; Freshness #43735565149 SUCCESS; Provenance #43735565027 SUCCESS; Graphify #43735565011 SUCCESS; Pages #43735564555 SUCCESS. Selector-only E2E fix in this child; exact gates pending."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4; 0 open PRs; issue #111 open. Quality #43734885113 SUCCESS incl. Chromium/published-site release contract; Graphify #43734885253 SUCCESS; Provenance #43734885239 SUCCESS; Pages #43734884518 SUCCESS. Freshness #43734885156 failed only because snapshot interpretation marked functional parent as documentation-only; 21/21 checker tests passed."
+    status: "NOW.md is the sole first-read checkpoint. Parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa; Quality #43735565023 has 130 pass / 1 selector failure; Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. Release contract skipped after Quality failure; selector-only correction in this child."
     branch: "main"
-    base_main: "78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4"
+    base_main: "2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact parent 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4: Quality #43734885113 SUCCESS incl. Chromium/published-site release contract; Graphify #43734885253 SUCCESS; Provenance #43734885239 SUCCESS; Pages #43734884518 SUCCESS. Freshness #43734885156: 21/21 unit tests pass; live check failed only because interpretation.last_main_commit_is_documentation_only was true while main_sha equaled last_functional_checkpoint_sha. Refresh snapshot interpretation and all five state files."
+    exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision for the project-filter/active-chat-header regression; then continue Deep Research 2.0. Host AgentRun remains disabled."
+    next: "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision after narrowing the project-row locator; then continue Deep Research 2.0. Host AgentRun remains disabled."
 
 
 
@@ -46,7 +46,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-15-UI-SIDEBAR-PROJECT-CONTEXT-001"
+  last_volley: "V-2026-11-15-UI-SIDEBAR-PROJECT-CONTEXT-002"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -298,9 +298,9 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4"
+  verified_main: "2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa"
   last_main_action: "Exact parent 4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3: Quality #43733527394 SUCCESS incl. Chromium; Graphify #43733527388 SUCCESS; Pages #43733527693 SUCCESS and root revision exact; /landing/ HTTP 404. Next child adds two AgentRun regressions; Freshness/Provenance pending on that child."
-  last_functional_checkpoint: "78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4"
+  last_functional_checkpoint: "2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa"
   main_quality: "Quality #43733527394 SUCCESS on exact parent 4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3; all jobs including Chromium."
   main_freshness: "Not triggered on exact functional parent 4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3; run on next state-changing child."
   main_graphify: "Graphify #43733527388 SUCCESS on exact parent 4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3."
@@ -548,7 +548,7 @@ owner_priority_2026_11_13:
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "External/Ollama/Python/OpenShell artifacts are SHA-verified in Actions, not installed; owner primary checkpoint excluded. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16, OpenShell 0.1.8 and pypdf 7.1.0 are current stable pins. FastAPI 0.163.0 is in seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is a lock-refresh candidate vs pinned 2.14.1. Target host and RU/EN/TH eval remain open."
-  live_main: "78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4"
+  live_main: "2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4"
+  checkpoint_parent_sha: "2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa"
   open_prs: []
   open_issues: [111]
   completed:
@@ -596,13 +596,14 @@ current_execution_checkpoint:
     - "Exact parent 9db8588: Pages #43724680667, Freshness #43724681291, Provenance #43724681306 and Graphify #43724681388 passed; Quality #43724681318 passed 122/123 Chromium tests and exposed project creation reassigning an existing chat. Current commit creates a project-owned chat and preserves existing chat ownership."
     - "Exact parent 888c2d5: Pages #43726434326, Freshness #43726435150, Provenance #43726435111 and Graphify #43726435074 passed; Quality #43726435103 passed 121/123 Chromium tests. Two failures were caused by newly added active-chat auto-switch on filter selection; current commit restores filter-only behavior."
     - "Exact parent 78c679d0ef3e05869ce4e2f3fd30ed8a64c360b4: Quality #43734885113 SUCCESS incl. Chromium/published-site release contract; Graphify #43734885253 SUCCESS; Provenance #43734885239 SUCCESS; Pages #43734884518 SUCCESS. Freshness #43734885156 passed 21/21 unit tests but failed one interpretation consistency check; corrected in this atomic child. AgentRun observer ownership and budget_exhausted terminal handling are implemented with Chromium regressions."
+    - "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 passed; one new project-context test failed on an overbroad locator matching nested data-chat-id nodes. Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 passed. Selector narrowed to .chat-row; release contract reruns on this child."
   dependency_audit:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
   next:
-    - "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and published revision for the project-filter/active-chat-header regression."
-    - "Continue Deep Research 2.0 with bounded source discovery, evidence ledger, claim-to-citation validation, contradiction handling, resumable state and export."
-    - "Keep AgentRun host flag disabled until host prerequisites and real model-backed acceptance are verified; do not imply multi-worker/tools/filesystem/shell/network."
+    - "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify, Pages and public revision after the project-row locator correction."
+    - "Continue Deep Research 2.0: bounded source discovery, evidence ledger, claim-to-citation validation, contradiction handling, resumable state and export."
+    - "Keep AgentRun host feature flag disabled until host prerequisites and real model-backed acceptance are verified."
     - "Continue Skills lifecycle, real Connectors, sandboxed Coder, full RAG, document/OCR/converter, installed voice, mode matrix, cache/observability/N2O and owner runbook."
 
