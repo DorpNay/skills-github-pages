@@ -2376,6 +2376,49 @@ permalink: /
       }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
     }
     function bindPositionedActionMenu(menu,trigger,panel) {
+      const positionMenu=()=>{
+        if(!menu.open)return;
+        const anchor=trigger.getBoundingClientRect(),viewport=window.visualViewport;
+        const viewportLeft=viewport?.offsetLeft||0,viewportTop=viewport?.offsetTop||0;
+        const viewportWidth=viewport?.width||window.innerWidth,viewportHeight=viewport?.height||window.innerHeight;
+        const width=panel.offsetWidth||190,height=panel.offsetHeight,margin=8,gap=5;
+        const left=Math.max(viewportLeft+margin,Math.min(anchor.right-width,viewportLeft+viewportWidth-width-margin));
+        const fitsBelow=anchor.bottom+gap+height<=viewportTop+viewportHeight-margin;
+        const top=fitsBelow?anchor.bottom+gap:Math.max(viewportTop+margin,anchor.top-height-gap);
+        panel.style.left=left+'px';panel.style.top=top+'px';menu.dataset.placement=fitsBelow?'below':'above';
+      };
+      const stopTrackingMenu=()=>{
+        window.removeEventListener('resize',positionMenu);
+        window.removeEventListener('scroll',positionMenu,true);
+        window.visualViewport?.removeEventListener('resize',positionMenu);
+        window.visualViewport?.removeEventListener('scroll',positionMenu);
+        panel.style.left='';panel.style.top='';delete menu.dataset.placement;
+      };
+      menu.addEventListener('toggle',()=>{
+        if(menu.open){
+          positionMenu();requestAnimationFrame(positionMenu);
+          window.addEventListener('resize',positionMenu);
+          window.addEventListener('scroll',positionMenu,true);
+          window.visualViewport?.addEventListener('resize',positionMenu);
+          window.visualViewport?.addEventListener('scroll',positionMenu);
+        }else stopTrackingMenu();
+      });
+      menu.addEventListener('keydown',event=>{
+        if(event.key !== 'Escape'||!menu.open)return;
+        event.preventDefault();event.stopPropagation();menu.open=false;trigger.focus({preventScroll:true});
+      });
+    }
+    function createChatRow(chat,compact=false) {
+      const active=chat.id===currentChatId,item=document.createElement('div');item.dataset.chatId=chat.id;
+      item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
+      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';
+      const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
+      const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
+      const panel=document.createElement('div');panel.className='chat-row-menu-panel';
+      const project=chat.projectId?projects.find(item=>item.id===chat.projectId):null,english=getUiLanguage()==='en';
+      const actions=[['chat-rename',english?'Rename':'Переименовать'],['chat-clone',english?'Clone':'Клонировать'],['export-chat',english?'Export chat':'Экспортировать чат'],['import-chats',english?'Import chats…':'Импортировать чаты…'],['chat-project',project?(english?'Move / detach from project':'Переместить / извлечь из проекта'):(english?'Add to project':'Добавить в проект')],['chat-clear',english?'Clear history':'Очистить историю'],['delete-chat',english?'Delete chat':'Удалить чат']];
+      actions.forEach(([action,label])=>{const button=document.createElement('button');button.type='button';button.dataset.action=action;button.dataset.chatId=chat.id;button.textContent=label;if(action==='delete-chat')button.className='danger';panel.appendChild(button);});
+      menu.append(summary,panel);
       bindPositionedActionMenu(menu,summary,panel);
       item.append(open,menu);return item;
     }
