@@ -10,6 +10,7 @@ async function ensureSidebarOpen(page) {
     await page.locator('[data-action="toggle-sidebar"]').click();
   }
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
+  await expect(sidebar).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
 }
 
 async function ensureSidebarClosed(page) {
@@ -22,10 +23,7 @@ async function ensureSidebarClosed(page) {
 }
 
 async function openProjectSettingsForId(page, projectId) {
-  const sidebar = page.locator('#sidebar');
-  if (await sidebar.evaluate(element => element.classList.contains('-translate-x-full'))) {
-    await page.locator('[data-action="toggle-sidebar"]').click();
-  }
+  await ensureSidebarOpen(page);
   await expect(page.locator('#projectPanel [data-action="open-project-settings"]:not([data-project-id])')).toHaveCount(0);
   const navigation = page.locator('#projectNavigationList');
   if (await navigation.evaluate(element => element.classList.contains('hidden'))) {
@@ -34,7 +32,9 @@ async function openProjectSettingsForId(page, projectId) {
   const row = page.locator('#projectNavigationList [data-project-id="' + projectId + '"]');
   await row.locator('[data-action="open-project-settings"]').click();
   await expect(page.locator('#projectSettingsModal')).toBeVisible();
-  await expect(page.locator('#currentProjectSelect')).toHaveValue(projectId);
+  const expectedProjectName = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === id)?.name || '', projectId);
+  expect(expectedProjectName).not.toBe('');
+  await expect(page.locator('#projectSettingsStatus')).toContainText(expectedProjectName);
 }
 
 async function chooseSearchMode(page, mode) {
@@ -150,6 +150,7 @@ test('legacy built-in assistant instructions are migrated out of the global prom
 test('global prompt saves explicit owner text and persists an intentional clear', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await openAdditionalSettings(page);
 
   await page.locator('#editSystemPrompt').click();
   await page.locator('#systemPromptInput').fill('Only my explicit global instructions.');
@@ -158,6 +159,7 @@ test('global prompt saves explicit owner text and persists an intentional clear'
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();
+  await openAdditionalSettings(page);
   await expect(page.locator('#systemPromptInput')).toHaveValue('Only my explicit global instructions.');
 
   await page.locator('#editSystemPrompt').click();
@@ -3351,16 +3353,20 @@ test('selecting a project filters the Chats section and the back arrow restores 
   await page.locator('[data-action="toggle-sidebar"]').click();
 
   async function createProject(name) {
+    await ensureSidebarOpen(page);
     await page.locator('#projectPanel [data-action="open-project-create"]').click();
     await page.locator('#projectCreateNameInput').fill(name);
     await page.locator('#projectCreateModal [data-action="create-project"]').click();
-    return page.evaluate(projectName => {
+    const projectId = await page.evaluate(projectName => {
       const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
       return projects.find(item => item.name === projectName)?.id;
     }, name);
+    await ensureSidebarOpen(page);
+    return projectId;
   }
 
   const alphaId = await createProject('Alpha Filter');
+  await ensureSidebarOpen(page);
   await page.locator('#chatSection [data-action="new-chat"]').click();
   const alphaChatIds = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').filter(chat => chat.projectId === id).map(chat => chat.id), alphaId);
   expect(alphaChatIds.length).toBeGreaterThanOrEqual(2);
@@ -3373,6 +3379,7 @@ test('selecting a project filters the Chats section and the back arrow restores 
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   await projectList.locator('[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
+  if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   let visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
@@ -3395,6 +3402,7 @@ test('project editing is available through the right-side three-dot action only'
   await page.locator('#projectCreateNameInput').fill('Editable Project');
   await page.locator('#projectCreateModal [data-action="create-project"]').click();
   const projectId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(p => p.name === 'Editable Project')?.id);
+  await ensureSidebarOpen(page);
   const list = page.locator('#projectNavigationList');
   if (await list.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   const row = list.locator('[data-project-id="' + projectId + '"]');
