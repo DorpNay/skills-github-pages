@@ -2304,6 +2304,155 @@ test('Agents panel reports the disabled AgentRun capability without offering a r
   await expect(page.locator('#agentRuntimeStart')).toBeDisabled();
 });
 
+
+test('AgentRun submits only the explicit prompt and safely renders real events and output', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  const scope = await page.evaluate(() => ({
+    chatId: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.id
+  }));
+  let submitted = null;
+  let idempotencyKey = '';
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: ['general','coder','reviewer','researcher'].map(id => ({ id, label: id, status: 'configured', tools: [], filesystem: false, network: false, independent_process: false })),
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') {
+      submitted = route.request().postDataJSON();
+      idempotencyKey = route.request().headers()['idempotency-key'] || '';
+      return route.fulfill({ status: 202, json: {
+        run: { run_id: 'run-e2e-success', state: 'queued' },
+        status_url: '/v1/agent-runs/run-e2e-success',
+        events_url: '/v1/agent-runs/run-e2e-success/events'
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-success' && route.request().method() === 'GET') {
+      return route.fulfill({ json: {
+        run: { run_id: 'run-e2e-success', state: 'succeeded', scope_kind: 'chat', scope_id: scope.chatId },
+        output: '<img src=x onerror=alert(1)>Safe text answer',
+        output_available: true, events: []
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-success/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-success',
+      events: [{ event_id: 1, event_type: 'run_started', metadata: { stage: 'model-completion' } }],
+      next_after_event_id: 1, state: 'succeeded'
+    } });
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeProfile')).toBeEnabled();
+  await expect(page.locator('#agentRuntimeModel')).toBeEnabled();
+  await page.locator('#agentRuntimeProfile').selectOption('coder');
+  await page.locator('#agentRuntimeModel').selectOption('qwen3.5:4b');
+  await page.locator('#agentRuntimePrompt').fill('Review only this explicitly supplied task.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('run_started');
+  await expect(page.locator('#agentRuntimeOutput')).toContainText('Safe text answer');
+  await expect(page.locator('#agentRuntimeOutput img')).toHaveCount(0);
+  expect(submitted).toEqual({
+    prompt: 'Review only this explicitly supplied task.',
+    scope_kind: 'chat',
+    scope_id: scope.chatId,
+    profile_id: 'coder',
+    model_id: 'qwen3.5:4b'
+  });
+  expect(idempotencyKey).toMatch(/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/);
+});
+
+test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  let cancelled = false;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') return route.fulfill({ status: 202, json: {
+      run: { run_id: 'run-e2e-cancel', state: 'queued' },
+      status_url: '/v1/agent-runs/run-e2e-cancel',
+      events_url: '/v1/agent-runs/run-e2e-cancel/events'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-cancel' && route.request().method() === 'GET') return route.fulfill({ json: {
+      run: { run_id: 'run-e2e-cancel', state: cancelled ? 'cancelled' : 'running' },
+      output: null, output_available: false, events: []
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-cancel/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-cancel', events: [], next_after_event_id: 0, state: cancelled ? 'cancelled' : 'running'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-cancel' && route.request().method() === 'DELETE') {
+      cancelled = true;
+      return route.fulfill({ json: { run: { run_id: 'run-e2e-cancel', state: 'cancelled' } } });
+    }
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#agentRuntimePrompt').fill('Cancel this explicitly submitted task.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeCancel')).toBeEnabled();
+  await page.locator('#agentRuntimeCancel').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Отменено');
+  await expect(page.locator('#agentRuntimePrompt')).toHaveValue('Cancel this explicitly submitted task.');
+  expect(cancelled).toBe(true);
+});
+
+test('AgentRun submission errors are bounded and do not erase the task prompt', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') return route.fulfill({
+      status: 429, json: { detail: 'Internal queue detail must not be shown to the browser.' }
+    });
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#agentRuntimePrompt').fill('Keep this task after a queue error.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('429');
+  await expect(page.locator('#agentRuntimeStatus')).not.toContainText('Internal queue detail');
+  await expect(page.locator('#agentRuntimePrompt')).toHaveValue('Keep this task after a queue error.');
+});
+
 test('mobile messages expose full text and retain a jump-to-latest control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
