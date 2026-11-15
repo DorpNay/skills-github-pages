@@ -8,7 +8,7 @@
 
 | Слой | Первый выбор | Почему | Условие готовности |
 |---|---|---|---|
-| Лендинг | Отдельная статическая страница **landing/index.html** в существующем GitHub Pages/Jekyll проекте | Не ломает текущий корневой AI Mobile Agent; один источник кода и один Pages deployment | Jekyll build, quality checks, Chromium и опубликованный Pages smoke проходят на точном SHA |
+| Публичный интерфейс | Корневой клиент **index.md** в существующем GitHub Pages/Jekyll проекте | Один актуальный интерфейс и один Pages deployment; отдельный презентационный маршрут `/landing/` выведен из публикации | Jekyll build, Quality/Chromium и опубликованный root smoke проходят на точном SHA |
 | Приложение | Существующий HTML/CSS/JavaScript client на GitHub Pages | Не переписывать рабочую основу и не добавлять frontend framework без доказанной необходимости | Smoke в Chromium, ручной тест на целевом мобильном устройстве |
 | API | FastAPI gateway на Python, отдельный Linux user **alandi**, systemd | Уже существующий gateway и его тесты — минимальный путь вместо нового backend | Unit/security tests, auth/CORS/allowlist/body/timeouts, restart/reboot проверены |
 | Модельный runtime | Ollama на том же VPS, bind только на loopback | Минимум сервисов, одна модель и отсутствие публичного Ollama API | Фактические RAM, latency и стабильность измерены на целевом VPS |
