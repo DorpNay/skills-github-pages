@@ -5418,13 +5418,7 @@ permalink: /
             requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
-          case 'select-project-filter': {
-            selectedProjectFilterId=control.dataset.projectId||null;
-            const target=chats.find(chat=>chat.projectId===selectedProjectFilterId);
-            if(target&&target.id!==currentChatId){if(!updateState([...chats],target.id))showToast('Не удалось переключить активный чат проекта.','error');renderProjectNavigation();}
-            else{renderProjectNavigation();renderChatList();}
-            event.preventDefault();break;
-          }
+          case 'select-project-filter': selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
           case 'clear-project-filter': selectedProjectFilterId=null;renderProjectNavigation();renderChatList();event.preventDefault();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -5436,10 +5430,7 @@ permalink: /
             $('chatNavToggle').setAttribute('aria-expanded',String(open));$('chatNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
-            selectedProjectFilterId='';
-            const target=chats.find(chat=>!chat.projectId);
-            if(target&&target.id!==currentChatId){if(!updateState([...chats],target.id))showToast('Не удалось переключить активный личный чат.','error');renderProjectNavigation();}
-            else{renderProjectNavigation();renderChatList();}
+            selectedProjectFilterId='';renderProjectNavigation();renderChatList();
             $('chatNavigationContent').classList.remove('hidden');$('chatNavToggle').setAttribute('aria-expanded','true');$('chatNavChevron').textContent='⌃';
             $('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});$('chatNavToggle').focus();break;
           }

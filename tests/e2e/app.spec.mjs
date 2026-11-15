@@ -3382,14 +3382,12 @@ test('selecting a project filters the Chats section and the back arrow restores 
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   await projectList.locator('[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId)).toBe(alphaId);
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   let visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
 
   await projectList.locator('[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId)).toBe(betaId);
   visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...betaChatIds].sort());
 

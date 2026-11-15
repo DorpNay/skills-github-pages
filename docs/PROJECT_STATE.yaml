@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-009. Parent main 9db85885af149d333c1fea46e2de78c17f5db2bb; 0 open PRs; issue #111 open. Pages #43724680667 SUCCESS; Freshness #43724681291 SUCCESS; Provenance #43724681306 SUCCESS; Graphify #43724681388 SUCCESS; Quality #43724681318 failed one project-filter scenario (122/123 passed), exposing createProject() moving an existing chat into a new project. Current commit creates a fresh project chat and preserves previous ownership; exact-head checks pending. AgentRun backend API is a feature-off single-worker prototype; frontend not wired. Root app canonical; /landing/ and CSS return 404. Same-origin studio paths are specified, not implemented."
+    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-009. Parent main 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; 0 open PRs; issue #111 open. Pages #43726434326 SUCCESS; Freshness #43726435150 SUCCESS; Provenance #43726435111 SUCCESS; Graphify #43726435074 SUCCESS; Quality #43726435103 failed two active-chat-preservation scenarios (121/123 passed) because project/personal filter selection auto-switched the active chat. Current commit restores filter-only behavior; project creation ownership fix remains. AgentRun backend API is a feature-off single-worker prototype; frontend not wired. Root app canonical; /landing/ and CSS return 404. Same-origin studio paths are specified, not implemented."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 9db85885af149d333c1fea46e2de78c17f5db2bb; 0 open PRs; issue #111 open. Pages #43724680667 SUCCESS; Quality #43724681318 FAILED one project-filter scenario (122/123 passed); Freshness #43724681291 SUCCESS; Provenance #43724681306 SUCCESS; Graphify #43724681388 SUCCESS."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; 0 open PRs; issue #111 open. Pages #43726434326 SUCCESS; Quality #43726435103 FAILED two active-chat-preservation scenarios (121/123 passed); Freshness #43726435150 SUCCESS; Provenance #43726435111 SUCCESS; Graphify #43726435074 SUCCESS."
     branch: "main"
-    base_main: "9db85885af149d333c1fea46e2de78c17f5db2bb"
+    base_main: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Parent main 9db85885af149d333c1fea46e2de78c17f5db2bb: Pages #43724680667 SUCCESS; public root exact revision 9db8588; Quality #43724681318 FAILED one project-filter scenario (122/123 passed), exposing chat reassignment during project creation; Freshness #43724681291 SUCCESS; Provenance #43724681306 SUCCESS; Graphify #43724681388 SUCCESS. Current commit preserves chat ownership and activates a chat in the selected project; exact-head checks pending."
+    exact_head_checks: "Parent main 888c2d59bee23cc31ebc00a2b0189e61705f5aa7: Pages #43726434326 SUCCESS; public root exact revision 888c2d5; Quality #43726435103 FAILED two active-chat-preservation scenarios (121/123 passed) because project filters changed currentChatId; Freshness #43726435150 SUCCESS; Provenance #43726435111 SUCCESS; Graphify #43726435074 SUCCESS. Current commit restores filter-only behavior; project creation ownership fix remains."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
     next: "Verify exact-head Freshness, Provenance, Quality/Chromium, Graphify and Pages on the current UI/E2E correction; do not weaken tests. Then connect the existing AgentRun worker to the model-backed UI/API contract, and define same-origin Notebook/Research/Workspace shared-data schemas before route implementation."
 
@@ -298,21 +298,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "9db85885af149d333c1fea46e2de78c17f5db2bb"
-  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-009 are archived verbatim. Parent 9db8588: Pages #43724680667 SUCCESS; Freshness #43724681291 SUCCESS; Provenance #43724681306 SUCCESS; Graphify #43724681388 SUCCESS; Quality #43724681318 failed one project-filter scenario (122/123 passed), exposing createProject() reassigning the active chat. Current commit preserves ownership and activates the project chat; exact-head verification pending."
-  last_functional_checkpoint: "9db85885af149d333c1fea46e2de78c17f5db2bb"
-  main_quality: "Quality #43724681318 FAILED on exact parent 9db85885af149d333c1fea46e2de78c17f5db2bb: 122/123 Chromium tests passed; one project-filter scenario exposed createProject() moving the current chat to a new project; non-Chromium quality jobs passed."
-  main_freshness: "Freshness #43724681291 SUCCESS on exact parent 9db85885af149d333c1fea46e2de78c17f5db2bb."
-  main_graphify: "Graphify #43724681388 SUCCESS on exact parent 9db85885af149d333c1fea46e2de78c17f5db2bb."
-  main_gateway: "Not triggered on exact parent 9db8588; no Gateway code changed in the project/chat UI slice."
-  main_provenance: "Provenance #43724681306 SUCCESS on exact parent 9db85885af149d333c1fea46e2de78c17f5db2bb."
-  main_pages: "Pages #43724680667 SUCCESS on exact parent 9db85885af149d333c1fea46e2de78c17f5db2bb; public root metadata reports exact 9db8588 revision; /landing/ and retired CSS return 404."
+  verified_main: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
+  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-009 are archived verbatim. Parent 888c2d5: Pages #43726434326 SUCCESS; Freshness #43726435150 SUCCESS; Provenance #43726435111 SUCCESS; Graphify #43726435074 SUCCESS; Quality #43726435103 failed two active-chat-preservation scenarios (121/123 passed) due to filter auto-switch; current commit restores filter-only semantics."
+  last_functional_checkpoint: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
+  main_quality: "Quality #43726435103 FAILED on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7: 121/123 Chromium tests passed; two failures show project/personal filter selection must preserve the active chat; non-Chromium quality jobs passed."
+  main_freshness: "Freshness #43726435150 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
+  main_graphify: "Graphify #43726435074 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
+  main_gateway: "Not triggered on exact parent 888c2d5; no Gateway code changed in the project/filter UI slice."
+  main_provenance: "Provenance #43726435111 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
+  main_pages: "Pages #43726434326 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; public root metadata reports exact 888c2d5 revision; /landing/ and retired CSS return 404."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
   runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
-  next: "Verify exact-head project ownership/filter correction; then wire the browser Agents panel to existing authenticated AgentRun endpoints (worker remains host-disabled until acceptance), improve true multi-agent execution behind capability grants, and continue Deep Research 2.0, Settings and same-origin Notebook/Research/Workspace contracts. Continue Skills, Connectors, sandbox, files/converters, RAG, voice and offline kit under K.5/K.6."
+  next: "Verify exact-head filter-only semantics and project ownership correction; then wire the browser Agents panel to existing authenticated AgentRun endpoints (worker remains host-disabled until acceptance), improve true multi-agent execution behind capability grants, and continue Deep Research 2.0, Settings and same-origin Notebook/Research/Workspace contracts. Continue Skills, Connectors, sandbox, files/converters, RAG, voice and offline kit under K.5/K.6."
 
 
 v1_ui_finalization:
@@ -548,7 +548,7 @@ owner_priority_2026_11_13:
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "External/Ollama/Python/OpenShell artifacts are SHA-verified in Actions, not installed; owner primary checkpoint excluded. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16, OpenShell 0.1.8 and pypdf 7.1.0 are current stable pins. FastAPI 0.163.0 is in seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is a lock-refresh candidate vs pinned 2.14.1. Target host and RU/EN/TH eval remain open."
-  live_main: "9db85885af149d333c1fea46e2de78c17f5db2bb"
+  live_main: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "9db85885af149d333c1fea46e2de78c17f5db2bb"
+  checkpoint_parent_sha: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
   open_prs: []
   open_issues: [111]
   completed:
@@ -593,12 +593,13 @@ current_execution_checkpoint:
     - "Exact parent d9bb5ef: Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium tests. Artifact #14164458184 identified selector/helper/accordion/sidebar-state test-contract issues; current commit corrects them without removing assertions."
     - "Exact parent add961cb: Pages #43723996242 SUCCESS; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS; Quality #43723996573 failed 6/123 Chromium tests because ensureSidebarOpen expected identity matrix instead of settled transform none. Current commit fixes that one assertion."
     - "Exact parent 9db8588: Pages #43724680667, Freshness #43724681291, Provenance #43724681306 and Graphify #43724681388 passed; Quality #43724681318 passed 122/123 Chromium tests and exposed project creation reassigning an existing chat. Current commit creates a project-owned chat and preserves existing chat ownership."
+    - "Exact parent 888c2d5: Pages #43726434326, Freshness #43726435150, Provenance #43726435111 and Graphify #43726435074 passed; Quality #43726435103 passed 121/123 Chromium tests. Two failures were caused by newly added active-chat auto-switch on filter selection; current commit restores filter-only behavior."
   dependency_audit:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
   next:
-    - "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify and Pages after the project-create ownership/filter correction; do not reuse historical run IDs."
+    - "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify and Pages after restoring filter-only semantics; do not reuse historical run IDs."
     - "Implement real model-backed AgentRun with typed profiles, worker lifecycle, model calls, live events, cancellation, budgets and verification; keep UI states honest until runtime exists."
     - "Inspect actual target host OS/architecture, disk, RAM/VRAM, kernel, container/VM support and network before installing OpenShell or models."
     - "Continue Deep Research, durable AgentRun, Skill lifecycle, full RAG, document/book/web parsing and OCR, installed voice, mode matrix, cache/observability/N2O and tested owner runbook."
