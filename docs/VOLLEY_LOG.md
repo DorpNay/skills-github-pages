@@ -362,3 +362,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Source inventory: INTEL.md consolidates 257 distinct URLs. The count is a curated inventory snapshot, not a claim that every source was rechecked in this step. This step rechecked official GitHub Pages custom-domain guidance and MDN same-origin/IndexedDB/Service Worker behavior.
 - Architecture implication: a same-origin path (e.g. /notebook/) can share origin-scoped browser storage with root code when the data contract is deliberately shared; a custom subdomain is a separate origin and needs explicit API/message/sync boundaries. A subdomain also needs an owner-controlled domain and DNS. Do not confuse a path route with a DNS subdomain.
 - No product code changed. Local browser DOM/interaction audit on this exact SHA remains pending; Quality Chromium is still running. Continue K.5 in the existing registry; no parallel backlog.
+
+## V-2026-11-15-OR12-CHECKPOINT-REFRESH-001 — owner request and exact-main checkpoint
+
+- Owner task OR-2026-11-15-012 is archived in NOW.md; the original line break before ". Продолжай" is preserved.
+- Exact parent main `2fb8ca69d91730dbf167158ae952ea7e361284c2`; open PRs: none; open issue: #111.
+- Pages #43730334708 SUCCESS. Quality #43730335368 FAILED on 3 AgentRun Task 2 Chromium E2E tests; all timed out waiting for `#agentRuntimeStart`, which is still disabled. Static analysis, Context, Jekyll, Integrity and Security jobs passed.
+- Freshness #43730335355 passed all 21 unit tests but failed the live snapshot/main comparison because snapshot still recorded e5051690; this commit refreshes the required five files. Graphify was not triggered on the documentation-only parent; previous code-bearing main 90fef0c passed #43729961270. Provenance was not triggered on this parent.
+- TinyFish read-only smoke: public root loaded as aLandi v10.0, root containers were functional, no visible page/console errors; no build SHA in public markup. Its /landing/ navigation rendered app content but did not capture raw HTTP status, so the route status remains unverified.
+- This atomic child refreshes NOW.md, AGENTS.md, docs/PROJECT_STATE.yaml, docs/project-state-snapshot.json and this log. No product runtime changed.
+- Next: verify exact-head Freshness/Provenance/Quality/Pages; then implement AgentRun Task 2 using the existing authenticated single-worker API contracts and E2E acceptance, keeping the host worker flag disabled.

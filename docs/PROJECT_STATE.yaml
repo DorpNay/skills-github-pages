@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-011. Parent main e5051690aa5e6d4e6cd2e59ca04bed4478761fda; 0 open PRs; issue #111 open. Pages #43728928234 SUCCESS and public root exact e5051690; Freshness #43728929559 SUCCESS; Provenance #43728929628 FAILED because two PROJECT_STATE status strings were missing closing quotes; Graphify #43728929688 SUCCESS; Quality #43728929561 still running at checkpoint capture. Current UI has a capability-gated AgentRun panel, still disabled for task execution pending Task 2."
+    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-012. Parent main 2fb8ca69d91730dbf167158ae952ea7e361284c2; 0 open PRs; issue #111 open. Pages #43730334708 SUCCESS; Quality #43730335368 failed 3 AgentRun Task 2 Chromium tests because Start remains disabled; Freshness #43730335355 stale snapshot SHA after 21/21 unit tests passed; Graphify #43729961270 PASS on prior code-bearing main 90fef0c. Root app renders; no public SHA; /landing raw HTTP status unknown. Current AgentRun Task 2 remains unimplemented."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main e5051690aa5e6d4e6cd2e59ca04bed4478761fda; 0 open PRs; issue #111 open. Pages #43728928234 SUCCESS; Freshness #43728929559 SUCCESS; Provenance #43728929628 FAILED YAML parsing; Graphify #43728929688 SUCCESS; Quality #43728929561 in progress."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 2fb8ca69d91730dbf167158ae952ea7e361284c2; 0 open PRs; issue #111 open. Pages #43730334708 SUCCESS; Quality #43730335368 FAILED on 3 Task 2 AgentRun tests waiting for enabled Start; Freshness #43730335355 stale snapshot comparison after 21/21 unit tests passed; Graphify #43729961270 SUCCESS on prior code-bearing parent 90fef0c; Provenance awaits this state refresh."
     branch: "main"
-    base_main: "e5051690aa5e6d4e6cd2e59ca04bed4478761fda"
+    base_main: "2fb8ca69d91730dbf167158ae952ea7e361284c2"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact parent main e5051690aa5e6d4e6cd2e59ca04bed4478761fda: Freshness #43728929559 SUCCESS; Graphify #43728929688 SUCCESS; Pages #43728928234 SUCCESS and public root exact e5051690; Provenance #43728929628 FAILED because two PROJECT_STATE YAML strings lack closing quotes; Quality #43728929561 still in progress. This direct child repairs both closed YAML strings and refreshes all five checkpoint files."
+    exact_head_checks: "Exact parent main 2fb8ca69d91730dbf167158ae952ea7e361284c2: Pages #43730334708 SUCCESS; Quality #43730335368 failed only 3 AgentRun Task 2 E2E cases, which timed out while Start was disabled; Freshness #43730335355 failed only stale snapshot SHA after 21/21 unit tests passed; Graphify not triggered on docs-only parent (prior code-bearing 90fef0c #43729961270 PASS); Provenance not triggered and must run after this state refresh."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Implement AgentRun browser vertical slice from docs/superpowers/plans/2026-11-15-agent-run-ui.md: capability-gated profile/model selection, prompt-only submission, real status/events/output/cancel. Keep host flag disabled; then define true multi-agent capability grants and same-origin Notebook/Research/Workspace contracts."
+    next: "Refresh exact-main state atomically, verify Freshness/Provenance/Quality/Pages, then implement AgentRun Task 2 browser flow using existing authenticated endpoints and the existing E2E acceptance. Keep the host worker feature flag disabled."
 
 
 
@@ -46,7 +46,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-15-LANDING-V2-OWNER-REQUIREMENTS-001"
+  last_volley: "V-2026-11-15-OR12-CHECKPOINT-REFRESH-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -179,23 +179,23 @@ blocked_items:
     reason: "No tested container/seccomp/Landlock implementation or escape test evidence."
 
 latest_checkpoint:
-  date: "2026-11-14"
-  main_sha: "973a07eab5d8eef493e359d468499f263420a74c"
+  date: "2026-11-15"
+  main_sha: "2fb8ca69d91730dbf167158ae952ea7e361284c2"
   open_prs: 0
   open_issues: 1
   active_pr: null
   active_pr_base_sha: null
   active_pr_head_at_checkpoint: null
   reconciled_closed_prs: [168, 171, 172, 175, 176, 178, 179, 180, 182]
-  main_quality_run_id: 43552190729
-  main_quality_status: "success"
-  main_graphify_run_id: 43552190747
-  main_graphify_status: "success"
-  main_pages_run_id: 43552190545
+  main_quality_run_id: 43730335368
+  main_quality_status: "failed; 3 AgentRun Task 2 E2E tests timed out on disabled Start"
+  main_graphify_run_id: 43729961270
+  main_graphify_status: "not triggered on documentation-only parent; previous code-bearing parent 90fef0c passed"
+  main_pages_run_id: 43730334708
   main_pages_status: "success"
   open_prs_at_checkpoint: []
   open_issues_at_checkpoint: [111]
-  next: "Verify Freshness and Provenance on the atomic 2026-11-14 checkpoint; then implement the read-only GitHub App connector and inspect the target host before installation."
+  next: "Verify exact-head Freshness/Provenance/Quality/Pages on the atomic OR-012 refresh; then implement AgentRun Task 2 against existing authenticated APIs."
 
 
 architecture_map_checkpoint:
@@ -298,21 +298,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "e5051690aa5e6d4e6cd2e59ca04bed4478761fda"
-  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-011 are archived; OR-011 corrects the exact OR-010 wording. Parent e5051690: Pages #43728928234 SUCCESS; Freshness #43728929559 SUCCESS; Graphify #43728929688 SUCCESS; Provenance #43728929628 failed metadata YAML parsing because status lines 6 and 19 lacked closing quotes; Quality #43728929561 still running. This direct child closes both scalars and refreshes state."
-  last_functional_checkpoint: "e5051690aa5e6d4e6cd2e59ca04bed4478761fda"
-  main_quality: "Quality #43728929561 was still in progress at checkpoint capture; Security, Integrity, Context, Static Analysis and Jekyll jobs had passed."
-  main_freshness: "Freshness #43728929559 SUCCESS on exact parent e5051690aa5e6d4e6cd2e59ca04bed4478761fda."
-  main_graphify: "Graphify #43728929688 SUCCESS on exact parent e5051690aa5e6d4e6cd2e59ca04bed4478761fda."
+  verified_main: "2fb8ca69d91730dbf167158ae952ea7e361284c2"
+  last_main_action: "Owner OR-2026-11-15-012 is archived. Exact parent 2fb8ca69d91730dbf167158ae952ea7e361284c2: Pages #43730334708 SUCCESS; Quality #43730335368 failed only three AgentRun Task 2 tests waiting on disabled Start; Freshness #43730335355 ran 21/21 unit tests but live snapshot still pointed at e5051690; Graphify #43729961270 PASS on prior code-bearing 90fef0c. TinyFish root smoke loaded aLandi v10.0 without visible errors but exposed no public SHA; /landing raw status unknown. This atomic child refreshes the five state files."
+  last_functional_checkpoint: "90fef0cdb2a50a3561f1145dbf1800345145480f"
+  main_quality: "Quality #43730335368 failed 3 AgentRun Task 2 Chromium tests because Start is disabled; other static, security, context and Jekyll jobs passed."
+  main_freshness: "Freshness #43730335355: 21/21 deterministic unit tests passed; live checkpoint comparison failed because snapshot SHA was stale (e5051690 vs live 2fb8ca69)."
+  main_graphify: "Not triggered for docs-only parent 2fb8ca69; prior code-bearing parent 90fef0c Graphify #43729961270 SUCCESS."
   main_gateway: "Not triggered on exact parent e5051690; no Gateway code changed in this AgentRun UI slice."
-  main_provenance: "Provenance #43728929628 FAILED because docs/PROJECT_STATE.yaml lines 6 and 19 had missing closing quotes; no model/voice artifact changed."
-  main_pages: "Pages #43728928234 SUCCESS on exact parent e5051690aa5e6d4e6cd2e59ca04bed4478761fda; public root exact e5051690; /landing/ and retired CSS return 404."
+  main_provenance: "Not triggered for docs-only parent 2fb8ca69; current PROJECT_STATE scalars are quoted, and exact-head Provenance should run after this state refresh."
+  main_pages: "Pages #43730334708 SUCCESS on exact parent main 2fb8ca69. TinyFish confirms root app renders, but no public build SHA exposed; raw /landing status unknown."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
   runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
-  next: "Verify exact-head filter-only semantics and project ownership correction; then wire the browser Agents panel to existing authenticated AgentRun endpoints (worker remains host-disabled until acceptance), improve true multi-agent execution behind capability grants, and continue Deep Research 2.0, Settings and same-origin Notebook/Research/Workspace contracts. Continue Skills, Connectors, sandbox, files/converters, RAG, voice and offline kit under K.5/K.6."
+  next: "Verify exact-head checkpoint gates on this atomic refresh; then implement AgentRun Task 2 with idempotent submission, bounded status/event reads, safe output and confirmed cancellation. Do not enable the host feature flag."
 
 
 v1_ui_finalization:
@@ -548,7 +548,7 @@ owner_priority_2026_11_13:
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "External/Ollama/Python/OpenShell artifacts are SHA-verified in Actions, not installed; owner primary checkpoint excluded. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16, OpenShell 0.1.8 and pypdf 7.1.0 are current stable pins. FastAPI 0.163.0 is in seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is a lock-refresh candidate vs pinned 2.14.1. Target host and RU/EN/TH eval remain open."
-  live_main: "e5051690aa5e6d4e6cd2e59ca04bed4478761fda"
+  live_main: "2fb8ca69d91730dbf167158ae952ea7e361284c2"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "e5051690aa5e6d4e6cd2e59ca04bed4478761fda"
+  checkpoint_parent_sha: "2fb8ca69d91730dbf167158ae952ea7e361284c2"
   open_prs: []
   open_issues: [111]
   completed:
@@ -589,6 +589,7 @@ current_execution_checkpoint:
     - "External artifact #43420046411 verified: 6,054,442,377 bytes, archive SHA-256 a43f068a9e54df4e022c95e29eb1c1618b40a8fc5391166f7e6f1a6a0d6a8682. Ollama artifacts #43418126506 verified: 7,728,830,482 bytes. Combined 13,783,272,859 bytes; expire 2026-12-13."
     - "Python runtime cache #43423610986 passed offline sync and pip-check for CPython 3.12/3.13/3.14 on Ubuntu 24.04 x86_64; three artifacts total 80,097,141 compressed bytes."
     - "15 owner priorities are tracked in the existing K.5 status table; no parallel backlog."
+    - "Exact parent 2fb8ca69d91730dbf167158ae952ea7e361284c2: Pages #43730334708 SUCCESS; Quality #43730335368 failed 3 AgentRun Task 2 E2E tests waiting on disabled Start; Freshness #43730335355 passed 21/21 unit tests but failed stale snapshot comparison; Graphify not triggered for docs-only parent (prior 90fef0c Graphify #43729961270 PASS). TinyFish root smoke rendered aLandi v10.0 without visible errors; no public SHA and raw /landing HTTP status unknown."
     - "Source inspection: DEFAULT_SYSTEM is empty and legacy built-in default is intended to migrate to empty; existing E2E checks fresh default only. Live browser acceptance contradicted this: systemPromptInput surfaced 28-char placeholder text, localStorage key null, meta revision not found. Browser automation returned a non-native textbox serialization, so native DOM value is not conclusively established. Resolve source/runtime/DOM mismatch; add migration, explicit save/clear and profile round-trip tests."
     - "Exact parent d9bb5ef: Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium tests. Artifact #14164458184 identified selector/helper/accordion/sidebar-state test-contract issues; current commit corrects them without removing assertions."
     - "Exact parent add961cb: Pages #43723996242 SUCCESS; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS; Quality #43723996573 failed 6/123 Chromium tests because ensureSidebarOpen expected identity matrix instead of settled transform none. Current commit fixes that one assertion."
