@@ -96,6 +96,33 @@ class GraphifyUiSurfaceTests(unittest.TestCase):
             self.assertTrue(all(edge.get("source_file") for edge in graph["links"]))
 
 
+    def test_collects_inline_css_from_the_root_markdown_client(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "index.md").write_text(
+                "<style>\\n#chatNavToggle[aria-expanded=\\\"true\\\"] { color: teal; }\\n</style>\\n"
+                '<button id="chatNavToggle" class="chat-section-summary"></button>\\n',
+                encoding="utf-8",
+            )
+            graph_path = root / "graph.json"
+            graph_path.write_text(json.dumps({
+                "directed": True,
+                "multigraph": True,
+                "graph": {"schema_version": 1},
+                "nodes": [],
+                "links": [],
+            }), encoding="utf-8")
+
+            result = enrich_graph(root, graph_path)
+            graph = json.loads(graph_path.read_text(encoding="utf-8"))
+            labels = [node.get("label") for node in graph["nodes"]]
+            relations = [edge["relation"] for edge in graph["links"]]
+
+            self.assertGreaterEqual(result["css_selector_nodes"], 1)
+            self.assertGreaterEqual(result["dom_selector_nodes"], 1)
+            self.assertIn("#chatNavToggle", labels)
+            self.assertIn("may_style", relations)
+
     def test_compound_selector_relationships_remain_candidates(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
