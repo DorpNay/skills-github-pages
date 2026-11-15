@@ -785,6 +785,32 @@ permalink: /
         </div>
       </section>
       <section id="agentFunctionSettings" class="hidden space-y-3">
+        <div id="agentRuntimePanel" class="function-panel-card space-y-3 p-3" aria-labelledby="agentRuntimeTitle">
+  <div class="flex items-center justify-between gap-2">
+    <strong id="agentRuntimeTitle" class="text-sm">Реальное выполнение задач · AgentRun</strong>
+    <button type="button" id="agentRuntimeRefresh" data-action="refresh-agent-runtime" class="function-panel-action function-panel-action-secondary text-xs">↻ Проверить</button>
+  </div>
+  <p id="agentRuntimeCapabilities" class="function-panel-muted text-[11px] leading-relaxed" aria-live="polite">Один worker на Gateway · concurrency 1 · без инструментов, веб-доступа, shell и доступа к файлам.</p>
+  <p id="agentRuntimeStatus" class="function-panel-notice function-panel-muted p-2 text-xs" role="status" aria-live="polite">Состояние AgentRun проверяется при открытии этой панели.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <label for="agentRuntimeProfile" class="function-panel-muted block text-[11px]">Профиль worker
+      <select id="agentRuntimeProfile" class="function-panel-field mt-1 w-full rounded-lg border p-2.5" disabled><option value="">Недоступно</option></select>
+    </label>
+    <label for="agentRuntimeModel" class="function-panel-muted block text-[11px]">Разрешённая модель
+      <select id="agentRuntimeModel" class="function-panel-field mt-1 w-full rounded-lg border p-2.5" disabled><option value="">Недоступно</option></select>
+    </label>
+  </div>
+  <label for="agentRuntimePrompt" id="agentRuntimePromptLabel" class="function-panel-muted block text-[11px]">Отдельный текст задания — передаётся worker напрямую
+    <textarea id="agentRuntimePrompt" rows="3" maxlength="12000" class="function-panel-field mt-1 w-full resize-y rounded-lg border p-3 text-sm" placeholder="Задание для одного worker" disabled></textarea>
+  </label>
+  <p id="agentRuntimeScopeNotice" class="function-panel-muted text-[10px] leading-relaxed">История чата, инструкции и память проекта, а также файлы автоматически не передаются. Проект/чат используется только как ссылка-метаданные запуска, не как разрешение на чтение данных.</p>
+  <div class="grid grid-cols-2 gap-2">
+    <button type="button" id="agentRuntimeStart" data-action="agent-run-start" class="function-panel-action function-panel-action-primary w-full" disabled>Запустить задачу</button>
+    <button type="button" id="agentRuntimeCancel" data-action="agent-run-cancel" class="function-panel-action function-panel-action-secondary w-full" disabled>Отменить</button>
+  </div>
+  <ol id="agentRuntimeEvents" class="function-panel-muted max-h-28 overflow-y-auto space-y-1 text-[10px]" aria-label="События AgentRun"></ol>
+  <pre id="agentRuntimeOutput" class="function-panel-card hidden max-h-64 overflow-auto whitespace-pre-wrap break-words p-3 text-xs" aria-live="polite"></pre>
+</div>
         <label class="function-panel-card flex items-start gap-2 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="function-panel-field mt-1 rounded focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block function-panel-muted text-[11px] leading-relaxed" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
         <div class="grid grid-cols-2 gap-3">
           <label class="function-panel-muted block text-xs">Размер команды · blueprint
@@ -3652,6 +3678,145 @@ permalink: /
       if (!persistChatMutation(chat, updates)) { renderAgentConfiguration(); return; }
       renderAgentConfiguration();
     }
+let agentRuntimeRefreshPromise = null;
+
+    function setAgentRuntimeCopy() {
+      const english=getUiLanguage()==='en';
+      $('agentRuntimeTitle').textContent=english?'Actual task execution · AgentRun':'Реальное выполнение задач · AgentRun';
+      $('agentRuntimeRefresh').textContent=english?'↻ Check':'↻ Проверить';
+      $('agentRuntimeCapabilities').textContent=english
+        ? 'One Gateway worker · concurrency 1 · no tools, web, shell or filesystem access.'
+        : 'Один worker на Gateway · concurrency 1 · без инструментов, веб-доступа, shell и доступа к файлам.';
+      $('agentRuntimePromptLabel').firstChild.textContent=english
+        ? 'Separate task text — sent directly to the worker'
+        : 'Отдельный текст задания — передаётся worker напрямую';
+      $('agentRuntimePrompt').placeholder=english?'Task for one worker':'Задание для одного worker';
+      $('agentRuntimeScopeNotice').textContent=english
+        ? 'Chat history, project instructions/memory and files are not attached automatically. Project/chat is run attribution metadata only, not permission to read its data.'
+        : 'История чата, инструкции и память проекта, а также файлы автоматически не передаются. Проект/чат используется только как ссылка-метаданные запуска, не как разрешение на чтение данных.';
+      $('agentRuntimeStart').textContent=english?'Start task':'Запустить задачу';
+      $('agentRuntimeCancel').textContent=english?'Cancel':'Отменить';
+    }
+
+    function setAgentRuntimeUnavailable(message) {
+      $('agentRuntimeStatus').textContent=message;
+      $('agentRuntimeProfile').disabled=true;
+      $('agentRuntimeModel').disabled=true;
+      $('agentRuntimePrompt').disabled=true;
+      $('agentRuntimeStart').disabled=true;
+      $('agentRuntimeCancel').disabled=true;
+    }
+
+    function replaceAgentRuntimeOptions(select, items, getValue, getLabel) {
+      select.replaceChildren();
+      for(const item of items) {
+        const value=getValue(item),label=getLabel(item);
+        if(typeof value!=='string'||!value||typeof label!=='string')continue;
+        const option=document.createElement('option');
+        option.value=value;
+        option.textContent=label;
+        select.appendChild(option);
+      }
+      select.disabled=select.options.length===0;
+      return select.options.length;
+    }
+
+    function refreshAgentRunRuntime() {
+      if(agentRuntimeRefreshPromise)return agentRuntimeRefreshPromise;
+      setAgentRuntimeCopy();
+      setAgentRuntimeUnavailable(getUiLanguage()==='en'
+        ? 'Checking Gateway AgentRun capability…'
+        : 'Проверяем возможность AgentRun на Gateway…');
+      const controller=new AbortController();
+      const timeout=window.setTimeout(()=>controller.abort(),12000);
+      agentRuntimeRefreshPromise=(async()=>{
+        try {
+          const config=getAlandiGatewayConfig();
+          const headers={Accept:'application/json',Authorization:'Bearer '+config.key};
+          const capabilityResponse=await fetch(config.baseUrl+'/capabilities',{
+            headers,cache:'no-store',credentials:'omit',signal:controller.signal
+          });
+          const capabilities=await capabilityResponse.json().catch(()=>null);
+          if(!capabilityResponse.ok) {
+            const error=new Error('capabilities');
+            error.status=capabilityResponse.status;
+            throw error;
+          }
+          if(!capabilities||typeof capabilities!=='object'
+              ||typeof capabilities.agent_runs?.enabled!=='boolean') {
+            throw new Error('invalid-capability-response');
+          }
+          const english=getUiLanguage()==='en';
+          const concurrency=Number.isInteger(capabilities.agent_runs.worker_concurrency)
+            ? capabilities.agent_runs.worker_concurrency : 1;
+          $('agentRuntimeCapabilities').textContent=english
+            ? 'One Gateway worker · concurrency '+concurrency+' · no tools, web, shell or filesystem access.'
+            : 'Один worker на Gateway · concurrency '+concurrency+' · без инструментов, веб-доступа, shell и доступа к файлам.';
+          if(capabilities.agent_runs.enabled!==true) {
+            setAgentRuntimeUnavailable(english
+              ? 'AgentRun is disabled on the Gateway. The runtime can only be enabled by the host owner.'
+              : 'AgentRun выключен на сервере. Включение возможно только владельцем Gateway.');
+            return;
+          }
+          const profileResponse=await fetch(config.baseUrl+'/agent-runs/profiles',{
+            headers,cache:'no-store',credentials:'omit',signal:controller.signal
+          });
+          const catalog=await profileResponse.json().catch(()=>null);
+          if(!profileResponse.ok) {
+            const error=new Error('profiles');
+            error.status=profileResponse.status;
+            throw error;
+          }
+          if(!catalog||!Array.isArray(catalog.profiles)||!catalog.profiles.length
+              ||!Array.isArray(catalog.models)||!catalog.models.length
+              ||catalog.worker_concurrency!==1||catalog.tools_enabled!==false
+              ||catalog.filesystem_enabled!==false||catalog.network_enabled!==false
+              ||catalog.profiles.some(profile=>!profile||typeof profile.id!=='string'
+                ||typeof profile.label!=='string'||!Array.isArray(profile.tools)
+                ||profile.tools.length>0||profile.filesystem!==false
+                ||profile.network!==false||profile.independent_process!==false)
+              ||catalog.models.some(model=>typeof model!=='string'||!model||model.length>180)) {
+            throw new Error('invalid-runtime-catalog');
+          }
+          const profileCount=replaceAgentRuntimeOptions(
+            $('agentRuntimeProfile'),catalog.profiles,
+            profile=>profile.id,profile=>profile.label
+          );
+          const modelCount=replaceAgentRuntimeOptions(
+            $('agentRuntimeModel'),catalog.models,
+            model=>model,model=>model
+          );
+          if(!profileCount||!modelCount)throw new Error('empty-runtime-catalog');
+          $('agentRuntimePrompt').disabled=false;
+          // Task submission becomes enabled only after the separately tested run lifecycle lands.
+          $('agentRuntimeStart').disabled=true;
+          $('agentRuntimeStatus').textContent=english
+            ? 'Gateway runtime is configured. '+profileCount+' role profiles, '+modelCount+' allowlisted models; task submission is not enabled yet.'
+            : 'Runtime Gateway настроен. Профилей: '+profileCount+', разрешённых моделей: '+modelCount+'; отправка задания пока отключена.';
+        } catch(error) {
+          const english=getUiLanguage()==='en';
+          const status=Number.isInteger(error?.status)?error.status:0;
+          let message;
+          if(error?.name==='AbortError')message=english?'Gateway capability check timed out.':'Истекло время проверки Gateway.';
+          else if(status===401)message=english?'Gateway authentication failed (401). Check the configured key.':'Gateway отклонил ключ доступа (401). Проверьте настройки подключения.';
+          else if(status===403)message=english?'Gateway denied access (403).':'Gateway запретил доступ (403).';
+          else if(status===503)message=english?'AgentRun worker is unavailable or disabled (503).':'Worker AgentRun недоступен или выключен (503).';
+          else if(status===429)message=english?'Gateway is rate limiting capability checks (429).':'Gateway ограничивает частоту запросов (429).';
+          else if(error?.message==='invalid-capability-response'
+              ||error?.message==='invalid-runtime-catalog'
+              ||error?.message==='empty-runtime-catalog')
+            message=english?'Gateway returned an invalid or incomplete AgentRun capability contract.':'Gateway вернул неполный или некорректный контракт AgentRun.';
+          else message=english
+            ? 'Connect the aLandi Gateway in Settings before checking AgentRun.'
+            : 'Подключите aLandi Gateway в настройках, чтобы проверить AgentRun.';
+          setAgentRuntimeUnavailable(message);
+        } finally {
+          window.clearTimeout(timeout);
+        }
+      })().finally(()=>{agentRuntimeRefreshPromise=null;});
+      return agentRuntimeRefreshPromise;
+    }
+
     function renderResearchConfiguration() {
       const chat=getCurrentChat(); if(!chat)return;
       ensureChatFunctionSettings(chat);
@@ -3676,7 +3841,7 @@ permalink: /
       $('functionPanelTitle').textContent = text[view[1]];
       $('functionPanelDescription').textContent = text[view[2]];
       $(view[0]).classList.remove('hidden');
-      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration(); }
+      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration();setAgentRuntimeCopy();void refreshAgentRunRuntime(); }
       if (kind === 'research') renderResearchConfiguration();
       if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
@@ -5392,6 +5557,7 @@ permalink: /
           case 'select-processing-mode': setProcessingMode(control.dataset.processingMode);if($('functionsMenu'))$('functionsMenu').open=false;break;
           case 'open-search-mode-settings': closeFunctionPanel();$('searchModeMenu').open=true;$('searchModeSummary').focus();break;
           case 'open-function-panel': openFunctionPanel(control.dataset.function);break;
+          case 'refresh-agent-runtime': await refreshAgentRunRuntime();break;
           case 'close-function-panel': closeFunctionPanel();break;
           case 'apply-skill-quiz': applySkillQuiz();break;
           case 'toggle-theme-cycle': toggleHomeTheme();break;

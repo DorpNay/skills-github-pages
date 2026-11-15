@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-010. Parent main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; 0 open PRs; issue #111 open. Quality #43727091701 SUCCESS (7/7 jobs incl. Chromium); Freshness #43727091644 SUCCESS; Provenance #43727091650 SUCCESS; Graphify #43727091641 SUCCESS; Pages #43727090926 SUCCESS. Public root exact revision c7d9c44. Filter-only project/chat behavior restored. AgentRun API is an authenticated encrypted single local-model worker, concurrency 1, disabled by default; browser UI not wired; tools/filesystem/network disabled. Same-origin studio paths are specified, not implemented."
+    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-011. Parent main 89dda05004cba887314b3edef6f1802480a0e9c5; 0 open PRs; issue #111 open. Pages #43727819235 SUCCESS; Freshness #43727819887 stale verified_main/snapshot mismatch; Provenance #43727819900 SUCCESS; Graphify #43727819824 SUCCESS; Quality #43727819858 123/124 Chromium with expected missing-AgentRun-control RED. Capability-gated Agents panel is added in this direct child; run submission stays disabled pending Task 2.
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main c7d9c44295e16d8b603dda96cdf0e408cd828dc5; 0 open PRs; issue #111 open. Quality #43727091701 SUCCESS (7/7 jobs); Freshness #43727091644 SUCCESS; Provenance #43727091650 SUCCESS; Graphify #43727091641 SUCCESS; Pages #43727090926 SUCCESS."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 89dda05004cba887314b3edef6f1802480a0e9c5; 0 open PRs; issue #111 open. Quality #43727819858 123/124 Chromium (one expected RED UI test); Freshness #43727819887 stale snapshot/verified_main; Provenance #43727819900 SUCCESS; Graphify #43727819824 SUCCESS; Pages #43727819235 SUCCESS.
     branch: "main"
-    base_main: "c7d9c44295e16d8b603dda96cdf0e408cd828dc5"
+    base_main: "89dda05004cba887314b3edef6f1802480a0e9c5"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact main c7d9c44295e16d8b603dda96cdf0e408cd828dc5: Quality #43727091701 SUCCESS (7/7 jobs incl. Chromium); Freshness #43727091644 SUCCESS; Provenance #43727091650 SUCCESS; Graphify #43727091641 SUCCESS; Pages #43727090926 SUCCESS; public root metadata exact c7d9c44. Filter-only project/chat behavior and project ownership preservation are verified."
+    exact_head_checks: "Exact parent 89dda05004cba887314b3edef6f1802480a0e9c5: Quality #43727819858 123/124 Chromium with one expected RED AgentRun UI test; Freshness #43727819887 failed due verified_main/snapshot mismatch (21/21 unit tests passed); Provenance #43727819900 SUCCESS; Graphify #43727819824 SUCCESS; Pages #43727819235 SUCCESS; public root exact 89dda050. Current direct child adds capability-gated profile/model/status UI; exact-head checks pending."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
     next: "Implement AgentRun browser vertical slice from docs/superpowers/plans/2026-11-15-agent-run-ui.md: capability-gated profile/model selection, prompt-only submission, real status/events/output/cancel. Keep host flag disabled; then define true multi-agent capability grants and same-origin Notebook/Research/Workspace contracts."
 
@@ -298,15 +298,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
-  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-009 are archived verbatim. Parent 888c2d5: Pages #43726434326 SUCCESS; Freshness #43726435150 SUCCESS; Provenance #43726435111 SUCCESS; Graphify #43726435074 SUCCESS; Quality #43726435103 failed two active-chat-preservation scenarios (121/123 passed) due to filter auto-switch; current commit restores filter-only semantics."
-  last_functional_checkpoint: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
-  main_quality: "Quality #43726435103 FAILED on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7: 121/123 Chromium tests passed; two failures show project/personal filter selection must preserve the active chat; non-Chromium quality jobs passed."
-  main_freshness: "Freshness #43726435150 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
-  main_graphify: "Graphify #43726435074 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
-  main_gateway: "Not triggered on exact parent 888c2d5; no Gateway code changed in the project/filter UI slice."
-  main_provenance: "Provenance #43726435111 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7."
-  main_pages: "Pages #43726434326 SUCCESS on exact parent 888c2d59bee23cc31ebc00a2b0189e61705f5aa7; public root metadata reports exact 888c2d5 revision; /landing/ and retired CSS return 404."
+  verified_main: "89dda05004cba887314b3edef6f1802480a0e9c5"
+  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-011 are archived (OR-011 corrects exact OR-010 wording). Parent 89dda050: Pages #43727819235 SUCCESS; Provenance #43727819900 SUCCESS; Graphify #43727819824 SUCCESS; Quality #43727819858 had one expected RED disabled-AgentRun UI failure (123/124 passed); Freshness #43727819887 failed because verified_main lagged snapshot. Current direct child adds capability panel and refreshes state atomically."
+  last_functional_checkpoint: "c7d9c44295e16d8b603dda96cdf0e408cd828dc5"
+  main_quality: "Quality #43727819858 FAILED on exact parent 89dda05004cba887314b3edef6f1802480a0e9c5: 123/124 Chromium tests passed; one new disabled-AgentRun UI E2E failed because the UI controls were not present. Non-Chromium jobs passed."
+  main_freshness: "Freshness #43727819887 FAILED on exact parent 89dda05004cba887314b3edef6f1802480a0e9c5 because current_checkpoint.verified_main lagged snapshot main SHA; all 21 checker unit tests passed."
+  main_graphify: "Graphify #43727819824 SUCCESS on exact parent 89dda05004cba887314b3edef6f1802480a0e9c5."
+  main_gateway: "Not triggered on exact parent 89dda050; no Gateway code changed in the AgentRun UI slice."
+  main_provenance: "Provenance #43727819900 SUCCESS on exact parent 89dda05004cba887314b3edef6f1802480a0e9c5."
+  main_pages: "Pages #43727819235 SUCCESS on exact parent 89dda05004cba887314b3edef6f1802480a0e9c5; public root metadata exact 89dda050; /landing/ and retired CSS return 404."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "888c2d59bee23cc31ebc00a2b0189e61705f5aa7"
+  checkpoint_parent_sha: "89dda05004cba887314b3edef6f1802480a0e9c5"
   open_prs: []
   open_issues: [111]
   completed:
