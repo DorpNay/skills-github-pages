@@ -97,7 +97,11 @@ def test_worker_invokes_only_allowlisted_local_model_and_encrypts_payloads(tmp_p
         assert "tools" not in body
         assert body["options"] == {"temperature": 0, "num_ctx": 4096, "num_predict": 128}
         assert body["messages"][1]["content"] == "PRIVATE OWNER PROMPT"
-        assert "no tools" in body["messages"][0]["content"].lower()
+        system_prompt = body["messages"][0]["content"].lower()
+        assert "no tools" in system_prompt
+        assert "no web access" in system_prompt
+        assert "no filesystem" in system_prompt
+        assert "no shell" in system_prompt
         assert json.loads(vault.get(run_id=run["run_id"], kind="input"))["prompt"] == "PRIVATE OWNER PROMPT"
         assert json.loads(vault.get(run_id=run["run_id"], kind="output"))["text"] == "Durable agent answer."
         raw_db = db_path.read_bytes()
