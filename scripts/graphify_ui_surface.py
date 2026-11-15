@@ -159,9 +159,9 @@ def make_edge(source: str, target: str, relation: str, path: str, line: int,
 
 def collect_css(root: Path):
     records = []
-    for path in sorted((root / "assets" / "css").rglob("*.css")):
-        relative = path.relative_to(root).as_posix()
-        rules = tinycss2.parse_stylesheet(read_text(path), skip_comments=True, skip_whitespace=True)
+
+    def collect(source: str, relative: str, line_offset: int = 0) -> None:
+        rules = tinycss2.parse_stylesheet(source, skip_comments=True, skip_whitespace=True)
         for rule in iter_qualified_rules(rules):
             selector_text = tinycss2.serialize(rule.prelude).strip()
             if not selector_text:
@@ -172,10 +172,26 @@ def collect_css(root: Path):
                 for selector in sorted(tokens):
                     records.append({
                         "path": relative,
-                        "line": int(getattr(rule, "source_line", 1)),
+                        "line": line_offset + int(getattr(rule, "source_line", 1)),
                         "selector": selector,
                         "selector_text": normalized,
                     })
+
+    for path in sorted((root / "assets" / "css").rglob("*.css")):
+        collect(read_text(path), path.relative_to(root).as_posix())
+
+    # The current GitHub Pages client keeps its stylesheet inline in index.md.
+    # Parse each style block as CSS while retaining source-file line provenance.
+    index_path = root / "index.md"
+    if index_path.is_file():
+        source = read_text(index_path)
+        for match in re.finditer(r"<style\\b[^>]*>([\\s\\S]*?)</style\\s*>", source, re.IGNORECASE):
+            css = match.group(1)
+            if not css.strip():
+                continue
+            line_offset = source.count("\\n", 0, match.start(1))
+            collect(css, index_path.relative_to(root).as_posix(), line_offset)
+
     return records
 
 
