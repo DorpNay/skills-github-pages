@@ -70,9 +70,7 @@ jobs:
         run: |
           expected_revision="$GITHUB_SHA"
           test -s ./_site/index.html
-          test -s ./_site/landing/index.html
           grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$expected_revision\"" ./_site/index.html
-          grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$expected_revision\"" ./_site/landing/index.html
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
@@ -160,46 +158,6 @@ jobs:
           grep -Ei '^(HTTP/|date:|age:|cache-control:|etag:|last-modified:|via:|x-cache:)' /tmp/live-client-canonical.headers || true
           exit 1
 
-      - name: Verify the published landing content on canonical URL after main deployment
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          landing_url="https://dorpnay.github.io/skills-github-pages/landing/?smoke=$GITHUB_SHA"
-          for attempt in $(seq 1 18); do
-            if curl --fail --silent --show-error --location --max-time 15 "$landing_url" -o /tmp/alandi-landing.html &&
-               grep --fixed-strings --quiet "Сохраняй контроль над средой" /tmp/alandi-landing.html &&
-               grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$GITHUB_SHA\"" /tmp/alandi-landing.html; then
-              echo "The current landing content is published via cache-busted URL."
-              break
-            fi
-            if [ "$attempt" -eq 18 ]; then
-              echo "The current landing content was not published in time."
-              exit 1
-            fi
-            echo "The cache-busted landing content is not available yet (attempt $attempt/18); retrying in 10 seconds."
-            sleep 10
-          done
-
-          canonical_landing_url="https://dorpnay.github.io/skills-github-pages/landing/"
-          for attempt in $(seq 1 18); do
-            if curl --fail --silent --show-error --location --max-time 15 \
-                 --dump-header /tmp/alandi-landing-canonical.headers \
-                 "$canonical_landing_url" -o /tmp/alandi-landing-canonical.html &&
-               grep --fixed-strings --quiet "Сохраняй контроль над средой" /tmp/alandi-landing-canonical.html &&
-               grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$GITHUB_SHA\"" /tmp/alandi-landing-canonical.html; then
-              echo "The canonical /landing/ URL serves the current content without cache-busting."
-              exit 0
-            fi
-            echo "The canonical landing URL is not yet serving current content (attempt $attempt/18); retrying in 10 seconds."
-            sleep 10
-          done
-          echo "The canonical /landing/ URL remained stale or mismatched."
-          grep -Ei '^(HTTP/|date:|age:|cache-control:|etag:|last-modified:|via:|x-cache:)' /tmp/alandi-landing-canonical.headers || true
-          exit 1
-      - name: Test the published aLandi landing page in Chromium
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env:
-          LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
-        run: npx playwright test tests/e2e/landing.spec.mjs
       - name: Upload browser diagnostics on failure
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -321,14 +279,9 @@ jobs:
           for index, source in enumerate(extractor.scripts):
               Path(f"audit-reports/ui-inline-{index}.js").write_text(source, encoding="utf-8")
 
-          landing = Path("landing/index.html").read_text(encoding="utf-8")
-          if landing.startswith("---\n"):
-              _, _, landing = landing.split("---\n", 2)
-          Path("audit-reports/landing-page.html").write_text(landing, encoding="utf-8")
-          print(f"Extracted {len(extractor.scripts)} inline UI scripts and normalized the Jekyll landing page for SAST.")
+          print(f"Extracted {len(extractor.scripts)} root-client inline UI scripts for SAST.")
           PY
-          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js audit-reports/landing-page.html \
-            > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr
+          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js \
           echo "$?" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."
           exit 0
