@@ -36,9 +36,9 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-15)
 
-- State-refresh parent: `be7337cbc5e839747b3fe7377ac5a9a27a35a24b`; Open PRs: none; Open issues: #111. Test-only RED checkpoint: Gateway #43737581208 failed because the evidence API did not exist yet; Quality #43737581226 was in progress; Freshness #43737581194 found the expected stale snapshot; Graphify #43737581219 and Pages #43737580201 passed.
-- This direct child implements the scoped EvidenceLedger API, idempotent quote persistence/deletion, capability reporting and explicit Research Trace v3 excerpt save. No raw page body is uploaded; no save occurs until the user clicks. RAG remains disabled by default. Exact-head CI is pending.
-- Next: verify Gateway Python 3.12/3.13/3.14, Quality/Chromium, Freshness, Provenance, Graphify, Pages and exact published revision. Then continue claim-to-citation support, contradiction records, durable resumability and bounded Exa/Firecrawl adapters. No new SDK/dependency or paid service.
+- State-refresh parent: `9bee2d979c3a9d91d252d09c0abbd605dfce22cb`; Open PRs: none; Open issues: #111. Gateway #43738527999 had one outdated capabilities fixture failure while the new EvidenceLedger API tests passed; Quality #43738528161 was in progress; Freshness #43738528040 passed; Provenance #43738528019 caught leftover YAML list items; Graphify #43738528011 and Pages #43738527399 passed.
+- This child updates the legacy capabilities fixture for the new disabled-RAG field and removes the stale YAML list residue. The scoped EvidenceLedger API and explicit Research Trace v3 save remain implemented; exact-head checks are pending.
+- Next: verify Gateway Python 3.12/3.13/3.14, Quality/Chromium, Freshness, Provenance, Graphify, Pages and exact published revision. Continue claim-to-citation support, contradictions, durable resumability and bounded Exa/Firecrawl adapters only after the vertical slice is green.
 
 ## Targeted UI source review — 2026-11-15
 

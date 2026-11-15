@@ -79,6 +79,7 @@ def test_capabilities_require_auth_and_only_report_enabled_flags():
         "audio": {"transcription": True, "speech": False, "speech_voices": []},
         "documents": {"extraction": True},
         "connectors": {"github_app": False},
+        "rag": {"enabled": False, "evidence_ledger": False},
         "agent_runs": {"enabled": False, "worker_concurrency": 1, "tools_enabled": False},
     }
 

@@ -406,3 +406,9 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Research Trace schema v3 stores chat ID and capture timestamps. Explicit Save to Gateway sends only <=360-character excerpts after user action; it does not upload full pages automatically. Remote Gateway must advertise RAG/EvidenceLedger. Evidence remains conversation-scoped.
 - K.5 Deep Research status is PARTIAL, not complete. Semantic claim-to-citation verification, contradictions, resumable state, independent Exa/Firecrawl adapters, budget accounting and Notebook/export remain open.
 - Exact-head CI and public revision verification are pending on this implementation commit. No dependency, paid service, host setting or model changed.
+
+## V-2026-11-15-DEEP-RESEARCH-EVIDENCE-LEDGER-002 — fixture and checkpoint correction
+
+- Parent implementation 9bee2d979c3a9d91d252d09c0abbd605dfce22cb; 0 open PRs; issue #111. Gateway #43738527999 failed one legacy capabilities fixture because the new disabled-RAG object was absent; the new EvidenceLedger API tests passed. Freshness #43738528040 SUCCESS. Provenance #43738528019 failed because stale block-list entries remained below the new flow-style next array. Graphify #43738528011 and Pages #43738527399 SUCCESS.
+- This child adds the expected disabled RAG/EvidenceLedger capabilities to the existing fixture and removes the stale YAML list residue. No production behavior changed in this correction.
+- Exact-head Gateway/Quality/Freshness/Provenance/Graphify/Pages and Firecrawl revision smoke rerun after this correction.
