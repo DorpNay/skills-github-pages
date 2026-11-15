@@ -26,3 +26,8 @@
 - Russian conversation; technical identifiers/code/artifacts retain native language.
 
 - Task-scoped publication authorization (2026-11-15): the owner explicitly authorizes direct commits to main and the automatic GitHub Pages deployment caused by those pushes for LANDING-V2-2026-001. This does not authorize VPS/host deployment, paid provisioning, secret handling or unrelated external actions.\n- Owner acceptance OR-2026-11-15-006: the user-editable global prompt is empty by default; placeholder copy is not a value. K.6.8 is canonical. Source and live HTML currently show an empty, read-only textarea until the explicit edit action; retain regression coverage for fresh, legacy, save/clear and profile round-trip.
+
+
+## Current owner authorization — LANDING-V2-2026-001
+
+The owner explicitly authorizes direct commits/merges to `main`, required connected tools/plugins/skills, and automatic GitHub Pages publication for this task. This does not authorize force-push, rebase/reset, history rewriting, destructive user-data actions, VPS deployment, paid provisioning or secret handling.
