@@ -38,6 +38,11 @@ from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
+try:
+    from .rag.evidence_ledger import EvidenceLedgerConflictError
+except ImportError:  # supports "uvicorn app:app" from the gateway directory
+    from rag.evidence_ledger import EvidenceLedgerConflictError
+
 logger = logging.getLogger("alandi.gateway")
 
 
@@ -975,9 +980,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             )
             app.state.rag_store.initialize()
             try:
-                from .rag.evidence_ledger import EvidenceLedger, EvidenceLedgerConflictError
+                from .rag.evidence_ledger import EvidenceLedger
             except ImportError:  # supports "uvicorn app:app" from the gateway directory
-                from rag.evidence_ledger import EvidenceLedger, EvidenceLedgerConflictError
+                from rag.evidence_ledger import EvidenceLedger
             app.state.evidence_ledger = EvidenceLedger(config.rag_path)
             app.state.evidence_ledger.initialize()
         if config.agent_runs_enabled:

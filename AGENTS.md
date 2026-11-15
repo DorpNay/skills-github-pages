@@ -36,11 +36,11 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `82378d2990bb8fddaf0f5223135519357dd8fa1d`; 0 open PRs; issue #111. Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium and release contract); Pages #43760139103 SUCCESS; Freshness #43760139562 PASS; Provenance #43760139586 PASS.
-- Published canonical and cache-busted client report `alandi-build-revision=82378d2990bb8fddaf0f5223135519357dd8fa1d`.
-- Graphify #43759158498 PASS on code/test parent 2185. Gateway #43738728923 PASS on gateway-bearing parent 5773; no Gateway code changed on 82378.
-- Current implementation slice adds typed claim/contradiction EvidenceLedger records and authenticated routes, deterministic idempotency, same-scope/run source linkage, same-model-only reviewer mode and deletion conflict protection. No schema migration or dependency. Exact-head CI pending.
-- Next: connect Research Trace to the new endpoints; pass captured source excerpts to the same-model critic, validate/render structured claims and contradictions, and persist only on explicit save. Provider adapters and resumable research runs remain open.
+- Parent main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111.
+- Gateway #43762082085 failed on Python 3.12/3.13/3.14 (269 passed, 1 failed per job): `EvidenceLedgerConflictError` was imported inside the lifespan function but referenced by outer route handlers. Quality #43762082040 Ruff gate failed on the same undefined name; Chromium job was still running at capture.
+- Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 deployment SUCCESS; Graphify #43762082015 SUCCESS. Public revision/meta remains unverified.
+- Fix: move the exception import to module scope in `gateway/app.py`, keep the local lifespan import limited to `EvidenceLedger`, and rerun exact-head gates. No tests disabled.
+- Next: after Gateway, Ruff, Chromium, Freshness, Provenance, Pages and public revision are verified, connect Research Trace to the new endpoints.
 
 ## Targeted UI source review — 2026-11-16
 

@@ -143,7 +143,7 @@
 
 ## 8. Claim and contradiction persistence — 2026-11-16
 
-**Backend maturity:** IMPLEMENTED IN THIS CHANGE / EXACT-HEAD CI PENDING.
+**Backend maturity:** IMPLEMENTED IN d806d19 / VERIFICATION BLOCKED — Gateway and Ruff exposed a module-scope exception import defect; the next child moves the exception import to module scope. No test was disabled.
 
 - Reuses the existing `evidence_records` table; no new table or migration.
 - Adds typed `claim` and `contradiction` records with deterministic idempotent IDs.
@@ -152,5 +152,5 @@
 - Prevents deleting source quotes or claims while derived records reference them.
 - New authenticated Gateway routes remain behind the existing RAG-enabled gate; RAG remains disabled by default.
 
-**Still open:** Research Trace has not yet passed source excerpts into the critic, structured claim review is not yet produced or rendered, and the UI does not yet persist claims/contradictions through these endpoints. Exa/Firecrawl runtime adapters, durable resumable research runs and Notebook/report export remain unimplemented. The existing same-model pipeline must not be described as an independent agent team.
+**Still open:** the import-scope defect must pass exact-head Gateway and Quality after correction. Research Trace has not yet passed source excerpts into the critic, structured claim review is not yet produced or rendered, and the UI does not yet persist claims/contradictions through these endpoints. Exa/Firecrawl runtime adapters, durable resumable research runs and Notebook/report export remain unimplemented. The existing same-model pipeline must not be described as an independent agent team.
 

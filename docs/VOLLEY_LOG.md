@@ -451,3 +451,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Exa Search/Contents and Firecrawl Search/Scrape official references were revalidated from the existing INTEL inventory (490 unique URLs); no new URL rows, provider keys, paid calls, or runtime adapters.
 - Next: connect Research Trace to the new endpoints with source excerpts, structured same-model claim review, contradiction rendering and explicit-save persistence; then provider adapters and resumable run state.
 
+
+
+## V-2026-11-16-DEEP-RESEARCH-CLAIM-LEDGER-FIX-001 — exact-head import-scope correction
+
+- Parent main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111.
+- Gateway #43762082085 failed on Python 3.12/3.13/3.14 (269 passed, 1 failed per job): `EvidenceLedgerConflictError` was imported inside the lifespan function but referenced in route handlers defined in the outer `create_app` scope. Quality #43762082040 Ruff gate found the same undefined name; Chromium remained in progress at capture.
+- Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 deployment SUCCESS; Graphify #43762082015 SUCCESS. Public revision/meta remains unverified.
+- Fix moves the exception import to module scope and removes it from the lifespan-local import; tests remain enabled.
+- Next: verify exact-child Gateway, Ruff, Chromium, Freshness, Provenance, Pages and public revision before proceeding to Research Trace integration.
+
