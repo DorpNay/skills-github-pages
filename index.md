@@ -275,7 +275,25 @@ permalink: /
     }
     #sidebar { overflow-y:auto; overscroll-behavior:contain; }
     #sidebar > :not(#chatList) { flex-shrink:0; }
-    #sidebar #chatList { flex:1 0 8rem; min-height:8rem; }
+    .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;height:clamp(220px,32vh,300px);min-height:220px;margin:8px 12px;padding:10px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface); }
+    #projectNavigation { display:flex;flex:1;flex-direction:column;min-height:0;gap:8px; }
+    #projectNavigationList { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; }
+    #chatSection { min-height:220px; }
+    #chatSection > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
+    #sidebar #chatList { flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto; }
+    #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:8px 12px; }
+    .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:42px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
+    .project-create-row { color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border-color:color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
+    .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border-color:color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
+    .chat-scope-back { min-height:36px;padding:0 10px;border-radius:9px;color:var(--ui-text-muted);font-size:11px;text-align:left; }
+    .project-nav-item { display:flex;align-items:center;gap:6px;padding:4px;border:1px solid var(--ui-border);border-radius:11px;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
+    .project-nav-item.is-active { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    .project-nav-select { display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;min-height:40px;padding:0 8px;border-radius:8px;text-align:left;font-size:12px;color:var(--ui-text); }
+    .project-nav-count { flex-shrink:0;color:var(--ui-text-muted);font-size:10px;font-variant-numeric:tabular-nums; }
+    .project-nav-settings { display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:9px;color:var(--ui-text-muted);font-size:22px;line-height:1; }
+    .project-nav-settings:hover { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
+    #projectCreateModal section { background:var(--ui-surface); }
+    @media (max-width:380px) { .sidebar-main-section { height:clamp(220px,34vh,280px); } }
     #chatBox, #memoryBox { color:var(--ui-text); }
     #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
@@ -429,7 +447,29 @@ permalink: /
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
     </div>
     
-    <section id="memoryPanel" class="mx-3 my-2 rounded-xl border border-gray-800 p-2 space-y-2" aria-label="Настройки памяти">
+    
+    <section id="projectPanel" class="sidebar-main-section project-main-section" aria-label="Проекты">
+      <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
+        <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
+      </button>
+      <button type="button" data-action="open-project-create" data-i18n="createProject" class="project-create-row">＋ Создать проект</button>
+      <div id="projectNavigationList" class="hidden space-y-1.5" aria-label="Список проектов"></div>
+      <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
+    </section>
+    <details id="chatSection" open class="sidebar-main-section chat-main-section">
+      <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
+        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
+      </summary>
+      <div class="chat-primary-actions">
+        <button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="chat-create-row">＋ Новый чат</button>
+        <button type="button" id="chatScopeBackButton" data-action="clear-project-filter" class="chat-scope-back hidden">← Все чаты</button>
+        <button type="button" id="projectlessNavButton" data-action="projectless-nav" class="project-nav-unassigned" aria-label="Показать чаты без проекта">
+          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
+        </button>
+      </div>
+      <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
+    </details>
+    <section id="memoryPanel" class="mx-3 my-2 rounded-xl p-2 space-y-2" aria-label="Настройки памяти">
       <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
             <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
@@ -446,29 +486,7 @@ permalink: /
             </div>
           </details>
     </section>
-    <section id="projectPanel" class="px-3 py-2 border-t border-gray-800 space-y-2" aria-label="Проекты и настройки проекта">
-      <div class="mb-2">
-        <button type="button" data-action="open-project-create" data-i18n="createProject" class="w-full rounded-lg border border-cyan-800 bg-cyan-950/40 px-2 py-2 text-left text-xs font-semibold">＋ Создать проект</button>
-      </div>
-      <div id="projectNavigation" class="space-y-1.5">
-        <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
-          <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
-        </button>
-        <button id="projectlessNavButton" type="button" data-action="projectless-nav" class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs project-nav-unassigned" aria-label="Показать чаты без проекта">
-          <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
-        </button>
-        <div id="projectNavigationList" class="hidden pl-2 space-y-1" aria-label="Список проектов"></div>
-      </div>
-      <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
-    </section>
-    <p id="projectStatusLine" class="mx-3 -mt-1 mb-1 px-2 text-[10px] leading-relaxed text-gray-500" role="status" aria-live="polite">Личный чат · без проекта</p>
-    <details id="chatSection" open class="mx-3 my-2 rounded-xl border border-gray-800">
-      <summary class="chat-section-summary flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-semibold cursor-pointer select-none" aria-controls="chatList">
-        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span>
-      </summary>
-      <div class="px-2 pt-2"><button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="w-full rounded-lg border border-blue-500/25 bg-blue-600/10 hover:bg-blue-600/20 py-2 text-xs font-semibold text-blue-200">＋ Новый личный чат</button></div>
-      <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
-    </details>
+    <p id="projectStatusLine" class="sr-only" role="status" aria-live="polite">Личный чат · без проекта</p>
 
      <div id="chatRowMenuSidebarScrim" aria-hidden="true"></div>
     <input id="importFile" type="file" class="hidden" accept="application/json,.json">
@@ -497,10 +515,7 @@ permalink: /
               <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
               <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
               <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
-              <div class="grid grid-cols-2 gap-2">
-                <button id="createProjectSubmit" type="button" data-action="create-project" class="hidden bg-cyan-900/70 hover:bg-cyan-800 border border-cyan-800 rounded-lg py-2 text-xs" data-i18n="createProject">＋ Создать проект</button>
-                <button id="saveProjectSubmit" type="button" data-action="save-project" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
-              </div>
+              <button id="saveProjectSubmit" type="button" data-action="save-project" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
     
               <label for="projectMemoryInput" class="block text-[11px] text-gray-400" data-i18n="projectMemoryLabel">Добавить факт в память проекта</label>
               <div class="flex gap-1"><input id="projectMemoryInput" type="text" maxlength="600" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Факт, решение или ограничение"><button type="button" data-action="add-project-memory" class="rounded-lg border border-gray-700 px-2 text-xs" aria-label="Добавить факт">＋</button></div>
@@ -524,6 +539,20 @@ permalink: /
     
             </div>
           </details>
+    </section>
+  </div>
+  <div id="projectCreateModal" class="hidden fixed inset-0 z-[65] bg-black/80 p-3 sm:p-5 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="projectCreateModalTitle">
+    <section class="w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-gray-700 bg-gray-950 p-4 shadow-2xl">
+      <header class="mb-4 flex items-center justify-between gap-3 border-b border-gray-800 pb-3">
+        <h2 id="projectCreateModalTitle" class="text-sm font-bold">Создать проект</h2>
+        <button type="button" data-action="close-project-create" aria-label="Закрыть создание проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
+      </header>
+      <div class="space-y-3">
+        <div><label for="projectCreateNameInput" class="mb-1 block text-xs text-gray-300">Название проекта</label><input id="projectCreateNameInput" type="text" maxlength="100" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Название проекта" autocomplete="off"></div>
+        <div><label for="projectCreateInstructionsInput" class="mb-1 block text-xs text-gray-300">Инструкции проекта</label><textarea id="projectCreateInstructionsInput" rows="4" maxlength="6000" class="w-full resize-y rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Цель, стиль, ограничения и критерии результата"></textarea></div>
+        <div><label for="projectCreateMemoryScopeSelect" class="mb-1 block text-xs text-gray-300">Область памяти</label><select id="projectCreateMemoryScopeSelect" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm"><option value="project-only">Только память проекта</option><option value="project-and-global">Память проекта + общая память (если разрешена)</option></select></div>
+        <button type="button" data-action="create-project" class="w-full rounded-xl border border-cyan-700 bg-cyan-950/60 py-3 text-sm font-semibold text-cyan-100">Создать проект</button>
+      </div>
     </section>
   </div>
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden" aria-hidden="true"></div>
@@ -2015,22 +2044,28 @@ permalink: /
       return false;
     }
     let selectedProjectForSettingsId=null;
+    let selectedProjectFilterId=null;
     let creatingProject=false;
     let projectSettingsOpener=null;
-    function closeProjectSettings(){
-      const modal=$('projectSettingsModal');
-      if(!modal||modal.classList.contains('hidden'))return;
-      modal.classList.add('hidden');
+    function restoreProjectModalFocus(){
       const opener=projectSettingsOpener;projectSettingsOpener=null;
       const sidebarOpen=!$('sidebar').classList.contains('-translate-x-full');
       const visibleOpener=opener&&document.contains(opener)&&(!opener.closest('#sidebar')||sidebarOpen)?opener:null;
-      const fallback=$('appSidebarToggle');
-      const target=visibleOpener||fallback;
+      const target=visibleOpener||$('appSidebarToggle');
       if(target&&!target.disabled&&target.getClientRects().length)target.focus({preventScroll:true});
     }
+    function closeProjectSettings(){
+      const modal=$('projectSettingsModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      modal.classList.add('hidden');restoreProjectModalFocus();
+    }
+    function closeProjectCreate(){
+      const modal=$('projectCreateModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      modal.classList.add('hidden');creatingProject=false;restoreProjectModalFocus();
+    }
     function syncProjectEditorMode(){
-      $('createProjectSubmit')?.classList.toggle('hidden',!creatingProject);
-      $('saveProjectSubmit')?.classList.toggle('hidden',creatingProject);
+      $('saveProjectSubmit')?.classList.remove('hidden');
     }
     function getProjectForChat(chat){
       if(arguments.length===0) return projects.find(project=>project.id===selectedProjectForSettingsId)||null;
@@ -2191,20 +2226,24 @@ permalink: /
       renderRequestProjectChoices();
     }
     function createProject(){
-      const input=$('projectNameInput'),name=input.value.trim().slice(0,100);
+      const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousCreating=creatingProject;
+      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
       const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;
-      chat.projectId=project.id;chat.projectMemoryEnabled=false
-      if(!persistProjectsAndChats()){projects=previousProjects;selectedProjectForSettingsId=previousSelected;creatingProject=previousCreating;safeAssignOwn(chat,previousChat);renderProjectUI();renderChatList();renderActiveChat();return;}
-      renderProjectUI();renderChatList();renderActiveChat();
+      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
+      creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;selectedProjectFilterId=project.id;
+      chat.projectId=project.id;chat.projectMemoryEnabled=false;
+      if(!persistProjectsAndChats()){
+        projects=previousProjects;selectedProjectForSettingsId=previousSelected;selectedProjectFilterId=previousFilter;creatingProject=previousCreating;
+        safeAssignOwn(chat,previousChat);renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();return;
+      }
+      $('projectCreateModal').classList.add('hidden');projectSettingsOpener=null;
+      $('appSidebarToggle')?.focus({preventScroll:true});
+      renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
     }
     function saveProject(){
-      if(creatingProject){createProject();return;}
       const project=getProjectForChat();
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
       const name=$('projectNameInput').value.trim().slice(0,100);
@@ -2220,7 +2259,7 @@ permalink: /
       if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
       const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
-      chat.projectId=target?.id||null;chat.projectMemoryEnabled=falseselectedProjectForSettingsId=target?.id||null;
+      chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
       if(!persistChats()){safeAssignOwn(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
       renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
@@ -2332,36 +2371,57 @@ permalink: /
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
-      const expanded=new Set([...list.querySelectorAll('details.project-nav-item[open]')].map(item=>item.dataset.projectId));
       list.replaceChildren();
-      const unassigned=chats.filter(chat=>!chat.projectId);
-      $('projectlessChatCount').textContent=String(unassigned.length);
-      $('chatSectionCount').textContent=String(unassigned.length);
-      const current=getCurrentChat();
-      $('projectlessNavButton').classList.toggle('is-active',!current?.projectId);
       const english=getUiLanguage()==='en';
+      const unassignedCount=chats.filter(chat=>!chat.projectId).length;
+      $('projectlessChatCount').textContent=String(unassignedCount);
+      $('projectlessNavButton').classList.toggle('is-active',selectedProjectFilterId==='');
       for(const project of projects) {
-        const group=document.createElement('details');group.className='project-nav-item';group.dataset.projectId=project.id;group.open=expanded.has(project.id);
-        const summary=document.createElement('summary');
-        const caret=document.createElement('span');caret.className='project-nav-caret';caret.textContent=group.open?'⌄':'›';caret.setAttribute('aria-hidden','true');
-        const title=document.createElement('span');title.className='min-w-0 flex-1 truncate';title.textContent=project.name;
-        const count=document.createElement('span');count.className='text-[10px] text-gray-500';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
-        summary.append(caret,title,count);group.appendChild(summary);
-        group.addEventListener('toggle',()=>{caret.textContent=group.open?'⌄':'›';});
-        const children=document.createElement('div');children.className='project-nav-chats';
-        const assigned=chats.filter(chat=>chat.projectId===project.id);
-        if(!assigned.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[10px] text-gray-500';empty.textContent=english?'No chats in this project yet.':'В проекте пока нет чатов.';children.appendChild(empty);}
-        assigned.forEach(chat=>children.appendChild(createChatRow(chat,true)));
-        const toolbar=document.createElement('div');toolbar.className='flex gap-1 px-1 pt-1';const addChat=document.createElement('button');addChat.type='button';addChat.dataset.action='new-chat-in-project';addChat.dataset.projectId=project.id;addChat.className='flex-1 rounded-lg border border-cyan-900/50 px-2 py-1.5 text-[10px] text-cyan-200 hover:bg-cyan-950/40';addChat.textContent=english?'＋ New chat':'＋ Новый чат';const settings=document.createElement('button');settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;settings.className='rounded-lg px-2 py-1.5 text-[10px] text-gray-500 hover:text-cyan-300';settings.textContent=english?'⚙ Settings':'⚙ Настройки';toolbar.append(addChat,settings);children.appendChild(toolbar);
-        group.appendChild(children);list.appendChild(group);
+        const row=document.createElement('div');
+        row.className='project-nav-item'+(selectedProjectFilterId===project.id?' is-active':'');
+        row.dataset.projectId=project.id;
+        const select=document.createElement('button');
+        select.type='button';select.dataset.action='select-project-filter';select.dataset.projectId=project.id;
+        select.className='project-nav-select';
+        select.setAttribute('aria-pressed',String(selectedProjectFilterId===project.id));
+        select.textContent=project.name;
+        const count=document.createElement('span');
+        count.className='project-nav-count';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
+        select.appendChild(count);
+        const settings=document.createElement('button');
+        settings.type='button';settings.dataset.action='open-project-settings';settings.dataset.projectId=project.id;
+        settings.className='project-nav-settings';settings.textContent='⋯';
+        settings.setAttribute('aria-label',english?'Project settings for '+project.name:'Настройки проекта '+project.name);
+        settings.title=english?'Project settings':'Настройки проекта';
+        row.append(select,settings);list.appendChild(row);
       }
-      if(!projects.length){const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);}
+      if(!projects.length){
+        const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';
+        empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);
+      }
     }
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
       const list=$('chatList');list.replaceChildren();
-      const personalChats=chats.filter(chat=>!chat.projectId);list.dataset.emptyLabel=getUiLanguage()==='en'?'No personal chats yet.':'Нет личных чатов без проекта';list.classList.toggle('is-empty',personalChats.length===0);
-      personalChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      if(selectedProjectFilterId!==null&&selectedProjectFilterId!==''&&!projects.some(project=>project.id===selectedProjectFilterId))selectedProjectFilterId=null;
+      const visibleChats=selectedProjectFilterId===null
+        ? chats
+        : chats.filter(chat=>selectedProjectFilterId===''?!chat.projectId:chat.projectId===selectedProjectFilterId);
+      const english=getUiLanguage()==='en';
+      const selectedProject=projects.find(project=>project.id===selectedProjectFilterId);
+      const back=$('chatScopeBackButton');
+      back.classList.toggle('hidden',selectedProjectFilterId===null);
+      back.textContent=english
+        ? '← All chats'+(selectedProject?' · '+selectedProject.name:selectedProjectFilterId===''?' · No project':'')
+        : '← Все чаты'+(selectedProject?' · '+selectedProject.name:selectedProjectFilterId===''?' · Без проекта':'');
+      list.dataset.emptyLabel=selectedProject
+        ? (english?'No chats in this project yet.':'В этом проекте пока нет чатов.')
+        : selectedProjectFilterId===''
+          ? (english?'No personal chats yet.':'Нет личных чатов без проекта')
+          : (english?'No chats yet.':'Пока нет чатов.');
+      list.classList.toggle('is-empty',visibleChats.length===0);
+      $('chatSectionCount').textContent=String(visibleChats.length);
+      visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -4574,6 +4634,7 @@ permalink: /
       sendMessage(true);
     }
     function createNewChat() {
+      if(typeof selectedProjectFilterId==='string'&&selectedProjectFilterId){createNewChatInProject(selectedProjectFilterId);return;}
       const chat=createChat('Новый личный чат',[],null);
       updateState([chat,...chats],chat.id);
       toggleSidebar(false);
@@ -5337,17 +5398,24 @@ permalink: /
           case 'clear-request-context': selectedRequestProjectIds.clear();saveRequestContextForActiveChat();renderRequestProjectChoices();break;
           case 'remove-draft-attachment': pendingComposerAttachments=pendingComposerAttachments.filter(item=>item.id!==control.dataset.attachmentId);renderDraftAttachments();break;
           case 'close-project-settings': closeProjectSettings();break;
+          case 'close-project-create': closeProjectCreate();break;
           case 'open-project-create': {
-            projectSettingsOpener=control;
-            creatingProject=true;selectedProjectForSettingsId=null;$('projectManagerDetails').open=true;$('projectMemoryScopeSelect').value='project-only';renderProjectUI();$('projectSettingsModal').classList.remove('hidden');toggleSidebar(false);requestAnimationFrame(()=>$('projectNameInput').focus({preventScroll:true}));break;
+            projectSettingsOpener=control;creatingProject=true;
+            $('projectCreateNameInput').value='';$('projectCreateInstructionsInput').value='';
+            $('projectCreateMemoryScopeSelect').value='project-only';
+            $('projectCreateModal').classList.remove('hidden');toggleSidebar(false);
+            requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
+          case 'select-project-filter': selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+          case 'clear-project-filter': selectedProjectFilterId=null;renderProjectNavigation();renderChatList();event.preventDefault();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
             const list=$('projectNavigationList'),open=list.classList.toggle('hidden')===false;
             $('projectNavToggle').setAttribute('aria-expanded',String(open));$('projectNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
+            selectedProjectFilterId='';renderProjectNavigation();renderChatList();
             $('chatSection').open=true;$('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});
             $('chatSection').querySelector('summary')?.focus();break;
           }
@@ -5476,6 +5544,7 @@ permalink: /
     $('modelSearch').addEventListener('input',()=>populateModelPresets(currentProvider(),$('modelName').value));
     $('traceModal').addEventListener('click', (event) => { if (event.target === $('traceModal')) closeTrace(); });
     $('projectSettingsModal').addEventListener('click', (event) => { if (event.target === $('projectSettingsModal')) closeProjectSettings(); });
+    $('projectCreateModal').addEventListener('click', (event) => { if (event.target === $('projectCreateModal')) closeProjectCreate(); });
     // Escape is handled centrally so every modal shares the same close and focus-return path.
     $('modelPreset').addEventListener('change',()=>{const value=$('modelPreset').value;if(value!=='__custom__')$('modelName').value=value;safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();});
     $('modelName').addEventListener('input',()=>{safeSet('ai_provider_connection_'+currentProvider(),'');refreshApiKeyLamp();scheduleProviderAutoConnect();});
@@ -5582,6 +5651,7 @@ permalink: /
       if (event.key === 'Escape') {
         if (!$('chatActionModal').classList.contains('hidden')) closeChatActionDialog();
         else if (!$('traceModal').classList.contains('hidden')) closeTrace();
+        else if (!$('projectCreateModal').classList.contains('hidden')) closeProjectCreate();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
         else if ($('functionsMenu')?.open) { $('functionsMenu').open = false; $('functionsMenuSummary')?.focus(); }
