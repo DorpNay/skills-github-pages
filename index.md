@@ -283,7 +283,7 @@ permalink: /
     #chatNavToggle { display:flex;align-items:center;justify-content:space-between;width:100%;min-height:40px;padding:0 10px;border-radius:10px;text-align:left; }
     #chatNavigationContent { display:flex;flex:1;flex-direction:column;min-height:0;gap:6px; }
     #chatNavigationContent.hidden { display:none; }
-    #chatSection > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
+    #chatNavigationContent > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
     #sidebar #chatList { flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto; }
     #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:8px 12px; }
     .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:42px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
