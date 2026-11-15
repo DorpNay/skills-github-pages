@@ -302,11 +302,11 @@ current_checkpoint:
   last_main_action: "Exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780: Gateway #43738728923 PASS; Quality #43738728922 ran 133 Chromium tests (121 pass, 12 fail); Freshness #43738728942, Provenance #43738728997, Graphify #43738728920 and Pages #43738728149 PASS/SUCCESS. Diagnostic artifact #14172036136 identified duplicate project selectors, collapsed disclosure menu actions and a stale Research Trace v2 assertion. This child fixes only E2E tests."
   last_functional_checkpoint: "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3"
   main_quality: "Quality #43738728922 FAILED: 121/133 Chromium tests passed; 12 failures are diagnosed and corrected in this child; exact-child rerun pending."
-  main_freshness: "Freshness #43738728942 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
-  main_graphify: "Graphify #43738728920 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
+  main_freshness: "Freshness #43738728942 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780."
+  main_graphify: "Graphify #43738728920 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780."
   main_gateway: "Gateway #43738728923 SUCCESS across Python 3.12/13/14; gateway contract/security and offline eval passed on exact parent."
-  main_provenance: "Provenance #43738728997 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
-  main_pages: "Pages #43738728149 SUCCESS; public root HTTP 200 and alandi-build-revision matches exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780.
+  main_provenance: "Provenance #43738728997 SUCCESS on exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780."
+  main_pages: "Pages #43738728149 SUCCESS; public root HTTP 200 and alandi-build-revision matches exact parent 5773e12c7c05db29e5956aed18ce1da13a6f9780."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
