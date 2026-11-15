@@ -3324,6 +3324,7 @@ test('project creation is a separate modal and never opens the project editor', 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
+  const originalChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   const opener = page.locator('#projectPanel [data-action="open-project-create"]');
   await opener.click();
 
@@ -3337,15 +3338,17 @@ test('project creation is a separate modal and never opens the project editor', 
 
   await expect(page.locator('#projectCreateModal')).toBeHidden();
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
-  const saved = await page.evaluate(() => {
+  const saved = await page.evaluate(originalId => {
     const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const project = projects.find(item => item.name === 'Owner Create Flow');
-    return { project, activeChat: chats.find(item => item.id === localStorage.getItem('ai_current_chat_v87')) };
-  });
+    return { project, activeChat: chats.find(item => item.id === localStorage.getItem('ai_current_chat_v87')), originalChat: chats.find(item => item.id === originalId) };
+  }, originalChatId);
   expect(saved.project?.instructions).toBe('Created in a dedicated dialog.');
   expect(saved.project?.memoryScope).toBe('project-and-global');
   expect(saved.activeChat?.projectId).toBe(saved.project?.id);
+  expect(saved.activeChat?.id).not.toBe(originalChatId);
+  expect(saved.originalChat?.projectId).toBe(null);
 });
 
 test('selecting a project filters the Chats section and the back arrow restores all chats', async ({ page }) => {
@@ -3379,12 +3382,14 @@ test('selecting a project filters the Chats section and the back arrow restores 
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   await projectList.locator('[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
   await expect(page.locator('#chatScopeBackButton')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId)).toBe(alphaId);
   if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
   let visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
 
   await projectList.locator('[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.projectId)).toBe(betaId);
   visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...betaChatIds].sort());
 

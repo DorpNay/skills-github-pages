@@ -2242,14 +2242,13 @@ permalink: /
       const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100);
       if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
-      const previousProjects=projects.slice(),previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
-      const chat=getCurrentChat(),previousChat={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
+      const previousProjects=projects.slice(),previousChats=chats.slice(),previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
-      creatingProject=false;projects=[project,...projects];selectedProjectForSettingsId=project.id;selectedProjectFilterId=project.id;
-      chat.projectId=project.id;chat.projectMemoryEnabled=false;
+      const projectChat=createChat((getUiLanguage()==='en'?'New chat · ':'Новый чат · ')+project.name,[],project.id);
+      creatingProject=false;projects=[project,...projects];chats=[projectChat,...chats];currentChatId=projectChat.id;selectedProjectForSettingsId=project.id;selectedProjectFilterId=project.id;
       if(!persistProjectsAndChats()){
-        projects=previousProjects;selectedProjectForSettingsId=previousSelected;selectedProjectFilterId=previousFilter;creatingProject=previousCreating;
-        safeAssignOwn(chat,previousChat);renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();return;
+        projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;selectedProjectFilterId=previousFilter;creatingProject=previousCreating;
+        renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();return;
       }
       $('projectCreateModal').classList.add('hidden');projectSettingsOpener=null;
       $('appSidebarToggle')?.focus({preventScroll:true});
@@ -5419,7 +5418,13 @@ permalink: /
             requestAnimationFrame(()=>$('projectCreateNameInput').focus({preventScroll:true}));break;
           }
           case 'create-project': createProject();break;
-          case 'select-project-filter': selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+          case 'select-project-filter': {
+            selectedProjectFilterId=control.dataset.projectId||null;
+            const target=chats.find(chat=>chat.projectId===selectedProjectFilterId);
+            if(target&&target.id!==currentChatId){if(!updateState([...chats],target.id))showToast('Не удалось переключить активный чат проекта.','error');renderProjectNavigation();}
+            else{renderProjectNavigation();renderChatList();}
+            event.preventDefault();break;
+          }
           case 'clear-project-filter': selectedProjectFilterId=null;renderProjectNavigation();renderChatList();event.preventDefault();break;
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
@@ -5431,7 +5436,10 @@ permalink: /
             $('chatNavToggle').setAttribute('aria-expanded',String(open));$('chatNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
-            selectedProjectFilterId='';renderProjectNavigation();renderChatList();
+            selectedProjectFilterId='';
+            const target=chats.find(chat=>!chat.projectId);
+            if(target&&target.id!==currentChatId){if(!updateState([...chats],target.id))showToast('Не удалось переключить активный личный чат.','error');renderProjectNavigation();}
+            else{renderProjectNavigation();renderChatList();}
             $('chatNavigationContent').classList.remove('hidden');$('chatNavToggle').setAttribute('aria-expanded','true');$('chatNavChevron').textContent='⌃';
             $('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});$('chatNavToggle').focus();break;
           }
