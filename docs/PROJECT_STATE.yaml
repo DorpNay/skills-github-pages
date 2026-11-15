@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance is K.6 plus OR-2026-11-15-006 and OR-2026-11-15-007. Live main ee925bfa2e093e1077b9a859f83ad134ea2fecfc; 0 open PRs; issue #111 open. Pages #43718883625 SUCCESS and Graphify #43718884625 SUCCESS; Quality #43718884394 still in progress. Root app is canonical; /landing/ source is absent and public route returns 404. Same-origin studio routes are an architecture candidate, not yet implemented."
+    status: "Active task LANDING-V2-2026-001; owner acceptance is K.6 plus OR-2026-11-15-006, OR-2026-11-15-007 and OR-2026-11-15-008. Live main 6f9772bb91c1046be0e2786d56a0cdf537c08a0f; 0 open PRs; issue #111 open. Pages #43720038473 SUCCESS; Quality #43720039674 in progress; Freshness #43720039693 failed on snapshot SHA drift; Provenance #43719748704 SUCCESS; Graphify #43718884625 SUCCESS on parent ee925. Root app is canonical; /landing/ and its CSS return 404. Same-origin studio paths are the recommended architecture candidate, not implemented."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 50a723e102363cd911c2a625a9330cf217f35469; 0 open PRs; issue #111 open. Pages #43719394531 and Quality #43719394800 in progress; Freshness #43719394748 failed on stale current_checkpoint.verified_main; Provenance #43719394814 failed on malformed YAML status. Graphify #43718884625 passed on prior SHA ee925."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 6f9772bb91c1046be0e2786d56a0cdf537c08a0f; 0 open PRs; issue #111 open. Pages #43720038473 SUCCESS; Quality #43720039674 in progress; Freshness #43720039693 failed because snapshot main SHA lagged current main (21/21 checker tests passed); Provenance #43719748704 SUCCESS on a4c1cf0; Graphify #43718884625 SUCCESS on ee925."
     branch: "main"
-    base_main: "50a723e102363cd911c2a625a9330cf217f35469"
+    base_main: "6f9772bb91c1046be0e2786d56a0cdf537c08a0f"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact current main 50a723e102363cd911c2a625a9330cf217f35469: Freshness #43719394748 failed because current_checkpoint.verified_main did not match snapshot SHA; Provenance #43719394814 failed because landing_release_strategy.status was unterminated. The 21 freshness unit tests passed. Quality #43719394800 and Pages #43719394531 were in progress; Graphify #43718884625 passed on parent ee925."
+    exact_head_checks: "Parent main 6f9772bb91c1046be0e2786d56a0cdf537c08a0f: Pages #43720038473 SUCCESS; public root exact revision 6f9772bb; Quality #43720039674 IN_PROGRESS; Freshness #43720039693 FAILED because snapshot main SHA remained 50a723e; 21/21 freshness unit tests passed; Provenance #43719748704 SUCCESS on a4c1cf0; Graphify #43718884625 SUCCESS on prior UI SHA ee925."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Repair exact checkpoint YAML/verified_main and pass Freshness/Provenance; then finish exact-head Quality/Chromium and Pages. Continue unified Settings, real Agent and Deep Research workflows, then Notebook/Research/Workspace same-origin route implementation only when shared-data boundaries are specified."
+    next: "Refresh NOW/AGENTS/PROJECT_STATE/VOLLEY_LOG/snapshot as one direct child of 6f9772bb; re-run exact-head Freshness, Provenance, Quality/Chromium and Pages. Then inspect existing AgentRun before selecting SDK/checkpoint architecture; implement same-origin Notebook/Research/Workspace routes only after versioned shared-data contracts are accepted."
 
 
 
@@ -298,7 +298,7 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "50a723e102363cd911c2a625a9330cf217f35469"
+  verified_main: "6f9772bb91c1046be0e2786d56a0cdf537c08a0f"
   last_main_action: "Owner requests OR-2026-11-15-005 and OR-2026-11-15-006 recorded; K.6.8 now specifies the empty global prompt. Parent e0e90b4: Pages #43714877166 SUCCESS; Quality #43714877561 in progress; Freshness #43714877492 failed on stale metadata and missing issue marker. Root and /landing/ both returned exact e0e90b4 after Pages completed."
   last_functional_checkpoint: "62959f97ac6b0fb8cca4cb56f995c42c3f842f3a"
   main_quality: "Quality #43714877561 was IN_PROGRESS on exact parent e0e90b4b038127ef0dc22c768a9b749f53ad7652 at last inspection; final result must be retrieved."

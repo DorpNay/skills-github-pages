@@ -31,3 +31,8 @@
 ## Current owner authorization — LANDING-V2-2026-001
 
 The owner explicitly authorizes direct commits/merges to `main`, required connected tools/plugins/skills, and automatic GitHub Pages publication for this task. This does not authorize force-push, rebase/reset, history rewriting, destructive user-data actions, VPS deployment, paid provisioning or secret handling.
+
+
+## OR-008 source and route policy
+
+Use `INTEL.md` as the external-source register. It contains 450 distinct URL strings / 528 occurrences (full inventory snapshot 2026-11-04); revalidate only sources relevant to the active subsystem, record checked date/version/license, and do not bulk-import dependencies or models. For Notebook/Research/Workspace, prefer same-origin Pages paths with an explicit shared-data contract before considering subdomains. A subdomain is a separate origin and requires owner-controlled DNS plus an authenticated API/sync design. No domain/DNS change is authorized by this note.

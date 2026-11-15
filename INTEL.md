@@ -766,3 +766,43 @@ Release/tag recheck on 2026-11-15; this is not proof of target-host installation
 **ASR decision:** retain whisper.cpp + large-v3-turbo as stable baseline. Qwen3-ASR-0.6B is staged as a challenger; do not replace Whisper or download 1.7B until same-audio RU/EN/TH WER/CER, RTF, cold/warm latency, peak RSS/PSS, cancellation and target-host resource tests are run. The owner-supplied primary checkpoint remains excluded from automated downloads.
 
 **Artifact state:** external cache #43553056846 (6,054,444,756 bytes), Ollama packages #43418126506 (7,728,830,482 bytes), Python cache #43553056865 (80,105,944 bytes), and OpenShell #43616944431 (207,414,886 bytes) are verified temporary Actions artifacts, not installed on the target VPS. Check expiry before owner-host installation.
+
+
+## 2026-11-15 — OR-008 targeted source review: same-origin studios and agent orchestration
+
+**Scope and freshness.** The source register contains 450 distinct URL strings across 528 occurrences. Its full inventory snapshot is dated 2026-11-04. This entry records a targeted 2026-11-15 recheck of sources relevant to OR-007/008; it does not claim all 450 sources were freshly revalidated. No dependency, model, custom domain, DNS record or deployment target was installed or changed.
+
+### Same-origin Pages routes versus custom subdomains
+
+Rechecked primary sources:
+- GitHub Pages publishing source: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+- GitHub Pages custom domains: https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site
+- MDN same-origin policy: https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy
+- MDN Web Storage API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API
+- MDN IndexedDB API: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+- MDN Broadcast Channel API: https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API
+
+**Finding:** a path such as `/notebook/` or `/research/` on the existing GitHub Pages host remains the same origin as the root application; the path does not change the origin tuple. Same-origin pages can use the same origin-scoped localStorage/IndexedDB and BroadcastChannel. A custom subdomain changes the host and therefore the origin; browser storage is isolated and API authentication, CORS and explicit synchronization become necessary. GitHub Pages custom domains require owner-controlled DNS configuration and domain setup.
+
+**Recommendation (PROPOSAL, not implementation):** keep one Pages publication and add separately navigable same-origin paths only when each studio has a defined purpose and shared-data contract. Reuse the existing project/chat/document identity and a single versioned data layer; do not duplicate localStorage schemas or copy the application bundle into independent systems. Candidate shared identifiers: `projectId`, `chatId`, `workspaceId`, `documentId`, plus schema version. Use IndexedDB or the existing canonical persistence layer for larger artifacts; BroadcastChannel may notify open tabs of updates. Keep the root chat app as the primary surface. Defer custom subdomains until a verified owner domain, DNS control and a concrete cross-origin API/sync need exist.
+
+### Agent orchestration and durable approvals
+
+Rechecked versioned primary sources:
+- OpenAI Agents Python v0.24.0 — multi-agent patterns: https://github.com/openai/openai-agents-python/blob/v0.24.0/docs/multi_agent.md
+- OpenAI Agents Python v0.24.0 — run results and resumable state: https://github.com/openai/openai-agents-python/blob/v0.24.0/docs/results.md
+- OpenAI Agents Python v0.24.0 — human-in-the-loop approvals: https://github.com/openai/openai-agents-python/blob/v0.24.0/docs/human_in_the_loop.md
+- LangGraph — checkpointers: https://docs.langchain.com/oss/python/langgraph/checkpointers
+
+**Finding:** OpenAI Agents SDK distinguishes manager-owned specialist calls (`Agent.as_tool()`) from handoffs that transfer control to a specialist. The former fits bounded research/code/critic subtasks where one manager owns the final answer; handoffs fit workflows where the specialist should own the rest of the turn. SDK RunState can serialize paused runs and resume after approvals/rejections, including nested agent-tool interruptions. LangGraph checkpointers provide thread-scoped durable graph state and resume semantics.
+
+**Recommendation (PROPOSAL, not dependency selection):** inspect aLandi's existing AgentRun worker, persistence, idempotency, approvals and tracing before choosing an orchestration library. Prefer one manager plus on-demand bounded specialists; invoke them only when the router identifies a need. Keep explicit per-run budgets, step limits, source/tool allowlists, structured outputs and resumable state. Do not install OpenAI Agents SDK or LangGraph until a compatibility/license/dependency/performance comparison shows a gap the existing runtime cannot fill. Avoid a second parallel persistence/checkpoint system.
+
+### Next targeted source passes
+
+1. Audit current AgentRun and gateway contracts before selecting orchestration dependencies.
+2. Recheck Deep Research methods and evidence/citation workflows against current official and maintained implementations.
+3. Recheck local-first retrieval, SQLite FTS, document ingestion/conversion, file sandboxing and offline model packaging before downloading anything.
+4. Recheck Notebook/studio UI patterns and accessibility before implementing same-origin routes.
+
+**Status:** source review recorded; same-origin studio routes remain SPECIFIED/PROPOSED; no SDK, model, package, custom domain or DNS changes made.
