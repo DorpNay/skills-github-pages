@@ -21,7 +21,7 @@
 ## Engineering
 `CLASSIFY → NOW → INSPECT → PLAN → CHANGE → VERIFY → RECORD → REPORT`
 - Small reversible changes; preserve compatibility and security. Define acceptance, risks and rollback for non-trivial work.
-- Focused checks first; exact-head CI only. Distinguish IMPLEMENTED from VERIFIED and code merge from deployment.
+- Focused checks first; exact-head CI only. Distinguish IMPLEMENTED from VERIFIED and code merge from deployment. Atomic main checkpoint refreshes must update NOW.md, AGENTS.md, docs/PROJECT_STATE.yaml, docs/project-state-snapshot.json and docs/VOLLEY_LOG.md together as a direct child of the recorded parent.
 - Use official primary sources and version-relevant Context7 docs when external/API contracts matter.
 - Report WHERE branch/PR/HEAD · WHAT changed · CHECKS exact commands/results/SHA · OPEN limits · NEXT one action.
 - Russian conversation; technical identifiers/code/artifacts retain native language.
