@@ -281,8 +281,12 @@ jobs:
 
           print(f"Extracted {len(extractor.scripts)} root-client inline UI scripts for SAST.")
           PY
-          semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js \
-          echo "$?" > audit-reports/semgrep.exit
+          if semgrep scan --config p/default --json gateway scripts router observability intel latency gateway/tests tests audit-reports/ui-inline-*.js > audit-reports/semgrep.json 2> audit-reports/semgrep.stderr; then
+            semgrep_status=0
+          else
+            semgrep_status=$?
+          fi
+          echo "$semgrep_status" > audit-reports/semgrep.exit
           echo "Findings are report-only at this stage; scanner/runtime errors are checked separately."
           exit 0
       - name: Upload raw scanner evidence
