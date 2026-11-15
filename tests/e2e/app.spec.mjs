@@ -2423,6 +2423,61 @@ test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', 
   expect(cancelled).toBe(true);
 });
 
+test('AgentRun reuses the idempotency key after an ambiguous network failure', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  let postAttempts = 0;
+  const keys = [];
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') {
+      postAttempts += 1;
+      keys.push(route.request().headers()['idempotency-key']);
+      if (postAttempts === 1) return route.abort();
+      return route.fulfill({ status: 202, json: {
+        run: { run_id: 'run-e2e-retry', state: 'queued' },
+        status_url: '/v1/agent-runs/run-e2e-retry',
+        events_url: '/v1/agent-runs/run-e2e-retry/events'
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-retry/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-retry', events: [], next_after_event_id: 0, state: 'succeeded'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-retry') return route.fulfill({ json: {
+      run: { run_id: 'run-e2e-retry', state: 'succeeded' },
+      output: 'Recovered through the same idempotency key.',
+      output_available: true, events: []
+    } });
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await page.locator('#agentRuntimePrompt').fill('Retry this exact task safely.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Gateway request failed');
+  await expect(page.locator('#agentRuntimePrompt')).toHaveValue('Retry this exact task safely.');
+  await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
+  expect(postAttempts).toBe(2);
+  expect(keys).toHaveLength(2);
+  expect(keys[0]).toBeTruthy();
+  expect(keys[1]).toBe(keys[0]);
+});
+
 test('AgentRun submission errors are bounded and do not erase the task prompt', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {

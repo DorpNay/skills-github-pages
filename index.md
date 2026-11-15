@@ -3682,6 +3682,7 @@ let agentRuntimeRefreshPromise = null;
     let agentRuntimeReady = false;
     let agentRuntimeActiveRun = null;
     let agentRuntimePollController = null;
+    let agentRuntimePendingSubmission = null;
 
     function setAgentRuntimeCopy() {
       const english=getUiLanguage()==='en';
@@ -3765,24 +3766,38 @@ let agentRuntimeRefreshPromise = null;
     }
 
     async function agentRuntimeFetch(config,path,options={}) {
-      const response=await fetch(config.baseUrl+path,{
-        ...options,
-        headers:{
-          Accept:'application/json',
-          Authorization:'Bearer '+config.key,
-          ...(options.headers||{})
-        },
-        cache:'no-store',
-        credentials:'omit'
-      });
-      const payload=await response.json().catch(()=>null);
-      if(!response.ok) {
-        const error=new Error('agent-runtime-http');
-        error.status=response.status;
-        throw error;
+      const {signal,...requestOptions}=options;
+      const controller=new AbortController();
+      const abortParent=()=>controller.abort();
+      if(signal) {
+        if(signal.aborted)controller.abort();
+        else signal.addEventListener('abort',abortParent,{once:true});
       }
-      if(!payload||typeof payload!=='object')throw new Error('agent-runtime-invalid-response');
-      return payload;
+      const timeout=window.setTimeout(()=>controller.abort(),10000);
+      try {
+        const response=await fetch(config.baseUrl+path,{
+          ...requestOptions,
+          signal:controller.signal,
+          headers:{
+            Accept:'application/json',
+            Authorization:'Bearer '+config.key,
+            ...(requestOptions.headers||{})
+          },
+          cache:'no-store',
+          credentials:'omit'
+        });
+        const payload=await response.json().catch(()=>null);
+        if(!response.ok) {
+          const error=new Error('agent-runtime-http');
+          error.status=response.status;
+          throw error;
+        }
+        if(!payload||typeof payload!=='object')throw new Error('agent-runtime-invalid-response');
+        return payload;
+      } finally {
+        window.clearTimeout(timeout);
+        if(signal)signal.removeEventListener('abort',abortParent);
+      }
     }
 
     function agentRuntimeErrorText(error) {
@@ -3911,7 +3926,21 @@ let agentRuntimeRefreshPromise = null;
       let config;
       try {config=getAlandiGatewayConfig();}
       catch(error) {$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);return;}
-      const key=(globalThis.crypto?.randomUUID?.()||('run-'+Date.now()+'-'+Math.random().toString(36).slice(2))).slice(0,200);
+      const submission={
+        prompt,
+        scope_kind:'conversation',
+        scope_id:chat.id,
+        profile_id:$('agentRuntimeProfile').value,
+        model_id:$('agentRuntimeModel').value
+      };
+      const signature=config.baseUrl+'\n'+JSON.stringify(submission);
+      if(!agentRuntimePendingSubmission||agentRuntimePendingSubmission.signature!==signature) {
+        agentRuntimePendingSubmission={
+          signature,
+          key:(globalThis.crypto?.randomUUID?.()||('run-'+Date.now()+'-'+Math.random().toString(36).slice(2))).slice(0,200)
+        };
+      }
+      const key=agentRuntimePendingSubmission.key;
       const requestController=new AbortController();
       const requestTimeout=window.setTimeout(()=>requestController.abort(),12000);
       $('agentRuntimeStart').disabled=true;
@@ -3927,16 +3956,11 @@ let agentRuntimeRefreshPromise = null;
         const created=await agentRuntimeFetch(config,'/agent-runs',{
           method:'POST',signal:requestController.signal,
           headers:{'Content-Type':'application/json','Idempotency-Key':key},
-          body:JSON.stringify({
-            prompt,
-            scope_kind:'conversation',
-            scope_id:chat.id,
-            profile_id:$('agentRuntimeProfile').value,
-            model_id:$('agentRuntimeModel').value
-          })
+          body:JSON.stringify(submission)
         });
         const runId=created.run?.run_id;
         if(typeof runId!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(runId))throw new Error('agent-runtime-invalid-run-id');
+        agentRuntimePendingSubmission=null;
         agentRuntimeActiveRun={id:runId,afterEventId:0,startedAt:Date.now()};
         agentRuntimePollController=new AbortController();
         $('agentRuntimeCancel').disabled=false;
