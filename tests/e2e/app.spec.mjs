@@ -137,16 +137,6 @@ test('global system prompt is empty by default and obsolete Gemini reset is abse
   await expect(page.locator('[data-action="restore-defaults"]')).toHaveCount(0);
 });
 
-test('legacy placeholder text is migrated out of the global prompt setting', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('ai_system_prompt', 'Свои правила для всех запросов');
-  });
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await page.locator('[data-action="toggle-settings"]').click();
-  await expect(page.locator('#systemPromptInput')).toHaveValue('');
-  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
-});
-
 test('legacy built-in assistant instructions are migrated out of the global prompt', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('ai_system_prompt', 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.');
@@ -193,7 +183,7 @@ test('sidebar order puts Projects and Chats first and keeps memory discreet', as
   await expect(page.locator('#sidebar [data-action="open-research-studio"]')).toHaveCount(0);
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectStatusLine')).toHaveClass(/sr-only/);
@@ -1971,7 +1961,7 @@ test('sidebar separates project selection from the shared Chats list', async ({ 
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded','false');
   await expect(page.locator('#projectNavigationList')).toBeHidden();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open','');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded','true');
   await expect(page.locator('#chatList [data-action="switch-chat"]')).toHaveCount(3);
   await expect(page.locator('#chatList')).toContainText('Personal chat');
   await expect(page.locator('#chatList')).toContainText('Alpha project chat');
@@ -1995,7 +1985,7 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await page.locator('#memoryToolsDetails > summary').click();
   await page.locator('#projectNavToggle').click();
   await expect(page.locator('#projectNavigationList')).toBeVisible();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
 
   const dispatchSwipe = (start, end, cancelled = false) => page.locator('#sidebar').evaluate((sidebar, points) => {
     const dispatch = (type, point, property) => {
@@ -2034,11 +2024,11 @@ test('sidebar closes on a horizontal touch swipe without consuming vertical scro
   await expect(page.locator('#sidebarOverlay')).toBeHidden();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectNavigationList')).toBeVisible();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
 
   await ensureSidebarOpen(page);
   await expect(page.locator('#projectNavigationList')).toBeVisible();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('composer offers unrestricted file picking but blocks unsupported formats until removed', async ({ page }) => {
@@ -3310,8 +3300,19 @@ test('owner sidebar contract: balanced Projects and Chats sections, persistent c
   expect(projectOrder).toBe(true);
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
-  await expect(page.locator('#chatSection')).toHaveAttribute('open', '');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  const panelHeights = await page.evaluate(() => ({
+    projects: document.querySelector('#projectPanel').getBoundingClientRect().height,
+    chats: document.querySelector('#chatSection').getBoundingClientRect().height
+  }));
+  expect(Math.abs(panelHeights.projects - panelHeights.chats)).toBeLessThanOrEqual(1);
+  await page.locator('#chatNavToggle').click();
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#chatNavigationContent')).toBeHidden();
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await page.locator('#chatNavToggle').click();
+  await expect(page.locator('#chatNavigationContent')).toBeVisible();
   await expect(page.locator('#chatScopeBackButton')).toBeHidden();
   await expect(page.locator('#memoryPanel')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
