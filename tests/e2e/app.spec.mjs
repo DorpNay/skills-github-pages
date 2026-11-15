@@ -10,7 +10,7 @@ async function ensureSidebarOpen(page) {
     await page.locator('[data-action="toggle-sidebar"]').click();
   }
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
-  await expect(sidebar).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  await expect(sidebar).toHaveCSS('transform', 'none');
 }
 
 async function ensureSidebarClosed(page) {

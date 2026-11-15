@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-15"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-009. Parent main d9bb5efdf7130b82156afa631664a7b5c0bb1192; 0 open PRs; issue #111 open. Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium assertions; Graphify #43718884625 is prior UI SHA only. UI/E2E correction is in this direct-main commit; exact-head checks pending. Root app remains canonical; /landing/ and CSS return 404. Same-origin studio paths are specified, not implemented."
+    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-006 through OR-2026-11-15-009. Parent main add961cb63f54ff970be5d446759bec2eae3ade8; 0 open PRs; issue #111 open. Pages #43723996242 SUCCESS; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS; Quality #43723996573 failed 6/123 Chromium assertions, all from one incorrect sidebar transform expectation. Current commit corrects the helper to `transform: none`; exact-head checks pending. AgentRun backend API is a feature-off single-worker prototype; frontend not wired. Root app canonical; /landing/ and CSS return 404. Same-origin studio paths are specified, not implemented."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main d9bb5efdf7130b82156afa631664a7b5c0bb1192; 0 open PRs; issue #111 open. Pages #43720532438 SUCCESS; Quality #43720532677 FAILED with 116/123 Chromium tests passing; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Graphify #43718884625 is prior UI SHA only."
+    status: "NOW.md is the sole first-read checkpoint. Parent main add961cb63f54ff970be5d446759bec2eae3ade8; 0 open PRs; issue #111 open. Pages #43723996242 SUCCESS; Quality #43723996573 FAILED with 117/123 Chromium tests passing (six share one sidebar transform expectation); Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS."
     branch: "main"
-    base_main: "d9bb5efdf7130b82156afa631664a7b5c0bb1192"
+    base_main: "add961cb63f54ff970be5d446759bec2eae3ade8"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Parent main d9bb5efdf7130b82156afa631664a7b5c0bb1192: Pages #43720532438 SUCCESS; public root exact revision d9bb5ef; Quality #43720532677 FAILED with 116/123 Chromium tests passing; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Graphify #43718884625 SUCCESS only on prior UI SHA ee925. Artifact #14164458184 reviewed; exact UI/E2E correction is in the current direct-main commit and awaits exact-head checks."
+    exact_head_checks: "Parent main add961cb63f54ff970be5d446759bec2eae3ade8: Pages #43723996242 SUCCESS; public root exact revision add961cb; Quality #43723996573 FAILED 6/123 (117 passed), all six failures share the incorrect identity-matrix transform expectation in ensureSidebarOpen; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS. Current commit changes the settled open transform expectation to none; exact-head checks pending."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
     next: "Verify exact-head Freshness, Provenance, Quality/Chromium, Graphify and Pages on the current UI/E2E correction; do not weaken tests. Then connect the existing AgentRun worker to the model-backed UI/API contract, and define same-origin Notebook/Research/Workspace shared-data schemas before route implementation."
 
@@ -298,21 +298,21 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-15"
-  verified_main: "d9bb5efdf7130b82156afa631664a7b5c0bb1192"
-  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-009 are archived verbatim. Parent d9bb5ef: Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium tests. Current direct-main commit corrects E2E row identity, project helper semantics, sidebar transition assumptions and prompt accordion setup; exact-head verification pending."
-  last_functional_checkpoint: "ee925bfa2e093e1077b9a859f83ad134ea2fecfc"
-  main_quality: "Quality #43720532677 FAILED on exact parent d9bb5efdf7130b82156afa631664a7b5c0bb1192: 116/123 Chromium tests passed; 7 E2E assertions failed; non-Chromium quality jobs passed."
-  main_freshness: "Freshness #43720532602 SUCCESS on exact parent d9bb5efdf7130b82156afa631664a7b5c0bb1192."
-  main_graphify: "Graphify #43718884625 SUCCESS on prior UI SHA ee925bfa; no exact d9bb5ef run retrieved."
-  main_gateway: "Lite Gateway Tests #43696995842 PASS on exact SHA 62959f97ac6b0fb8cca4cb56f995c42c3f842f3a across Python 3.12/13/14."
-  main_provenance: "Provenance #43720532676 SUCCESS on exact parent d9bb5efdf7130b82156afa631664a7b5c0bb1192."
-  main_pages: "Pages #43720532438 SUCCESS on exact parent d9bb5efdf7130b82156afa631664a7b5c0bb1192; public root metadata reports exact d9bb5ef revision; /landing/ and retired CSS return 404."
+  verified_main: "add961cb63f54ff970be5d446759bec2eae3ade8"
+  last_main_action: "Owner requests OR-2026-11-15-006 through OR-2026-11-15-009 are archived verbatim. Parent add961cb: Pages #43723996242 SUCCESS; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS; Quality #43723996573 failed 6/123 Chromium tests due one shared sidebar transform assertion. Current commit changes expected settled transform to none; exact-head verification pending."
+  last_functional_checkpoint: "add961cb63f54ff970be5d446759bec2eae3ade8"
+  main_quality: "Quality #43723996573 FAILED on exact parent add961cb63f54ff970be5d446759bec2eae3ade8: 117/123 Chromium tests passed; 6 failures share one helper assertion expecting identity matrix instead of settled transform none; non-Chromium quality jobs passed."
+  main_freshness: "Freshness #43723996564 SUCCESS on exact parent add961cb63f54ff970be5d446759bec2eae3ade8."
+  main_graphify: "Graphify #43723996491 SUCCESS on exact parent add961cb63f54ff970be5d446759bec2eae3ade8."
+  main_gateway: "Not triggered on exact parent add961cb; no Gateway code changed in the UI/E2E slice."
+  main_provenance: "Provenance #43723996545 SUCCESS on exact parent add961cb63f54ff970be5d446759bec2eae3ade8."
+  main_pages: "Pages #43723996242 SUCCESS on exact parent add961cb63f54ff970be5d446759bec2eae3ade8; public root metadata reports exact add961cb revision; /landing/ and retired CSS return 404."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."
   freshness_guard: "scripts/check_project_state_freshness.py; NOW.md is the only first-read checkpoint. Atomic refresh updates NOW/AGENTS/snapshot/PROJECT_STATE/VOLLEY_LOG; obsolete orientation files are rejected."
   runtime_boundary: "AgentRun single-worker API and encrypted payload vault are CI-covered, but Ollama/VPS and backup/restore are not host-verified. Auxiliary model/runtime artifacts remain staged; owner-supplied largest model excluded. Offline device inference, native voice and sandbox host integration remain unverified."
-  next: "Verify exact-head UI/E2E correction; then continue the function/mode matrix, real AgentRun model integration, Deep Research workflows, Settings and same-origin Notebook/Research/Workspace contracts. Continue Skills, Connectors, sandbox, files/converters, RAG, voice and offline kit under K.5/K.6."
+  next: "Verify exact-head sidebar helper correction; then wire the browser Agents panel to existing authenticated AgentRun endpoints (worker remains host-disabled until acceptance), improve true multi-agent execution behind capability grants, and continue Deep Research 2.0, Settings and same-origin Notebook/Research/Workspace contracts. Continue Skills, Connectors, sandbox, files/converters, RAG, voice and offline kit under K.5/K.6."
 
 
 v1_ui_finalization:
@@ -548,7 +548,7 @@ owner_priority_2026_11_13:
   efficiency: "Direct main-model path by default; no unconditional planner/agent/helper/model call. Helpers and orchestration only for evaluated task classes."
   priority_count: "14 K.1 product requirements plus K.2 model/API/library/database/license/resource decision pack = 15 owner priorities."
   stack_status: "External/Ollama/Python/OpenShell artifacts are SHA-verified in Actions, not installed; owner primary checkpoint excluded. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16, OpenShell 0.1.8 and pypdf 7.1.0 are current stable pins. FastAPI 0.163.0 is in seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is a lock-refresh candidate vs pinned 2.14.1. Target host and RU/EN/TH eval remain open."
-  live_main: "d9bb5efdf7130b82156afa631664a7b5c0bb1192"
+  live_main: "add961cb63f54ff970be5d446759bec2eae3ade8"
   open_prs: []
   open_issues: [111]
   target_pr_hygiene: "Main only, zero open PRs. Do not create new PRs unless the owner changes this explicit directive."
@@ -580,7 +580,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-15"
-  checkpoint_parent_sha: "d9bb5efdf7130b82156afa631664a7b5c0bb1192"
+  checkpoint_parent_sha: "add961cb63f54ff970be5d446759bec2eae3ade8"
   open_prs: []
   open_issues: [111]
   completed:
@@ -591,12 +591,13 @@ current_execution_checkpoint:
     - "15 owner priorities are tracked in the existing K.5 status table; no parallel backlog."
     - "Source inspection: DEFAULT_SYSTEM is empty and legacy built-in default is intended to migrate to empty; existing E2E checks fresh default only. Live browser acceptance contradicted this: systemPromptInput surfaced 28-char placeholder text, localStorage key null, meta revision not found. Browser automation returned a non-native textbox serialization, so native DOM value is not conclusively established. Resolve source/runtime/DOM mismatch; add migration, explicit save/clear and profile round-trip tests."
     - "Exact parent d9bb5ef: Pages #43720532438 SUCCESS; Freshness #43720532602 SUCCESS; Provenance #43720532676 SUCCESS; Quality #43720532677 failed 7/123 Chromium tests. Artifact #14164458184 identified selector/helper/accordion/sidebar-state test-contract issues; current commit corrects them without removing assertions."
+    - "Exact parent add961cb: Pages #43723996242 SUCCESS; Freshness #43723996564 SUCCESS; Provenance #43723996545 SUCCESS; Graphify #43723996491 SUCCESS; Quality #43723996573 failed 6/123 Chromium tests because ensureSidebarOpen expected identity matrix instead of settled transform none. Current commit fixes that one assertion."
   dependency_audit:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
   next:
-    - "Verify exact-head Quality/Chromium, Freshness, Provenance, Graphify and Pages after the chat-row identity and E2E contract correction; do not reuse historical run IDs."
+    - "Rerun exact-head Quality/Chromium, Freshness, Provenance, Graphify and Pages after correcting ensureSidebarOpen to expect transform none; do not reuse historical run IDs."
     - "Implement real model-backed AgentRun with typed profiles, worker lifecycle, model calls, live events, cancellation, budgets and verification; keep UI states honest until runtime exists."
     - "Inspect actual target host OS/architecture, disk, RAM/VRAM, kernel, container/VM support and network before installing OpenShell or models."
     - "Continue Deep Research, durable AgentRun, Skill lifecycle, full RAG, document/book/web parsing and OCR, installed voice, mode matrix, cache/observability/N2O and tested owner runbook."
