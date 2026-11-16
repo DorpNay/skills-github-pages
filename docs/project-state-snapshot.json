@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
-    "main_commit_subject": "docs(research): record verified claim and contradiction save",
-    "main_commit_date": "2026-11-16T05:26:40Z",
+    "main_sha": "55d68e07d33cb8192c164062d47bedcbf11d7561",
+    "main_commit_subject": "docs(research): record provenance and tracing source review",
+    "main_commit_date": "2026-11-16T05:37:43Z",
     "last_functional_checkpoint_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
     "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
     "main_quality_run": 43810947390,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
+    "checkpoint_parent_sha": "55d68e07d33cb8192c164062d47bedcbf11d7561",
     "merged_prs": [
       184,
       185
