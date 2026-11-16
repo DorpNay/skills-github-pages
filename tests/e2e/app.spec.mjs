@@ -2379,7 +2379,8 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
     scope_kind: 'conversation',
     scope_id: scope.chatId,
     profile_id: 'coder',
-    model_id: 'qwen3.5:4b'
+    model_id: 'qwen3.5:4b',
+    strategy_id: 'single'
   });
   expect(idempotencyKey).toMatch(/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/);
 });
@@ -3884,7 +3885,10 @@ test('AgentRun persists the selected safe strategy and submits it without escala
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
-      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      profiles: [
+        { id: 'coder', label: 'Coder', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false },
+        { id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }
+      ],
       strategies: [
         { id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
         { id: 'team_review', label: 'Analyst + reviewer + coordinator', status: 'available', task_count: 3, roles: ['researcher', 'reviewer', 'general'], execution_mode: 'fan_out_fan_in', context_isolation: 'per_task', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
@@ -3922,8 +3926,11 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   await expect(page.locator('#agentRuntimeStrategy option')).toHaveCount(2);
   await expect(page.locator('#agentRuntimeStrategy option[value="unsafe_shell"]')).toHaveCount(0);
   await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('single');
+  await page.locator('#agentRuntimeProfile').selectOption('coder');
   await page.locator('#agentRuntimeStrategy').selectOption('team_review');
   await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('последовательно');
+  await expect(page.locator('#agentRuntimeProfile')).toHaveValue('general');
+  await expect(page.locator('#agentRuntimeProfile')).toBeDisabled();
   const selectedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   const saved = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
@@ -3947,6 +3954,8 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   await page.locator('#functionsMenuSummary').click();
   await page.locator('#functionsMenu [data-function="agents"]').click();
   await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('team_review');
+  await expect(page.locator('#agentRuntimeProfile')).toHaveValue('general');
+  await expect(page.locator('#agentRuntimeProfile')).toBeDisabled();
   await page.locator('#agentRuntimePrompt').fill('Run the bounded team review on this explicit task.');
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');

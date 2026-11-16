@@ -3847,9 +3847,9 @@ let agentRuntimeRefreshPromise = null;
         ? 'One Gateway worker · concurrency 1 · no tools, web, shell or filesystem access.'
         : 'Один worker на Gateway · concurrency 1 · без инструментов, веб-доступа, shell и доступа к файлам.';
       $('agentRuntimePromptLabel').firstChild.textContent=english
-        ? 'Separate task text — sent directly to the worker'
-        : 'Отдельный текст задания — передаётся worker напрямую';
-      $('agentRuntimePrompt').placeholder=english?'Task for one worker':'Задание для одного worker';
+        ? 'Task prompt — sent to the selected AgentRun strategy'
+        : 'Текст задания — передаётся выбранной стратегии AgentRun';
+      $('agentRuntimePrompt').placeholder=english?'Task for AgentRun':'Задание для AgentRun';
       $('agentRuntimeScopeNotice').textContent=english
         ? 'Chat history, project instructions/memory and files are not attached automatically. Project/chat is run attribution metadata only, not permission to read its data.'
         : 'История чата, инструкции и память проекта, а также файлы автоматически не передаются. Проект/чат используется только как ссылка-метаданные запуска, не как разрешение на чтение данных.';
@@ -3890,6 +3890,10 @@ let agentRuntimeRefreshPromise = null;
     function updateAgentRuntimeStartAvailability() {
       const selectedStrategy=$('agentRuntimeStrategy').value;
       const strategyAvailable=agentRuntimeSafeStrategies.includes(selectedStrategy);
+      const teamReview=selectedStrategy==='team_review';
+      const generalProfileAvailable=[...$('agentRuntimeProfile').options].some(option=>option.value==='general');
+      if(teamReview&&generalProfileAvailable)$('agentRuntimeProfile').value='general';
+      $('agentRuntimeProfile').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||teamReview;
       $('agentRuntimeStrategy').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||!strategyAvailable;
       $('agentRuntimeStart').disabled=!agentRuntimeReady
         ||Boolean(agentRuntimeActiveRun)
@@ -4042,6 +4046,8 @@ let agentRuntimeRefreshPromise = null;
             model=>model,model=>model
           );
           agentRuntimeSafeStrategies=normalizeAgentRuntimeStrategies(catalog.strategies);
+          const hasGeneralProfile=catalog.profiles.some(profile=>profile?.id==='general');
+          if(!hasGeneralProfile)agentRuntimeSafeStrategies=agentRuntimeSafeStrategies.filter(strategy=>strategy!=='team_review');
           if(!agentRuntimeSafeStrategies.includes('single'))throw new Error('empty-runtime-strategy-catalog');
           const strategyCount=replaceAgentRuntimeOptions(
             $('agentRuntimeStrategy'),agentRuntimeSafeStrategies,
@@ -4117,7 +4123,7 @@ let agentRuntimeRefreshPromise = null;
         prompt,
         scope_kind:'conversation',
         scope_id:chat.id,
-        profile_id:$('agentRuntimeProfile').value,
+        profile_id:strategyId==='team_review'?'general':$('agentRuntimeProfile').value,
         model_id:$('agentRuntimeModel').value,
         strategy_id:strategyId
       };
