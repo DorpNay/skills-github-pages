@@ -210,7 +210,7 @@ class Settings:
         base = validate_ollama_base_url(
             os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").strip().rstrip("/"),
         )
-        models = tuple(item.strip() for item in os.getenv("ALANDI_ALLOWED_MODELS", "qwen3.5:4b").split(",") if item.strip())
+        models = tuple(item.strip() for item in os.getenv("ALANDI_ALLOWED_MODELS", "qwen3.5:4b,qwen3.5:2b-q4_K_M").split(",") if item.strip())
         if not models or len(set(models)) != len(models):
             raise ValueError("ALANDI_ALLOWED_MODELS must contain unique model tags")
         helper_model = os.getenv("ALANDI_HELPER_MODEL", "").strip()
@@ -1082,9 +1082,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             "agent_runs": {"enabled": config.agent_runs_enabled, "worker_concurrency": 1, "tools_enabled": False},
         }, headers={"Cache-Control": "no-store"})
 
-    @app.get("/v1/models")
-    async def models(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
-        authorize(config, authorization)
+    async def installed_allowed_models(request: Request) -> list[str]:
         try:
             response = await request.app.state.client.get(f"{config.ollama_base_url}/api/tags")
             response.raise_for_status()
@@ -1093,11 +1091,21 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             logger.warning("Model catalog request failed; response body omitted")
             raise HTTPException(503, "Local model catalog is unavailable") from None
         raw_models = payload.get("models", []) if isinstance(payload, dict) else []
-        found = {item.get("name") or item.get("model") for item in raw_models if isinstance(item, dict)}
+        found = {
+            item.get("name") or item.get("model")
+            for item in raw_models
+            if isinstance(item, dict) and isinstance(item.get("name") or item.get("model"), str)
+        }
+        return [model for model in config.allowed_models if model in found]
+
+    @app.get("/v1/models")
+    async def models(request: Request, authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        available_models = await installed_allowed_models(request)
         return JSONResponse(content={"object": "list", "data": [
             {"id": model, "object": "model", "created": 0, "owned_by": "alandi",
              "context_length": config.model_context_length_tokens}
-            for model in config.allowed_models if model in found
+            for model in available_models
         ]})
 
     @app.get("/v1/agent-runs/profiles")
@@ -1107,8 +1115,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         worker = request.app.state.agent_run_worker
         if worker is None:
             raise HTTPException(503, "AgentRun is disabled")
+        available_models = await installed_allowed_models(request)
         return JSONResponse(
-            {"profiles": worker.profiles(), "models": list(config.allowed_models),
+            {"profiles": worker.profiles(), "models": available_models,
              "worker_concurrency": 1, "max_pending_runs": config.agent_runs_max_pending_runs,
              "tools_enabled": False, "filesystem_enabled": False, "network_enabled": False},
             headers={"Cache-Control": "no-store"},

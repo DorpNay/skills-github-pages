@@ -36,12 +36,12 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `f49d37641d81660ce0c8f757ed54a347ed23a77c`; Open PRs: none; Open issues: #111.
-- Parent f49d is documentation-only. Pages #43789721496 SUCCESS; Quality #43789722423 was IN_PROGRESS at capture; Freshness #43789722327 failed because the five-file state refresh had not yet followed the documentation commit. The current direct child refreshes all five required state files.
-- Code-bearing parent 1851b7204b1efc6216d139d97653e0dbfc5c4668: Chromium #43783851413 had 131 passed / 2 stale test assertions; this child updates only the assertions (source_id across the full message set; Research Trace schema v4).
+- Parent main `3da2a0865458898f9c3a4923a15f0485bdeda6f3`; Open PRs: none; Open issues: #111.
+- Exact-head Quality #43790021314 SUCCESS (133 Chromium tests); Freshness #43790021248 SUCCESS; Provenance #43790021345 SUCCESS; Graphify #43790021246 SUCCESS; Pages #43790020168 SUCCESS. Live root meta `alandi-build-revision=3da2a0865458898f9c3a4923a15f0485bdeda6f3` verified. Gateway was not triggered on this test/state-only commit; last Gateway #43762493535 passed on prior Gateway-bearing checkpoint.
 - The owner-directed source sweep is recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md: 507 normalized unique URLs after adding 29 primary-source refs. Exa and Firecrawl are assistant-side research tools, not aLandi runtime dependencies.
-- No model weights, external runtime, UI framework or product dependency was installed. Bonsai 2 2B remains a candidate; Needle 2 is deferred pending lifecycle and multilingual tests; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
-- Next: verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision. Then connect explicit Save to Gateway to claim/contradiction APIs using only source quote IDs returned by successful writes.
+- Qwen3.5-2B Q4_K_M is staged in Actions artifact #14032317541 and SHA-verified, but not installed on target. Current child exposes only installed, allowlisted models to AgentRun; main 4B remains default. No target-host inference claim.
+- AgentRun is still one worker/task per run, concurrency 1, no tools/filesystem/network. Multi-agent DAG, task-scoped payloads and isolated Coder workspace are specified but not implemented. Bonsai 2 remains a candidate; Needle 2 is deferred; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
+- Next: verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision. Then implement task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
 
 ## Targeted UI source review — 2026-11-16
 

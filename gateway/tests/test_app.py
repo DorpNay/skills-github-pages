@@ -705,10 +705,71 @@ def test_agent_run_api_is_off_by_default_and_requires_authentication():
     assert response.status_code == 503
 
 
+def test_agent_run_profiles_expose_only_installed_allowlisted_models(tmp_path):
+    helper_model = "qwen3.5:2b-q4_K_M"
+
+    def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [
+                {"name": MODEL},
+                {"name": "not-allowlisted:latest"},
+            ]})
+        return httpx.Response(404, json={})
+
+    config = settings(
+        agent_runs_enabled=True,
+        agent_runs_path=str(tmp_path / "agent-runs.sqlite3"),
+        agent_runs_encryption_key=Fernet.generate_key().decode("ascii"),
+        agent_runs_retention_seconds=3600,
+        agent_runs_max_payload_bytes=256_000,
+        agent_runs_max_prompt_chars=2000,
+        agent_runs_max_output_tokens=128,
+        agent_runs_max_output_bytes=4096,
+        agent_runs_max_pending_runs=4,
+        agent_runs_poll_interval_seconds=0.05,
+        allowed_models=(MODEL, helper_model),
+    )
+    with client_for(config, handler) as client:
+        response = client.get(
+            "/v1/agent-runs/profiles",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+        )
+    assert response.status_code == 200
+    assert response.json()["models"] == [MODEL]
+    assert helper_model not in response.json()["models"]
+
+
+def test_agent_run_profiles_fail_closed_when_ollama_model_catalog_is_unavailable(tmp_path):
+    def handler(request):
+        return httpx.Response(503, json={})
+
+    config = settings(
+        agent_runs_enabled=True,
+        agent_runs_path=str(tmp_path / "agent-runs.sqlite3"),
+        agent_runs_encryption_key=Fernet.generate_key().decode("ascii"),
+        agent_runs_retention_seconds=3600,
+        agent_runs_max_payload_bytes=256_000,
+        agent_runs_max_prompt_chars=2000,
+        agent_runs_max_output_tokens=128,
+        agent_runs_max_output_bytes=4096,
+        agent_runs_max_pending_runs=4,
+        agent_runs_poll_interval_seconds=0.05,
+    )
+    with client_for(config, handler) as client:
+        response = client.get(
+            "/v1/agent-runs/profiles",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+        )
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Local model catalog is unavailable"
+
+
 def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path):
     calls = []
 
     async def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": MODEL}]})
         if request.url.path != "/api/chat":
             return httpx.Response(404, json={})
         body = json.loads(request.content)
@@ -736,6 +797,7 @@ def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path
         profiles = client.get("/v1/agent-runs/profiles", headers=headers)
         assert profiles.status_code == 200
         assert profiles.json()["worker_concurrency"] == 1
+        assert profiles.json()["models"] == [MODEL]
         assert profiles.json()["tools_enabled"] is False
         created = client.post(
             "/v1/agent-runs",

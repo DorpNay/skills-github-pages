@@ -193,7 +193,7 @@ Piper v1.8.0 adds a Thai phonemizer using TLTK, but the current official Piper v
 
 The manifest at models/artifacts.manifest.json pins 6,033,970,026 exact bytes for external-cache artifacts (includes the vision projector, Ollama runtime archive and Piper wheel; excludes the main Q4 model; tokenizer/config files add overhead) plus approximately 3,939,000,000 bytes for the two Ollama model-store references (Qwen3.5 base and Qwen3 embedding). Binaries are kept outside Git in ~/.cache/alandi/models. This is intentional: GitHub Pages and Git LFS are not the model registry.
 
-The current engineering container could not resolve external DNS; actual downloads did not complete. The downloader is implemented and verifies SHA-256 or upstream Git blob SHA-1 plus size. Run it from a network-enabled workstation/server, then record downloaded hashes and installation status. Do not claim downloaded or installed yet.
+The local engineering container did not perform model downloads. Separate network-enabled GitHub Actions acquisition runs #43417527347 and #43417305393 successfully downloaded and SHA-verified the listed auxiliary artifacts; they remain Actions artifacts and are not installed on the target host. The downloader and installer verify SHA-256 or upstream Git blob SHA-1 plus size. Do not infer target-host installation or live inference from an Actions artifact.
 
 On the reference 8-GB VPS, do not keep the embedding, reranker, ASR, OCR and TTS models resident alongside the main model by assumption. Queue heavy work and load/evict sequentially; start at 4K context and concurrency 1. Promote a different residency/concurrency policy only after peak RSS/PSS, KV-cache growth, cold start, p50/p95 and task quality are measured on the exact host.
 
@@ -232,3 +232,27 @@ This reference is a benchmark comparator, not the production default. The uncens
 - Qwen ASR Python package qwen-asr==0.0.6; official dependencies pin Transformers 4.57.6, Accelerate 1.12.0, Nagisa 0.2.11 and SoyNLP 0.0.493; optional vLLM 0.14.0 is GPU-only and excluded from the CPU-first baseline.
 - Tesseract 5.5.4, commit 7e548e6eff172f38f97664afe7f7ce40db36c8d6; release fixes 17 security advisories.
 - Exact API boundaries, runtime install status and current SQLite/IndexedDB storage policy are recorded in models/runtime-stack.lock.json.
+
+
+### Verified auxiliary artifacts — 2026-11-16
+
+The following packages are real GitHub Actions artifacts from run #43417305393. They are SHA-256 verified and have not been installed on the target host.
+
+| Package | Artifact ID | Size | Artifact archive SHA-256 | Retention |
+|---|---:|---:|---|---|
+| Qwen3.5-2B Q4_K_M, tag qwen3.5:2b-q4_K_M | 14032317541 | 1,945,791,476 bytes | e81c660da6917d8d0478470b4bb96b5553cdc9f5aa565e83f96b4864643c49f1 | through 2026-12-13 11:30:19Z |
+| Qwen3 Embedding 0.6B Q8_0 | 14032427244 | 639,156,333 bytes | 1b6931e3da563af3016326dc25968957e831860f0458314a7ab0b994e42910b0 | through 2026-12-13 11:30:33Z |
+| Qwen3.5-4B Q4_K_M | 14031837868 | 3,324,184,144 bytes | ff14b14e7cb3c4e933e9dc69176b1c7c243cef3732d16ac05c63124a7e2cd3cd | through 2026-12-13 11:29:58Z |
+| GLM-OCR Q8_0 | 14031799248 | 1,819,696,477 bytes | 81afda6dc9aac80835ba504c814a57e3b49cf5d9a4975bc509f4976bba19ffff | through 2026-12-13 11:30:38Z |
+
+For Qwen3.5-2B the pinned Ollama registry manifest SHA-256 is 1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7; the model layer is sha256:20cb277f0967ace47b0b5d5658e5e494a88937f7378b74b5a266496400938f4c (1,274,396,992 bytes) and the vision projector is sha256:5ddf560e34046fd958b2576324f2a9b57d70f297afe6526958d60a23f3bfc20b (671,372,768 bytes). The model is 1.88B parameters, Q4_K_M, Apache-2.0.
+
+**First integration candidate:** Qwen3.5-2B uses the existing Ollama registry/runtime path and is already staged. It may be exposed as an optional AgentRun model only when both allowlisted and present in Ollama /api/tags. The main 4B model remains first/default. The app must never display a configured-but-uninstalled model. AgentRun remains disabled by default and inference concurrency remains 1.
+
+To install the verified artifact on an owner-controlled host after checking free disk and the exact OLLAMA_MODELS directory:
+1. Download the artifact from Actions run #43417305393 (artifact ID 14032317541) and extract it into a private temporary directory.
+2. Run scripts/install_ollama_registry_model.py with --package-dir pointing to the extracted package and --models-dir pointing to the exact OLLAMA_MODELS directory.
+3. Run ollama show qwen3.5:2b-q4_K_M and a bounded read-only smoke test.
+4. Verify memory, KV cache, TTFT, p50/p95, tokens/sec, cancellation and RU/EN/TH quality on the actual host before enabling it for workers.
+
+The installer copies only verified Ollama blobs and manifest metadata; it does not restart Ollama, alter service ownership or run inference. The Actions artifact is not a host installation.
