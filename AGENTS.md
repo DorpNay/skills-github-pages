@@ -36,8 +36,8 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Documentation parent main: 400e42ce1d43a2e91410be9041d235167c1907cb; this five-file OR-012 state refresh is its direct child. Live queue: 0 open PRs, issue #111.
-- Last exact verified checks are on parent 67ea5ba: Quality #43869711819 SUCCESS (7/7), Pages #43869711208 SUCCESS, Freshness #43869712009 PASS, Provenance #43869711675 PASS, public root exact. Docs-only descendants b2fd9f2→400e42c have no exact-child checks yet; five-file refresh now aligns state for the next gate.
+- Documentation parent main: b81d45ee6653dcc0f3d92f4275354ade7c7ba202; this five-file Freshness repair is its direct child. Live queue: 0 open PRs, issue #111.
+- Parent 67ea5ba exact gates passed: Quality #43869711819 SUCCESS (7/7), Pages #43869711208 SUCCESS, Freshness #43869712009 PASS, Provenance #43869711675 PASS and public root exact. On exact main b81d45e, Pages build #43905601623 and static/security/integrity/context/Jekyll/Ruff Quality gates passed; Chromium was still running; Freshness/orientation #43905603329 failed only because VOLLEY_LOG lacked full parent SHA 400e42ce1d43a2e91410be9041d235167c1907cb (it had only short form); model/voice provenance #43905603268 passed. This child records the full SHA and refreshes all five state files.
 - Last functional code checkpoint: 0d34aa1c70bb68e57a3856ba20d8b5f966c65038. Graphify #43827521090 SUCCESS (2,519 nodes / 5,868 edges / 90 files); Gateway #43826933347 SUCCESS (279 tests) on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.
 - AgentRun: IMPLEMENTED / VERIFIED PROTOTYPE. Strategies single, team_review and coder_review; same-run SQLite DAG, task-ID Fernet payloads and bounded context. One worker/model slot; team inference sequential; feature flag false; no tools, web, shell, filesystem, repository or local Coder sandbox.
 - Main chat still contains the legacy multiAgentEnabled / runMultiAgentResearch four-stage path beside AgentRun agentRuntimeStrategy. AgentRun does not yet receive full main-chat history, project memory or attachments; scope IDs do not grant access. Unification and explicit context grants are next.
@@ -96,3 +96,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 - Main SHA at this refresh parent: `400e42ce1d43a2e91410be9041d235167c1907cb`. This child refreshes all five mandatory state files. Previous exact checks on 67ea5ba passed; exact-child checks for the refreshed checkpoint must be rerun.
 - OR-012 is archived in NOW.md. Owner approved both plans. Start with Plan 1 TDD (bounded context packet, explicit source grants, same-chat result return, shared observer and collapsible status), then Plan 2 Deep Research method migration.
 - While implementing Phase A, use Exa/Firecrawl/Context.dev and the INTEL.md source register for later Agent Library, mini-model registry, Skills, research, translation/grammar and local Coder slices. Assistant-side plugins are not automatically aLandi runtime capabilities.
+
+
+## Freshness repair — exact source
+- Failed job #43905603329 printed: `docs/VOLLEY_LOG.md: missing checkpoint main SHA 400e42ce1d43a2e91410be9041d235167c1907cb`. The earlier VOLLEY entry mentioned only abbreviated `400e42c`, not the required full SHA. No source-code or test failure caused this gate. This child logs the full checkpoint SHA and exact parent b81d45ee6653dcc0f3d92f4275354ade7c7ba202; rerun Freshness/Quality/Pages on the child.

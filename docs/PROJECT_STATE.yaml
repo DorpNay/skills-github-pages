@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Documentation refresh parent main 400e42ce1d43a2e91410be9041d235167c1907cb; 0 open PRs; issue #111. Owner approved AgentRun Plan 1 and Deep Research Plan 2; OR-012 K.6.17/K.6.18 added. Exact-child CI pending."
+    status: "Active task LANDING-V2-2026-001. Documentation refresh parent main b81d45ee6653dcc0f3d92f4275354ade7c7ba202; 0 open PRs; issue #111. Owner approved AgentRun Plan 1 and Deep Research Plan 2; OR-012 K.6.17/K.6.18 added. Freshness repair in progress."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 400e42ce1d43a2e91410be9041d235167c1907cb; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specify agent ecosystem and translator/grammar."
+    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main b81d45ee6653dcc0f3d92f4275354ade7c7ba202; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified. Exact-child Freshness repair in progress."
     branch: "main"
-    base_main: "400e42ce1d43a2e91410be9041d235167c1907cb"
+    base_main: "b81d45ee6653dcc0f3d92f4275354ade7c7ba202"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG prototype is CI-verified on code checkpoint 0d34aa1; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Legacy multiAgentEnabled/runMultiAgentResearch still coexists and main chat does not submit to AgentRun. Existing 500 ms event observer renders only inside Agents modal; chat-anchored status overlay is specified in K.6.16, not implemented. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
-    next: "Run exact-child gates on this OR-012 checkpoint; then implement approved Plan 1 under TDD (AgentRun context + chat dispatch + run status), followed by approved Plan 2; continue K.5 and external plugin/source research."
+    next: "Repair exact-parent SHA recording in VOLLEY_LOG; verify exact-child Freshness, Quality/Chromium, Provenance and Pages; then implement approved Plan 1 under TDD followed by Plan 2."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -294,19 +294,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "400e42ce1d43a2e91410be9041d235167c1907cb"
-  last_main_action: "Docs parent 400e42c includes OR-012 archive, K.6.17/K.6.18, K.5 updates, menu IA and both owner-approved plans. This direct-child refresh updates NOW/AGENTS/PROJECT_STATE/snapshot/VOLLEY; exact-child checks pending."
+  verified_main: "b81d45ee6653dcc0f3d92f4275354ade7c7ba202"
+  last_main_action: "Exact main b81d45e: Pages build #43905601623 successful; Quality #43905603264 static/security/integrity/context/Jekyll/Ruff passed but Chromium was still running; model/voice provenance #43905603268 passed. Freshness/orientation #43905603329 failed because VOLLEY lacked exact parent SHA 400e42ce1d43a2e91410be9041d235167c1907cb. This direct child fixes the full-SHA journal entry and refreshes five state files."
   last_functional_checkpoint: "0d34aa1c70bb68e57a3856ba20d8b5f966c65038"
-  main_quality: "Last verified parent Quality #43869711819 SUCCESS (7/7) on 67ea5ba; exact-child run pending on 400e42c."
-  main_freshness: "Last verified parent Freshness #43869712009 PASS on 67ea5ba; exact-child run pending on 400e42c."
+  main_quality: "On exact main b81d45e, Quality #43905603264 static/security/integrity/context/Jekyll/Ruff passed; Chromium was IN_PROGRESS at last poll. Full Quality result pending exact child."
+  main_freshness: "Freshness/orientation #43905603329 FAILED because VOLLEY_LOG lacked full parent SHA 400e42ce1d43a2e91410be9041d235167c1907cb; exact-child repair pending."
   main_graphify: "Graphify #43827521090 SUCCESS on functional code checkpoint 0d34aa1 (2,519 nodes / 5,868 edges / 90 files); docs-only refresh does not change code graph."
   main_gateway: "Gateway #43826933347 SUCCESS (279 tests) on unchanged backend commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d; no Gateway source changed after."
-  main_provenance: "Last verified parent Provenance #43869711675 PASS on 67ea5ba; exact-child run pending on 400e42c."
-  main_pages: "Last verified parent Pages #43869711208 SUCCESS and public root exact 67ea5ba; exact-child deploy/root verification pending on 400e42c."
+  main_provenance: "Model/voice provenance workflow #43905603268 passed on exact main b81d45e; recheck exact child after state refresh."
+  main_pages: "Pages build/deploy workflow #43905601623 succeeded on exact main b81d45e; public root exact revision not yet independently verified for this SHA."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
   runtime_boundary: "AgentRun exposes safe single/team_review; bounded three-node same-run DAG, task-ID Fernet payloads, dependency-gated synthesis, per-chat choice, strategy_id and task-state/dependency UI. One worker/model slot, serial inference; tools/shell/filesystem/network disabled; feature off; no independent processes, sandbox, target install or offline runtime."
-  next: "Implement approved Plan 1 under TDD: AgentRun main-chat context, opt-in dispatch, same-chat result return and K.6.16 status; then implement approved Plan 2."
+  next: "Re-run Freshness after exact-SHA VOLLEY repair; complete Quality/Chromium and Pages/root verification, then implement approved Plan 1 under TDD."
 
 
 

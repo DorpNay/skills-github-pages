@@ -569,3 +569,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Docs commits followed: NOW archive `e4dae73`; K.5/K.6 update `a79509e`; menu IA `61b4480`; AgentRun plan `1de8b05`; Deep Research plan `400e42c`.
 - Parent checks on 67ea5ba were green: Quality #43869711819, Freshness #43869712009, Provenance #43869711675, Pages #43869711208. Exact-child checks for current state remain pending.
 - This direct-child checkpoint refreshes the five canonical state files together. Next: exact-child gates, then TDD Plan 1; continue plugin/upstream research in parallel.
+
+
+## V-2026-11-16-S-067 — exact-SHA Freshness root cause and repair
+
+- Parent main exact: `400e42ce1d43a2e91410be9041d235167c1907cb`; direct child checkpoint: `b81d45ee6653dcc0f3d92f4275354ade7c7ba202`.
+- Freshness/orientation job #43905603329 failed explicitly: `docs/VOLLEY_LOG.md: missing checkpoint main SHA 400e42ce1d43a2e91410be9041d235167c1907cb`. The existing entry used only shortened `400e42c`; the checker requires the full exact SHA. This is a documentation-record integrity failure, not a product-code failure.
+- Exact main b81d45e: Pages build/deploy #43905601623 successful; Quality static/security/integrity/context/Jekyll/Ruff passed in #43905603264 while Chromium remained in progress; model/voice provenance #43905603268 passed.
+- This direct-child refresh records full exact SHA values `400e42ce1d43a2e91410be9041d235167c1907cb` and `b81d45ee6653dcc0f3d92f4275354ade7c7ba202`, and atomically refreshes NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md.
+- No product code, dependencies, models, host settings, credentials or runtime activation changed.
+- Next: exact-child Freshness/Quality/Chromium/Provenance/Pages and public root verification; then continue Plan 1 TDD.
