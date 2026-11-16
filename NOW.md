@@ -7,19 +7,19 @@
 ## CURRENT
 
 - **Task ID:** LANDING-V2-2026-001.
-- **Owner task received:** 2026-11-16. Requests OR-2026-11-15-003 through OR-2026-11-15-014 and OR-2026-11-16-001 through OR-2026-11-16-005 are archived verbatim below.
+- **Owner task received:** 2026-11-16. Latest continuation OR-2026-11-16-006 prioritizes completion of the existing AgentRun work before proceeding through the 15-point K.5 sequence. Requests OR-2026-11-15-003 through OR-2026-11-15-014 and OR-2026-11-16-001 through OR-2026-11-16-006 are archived verbatim below.
 - **Scope:** finish the existing 15-point programme in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K/K.5. K.6 in that same file is the binding detailed owner acceptance contract; no parallel backlog. The largest/owner-supplied primary model remains excluded.
 - **Authorization:** owner explicitly authorizes direct commits to main, connected tools/plugins/skills needed for this task, and automatic GitHub Pages deployment on every main push. This is task-scoped; it does not authorize VPS/host deployment, paid provisioning, secret handling, destructive data operations, force-push, rebase/reset or history rewriting.
 - **Canonical tracker:** one 15-row K.5 status table plus K.6 detailed acceptance contract in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md.
-- **Live parent checkpoint:** main `680ab02289c8517dbe9e36b53abb66317dda5f86`; Open PRs: none; Open issues: #111. Exact-head Gateway #43797179042 SUCCESS; Quality #43797179025 SUCCESS; Freshness #43797178997 SUCCESS; Provenance #43797179026 SUCCESS; Graphify #43797179000 SUCCESS; Pages #43797178161 SUCCESS. Current public root revision has not yet been independently fetched.
-- **Public publication:** Pages #43797178161 SUCCESS for exact main `680ab02289c8517dbe9e36b53abb66317dda5f86`; independently fetched live revision marker is pending.
+- **Live parent checkpoint:** main `9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7`; Open PRs: none; Open issues: #111. This commit changes only `tests/e2e/app.spec.mjs`. Quality #43798806788 FAILURE in Chromium: 133 passed, one new AgentRun strategy test failed because `#agentRuntimeStrategy` does not exist; the other six jobs passed, published-site release-contract step skipped. Graphify #43798806804 SUCCESS; Pages #43798806597 SUCCESS. Gateway/Freshness/Provenance were not triggered on this test-only commit. Code-bearing parent `680ab02289c8517dbe9e36b53abb66317dda5f86` passed Gateway #43797179042, Quality #43797179025, Freshness #43797178997, Provenance #43797179026 and Graphify #43797179000. Live public root revision for 9835e is not yet independently fetched.
+- **Public publication:** Pages #43798806597 SUCCESS for exact main `9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7`; public root revision marker still needs independent verification.
 - **Handoff:** OLEDUE.md, ORIENTER.md and legacy FILE_ORIENTER files are absent. NOW.md is the sole session/task checkpoint.
-- **K.5 status:** Deep Research PARTIAL: Research Trace schema v4 structured same-model review and claim/contradiction ledger API are implemented; browser Save integration remains open. AgentRun now has a CI-verified bounded three-node `team_review` DAG prototype, same-run dependency gating and task-ID-keyed Fernet inputs/outputs, preserving `single`. It remains one worker/model slot and serial inference, not parallel execution; tools/filesystem/network stay disabled; feature flag off. Agents UI selector and task graph still open. No Coder sandbox, Mini aLandi package, target install or offline device runtime.
+- **K.5 status:** Deep Research PARTIAL: Research Trace schema v4 structured same-model review and claim/contradiction ledger API are implemented; browser Save integration remains open. AgentRun backend is a CI-verified bounded three-node `team_review` DAG prototype with same-run dependencies and task-ID-keyed Fernet inputs/outputs, preserving `single`; one worker/model slot keeps inference serial. The newest exact-main E2E contract for strategy selection/per-chat persistence is intentionally RED because the selector is not implemented yet (Quality #43798806788, 133 pass / 1 fail). UI strategy selector, task graph/status rendering and Research Trace Save remain open. Tools/filesystem/network disabled; feature flag off. No Coder sandbox, Mini aLandi package, target install or offline voice runtime.
 - **Priority order:** (1) preserve full owner contract and accurate K.5 status; (2) correct function/mode semantics and design real Agent/Deep Research choices and efficient invocation; (3) implement owner-defined sidebar, project/chat flows and unified visual/interaction system; (4) implement and verify runtime capabilities, Skills, Connectors, coding sandbox, Notebook, files/converters, RAG, voice and offline package; (5) complete autonomy/reliability/evals/observability; (6) prepare final owner runbook.
 - **External source coverage:** normalized scan of INTEL.md found 568 HTTP(S) occurrences and 478 distinct URLs before this sweep; 29 distinct primary-source refs were added, bringing the current normalized count to 507. The older 490 count is not reproducible under this parser. Relevant existing agent orchestration, research, model, sandbox and UI sources were cross-checked. Exa and Firecrawl are available as ChatGPT research tools in this session; they are not aLandi runtime dependencies. No UI framework/dependency adopted.
 - **Model/artifact boundary:** exclude the largest/owner primary model. Owner explicitly requested small auxiliary model acquisition; only free artifacts with exact version, license, checksum, compatibility and storage review may be staged. No target-host install, paid provisioning, secret handling or deployment is authorized by this request. Bonsai 2 2B and Needle 2 remain candidates, not selected runtimes; target-host/hardware acceptance is unavailable.
 - **Owner-only actions:** retain PRE_LAUNCH_STACK_RU.md §8 and deliver a concise final instruction set only after repository/UI/runtime preparation. It must contain only truly owner-controlled steps: host/budget/domain/DNS/credentials/SSH, sanitized host facts, microphone/speaker/device tests and personal backup-restore verification.
-- **Immediate NEXT:** archive OR-2026-11-16-005 verbatim and add its complete acceptance to K.6. Then wire the real `single` / `team_review` selector and task graph/status into Agents UI; connect explicit Research Trace Save. Continue through independently tested slices: bounded Coder workspace/sandbox, project-scoped reviewed learning, Mini aLandi runnable offline package with reconnect/failover and voice, curated code/API knowledge packs and secure local files. Keep model inference concurrency 1 until host measurements justify more.
+- **Immediate NEXT:** implement the real `single` / `team_review` selector in the AgentRun panel; validate the server strategy contract against a fixed safe allowlist; persist selection in each chat; submit `strategy_id`; render the three real task records, dependencies and states; disclose serial model inference and disabled tools/filesystem/network. Exact-main TDD acceptance is already present in `tests/e2e/app.spec.mjs` and currently fails only because the selector is absent. Then connect explicit Research Trace claim/contradiction Save. Continue K.5 in order: bounded Coder workspace/sandbox, reviewed project-scoped learning, Mini aLandi offline package with reconnect/failover and offline voice, curated code/API knowledge packs and safe local files. Concurrency stays 1 until host measurements justify more.
 - **Status:** IN PROGRESS — owner-priority Landing 2.0 delivery.
 - **Routing invariant:** latest explicit owner request wins; otherwise resume CURRENT/NEXT. Never select an old PR as a default; historical PRs are evidence only.
 - **Repository / branch:** DorpNay/skills-github-pages / main; direct-main baseline.
@@ -43,6 +43,7 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+- [2026-11-16] S-053 | OWNER REQUEST OR-2026-11-16-006 ARCHIVE + AGENT UI RED CHECKPOINT | Parent main `9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7`; 0 open PRs; issue #111. Current commit changes only `tests/e2e/app.spec.mjs`; Quality #43798806788 failed one new test because the AgentRun strategy selector is absent (133 passed); Graphify #43798806804 SUCCESS; Pages #43798806597 SUCCESS; published-site contract skipped. The earlier code-bearing parent `680ab022` passed Gateway/Quality/Freshness/Provenance/Graphify/Pages. Archived the complete owner message verbatim. Existing K.6.3 and K.6.13 remain binding; no new backlog. | IMPLEMENTED backend prototype / AGENT UI ACCEPTANCE RED / NO CURRENT UI CODE. | Next: implement safe strategy allowlist, per-chat persistence, request submission and task graph rendering; exact-child full CI.
 - [2026-11-16] S-052 | OWNER REQUEST OR-2026-11-16-005 ARCHIVE + OFFLINE/CODER/LEARNING ACCEPTANCE | Parent main 680ab02289c8517dbe9e36b53abb66317dda5f86; 0 open PRs; issue #111. Exact-head Gateway #43797179042, Quality #43797179025, Freshness #43797178997, Provenance #43797179026, Graphify #43797179000 and Pages #43797178161 all SUCCESS. Archived complete user prompt verbatim; appended binding K.6.13; updated K.5 AgentRun row to distinguish CI-verified DAG prototype from unavailable UI/sandbox/host integration. Plugin/tool boundary: GitHub, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers and Superpowers installed/enabled; Exa, Code and Coder surfaces available. Twilio is a skill pack without authenticated account; no standalone Codex connector surfaced. | DOCUMENTATION AND ACCEPTANCE IMPLEMENTED; offline package/voice/local files/learning/Coder sandbox remain unimplemented. No runtime code or dependencies changed in this state-refresh commit. | Next: primary-source research per workstream, then Agents UI and further TDD vertical slices.
 - [2026-11-16] S-051 | FIX AGENTRUN WORKER DECLARATION | Parent main `25c1dec66f0599ce54bf6fda743bef1c71e7dcc7`; Gateway #43796730159 failed at `compileall` on duplicate `_remember_key` declaration; Quality #43796730165 was still running but Ruff had reported the same syntax defect; Freshness #43796730096, Provenance #43796730135, Pages #43796729855 and Graphify #43796730277 succeeded. Removed the duplicated function declaration only; rerun all exact-child gates. | IMPLEMENTED fix, UNVERIFIED. | Next: exact-child checks; do not extend UI or runtime until green.
 - [2026-11-16] S-050 | AGENTRUN NATIVE DAG BACKEND PROTOTYPE | Parent main `fe7bad6e366136a9b9fc5ad323e0eac32fba508d`; exact-parent Quality #43794659797, Freshness #43794659822, Provenance #43794659808 and Pages #43794659816 all SUCCESS; public root revision exact. Implemented additive SQLite task dependencies with same-run guard, bounded dependency list, idempotent dependency replay and ready-task gating. Added selectable `single` / `team_review` strategy to AgentRun API/worker; team creates independent researcher/reviewer contexts and a synthesis task gated on both, using task-ID-keyed Fernet payloads. Run output is copied from synthesis task for existing status compatibility; cancellation purges run and task payloads. Added deterministic store, worker and API tests. No new package, host setting, model install or feature-flag activation. Exact-child checks pending; Agents UI strategy selector remains next. | IMPLEMENTED prototype, UNVERIFIED exact HEAD.
@@ -361,3 +362,183 @@ DIVERGENCE, chat-demo, ghost-infer, needle 2 от Cactus, obscura, CRITIC-FREE R
 ### OR-2026-11-16-005
 
 Замечательно, продолжай большим количеством действий, долгую реализацию, подключай плагины себе @Firecrawl @Superpowers @Coder @Context7 @Code @Twilio Developer Kit @Exa @TinyFish @Vercel @GitHub @codex @OpenAI_Developers Изначально - абсолютно все детали моиж запросов зафиксируй куда надо, аак и мой промпт, который насколько знаю - ты всегда созраняель, меняй файлы так, чтобы не усложнять себе ориентир и учитывай то, куда ты обращаешься в репозитории и что делаешь в первую очередь, при моем запросе продолжить, чтобы ты делал это искрометно, но точно  и агентов сооружи гениально, пускай будет большая вариативность функций и использования, что тоже должно быть целостно систематизировано. Важно еще не забыть сделать в настройках готовый настроенный устанавливаемый пакет (миниаланди офлайн), чтобы иметь возможность скачать себе грамотно собранный рабочий модуль из одной небольшой модели + маленьких моделей и с ними, необходимый для них весь инструментарий в собранном работающем ядре пакета. Его можно будет скачать и пользоваться аЛанди в офлайне я(в том числе и с голосовыми функциями, плюс он может подхватывать при долгом разрыве связи; нужно продумать это, обязательно реализовать, собрать, чтобы было в лендинге рабочим механизмом. Возможно этот пакет - скачивать и не обязательно внутри программы в браузер, думаю - он может быть работающим файлом/папкой/архивом-базой, скачанной в файлы, и подключающийся за секунду при необходимости, если скачан. Одновременно с проработкой агентом и мультиагентов - не забудет реализовать наилучшего возможно кодера, можно ему скачать баз по кодингу, апи, реализациям, лендингам, кодам - из репозиториев, которые я давал во внешних источниках, там порой они немного весят, так как текст и код, но содержат кучу удачных примеров, и других баз-решений, которые уже гениально придуманы недавно . Среди агентов - не забудь, что должна быть функция обучаемого агента, а так же постоянно сохраненного самообучающегося агента, в контексте проекта например. А так же реализация взаимодействия с локальными файлами должна быть образцово-показательной, собрав в минималистичную, но просто умно собранную очень мощную рабочую эффективно оптимизированную конструкцию. Спасибо заранее 🙏🏻
+
+### OR-2026-11-16-006
+
+Продолжим финализацию всех моих пунктов по лендингу 2.0 001, доводим все до идеала. Ты проводил работу над агентами, с ними сначала и закончи. Убедись в актуальности документов, так как ты проделал определенную работу, наверное не успел зафиксировать, но не трать на это много времени, мы уже ориентир предусмотрели, должен быть для тебя простым и быстрым. Now.md oledue летс гоу бро 🙏🏻
+Мой последний запрос:
+Последним ты сводил агентов. Доведи до ума. Продолжаем доводить до идеала landing now.md работаем большими шагами, по много действий. Не забываем про все цели по порядку с деталями, про подключение тебе плагинов и коннекторов, про внешние источники из нашего списка, относительно каждого направления, в котором дорабатываешь лендинг. Спасибо заранее 🙏🏻
+(В прошлом промпте я давал тебе список новых источников на проверку, и задание изучать внешние источники в целом тоже; уверен - ты это зафиксировал в какие-то документы, потому что фиксация у нас всегда - первое действие, сейчас ты работал над агентами и уже скачал многое, настраивал мультиагентность, интегрировал лучшие решения из источников, собирал все вместе, сводил агентов, вот с этого и продолжи, чтоб не терять деталей)
+Твое последнее сообщение:
+Продолжаем. Идём не по принципу «добавить ещё агентов и возможностей», а к действительно согласованной, сильной и работающей системе aLandi.
+Главная цель — довести landing/NOW.md до полноценной точки входа в продукт: чтобы он отражал целостную архитектуру, актуальные возможности, объединённую систему агентов, реальные интеграции, порядок развития и доказанные решения.
+Я сохраняю важное разграничение:
+* FACT: GitHub DorpNay/skills-github-pages — канонический источник проекта.
+* FACT: N₂O задаёт правила координации, знаний, проверки и полномочий, но само по себе не создаёт независимые процессы агентов или новые интеграции.
+* FACT: подключённый инструмент ещё не означает, что его функция реализована в aLandi.
+* Цель: объединять лучшие решения внешних проектов, не превращая aLandi в набор дублирующих агентов, оркестраторов и подсистем.
+Будем работать крупными законченными итерациями, пакетами взаимосвязанных изменений. При этом не будем терять промежуточные результаты, источники, решения и следующие этапы.
+1. Восстановление фактической точки остановки
+FACT — NOW.md, live main, 16 ноября 2026:
+Последняя зафиксированная работа уже прошла несколько важных этапов:
+* Deep Research получил структурированный Research Trace schema v4, проверку утверждений, противоречий и связей с источниками.
+* AgentRun получил модельный каталог, allowlist и базовую модельную интеграцию.
+* Qwen3.5-2B и Bonsai 2 2B прошли этапы получения и проверки артефактов, но это ещё не означает установку и работающий inference на целевом сервере.
+* Exa и Firecrawl использовались для внешнего исследования.
+* Собрана первичная карта внешних решений по агентам, исследованиям, моделям, sandbox, UI и памяти.
+Критически важный незавершённый участок:
+* AgentRun пока ограничен одним worker и одной задачей на запуск.
+* DAG нескольких независимых исполнителей не реализован.
+* Coder sandbox не реализован.
+* Передача результатов между специалистами и полноценный coordinator lifecycle ещё требуют реализации.
+* Реальная установка моделей и проверка на целевом оборудовании остаются отдельными этапами.
+Поэтому считать агентов уже объединёнными в законченную мультиагентную систему нельзя. Это один из главных участков продолжения.
+2. Актуальный GitHub и контроль качества
+Основная ветка
+Синхронизирована
+main — 6830e5cdc14ae3138ba4d61125c7db8f7f353ba5
+* Открытых PR: 0
+* Открытая Issue: #111
+* Quality Sentinels:
+* Project State Freshness:
+* License / Provenance:
+* GitHub Pages:
+* Graphify: не запускался на последнем документационном commit.
+* Gateway: не запускался на последнем документационном commit.
+Это важное уточнение: текущая ветка уже ушла дальше старого checkpoint в NOW.md. Я восстановил фактический HEAD и нашёл причину расхождения — последний commit обновлял сведения о проверенном артефакте Bonsai.
+Следующий принципиальный шаг: не подключать сторонний оркестратор поверх существующего AgentRun, а проверить, как превратить существующий фундамент в настоящий координируемый runtime.
+3. Что берём из внешних разработок
+Я повторно проверил именно те источники, которые относятся к агентному runtime, а не просто популярные AI-проекты.
+OpenAI Agents SDK
+Берём модельный цикл, typed handoffs, разделение manager и specialist, guardrails, sessions, resumable state и tracing.
+ПЕРЕНОСИМ ПАТТЕРНЫ, НЕ SDK RUNTIME
+Official documentation⁠
+LangChain Deep Agents
+Берём изоляцию контекста субагентов, supervisor, компактную передачу результатов и управление длинными задачами.
+ПЕРЕНОСИМ АРХИТЕКТУРУ
+Official documentation⁠
+Temporal
+Берём durable execution, idempotency, recovery после перезапуска, checkpoints и корректное ожидание одобрений.
+ПЕРЕНОСИМ ПРИНЦИПЫ
+Official documentation⁠
+Microsoft Agent Framework
+Берём typed workflow, fan-out/fan-in, conditional edges, human-in-the-loop и разделение детерминированного управления и модельной работы.
+ПЕРЕНОСИМ ПАТТЕРНЫ
+Official repository⁠
+Архитектурный вывод: не устанавливать четыре конкурирующих оркестратора. У aLandi уже есть FastAPI, SQLite, зашифрованное хранилище задач и локальный Ollama. Сильнее будет собственный небольшой runtime, использующий лучшие идеи этих систем.
+Это сохраняет автономность, локальность и возможность в будущем заменить внутренние реализации без перестройки всего продукта.
+4. Проверка настоящего landing
+Публичная версия подтверждена
+Проверил не только GitHub, но и опубликованный сайт:
+* Главная страница отвечает HTTP 200.
+* alandi-build-revision точно совпадает с актуальным SHA 6830e5c.
+* Старый /landing/ возвращает HTTP 404 — он уже не является второй точкой входа.
+Обнаружил и важную особенность интерфейса: сейчас в Functions есть Agents, Deep Research, Skills и Connectors, но настройки размера команды и сценария пока остаются сохраняемым blueprint. Это не реальные 50 исполнителей.
+Значит, нам нужно довести не только backend, но и пользовательский контракт: человек должен понимать, какой именно способ работы он запускает, какие специалисты участвуют, какие данные им доступны и что фактически получилось.
+5. Фиксация и архитектурное решение
+Зафиксировано в main
+Новый commit: fe7bad6e366136a9b9fc5ad323e0eac32fba508d
+Сделал документационную итерацию до реализации, как и предусмотрено нашим процессом.
+Обновлены семь существующих канонических файлов:
+Файл	Что зафиксировано
+NOW.md	Новый запрос дословно, точка продолжения и очередность
+DECISIONS.md	Решение D-024 по мультиагентному runtime
+INTEL.md	Повторная проверка внешних источников и выводы
+AGENTS.md	Инженерные ограничения и фактическое состояние
+PROJECT_STATE.yaml	Новый checkpoint
+project-state-snapshot.json	Машиночитаемое состояние
+VOLLEY_LOG.md	История исследования и план следующего этапа
+D-024 — наше основное инженерное решение: собственный управляемый DAG поверх существующего SQLite AgentRun, зашифрованные контексты отдельных задач, независимые специалисты и централизованная сборка результата.
+Не устанавливаем новый тяжёлый orchestration framework ради уже существующей инфраструктуры.
+Проверка документационной итерации завершена: все обязательные проверки прошли.
+На fe7bad6e:
+* Quality Sentinels — SUCCESS, включая Chromium regression и проверку опубликованного сайта.
+* Freshness — SUCCESS.
+* Provenance — SUCCESS.
+* Pages — SUCCESS.
+* Gateway и Graphify не запускались, поскольку это документационный commit; их предыдущие успешные проверки относятся к code-bearing checkpoint.
+Проверил также, что публичный сайт действительно получил именно эту ревизию.
+6. Реализация: первый настоящий multi-agent workflow
+Начинаю с законченного вертикального среза, а не с декоративного увеличения числа агентов.
+D-024 · Team Review DAG
+Пользовательская задача
+Один явно переданный prompt
+Worker 1
+Research analyst
+Отдельный контекст. Анализ исходного задания.
+Worker 2
+Independent reviewer
+Другой контекст. Проверка допущений и рисков.
+Ожидание завершения обеих задач
+Coordinator
+Synthesis
+Сводит два результата, сохраняет противоречия и неопределённость.
+Итоговый результат
+Одна согласованная выдача и журнал выполнения всех задач.
+Логических исполнителей
+3
+Одновременно работающих model slots
+1
+Автоматический доступ к инструментам
+Нет
+Это принципиальное отличие от прежних четырёх последовательных этапов одной задачи: появляются самостоятельные task records, собственные зашифрованные контексты, зависимости и отдельные результаты.
+На нынешнем оборудовательном профиле модельные вызовы будут последовательными. Параллельное исполнение появится только после отдельного ресурсного и нагрузочного gate.
+Продолжаю. Первый большой этап уже внесён непосредственно в канонический репозиторий.
+AgentRun — первый настоящий multi-agent workflow
+Commit: 25c1dec66f0599ce54bf6fda743bef1c71e7dcc7
+Это уже не просто сведение нескольких agent profiles в один список. Реализован первый ограниченный граф исполнения:
+Входная задача
+Одна задача владельца
+Researcher
+Исследует задачу в собственном контексте.
+Reviewer
+Независимо проверяет предположения и риски.
+Оба результата должны быть готовы
+Fan-in
+Coordinator
+Сводит результаты, противоречия и ограничения в один ответ.
+Итоговый результат AgentRun
+Важные ограничения сохранены:
+* Три отдельных контекста задач, зашифрованные через Fernet.
+* Зависимости между задачами хранятся в SQLite.
+* Синтезатор не запускается до успешного завершения обоих специалистов.
+* Модель работает с concurrency = 1: три вызова последовательные, а не параллельные.
+* Нет произвольных инструментов, shell, файловой системы или сетевого доступа.
+* Старый single workflow и совместимость run-level output сохранены.
+* Отмена очищает зашифрованные данные всех задач.
+Это первый работающий архитектурный прототип, а не заявление о готовой production-мультиагентности.
+Первый контроль качества обнаружил дефект, поэтому прототип пока не считаю проверенным: в worker.py продублировалось объявление _remember_key. Дополнительно Ruff остановил проверку из-за этой синтаксической ошибки.
+Это локальная ошибка интеграции, не причина менять архитектуру. Исправляю её и повторяю проверки. До зелёного CI статус остаётся IMPLEMENTED / UNVERIFIED.
+Исправление прошло полный exact-HEAD CI.
+SHA: 680ab02289c8517dbe9e36b53abb66317dda5f86
+Проверка	Результат
+Gateway, Python 3.12
+Gateway, Python 3.13
+Gateway, Python 3.14
+Ruff / Security / Integrity / Context
+Chromium, включая опубликованный сайт
+Freshness
+Provenance
+Graphify
+GitHub Pages
+Проверил и опубликованную страницу: alandi-build-revision совпадает с SHA 680ab022….
+Это подтверждает работоспособность прототипа в CI и корректность публикации. VPS, реальный Ollama, аппаратные ограничения и production-нагрузка этим не подтверждены.
+Следующий этап уже определён существующим планом AgentRun, а не создаётся заново.
+В актуальной ветке появился новый TDD acceptance-тест: он требует двух реально разрешённых стратегий — `single` и `team_review`, сохранения выбора отдельно для каждого чата и запрета на показ небезопасных стратегий, даже если сервер ошибочно объявляет их доступными.
+Именно этот контракт беру за основу. Дополнительно закрываю отображение трёх задач команды: исследователь → рецензент → координатор. Никаких обещаний о параллельных агентах или доступе к shell.
+Последние действия твои: Проверены опубликованные версии сайта
+aLandi u GitHub Pages
+Проверил СІ, статусы проекта и обновил
+реестры задач
+Обновил INTEL и исследовал архитектуры и оркестрацию агентов
+区
+Проверил дату статьи об OpenAl Agents
+SDK
+Добавлены и проверены тесты соответствия D-024, worker и хранилища
++ Поиск в интернете...
+Проверил маршруты, обновил контракты, документацию и тесты восстановления агентов
+• Проверил мета-ревизию корневой страницы
+Изучены спецификации и обновлены UI
+агентов, документация и СІ
+Извлечены модели Anthropic и требования доступности чат-интерфейса
+Обновляя интерфейс агентов

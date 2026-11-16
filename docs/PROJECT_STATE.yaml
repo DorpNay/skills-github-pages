@@ -16,17 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 680ab02289c8517dbe9e36b53abb66317dda5f86; 0 open PRs; issue #111. Gateway #43797179042, Quality #43797179025, Freshness #43797178997, Provenance #43797179026, Graphify #43797179000 and Pages #43797178161 SUCCESS on exact HEAD. AgentRun bounded DAG prototype now CI-verified; feature-off, serial model inference, no tools/filesystem/network, no UI/sandbox/host integration yet."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7; 0 open PRs; issue #111. Current exact main adds AgentRun UI TDD acceptance; Quality #43798806788 fails only because #agentRuntimeStrategy is absent (133 Chromium tests passed). Graphify #43798806804 and Pages #43798806597 succeeded. Backend DAG verified on code-bearing parent 680ab022."
     branch: "main"
-    base_main: "680ab02289c8517dbe9e36b53abb66317dda5f86"
+    base_main: "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
-    exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
-    runtime_boundary: "AgentRun native bounded DAG prototype exact-head CI verified: single and three-node team_review, same-run dependency edges, dependency-ready claims, task-ID Fernet payloads, synthesis, cancellation. One worker/model slot means serial inference. Tools/filesystem/network disabled; feature flag off; Agents UI and sandbox not done. Auxiliary artifacts staged, not installed. Offline package/voice and target hardware unverified."
-    next: "Archive OR-2026-11-16-005 and add K.6.13; then wire Agents UI strategy/DAG status and Research Trace Save. Build a real scoped Coder sandbox/workspace, reviewed project learning, Mini aLandi offline package with safe reconnect and local voice, curated code/API packs and local-file workspace; exact tests before claims."
-
-
+    runtime_boundary: "AgentRun backend bounded single/team_review DAG prototype is CI-verified on code-bearing parent 680ab022; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Current main is test-only and has a red AgentRun strategy-selector E2E (missing UI control). No Coder sandbox, host install or offline package."
+    next: "Implement safe single/team_review selector, per-chat persistence, strategy_id submission and per-task DAG status rendering; then Research Trace Save and K.5 follow-ups."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -298,19 +294,20 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "680ab02289c8517dbe9e36b53abb66317dda5f86"
-  last_main_action: "Exact main 680ab02289c8517dbe9e36b53abb66317dda5f86: Gateway #43797179042 PASS; Quality #43797179025 SUCCESS; Freshness #43797178997 SUCCESS; Provenance #43797179026 SUCCESS; Graphify #43797179000 SUCCESS; Pages #43797178161 SUCCESS. Public root revision fetch still pending."
-  last_functional_checkpoint: "fb9c9d3a1cf06fe0e07606ad816767e00686a83f"
-  main_quality: "Quality #43797179025 SUCCESS on exact HEAD."
-  main_freshness: "Freshness #43797178997 SUCCESS on exact HEAD."
-  main_graphify: "Graphify #43797179000 SUCCESS on exact HEAD."
-  main_gateway: "Gateway #43797179042 PASS on exact HEAD."
-  main_provenance: "Provenance #43797179026 SUCCESS on exact HEAD."
-  main_pages: "Pages #43797178161 SUCCESS; public revision marker not independently fetched."
+  verified_main: "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7"
+  last_main_action: "Exact main 9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7 changes only tests/e2e/app.spec.mjs. Quality #43798806788 fails only Chromium: 133 passed, one new AgentRun UI test fails because #agentRuntimeStrategy is absent; six other Quality jobs passed; published-site contract skipped. Graphify #43798806804 SUCCESS; Pages #43798806597 SUCCESS. Gateway/Freshness/Provenance not triggered on this test-only commit."
+  last_functional_checkpoint: "680ab02289c8517dbe9e36b53abb66317dda5f86"
+  main_quality: "Quality #43798806788 FAILURE: one expected-red AgentRun strategy selector UI test; 133 Chromium tests passed; six other jobs passed."
+  main_freshness: "Not triggered on exact main 9835e; last pass #43797178997 on code-bearing parent 680ab022."
+  main_graphify: "Graphify #43798806804 SUCCESS on exact main."
+  main_gateway: "Not triggered on test-only exact main; last pass #43797179042 across Python 3.12/13/14 on code-bearing parent 680ab022."
+  main_provenance: "Not triggered on exact main 9835e; last pass #43797179026 on code-bearing parent 680ab022."
+  main_pages: "Pages #43798806597 SUCCESS for exact main 9835e; live public revision marker pending."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
-  runtime_boundary: "AgentRun native DAG backend prototype implemented; exact-parent Gateway/Ruff exposed a duplicated function declaration. Current child removes it; exact-child verification pending. Single worker/model slot, serial inference, tools/filesystem/network disabled, feature flag off. Bonsai and Qwen3.5-2B staged, not installed. VPS, backup/restore, sandbox and target-hardware quality unverified."
-  next: "Verify corrected backend on exact HEAD; then wire strategy selector/task graph into Agents UI. Research Trace Save, provider adapters and Coder sandbox remain later gated work."
+  runtime_boundary: "AgentRun bounded single/team_review DAG backend is implemented and code-bearing parent CI verified. Current exact main adds the missing UI acceptance test and is red because strategy selector and task graph UI are not implemented. One worker/model slot, serial inference, tools/filesystem/network disabled, feature flag off. Bonsai and Qwen3.5-2B staged, not installed. Coder sandbox, VPS, backup/restore and Mini aLandi remain unverified."
+  next: "Implement strict safe strategy selection, per-chat persistence, API strategy_id submission and per-task task graph/status rendering; verify exact-head CI. Then Research Trace Save and remaining K.5 in order."
+
 
 
 v1_ui_finalization:
