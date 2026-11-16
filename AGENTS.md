@@ -112,3 +112,7 @@ OR-013 implementation parent: `8ee3df6022f95dfc907499b7fa152684092f702f`; code c
 
 ## Current implementation checkpoint (2026-11-16)
 OR-013 context transport is implemented on main `f3608cd3253eeb5fb04a9960a620e3c0985956ba`. Gateway #43914028219 passed Python 3.12/13/14; Graphify #43914028152 passed; Pages #43914027020 succeeded. Quality #43914028299 is still running Chromium; static/security/integrity/context/Jekyll have passed. Earlier Ruff E701 findings were corrected in the latest code commit. Freshness/Provenance will run on this five-file state refresh. See NOW.md S-070.
+
+
+## Freshness checkpoint repair (2026-11-16)
+Freshness #43914831126 rejected the documentation-only state refresh because snapshot.main_sha and last_functional_checkpoint_sha were equal. The last functional implementation SHA is `1816fa821d7122c069ae4791cc2400a9cb2b1738`; current parent is `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`. All 21 checker unit tests passed. State metadata is being corrected without changing code or the gate. See NOW.md S-071.

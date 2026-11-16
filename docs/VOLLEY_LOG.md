@@ -605,3 +605,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Gateway #43914028219 PASS across Python 3.12/13/14; Graphify #43914028152 PASS; Pages #43914027020 SUCCESS. Quality #43914028299: Security, Jekyll, Ruff, Integrity and Context passed; Chromium remains in progress. Earlier Quality #43913239978 failed Ruff E701 only; all reported lines were corrected, and current Ruff gate passes.
 - Freshness/Provenance did not run on code-only commits; this five-file direct-child refresh is intended to trigger them. Exact-child Quality/Pages remain pending.
 - Plan 1 Task 1 context packet/worker/API implementation recorded; next is main chat routing and shared live status overlay. No tools, filesystem, browser, shell, network, model download or host activation added.
+
+
+## V-2026-11-16-S-071 — Freshness snapshot root-cause repair
+
+- Parent main exact: `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`; Freshness run #43914831126 failed at live check because snapshot.main_sha and last_functional_checkpoint_sha both equaled `f3608cd3253eeb5fb04a9960a620e3c0985956ba`. The checkpoint is documentation-only, so the checker requires a distinct last functional code SHA.
+- All 21 freshness checker unit tests passed; only live snapshot validation failed. Correct last functional SHA to `1816fa821d7122c069ae4791cc2400a9cb2b1738`; current main parent remains `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`.
+- No application code, tests, dependencies, model artifacts, host settings or permissions changed. No gate was weakened.
+- Next: exact-child Freshness/Provenance/Quality/Pages and published revision checks.

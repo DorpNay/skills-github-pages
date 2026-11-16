@@ -3,11 +3,11 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "f3608cd3253eeb5fb04a9960a620e3c0985956ba",
-    "main_commit_subject": "style: fix remaining Ruff statement layout",
-    "main_commit_date": "2026-11-16T17:02:09Z",
-    "last_functional_checkpoint_sha": "f3608cd3253eeb5fb04a9960a620e3c0985956ba",
-    "last_functional_milestone": "AgentRun accepts explicit bounded context packet, stores it in encrypted payload vault and binds it to idempotency digest; Gateway 3.12/13/14, Graphify and Pages pass. Main-chat routing/status overlay pending; feature flag false, no tools/filesystem/shell/network.",
+    "main_sha": "f19f57d1b3fcb190a417226a23a2162b00a3f5e6",
+    "main_commit_subject": "docs: checkpoint OR-013 context transport and verification",
+    "main_commit_date": "2026-11-16T17:06:28Z",
+    "last_functional_checkpoint_sha": "1816fa821d7122c069ae4791cc2400a9cb2b1738",
+    "last_functional_milestone": "AgentRun bounded context packet, encrypted handoff and context-aware idempotency implemented; Gateway tests on later style-only descendants pass; chat UI/status overlay pending.",
     "main_quality_run": 43914028299,
     "main_pages_deployment_run": 43914027020,
     "functional_parent_gateway_run": 43826933347,
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-S-070",
+  "last_volley": "V-2026-11-16-S-071",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -435,7 +435,7 @@
   "python_runtime_cache_bytes": 80105944,
   "main_quality_status": "IN_PROGRESS: Security, Jekyll, Ruff, Integrity and Context passed; Chromium pending.",
   "main_pages_status": "SUCCESS on exact code SHA f3608cd3253eeb5fb04a9960a620e3c0985956ba.",
-  "main_freshness_status": "PENDING five-file state-refresh child.",
+  "main_freshness_status": "REPAIR: documentation-only checkpoint must retain distinct last functional SHA 1816fa821d7122c069ae4791cc2400a9cb2b1738; prior exact check #43914831126 failed on equality.",
   "main_provenance_status": "PENDING five-file state-refresh child.",
   "main_graphify_status": "SUCCESS on exact code SHA f3608cd3253eeb5fb04a9960a620e3c0985956ba.",
   "main_gateway_status": "SUCCESS on exact code SHA f3608cd3253eeb5fb04a9960a620e3c0985956ba; Python 3.12/13/14.",
