@@ -802,9 +802,13 @@ permalink: /
           <button type="button" data-action="open-search-mode-settings" class="function-panel-action function-panel-action-secondary mt-3 w-full" data-i18n="researchOpenSearchSettings">Настроить охват веб-поиска</button>
         </div>
         <div class="function-panel-card p-3">
-          <div class="flex items-center justify-between gap-3"><strong class="text-xs" data-i18n="researchWorkflowStatusLabel">Структурированный pipeline</strong><span id="researchWorkflowSummary" class="function-panel-value px-2 py-1 text-[11px]">Прямой</span></div>
-          <p class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="researchWorkflowStatusHelp">Четыре последовательных этапа используют выбранную модель; blueprint не запускает независимых workers.</p>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="function-panel-action function-panel-action-secondary mt-3 w-full" data-i18n="researchOpenAgentSettings">Настроить Agents / structured analysis</button>
+          <label for="deepResearchMethodSelect" class="block text-xs font-semibold" data-i18n="researchWorkflowStatusLabel">Метод Deep Research</label>
+          <select id="deepResearchMethodSelect" class="advanced-control function-panel-field mt-2 w-full rounded-lg border" aria-describedby="researchWorkflowHelp">
+            <option value="none">Обычный ответ</option>
+            <option value="multi_step_evidence_report">Многоэтапный отчёт с доказательствами</option>
+          </select>
+          <p id="researchWorkflowHelp" class="function-panel-muted mt-2 text-[11px] leading-relaxed" data-i18n="researchWorkflowStatusHelp">Метод Deep Research независим от режима Агентов и бюджета Быстро/Тщательно. Доступен один проверяемый workflow.</p>
+          <span id="researchWorkflowSummary" class="sr-only">Прямой</span>
         </div>
         <div class="function-panel-notice function-panel-notice-warning p-3">
           <strong class="function-panel-notice-title block text-xs" data-i18n="research2RoadmapLabel">Deep Research 2.0 — в разработке</strong>
@@ -843,7 +847,6 @@ permalink: /
   <ol id="agentRuntimeEvents" class="function-panel-muted max-h-28 overflow-y-auto space-y-1 text-[10px]" aria-label="События AgentRun"></ol>
   <pre id="agentRuntimeOutput" class="function-panel-card hidden max-h-64 overflow-auto whitespace-pre-wrap break-words p-3 text-xs" aria-live="polite"></pre>
 </div>
-        <label class="function-panel-card flex items-start gap-2 p-3 text-sm"><input type="checkbox" id="agentModeControl" class="function-panel-field mt-1 rounded focus:ring-0"><span><strong class="block" data-i18n="agentModeOption">Использовать структурированный разбор</strong><span class="mt-1 block function-panel-muted text-[11px] leading-relaxed" data-i18n="agentModeHelp">Четыре последовательных этапа на выбранной модели.</span></span></label>
         <div class="grid grid-cols-2 gap-3">
           <label class="function-panel-muted block text-xs">Размер команды · blueprint
             <input id="agentTeamSize" type="range" min="1" max="50" step="1" value="4" class="mt-2 w-full"><span id="agentTeamSizeValue" class="function-panel-muted text-[11px] font-semibold">4 агента</span>
@@ -1137,7 +1140,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, executionMode: 'direct', privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, executionMode: 'direct', privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', deepResearchMethod: 'none', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (rawText === null) return;
@@ -1177,6 +1180,8 @@ permalink: /
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
+            deepResearchMethod: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod : (item.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'),
+            multiAgentEnabled: typeof item.multiAgentEnabled === 'boolean' ? item.multiAgentEnabled : (item.deepResearchMethod === 'multi_step_evidence_report'),
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
             executionMode: ['direct','agent'].includes(item.executionMode) ? item.executionMode : 'direct',
             ...(typeof item.activeAgentRunId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(item.activeAgentRunId) ? { activeAgentRunId: item.activeAgentRunId } : {}),
@@ -1250,7 +1255,7 @@ permalink: /
     function persistChatMutation(chat, updates, mirroredWrites = []) {
       if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
       const allowedUpdateKeys = new Set([
-        'searchMode', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
+        'searchMode', 'deepResearchMethod', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
         'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy', 'executionMode'
       ]);
       const updateEntries = Object.entries(updates);
@@ -1583,7 +1588,7 @@ permalink: /
         functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
         researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',
         researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',
-        researchWorkflowStatusLabel:'Структурированный pipeline',researchWorkflowStatusHelp:'Четыре последовательных этапа используют выбранную модель. Сохранённый team blueprint не запускает независимых workers.',researchOpenAgentSettings:'Настроить Agents / structured analysis',
+        researchWorkflowStatusLabel:'Метод Deep Research',researchWorkflowStatusHelp:'Метод Deep Research независим от режима Агентов и бюджета Быстро/Тщательно. Доступен один проверяемый workflow.',researchOpenAgentSettings:'Настроить Agents / structured analysis',
         research2RoadmapLabel:'Deep Research 2.0 — в разработке',research2RoadmapHelp:'Планируемые: возобновляемые runs, коллекции источников, evidence ledger, проверка claim-to-citation и анализ противоречий. Это не активный runtime.',agentModeOption:'Разрешить структурированный разбор сложных задач',agentModeHelp:'Планировщик → исследователь → критик → синтезатор. Все этапы используют выбранную модель; Быстро/Тщательно ограничивает инструменты в исследовательском этапе. Конвейер запускается только для подходящих сложных запросов; отдельная команда моделей не создаётся.',
         functionSkillsTitle:'Профиль задачи',functionSkillsDescription:'Профиль добавляет специализированные инструкции для этого чата. Он не включает инструменты, веб-поиск или дополнительные разрешения.',skillPresetLabel:'Профиль этого чата',skillAuto:'Авто (тщательно/структурно)',skillPlanning:'Планирование',skillResearch:'Исследование',skillCodeReview:'Код и ревью',skillDataAnalysis:'Анализ данных',skillAgentSystems:'Системы агентов',skillMultimodal:'Мультимодальные задачи',skillPresetHelp:'Авто подбирает профиль в тщательном или структурированном разборе; быстрые прямые ответы остаются лёгкими. Ручной профиль меняет только инструкции, не включает инструменты или доступ к данным. Выбор действует в этом чате; новый чат начинает с Авто.',
         functionConnectorsTitle:'Интеграции',functionConnectorsDescription:'Показываем только реально подключённые интеграции. Сейчас внешние источники не подключены; переключателей-заглушек нет.',
@@ -1609,7 +1614,7 @@ permalink: /
         functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
         researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',
         researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',
-        researchWorkflowStatusLabel:'Structured pipeline',researchWorkflowStatusHelp:'Four sequential stages use the selected model. A saved team blueprint does not launch independent workers.',researchOpenAgentSettings:'Configure Agents / structured analysis',
+        researchWorkflowStatusLabel:'Deep Research method',researchWorkflowStatusHelp:'Deep Research method is independent from Agent mode and Fast/Thorough effort. One verified workflow is available.',researchOpenAgentSettings:'Configure Agents / structured analysis',
         research2RoadmapLabel:'Deep Research 2.0 — in development',research2RoadmapHelp:'Planned: resumable runs, source collections, an evidence ledger, claim-to-citation validation and contradiction analysis. This is not active runtime.',agentModeOption:'Allow structured workflow for complex tasks',agentModeHelp:'Planner → researcher → critic → synthesizer. All stages use the selected model; Quick/Thorough limits tools in the research stage. The pipeline runs only for suitable complex requests; no separate model team is created.',
         functionSkillsTitle:'Task profile',functionSkillsDescription:'A profile adds task-specific instructions for this chat. It does not enable tools, web search or additional permissions.',skillPresetLabel:'Task profile for this chat',skillAuto:'Auto (thorough/structured)',skillPlanning:'Planning',skillResearch:'Research',skillCodeReview:'Code and review',skillDataAnalysis:'Data analysis',skillAgentSystems:'Agent systems',skillMultimodal:'Multimodal tasks',skillPresetHelp:'Auto selects a profile for Thorough or structured requests; quick direct answers stay lean. A manual profile changes instructions only, not tools or data access. This choice applies to this chat; new chats start with Auto.',
         functionConnectorsTitle:'Integrations',functionConnectorsDescription:'Only real connected integrations are listed. No external sources are connected yet; there are no placeholder switches.',
@@ -2901,12 +2906,14 @@ permalink: /
     const VALID_AGENT_SCENARIOS = new Set(['general','research','software','product','due-diligence','custom']);
     const VALID_AGENT_ROLES = new Set(['balanced','research','software','product','custom']);
     const VALID_AGENT_RUNTIME_STRATEGIES = new Set(['single','team_review','coder_review']);
+    const VALID_DEEP_RESEARCH_METHODS = new Set(['none','multi_step_evidence_report']);
     function ensureChatFunctionSettings(chat) {
       if (!chat || typeof chat !== 'object') return false;
       let changed = false;
       if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
       if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
-      if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
+      if (!VALID_DEEP_RESEARCH_METHODS.has(chat.deepResearchMethod)) { chat.deepResearchMethod = chat.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'; changed = true; }
+      if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = chat.deepResearchMethod !== 'none'; changed = true; }
       if (!['direct','agent'].includes(chat.executionMode)) { chat.executionMode = 'direct'; changed = true; }
       if (Object.prototype.hasOwnProperty.call(chat,'activeAgentRunId') && (typeof chat.activeAgentRunId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(chat.activeAgentRunId))) { delete chat.activeAgentRunId; changed = true; }
       if (!VALID_AGENT_RUNTIME_STRATEGIES.has(chat.agentRuntimeStrategy)) { chat.agentRuntimeStrategy = 'single'; changed = true; }
@@ -2935,7 +2942,7 @@ permalink: /
       ensureChatFunctionSettings(chat);
       processingMode = chat.processingMode;
       $('toggleSearch').checked = chat.searchMode !== 'offline';
-      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      $('toggleMultiAgent').checked = chat.deepResearchMethod !== 'none';
       const executionModeToggle=$('executionModeToggle');
       if(executionModeToggle) {
         const agentMode=chat.executionMode==='agent',english=getUiLanguage()==='en';
@@ -3013,20 +3020,24 @@ permalink: /
       updateModeUI();
       if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
     }
-    function setAgentMode(enabled) {
+    function setDeepResearchMethod(method) {
       const chat = getCurrentChat();
       ensureChatFunctionSettings(chat);
-      const next = Boolean(enabled);
-      if (!persistChatMutation(chat, { multiAgentEnabled: next }, [[STORAGE.multiAgent, String(next)]])) {
-        $('toggleMultiAgent').checked = chat.multiAgentEnabled;
-        if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+      const next = VALID_DEEP_RESEARCH_METHODS.has(method) ? method : 'none';
+      const legacyEnabled = next !== 'none';
+      if (!persistChatMutation(chat, { deepResearchMethod: next, multiAgentEnabled: legacyEnabled }, [[STORAGE.multiAgent, String(legacyEnabled)]])) {
+        $('toggleMultiAgent').checked = chat.deepResearchMethod !== 'none';
+        if ($('deepResearchMethodSelect')) $('deepResearchMethodSelect').value = chat.deepResearchMethod;
         updateModeUI();
         return;
       }
-      $('toggleMultiAgent').checked = chat.multiAgentEnabled;
-      if ($('agentModeControl')) $('agentModeControl').checked = chat.multiAgentEnabled;
+      $('toggleMultiAgent').checked = legacyEnabled;
+      if ($('deepResearchMethodSelect')) $('deepResearchMethodSelect').value = next;
       updateModeUI();
       if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
+    }
+    function setAgentMode(enabled) {
+      setDeepResearchMethod(enabled ? 'multi_step_evidence_report' : 'none');
     }
     function setSkillPreset(preset) {
       if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
@@ -3063,14 +3074,14 @@ permalink: /
       const summary = [
         fast ? text.modeFastShort : text.modeDeepShort,
         text[searchKey],
-        chat.multiAgentEnabled ? text.workflowStructuredShort : text.workflowDirectShort,
+        chat.deepResearchMethod !== 'none' ? text.workflowStructuredShort : text.workflowDirectShort,
         text[profileKeys[chat.skillPreset] || 'skillAutoShort']
       ].join(' · ');
       const searchHelp = searchMode === 'offline' ? text.searchModeOfflineHelp : searchMode === 'more' ? text.searchModeMoreHelp : text.searchModeNormalHelp;
       const title = [
         fast ? text.modeFastHelp : text.modeDeepHelp,
         searchHelp,
-        chat.multiAgentEnabled ? text.workflowStructuredHelp : text.workflowDirectHelp,
+        chat.deepResearchMethod !== 'none' ? text.workflowStructuredHelp : text.workflowDirectHelp,
         text.taskProfileHelp
       ].join(' ');
       $('modeHint').textContent = summary;
@@ -4541,7 +4552,9 @@ let agentRuntimeRefreshPromise = null;
       $('researchModeSummary').textContent=text[chat.processingMode==='deep'?'modeDeepShort':'modeFastShort'];
       const searchKey=chat.searchMode==='offline'?'searchModeOfflineShort':chat.searchMode==='more'?'searchModeMoreShort':'searchModeNormalShort';
       $('researchSearchModeSummary').textContent=text[searchKey];
-      $('researchWorkflowSummary').textContent=text[chat.multiAgentEnabled?'workflowStructuredShort':'workflowDirectShort'];
+      $('researchWorkflowSummary').textContent=text[chat.deepResearchMethod!=='none'?'workflowStructuredShort':'workflowDirectShort'];
+      const methodSelect=$('deepResearchMethodSelect');
+      if(methodSelect){methodSelect.value=chat.deepResearchMethod;const english=getUiLanguage()==='en';methodSelect.options[0].text=english?'Direct chat':'Обычный ответ';methodSelect.options[1].text=english?'Multi-step evidence report':'Многоэтапный отчёт с доказательствами';}
     }
     function openFunctionPanel(kind) {
       const functionsMenu=$('functionsMenu'); if(functionsMenu) functionsMenu.open=false;
@@ -4558,7 +4571,7 @@ let agentRuntimeRefreshPromise = null;
       $('functionPanelTitle').textContent = text[view[1]];
       $('functionPanelDescription').textContent = text[view[2]];
       $(view[0]).classList.remove('hidden');
-      if (kind === 'agents') { $('agentModeControl').checked = getCurrentChat().multiAgentEnabled === true;renderAgentConfiguration();setAgentRuntimeCopy();void refreshAgentRunRuntime(); }
+      if (kind === 'agents') { renderAgentConfiguration();setAgentRuntimeCopy();void refreshAgentRunRuntime(); }
       if (kind === 'research') renderResearchConfiguration();
       if (kind === 'skills') renderSkillConfiguration();
       $('functionPanelModal').classList.remove('hidden');
@@ -5095,7 +5108,7 @@ let agentRuntimeRefreshPromise = null;
       const finalText = await requestTextStage(systemPrompt + '\nРоль: синтезатор. Ответь прямо на исходный запрос. Используй план, факты из черновика и критику; исправь фактические ошибки, отличай подтверждённое от неопределённого, сохрани полезные ссылки. Не включай шаблонное вступление о возможностях ассистента и не добавляй общих рекомендаций, не нужных для задачи.', [...history, { role: 'user', content: 'План:\n' + plan + '\n\nЧерновик исследователя:\n' + draft + '\n\nКритика (same-model, структурированный результат):\n' + critique }], signal, '🧩 Исследование 4/4: синтез…');
       const traceId=globalThis.crypto?.randomUUID?.()||('trace-'+Date.now()+'-'+Math.random().toString(36).slice(2)),finalRoute=lastSuccessfulRoute?{...lastSuccessfulRoute}:null,traceCreatedAt=new Date().toISOString();
       const researchMessages = workChat.messages.slice(researchStart);
-      const researchTrace={schemaVersion:4,id:traceId,createdAt:traceCreatedAt,chatId:String(chat?.id||''),scope:'conversation',provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,claims:review.claims,contradictions:review.contradictions,reviewParseStatus:review.parseStatus,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
+      const researchTrace={schemaVersion:4,id:traceId,createdAt:traceCreatedAt,chatId:String(chat?.id||''),scope:'conversation',provider:finalRoute?.providerLabel||(PROVIDERS[currentProvider()]?.label||currentProvider()),model:finalRoute?.model||(safeGet(STORAGE.model)||DEFAULT_MODEL),systemPromptCharCount:String(systemPrompt||'').length,run:activeRunTelemetry?{schemaVersion:activeRunTelemetry.schemaVersion,workflow:activeRunTelemetry.workflow,mode:activeRunTelemetry.mode,webSearchEnabled:activeRunTelemetry.webSearchEnabled,deepResearchMethod:activeRunTelemetry.deepResearchMethod||'none',multiAgentEnabled:activeRunTelemetry.multiAgentEnabled,crossProviderFallbackEnabled:activeRunTelemetry.crossProviderFallbackEnabled,startedAt:activeRunTelemetry.startedAt,durationMs:activeRunStartedAt?Date.now()-activeRunStartedAt:null,configuredPromptFingerprint:activeRunTelemetry.configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:activeRunTelemetry.configuredPromptFingerprintAlgorithm}:null,plan,draft,critique,claims:review.claims,contradictions:review.contradictions,reviewParseStatus:review.parseStatus,finalText,sources,routes:activeRunTelemetry?activeRunTelemetry.routes.map(route=>({...route})):[],attempts:activeRunTelemetry?activeRunTelemetry.attempts.map(attempt=>({...attempt})):[]};
       safeSet('ai_research_trace_' + traceId, JSON.stringify(researchTrace));
       chat.messages.push({ role: 'assistant', content: finalText, researchTrace, providerInfo: finalRoute });
       updateState([...chats]);
@@ -5682,11 +5695,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       activeChatId = chat.id;
       const controller = new AbortController(); activeController = controller;
       setBusy(true);
-      const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=$('toggleMultiAgent').checked,mode=processingMode;
+      const offlineMode=safeGet(STORAGE.offline)==='true',useSearch=!offlineMode&&$('toggleSearch').checked,useMultiAgent=chat.deepResearchMethod==='multi_step_evidence_report',mode=processingMode;
       const provider=safeGet(STORAGE.provider)||'alandi',model=safeGet(STORAGE.model)||(PROVIDERS[safeGet(STORAGE.provider)||'alandi']?.models?.[0]?.[0]||DEFAULT_MODEL),workflow=useMultiAgent&&shouldUseMultiAgentResearch(text)?'research':'direct';
       const configuredPrompt=safeGet(STORAGE.systemPrompt),activeConfiguredPrompt=normalizeUserSystemPrompt(configuredPrompt);
       const configuredPromptFingerprint=await makeCacheKey(activeConfiguredPrompt);
-      activeRunStartedAt=Date.now();activeRunTelemetry={schemaVersion:1,provider,model,workflow,mode,webSearchEnabled:useSearch,multiAgentEnabled:useMultiAgent,crossProviderFallbackEnabled:safeGet(STORAGE.crossProviderFallback)==='true',startedAt:new Date(activeRunStartedAt).toISOString(),configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:configuredPromptFingerprint.startsWith('fnv-')?'fnv1a-fallback':'sha-256',routes:[],attempts:[]};lastSuccessfulRoute=null;
+      activeRunStartedAt=Date.now();activeRunTelemetry={schemaVersion:1,provider,model,workflow,mode,webSearchEnabled:useSearch,deepResearchMethod:chat.deepResearchMethod,multiAgentEnabled:useMultiAgent,crossProviderFallbackEnabled:safeGet(STORAGE.crossProviderFallback)==='true',startedAt:new Date(activeRunStartedAt).toISOString(),configuredPromptFingerprint,configuredPromptFingerprintAlgorithm:configuredPromptFingerprint.startsWith('fnv-')?'fnv1a-fallback':'sha-256',routes:[],attempts:[]};lastSuccessfulRoute=null;
       safeSet(STORAGE.search, String(useSearch));
       safeSet(STORAGE.multiAgent, String(useMultiAgent));
       try {
@@ -5867,6 +5880,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           
           processingMode: ['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
           searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'normal',
+          deepResearchMethod: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod:(chat.multiAgentEnabled===true?'multi_step_evidence_report':'none'),
           multiAgentEnabled: chat.multiAgentEnabled===true,
           skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',
           messages: chat.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).slice(0,10000).map((m) => ({
@@ -6908,8 +6922,8 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     $('modeFast').addEventListener('click', () => setProcessingMode('fast'));
     $('modeDeep').addEventListener('click', () => setProcessingMode('deep'));
     $('toggleSearch').addEventListener('change', event => setSearchMode(event.target.checked ? 'normal' : 'offline'));
-    $('toggleMultiAgent').addEventListener('change', event => setAgentMode(event.target.checked));
-    $('agentModeControl').addEventListener('change', event => setAgentMode(event.target.checked));
+    $('toggleMultiAgent').addEventListener('change', event => setDeepResearchMethod(event.target.checked ? 'multi_step_evidence_report' : 'none'));
+    $('deepResearchMethodSelect').addEventListener('change', event => setDeepResearchMethod(event.target.value));
     $('skillPresetSelect').addEventListener('change', event => {setSkillPreset(event.target.value);renderSkillConfiguration();});
     $('skillGoalSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillGoal:$('skillGoalSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
     $('skillOutputSelect').addEventListener('change',()=>{const chat=getCurrentChat();if(chat&&persistChatMutation(chat,{skillOutputMode:$('skillOutputSelect').value})){renderSkillConfiguration();updateModeUI();}else{renderSkillConfiguration();updateModeUI();}});
