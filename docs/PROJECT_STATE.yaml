@@ -18,7 +18,7 @@ project_state:
   root_orienter:
     status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 9aec46084686077e6975cf7deb504305953725e1; functional AgentRun UI checkpoint 377818cceef7099d6698c07561c715358d5d8ddd; 0 open PRs; issue #111. Quality, Graphify and Pages passed for the functional UI checkpoint."
     branch: "main"
-    base_main: "a39c851a9b31fea06190eecd285237080cea55d7"
+    base_main: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun backend bounded single/team_review DAG prototype is CI-verified on code-bearing parent 680ab022; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Current main is test-only and has a red AgentRun strategy-selector E2E (missing UI control). No Coder sandbox, host install or offline package."
@@ -294,7 +294,7 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "a39c851a9b31fea06190eecd285237080cea55d7"
+  verified_main: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
   last_main_action: "Safe AgentRun UI on exact main 377818c. Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Public root revision exact."
   last_functional_checkpoint: "377818cceef7099d6698c07561c715358d5d8ddd"
   main_quality: "Quality #43804109317 SUCCESS: all 7 jobs; 134 Chromium tests and published-site contract passed."
@@ -602,7 +602,7 @@ current_execution_checkpoint:
 owner_request_delta:
   id: "OR-2026-11-16-008"
   status: "SPECIFIED"
-  parent_main_sha: "a39c851a9b31fea06190eecd285237080cea55d7"
+  parent_main_sha: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
   scope: "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance."
   implementation_status: "AgentRun coder_review strategy and compact Memory status visibility are implemented and CI-verified; host feature remains disabled. Offline package, local Coder workspace, full Memory/Sources UX and plugin integrations remain specified/deferred."
   next: "Complete plugin/source strategy and record capability boundaries; then continue K.5 mobile UX, Memory/Sources and offline package work. AgentRun next gates: failure injection, durable resume/approval and local Coder sandbox."

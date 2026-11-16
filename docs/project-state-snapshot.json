@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "a39c851a9b31fea06190eecd285237080cea55d7",
-    "main_commit_subject": "docs(state): record verified AgentRun and plugin strategy",
-    "main_commit_date": "2026-11-16T08:09:30Z",
+    "main_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f",
+    "main_commit_subject": "docs(state): repair OR-008 journal boundary",
+    "main_commit_date": "2026-11-16T08:11:08Z",
     "last_functional_checkpoint_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
     "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
     "main_quality_run": 43810947390,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "a39c851a9b31fea06190eecd285237080cea55d7",
+    "checkpoint_parent_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f",
     "merged_prs": [
       184,
       185
@@ -448,7 +448,7 @@
     "scope": "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance.",
     "implementation_status": "AgentRun coder_review strategy and compact Memory status visibility are implemented and CI-verified; host feature remains disabled. Offline package, local Coder workspace, full Memory/Sources UX and plugin integrations remain specified/deferred.",
     "next": "Complete plugin/source strategy; then continue K.5 mobile UX, Memory/Sources and offline package work. AgentRun next gates: failure injection, durable resume/approval and local Coder sandbox.",
-    "parent_main_sha": "a39c851a9b31fea06190eecd285237080cea55d7"
+    "parent_main_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
   },
   "next": [
     "Complete the assistant-plugin/source usage map using actual capability contracts; do not add connectors or runtimes without a separate owner decision.",
