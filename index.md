@@ -6048,6 +6048,7 @@ let agentRuntimeRefreshPromise = null;
         const claimsById = new Map();
         const savedClaimIds = new Set();
         const claimRecordIds = [];
+        const claimRecordIdsById = {};
         let savedClaims = 0, skippedClaims = 0, failedClaims = 0;
         for (const claim of claims) {
           const claimId = String(claim?.claim_id || '');
@@ -6079,12 +6080,13 @@ let agentRuntimeRefreshPromise = null;
             metadata: { trace_id: runId.slice(0, 64), review_parse_status: String(activeTrace.reviewParseStatus || '').slice(0, 40) }
           };
           const recordId = await postRecord('/rag/evidence/claims', payload);
-          if (recordId) { savedClaims++; savedClaimIds.add(claimId); claimRecordIds.push(recordId); }
+          if (recordId) { savedClaims++; savedClaimIds.add(claimId); claimRecordIds.push(recordId); claimRecordIdsById[claimId] = recordId; }
           else failedClaims++;
         }
 
         const contradictions = Array.isArray(activeTrace.contradictions) ? activeTrace.contradictions.slice(0, 20) : [];
         const contradictionRecordIds = [];
+        const contradictionRecordIdsById = {};
         let savedContradictions = 0, skippedContradictions = 0, failedContradictions = 0;
         for (const item of contradictions) {
           const contradictionId = String(item?.contradiction_id || '');
@@ -6110,7 +6112,7 @@ let agentRuntimeRefreshPromise = null;
             metadata: { trace_id: runId.slice(0, 64), review_parse_status: String(activeTrace.reviewParseStatus || '').slice(0, 40) }
           };
           const recordId = await postRecord('/rag/evidence/contradictions', payload);
-          if (recordId) { savedContradictions++; contradictionRecordIds.push(recordId); }
+          if (recordId) { savedContradictions++; contradictionRecordIds.push(recordId); contradictionRecordIdsById[contradictionId] = recordId; }
           else failedContradictions++;
         }
 
@@ -6120,8 +6122,8 @@ let agentRuntimeRefreshPromise = null;
         activeTrace.evidenceLedger = {
           status: failedTotal ? (savedTotal ? 'partial' : 'failed')
             : skippedTotal ? (savedTotal ? 'partial' : 'empty') : (savedTotal ? 'saved' : 'empty'),
-          saved, skipped, failed, evidenceIds, savedClaims, skippedClaims, failedClaims, claimRecordIds,
-          savedContradictions, skippedContradictions, failedContradictions, contradictionRecordIds,
+          saved, skipped, failed, evidenceIds, savedClaims, skippedClaims, failedClaims, claimRecordIds, claimRecordIdsById,
+          savedContradictions, skippedContradictions, failedContradictions, contradictionRecordIds, contradictionRecordIdsById,
           sourceEvidenceIds: Object.fromEntries(sourceEvidenceIds), scope, scopeId, savedAt: new Date().toISOString()
         };
         safeSet('ai_research_trace_' + activeTrace.id, JSON.stringify(activeTrace));

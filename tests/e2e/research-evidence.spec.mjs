@@ -223,8 +223,12 @@ test('research trace explicitly persists source quotes, claims and contradiction
   ]);
   expect(contradictionPosts[0].evidence_ids).toEqual([evidenceIdsBySource.get('S1'), evidenceIdsBySource.get('S2')]);
   expect(contradictionPosts[0].reviewer_mode).toBe('same-model');
-  expect(trace.evidenceLedger.saved).toBe(2);
-  expect(trace.evidenceLedger.savedClaims).toBe(2);
-  expect(trace.evidenceLedger.savedContradictions).toBe(1);
+  const savedTrace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
+  expect(savedTrace.evidenceLedger.status).toBe('saved');
+  expect(savedTrace.evidenceLedger.saved).toBe(2);
+  expect(savedTrace.evidenceLedger.savedClaims).toBe(2);
+  expect(savedTrace.evidenceLedger.savedContradictions).toBe(1);
+  expect(savedTrace.evidenceLedger.claimRecordIdsById.C1).toBe('claim-fixture-C1');
+  expect(savedTrace.evidenceLedger.contradictionRecordIdsById.X1).toBe('contradiction-fixture-X1');
 });
 

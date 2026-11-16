@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "00a8d40bd2af8e8a4c1d4eb0234c6e78f956bd8f",
-    "main_commit_subject": "docs(state): align exact freshness checkpoint",
-    "main_commit_date": "2026-11-16T05:20:56Z",
+    "main_sha": "5f59fa3fe4ddbd9215e4927289cb18c169681ebe",
+    "main_commit_subject": "feat(research): persist linked claims and contradictions on explicit save",
+    "main_commit_date": "2026-11-16T05:23:53Z",
     "last_functional_checkpoint_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
     "last_functional_milestone": "AgentRun UI verified on 377818c; Research Trace explicit Save of source quotes, linked claims and contradictions implemented in this child, pending exact-head CI.",
     "main_quality_run": 43804109317,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "00a8d40bd2af8e8a4c1d4eb0234c6e78f956bd8f",
+    "checkpoint_parent_sha": "5f59fa3fe4ddbd9215e4927289cb18c169681ebe",
     "merged_prs": [
       184,
       185
