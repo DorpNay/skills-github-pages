@@ -3,8 +3,8 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
-    "main_commit_subject": "feat(ui): refine balanced Projects and Chats sidebar",
+    "main_sha": "b543e9f4b41d4acc46f59b39c05ed228704269a1",
+    "main_commit_subject": "test(ui): reopen settings for profile round-trip assertion",
     "main_commit_date": "2026-11-16T05:37:43Z",
     "last_functional_checkpoint_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
     "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
+    "checkpoint_parent_sha": "b543e9f4b41d4acc46f59b39c05ed228704269a1",
     "merged_prs": [
       184,
       185

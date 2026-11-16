@@ -9,12 +9,12 @@
 - **Task ID:** LANDING-V2-2026-001.
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. No default PR branch; work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111.
-- **Documentation refresh parent:** `59899a12a2b703e10411a91feb16eb7ad90bc585`.
+- **Documentation refresh parent:** `b543e9f4b41d4acc46f59b39c05ed228704269a1`.
 - **Owner task:** OR-2026-11-16-007 resumes the detailed OR-2026-11-16-006 scope archived below.
 - **Scope:** existing 15-point programme in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K/K.5; K.6 is binding. No parallel backlog. Exclude owner-supplied primary model.
 - **Authorization:** direct commits to main, assistant-side tools/plugins/skills, automatic Pages publication. No VPS deployment, paid provisioning, secrets, destructive operations, force-push, rebase/reset or history rewrite.
 - **Tracker:** one 15-row K.5 table plus K.6 acceptance contract.
-- **Live code checkpoint:** `59899a12a2b703e10411a91feb16eb7ad90bc585` — K.1.1 sidebar refinement; profile round-trip E2E now explicitly reopens settings after import; exact-head checks pending; 0 open PRs; issue #111.
+- **Live code checkpoint:** `59899a12a2b703e10411a91feb16eb7ad90bc585` — K.1.1 sidebar implementation; profile import/export E2E now reloads from persisted state before re-export; exact-head checks pending; 0 open PRs; issue #111.
 - **AgentRun UI:** Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests; published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exactly matches 377818c.
 - **Gateway boundary:** UI did not change backend. Latest focused Gateway #43797179042 is on parent `680ab02289c8517dbe9e36b53abb66317dda5f86`, Python 3.12/13/14.
 - **Agents maturity:** IMPLEMENTED / VERIFIED PROTOTYPE. Safe `single`/`team_review`; per-chat strategy; General coordinator pinned; explicit `strategy_id`; real researcher/reviewer/synthesis task states/dependencies. Same-run DAG in SQLite, task-ID Fernet payloads. One worker/model slot means sequential inference; logical roles are not OS processes. Feature flag false; tools/shell/filesystem/network disabled. No Coder sandbox or target runtime.
