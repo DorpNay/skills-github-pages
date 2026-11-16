@@ -42,6 +42,8 @@ const suites = {
     }],
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
+      includes('id="deepResearchMethodSelect"', 'Deep Research method selection must be separate from AgentRun.');
+      includes("deepResearchMethod:chat.deepResearchMethod", 'Run telemetry must preserve the selected Deep Research method.');
       includes('function collectResearchEvidence(messages)', 'Research traces must preserve actual source results returned by tools.');
       includes('function normalizeResearchEvidenceUrl(rawUrl)', 'Research evidence links must be validated as public HTTPS URLs.');
       includes('const researchMessages = workChat.messages.slice(researchStart)', 'Evidence must come from the actual researcher execution.');

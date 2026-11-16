@@ -46,6 +46,7 @@ async function setDeepResearchMethod(page, method) {
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="research"]').click();
   await page.locator('#deepResearchMethodSelect').selectOption(method);
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').click();
 }
 async function setSkillPreset(page, preset) {
   await page.locator('#skillPresetSelect').evaluate((control, value) => {
