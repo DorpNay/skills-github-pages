@@ -225,3 +225,30 @@ PR #128 is the canonical research/specification home for the durable AgentRun/ta
 **Runtime checkpoint:** PR #134 now contains an offline file-backed AgentRun/task lifecycle persistence prototype on a branch from `main`; its tested payload/result contract accepts bounded scalar metadata and reference lists only. This does **not** provide a durable AgentRun API, authenticated scope grants, real workers, tool execution, approvals, artifact registry/validator or UI run controls.
 
 Acceptance is owned by PR #128 research/eval contracts plus PR #134 prototype review. No runtime controls should be exposed by this UI architecture note until the missing API/permission/execution contracts are implemented and tested.
+
+## 0.3 Owner-approved expansion — OR-2026-11-16-012
+
+Owner approved Plan 1 (AgentRun main-chat integration/status) and Plan 2 (Deep Research method separation), and expanded the target agent/research/skills experience. Binding contracts: addendum K.6.17–K.6.18. This section distinguishes desired catalog shape from currently available handlers.
+
+### Agents — target catalog
+- **Discover:** curated ready-made agents and scenario cards, each with real capability requirements and availability labels.
+- **My Agents:** versioned personal library; inspect, clone, configure, export, disable and rollback.
+- **Create agent:** role/profession, identity/persona, instructions, languages, model preference, skills, allowed knowledge/source collections, output contract, budgets and permission preview.
+- **Teams:** validated DAG/scenario builder; single, team_review and coder_review are the existing executable strategies. Other saved arrangements remain templates until handlers exist.
+- **Live dialogue:** optional two-agent conversation in the originating chat with the owner as conductor; typed turns, attribution and user-controlled pause/redirect/stop. No hidden background discussion.
+- **Simulation Lab:** future bounded synthetic population experiments, not thousands of LLM sessions or human-behavior evidence.
+- **Runs:** current/historical/next declared actions, approvals, task/model/resource status and outputs. Reuse K.6.16 event contract.
+
+### Models, Skills and permissions
+- Multiple compact installed models may be registered with exact revision/digest/license, quantization, capabilities, languages, context, memory footprint, benchmark and latency. A router selects by task and measured budget; installation of several models does not promise concurrent inference.
+- Skills remain versioned procedures/instructions; import is inert and never grants tool permissions. Agent Library identity, Skills, project knowledge/Memory, research evidence and model weights remain separate stores.
+- Browser, internet, database, files, parser/converter, OCR and sandbox are individually granted typed capabilities, scoped to agent+run+resource. Read/write are separate; high-risk actions require approval and audit.
+
+### Deep Research — target catalog
+- Quick source lookup and the existing multi-step evidence report are the first distinct choices. Comparative analysis, literature review, fact-check/source audit and Notebook synthesis remain disabled until their own method handlers, provenance/citation policy and golden-set evaluations exist.
+- Search breadth, effort level, AgentRun execution strategy and research method remain orthogonal.
+
+### Skills — target catalog
+- Browse/create/import from sources; review provenance/license/security; test/evaluate; manage dependencies; version/export/rollback; preview exact capabilities. A Skill contributes procedure only and cannot silently gain tools or data access.
+
+**Current maturity:** menu/catalog shape SPECIFIED and owner-approved.
