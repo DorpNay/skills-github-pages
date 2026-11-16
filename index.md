@@ -1181,7 +1181,7 @@ permalink: /
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
             deepResearchMethod: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod : (item.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'),
-            multiAgentEnabled: typeof item.multiAgentEnabled === 'boolean' ? item.multiAgentEnabled : (item.deepResearchMethod === 'multi_step_evidence_report'),
+            multiAgentEnabled: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod === 'multi_step_evidence_report' : item.multiAgentEnabled === true,
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
             executionMode: ['direct','agent'].includes(item.executionMode) ? item.executionMode : 'direct',
             ...(typeof item.activeAgentRunId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(item.activeAgentRunId) ? { activeAgentRunId: item.activeAgentRunId } : {}),
@@ -5881,7 +5881,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           processingMode: ['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
           searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'normal',
           deepResearchMethod: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod:(chat.multiAgentEnabled===true?'multi_step_evidence_report':'none'),
-          multiAgentEnabled: chat.multiAgentEnabled===true,
+          multiAgentEnabled: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod) ? chat.deepResearchMethod === 'multi_step_evidence_report' : chat.multiAgentEnabled===true,
           skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',
           messages: chat.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).slice(0,10000).map((m) => ({
             role: m.role, content: typeof m.content === 'string' ? m.content.slice(0,30000) : '',
