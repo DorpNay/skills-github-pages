@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main e4b791076d19e312265eee301c417cc257f3fc48; 0 open PRs; issue #111. Gateway #43762493535, Quality #43762493518 (all 7 jobs incl. Chromium), Freshness #43762493531, Provenance #43762493641, Graphify #43762493514 and Pages #43762493391 all PASS/SUCCESS. Public root meta exact. Current child stages Research Trace schema v4 same-model structured critic parsing/rendering; exact-head CI pending."
+    status: "NOW.md is the sole first-read checkpoint. Parent main f49d37641d81660ce0c8f757ed54a347ed23a77c; 0 open PRs; issue #111. This parent is documentation-only: Pages #43789721496 SUCCESS; Quality #43789722423 was IN_PROGRESS; Freshness #43789722327 failed because the five-file checkpoint refresh had not yet followed the docs commit. Code-bearing parent 1851b7204b1efc6216d139d97653e0dbfc5c4668 had 131 Chromium passes / 2 stale assertions; current child fixes test assertions only. Source review in INTEL/TECHNIQUE_REGISTER; 507 normalized URLs. No model/runtime installed."
     branch: "main"
-    base_main: "e4b791076d19e312265eee301c417cc257f3fc48"
+    base_main: "f49d37641d81660ce0c8f757ed54a347ed23a77c"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
     exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Verify exact-head CI for Research Trace schema v4 structured same-model review. If green, connect explicit Save to Gateway to claim/contradiction APIs using only saved source-quote evidence IDs; then implement provider adapters and resumable run state."
+    next: "Verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision. If green, connect explicit Save to Gateway to claim/contradiction APIs using only saved source-quote evidence IDs; then extend existing AgentRun to bounded specialist workers."
 
 
 
@@ -46,7 +46,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-16-DEEP-RESEARCH-STRUCTURED-REVIEW-001"
+  last_volley: "V-2026-11-16-OWNER-SOURCE-SWEEP-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -298,15 +298,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "e4b791076d19e312265eee301c417cc257f3fc48"
-  last_main_action: "Parent e4b791076d19e312265eee301c417cc257f3fc48: Gateway #43762493535 PASS (Python 3.12/13/14); Quality #43762493518 PASS all 7 jobs incl. Chromium and release contract; Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS; public meta exact. Current schema-v4 Research Trace child pending exact-head CI."
-  last_functional_checkpoint: "4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3"
-  main_quality: "Quality #43762493518 SUCCESS all 7 jobs incl. Chromium and published release contract."
-  main_freshness: "Freshness #43762493531 SUCCESS."
-  main_graphify: "Graphify #43762493514 SUCCESS."
-  main_gateway: "Gateway #43762493535 SUCCESS across Python 3.12/13/14."
-  main_provenance: "Provenance #43762493641 SUCCESS."
-  main_pages: "Pages #43762493391 SUCCESS; live root meta alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48."
+  verified_main: "f49d37641d81660ce0c8f757ed54a347ed23a77c"
+  last_main_action: "Parent f49d37641d81660ce0c8f757ed54a347ed23a77c is documentation-only: Pages #43789721496 SUCCESS; Quality #43789722423 IN_PROGRESS; Freshness #43789722327 failed because the prior docs-only commit had not yet refreshed the five required files. This direct child refreshes NOW/AGENTS/PROJECT_STATE/snapshot/VOLLEY_LOG and corrects two E2E assertions only."
+  last_functional_checkpoint: "1851b7204b1efc6216d139d97653e0dbfc5c4668"
+  main_quality: "Quality #43789722423 IN_PROGRESS at parent capture; exact-child rerun required. Parent code-bearing SHA 1851 had 131 Chromium passes and 2 stale assertions; current child fixes only those assertions."
+  main_freshness: "Freshness #43789722327 FAILED on parent f49d because snapshot lagged; 21 deterministic unit tests passed. This direct child updates all five required refresh paths."
+  main_graphify: "Not triggered for documentation-only parent f49d; latest code-bearing parent 1851 Graphify check succeeded."
+  main_gateway: "Not triggered for documentation-only parent; no Gateway files changed. Last known Gateway #43762493535 passed on prior Gateway-bearing parent."
+  main_provenance: "Not triggered for documentation-only parent; no model/dependency manifest changes. Last known Provenance #43762493641 passed on prior manifest-bearing parent."
+  main_pages: "Pages #43789721496 SUCCESS for f49d; live root meta revision recheck pending."
   merged_prs: "Historical merge records remain history only; current delivery is direct to main under explicit owner policy."
   open_pull_requests: "0 live open PRs."
   open_issues: "Issue #111 only; owner-controlled host/release gates."

@@ -168,7 +168,7 @@ test('research trace explicitly persists captured excerpts to the scoped Gateway
   await page.locator('#chatBox [data-action="open-trace"]').last().click();
   const traceId = await page.locator('#chatBox [data-action="open-trace"]').last().getAttribute('data-trace-id');
   const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
-  expect(trace.schemaVersion).toBe(3);
+  expect(trace.schemaVersion).toBe(4);
   expect(trace.chatId).toBeTruthy();
   expect(trace.sources).toHaveLength(1);
   expect(evidencePosts).toHaveLength(0);

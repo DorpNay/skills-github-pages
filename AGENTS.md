@@ -36,15 +36,20 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111.
-- Gateway #43762493535 PASS across Python 3.12/13/14; Quality #43762493518 PASS all 7 jobs including Chromium and published release contract; Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS.
-- Live canonical root meta `alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48` verified.
-- Current child stages Research Trace schema v4: same-model (not independent) structured critic output, bounded JSON parser, source-ID allowlist and relation/contradiction linkage validation, safe rendering and E2E coverage. Exact-head CI pending.
-- Next: verify exact-head Quality/Chromium, Gateway, Freshness, Provenance, Graphify, Pages and public revision. Then connect explicit Save to Gateway to claim/contradiction APIs using only source quote IDs returned by successful writes.
+- Parent main `f49d37641d81660ce0c8f757ed54a347ed23a77c`; Open PRs: none; Open issues: #111.
+- Parent f49d is documentation-only. Pages #43789721496 SUCCESS; Quality #43789722423 was IN_PROGRESS at capture; Freshness #43789722327 failed because the five-file state refresh had not yet followed the documentation commit. The current direct child refreshes all five required state files.
+- Code-bearing parent 1851b7204b1efc6216d139d97653e0dbfc5c4668: Chromium #43783851413 had 131 passed / 2 stale test assertions; this child updates only the assertions (source_id across the full message set; Research Trace schema v4).
+- The owner-directed source sweep is recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md: 507 normalized unique URLs after adding 29 primary-source refs. Exa and Firecrawl are assistant-side research tools, not aLandi runtime dependencies.
+- No model weights, external runtime, UI framework or product dependency was installed. Bonsai 2 2B remains a candidate; Needle 2 is deferred pending lifecycle and multilingual tests; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
+- Next: verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision. Then connect explicit Save to Gateway to claim/contradiction APIs using only source quote IDs returned by successful writes.
 
 ## Targeted UI source review — 2026-11-16
 
 Official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav were rechecked. Reuse disclosure semantics, focus return, Escape/Tab/outside dismissal, shallow navigation, visible focus and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.
+
+## Owner-directed agent/model source review — 2026-11-16
+
+INTEL.md and docs/TECHNIQUE_REGISTER_RU.md record the 2026-11-16 source sweep and aLandi-native dispositions. No external agent platform, inference runtime, model weights or React UI dependencies were adopted. Use the existing AgentRun/SQLite and capability contracts; imported patterns do not grant permissions.
 
 ## OR-008 source and route policy
 
