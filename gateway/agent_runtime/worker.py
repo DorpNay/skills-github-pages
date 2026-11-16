@@ -131,6 +131,11 @@ class AgentRunWorker:
              "execution_mode": "fan_out_fan_in", "context_isolation": "per_task",
              "model_concurrency": 1, "parallel_inference": False,
              "tools": [], "filesystem": False, "network": False},
+            {"id": "coder_review", "label": "Coder: черновик + проверка (без запуска)",
+             "status": "available", "task_count": 3, "roles": ["coder", "reviewer", "general"],
+             "execution_mode": "sequential_review", "context_isolation": "per_task",
+             "model_concurrency": 1, "parallel_inference": False,
+             "tools": [], "filesystem": False, "network": False},
         ]
 
     async def start(self) -> None:
@@ -151,12 +156,12 @@ class AgentRunWorker:
         prompt = prompt.strip()
         if len(prompt) > self.max_prompt_chars:
             raise AgentRunError("prompt exceeds the configured size limit")
-        if not isinstance(strategy_id, str) or strategy_id not in {"single", "team_review"}:
+        if not isinstance(strategy_id, str) or strategy_id not in {"single", "team_review", "coder_review"}:
             raise AgentRunError("unknown AgentRun strategy")
         if not isinstance(profile_id, str) or profile_id not in PROFILE_PROMPTS:
             raise AgentRunError("unknown agent profile")
-        if strategy_id == "team_review" and profile_id != "general":
-            raise AgentRunError("team_review uses fixed researcher, reviewer and coordinator roles; profile_id must be general")
+        if strategy_id in {"team_review", "coder_review"} and profile_id != "general":
+            raise AgentRunError("team_review and coder_review use fixed specialist roles; profile_id must be general")
         selected_model = model_id or (self.allowed_models[0] if self.allowed_models else "")
         if selected_model not in self.allowed_models:
             raise AgentRunError("model is not in the configured allowlist")
@@ -171,7 +176,7 @@ class AgentRunWorker:
                     "independent reviewer: challenge assumptions, identify risks, edge cases, counterarguments and missing information without seeing another specialist's work."),
             }
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
-        stage = profile_id if strategy_id == "single" else f"team_review:{profile_id}"
+        stage = profile_id if strategy_id == "single" else f"{strategy_id}:{profile_id}"
         run_args = {
             "idempotency_key": idempotency_key, "scope_kind": scope_kind, "scope_id": scope_id,
             "goal_ref": f"prompt-sha256:{prompt_hash}",
@@ -199,7 +204,7 @@ class AgentRunWorker:
                         max_attempts=self.max_attempts)
                 elif len(tasks) != 1 or tasks[0]["task_key"] != "model-completion":
                     raise AgentRunError("single strategy does not match the existing task graph")
-            else:
+            elif strategy_id == "team_review":
                 root_tasks: dict[str, dict[str, Any]] = {}
                 for task_key, specialist_profile in (("researcher", "researcher"), ("reviewer", "reviewer")):
                     task = self.store.enqueue_task(run_id=run_id, task_key=task_key,
@@ -216,6 +221,29 @@ class AgentRunWorker:
                              "worker_profile_id": "general", "max_output_tokens": self.max_output_tokens},
                     max_attempts=self.max_attempts,
                     depends_on=[root_tasks["researcher"]["task_id"], root_tasks["reviewer"]["task_id"]])
+            else:
+                coder = self.store.enqueue_task(run_id=run_id, task_key="coder",
+                    idempotency_key=hashlib.sha256(f"{idempotency_key}:coder".encode()).hexdigest(),
+                    payload={"task_type": "specialist_completion", "model_id": selected_model,
+                             "worker_profile_id": "coder", "max_output_tokens": self.max_output_tokens},
+                    max_attempts=self.max_attempts)
+                coder_prompt = self._team_specialist_prompt(
+                    prompt,
+                    "code drafting specialist: propose a minimal patch or implementation from the code and context supplied in the task. Do not claim repository access, file changes, command execution or tests; clearly state what remains unexecuted.",
+                )
+                self.payload_vault.put(run_id=coder["task_id"], kind="input",
+                    plaintext=json.dumps({"prompt": coder_prompt}, ensure_ascii=False, separators=(",", ":")))
+                reviewer = self.store.enqueue_task(run_id=run_id, task_key="reviewer",
+                    idempotency_key=hashlib.sha256(f"{idempotency_key}:reviewer".encode()).hexdigest(),
+                    payload={"task_type": "dependent_review", "model_id": selected_model,
+                             "worker_profile_id": "reviewer", "max_output_tokens": self.max_output_tokens},
+                    max_attempts=self.max_attempts, depends_on=[coder["task_id"]])
+                self.store.enqueue_task(run_id=run_id, task_key="synthesis",
+                    idempotency_key=hashlib.sha256(f"{idempotency_key}:synthesis".encode()).hexdigest(),
+                    payload={"task_type": "coder_synthesis", "model_id": selected_model,
+                             "worker_profile_id": "general", "max_output_tokens": self.max_output_tokens},
+                    max_attempts=self.max_attempts,
+                    depends_on=[coder["task_id"], reviewer["task_id"]])
         except Exception as exc:
             try:
                 current = self.store.get_run(run_id)
@@ -291,7 +319,7 @@ class AgentRunWorker:
                 return True
             if tasks and all(item["state"] == "succeeded" for item in tasks):
                 stage = str(run.get("metadata", {}).get("stage", ""))
-                if stage.startswith("team_review:"):
+                if stage.startswith(("team_review:", "coder_review:")):
                     synthesis = next((item for item in tasks if item["task_key"] == "synthesis"), None)
                     final_output = self._read_output(synthesis["task_id"]) if synthesis is not None else None
                     if final_output is None:
@@ -307,7 +335,7 @@ class AgentRunWorker:
         task = self.store.get_task(claim.task_id)
         payload = self._json_object(task.get("payload", task.get("payload_json")))
         task_type = payload.get("task_type", "model_completion")
-        if task_type not in {"model_completion", "specialist_completion", "team_synthesis"}:
+        if task_type not in {"model_completion", "specialist_completion", "dependent_review", "team_synthesis", "coder_synthesis"}:
             self._fail_claim(run_id, claim, "worker_policy_rejected", retryable=False)
             return True
         model_id = payload.get("model_id", "")
@@ -332,7 +360,7 @@ class AgentRunWorker:
                     output_record = saved_output
             else:
                 output_record = saved_output
-            if task_type == "team_synthesis":
+            if task_type in {"team_synthesis", "coder_synthesis"}:
                 self._persist_run_output(run_id, output_record)
             output_text = output_record["text"]
             self.store.complete_task(claim=claim, result={
@@ -415,12 +443,37 @@ class AgentRunWorker:
             return self._read_input(run_id)
         if task_type == "specialist_completion":
             return self._read_input(task["task_id"])
-        if task_type != "team_synthesis":
-            raise AgentRunError("unsupported AgentRun task type")
         goal = self._read_input(run_id)
         dependency_ids = self.store.list_task_dependencies(task_id=task["task_id"])
+        if task_type == "dependent_review":
+            if len(dependency_ids) != 1:
+                raise AgentPayloadError("dependent review requires exactly one completed draft")
+            dependency = self.store.get_task(dependency_ids[0])
+            output = self._read_output(dependency_ids[0])
+            if dependency["state"] != "succeeded" or output is None or dependency["task_key"] != "coder":
+                raise AgentPayloadError("the required Coder draft is unavailable")
+            prefix = "Original user task:\n" + goal + "\n\nCoder draft to review:\n"
+            suffix = (
+                "\n\nReviewer assignment: inspect the proposed patch for correctness, security, "
+                "compatibility, edge cases and missing tests. Do not execute code or claim tests ran. "
+                "Return concrete findings and any blocking issues."
+            )
+            available = self.max_prompt_chars - len(prefix) - len(suffix)
+            if available < 256:
+                raise AgentPayloadError("review context budget is too small")
+            report = output["text"]
+            if len(report) > available:
+                report = report[:available] + "\n[Coder draft truncated to the configured review context budget]"
+            prompt = prefix + report + suffix
+            if len(prompt) > self.max_prompt_chars:
+                raise AgentPayloadError("review prompt exceeds the configured context limit")
+            self.payload_vault.put(run_id=task["task_id"], kind="input",
+                plaintext=json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":")))
+            return prompt
+        if task_type not in {"team_synthesis", "coder_synthesis"}:
+            raise AgentRunError("unsupported AgentRun task type")
         if len(dependency_ids) != 2:
-            raise AgentPayloadError("team synthesis requires exactly two completed specialist reports")
+            raise AgentPayloadError("synthesis requires exactly two completed specialist reports")
         reports = []
         for dependency_id in dependency_ids:
             dependency = self.store.get_task(dependency_id)
@@ -428,12 +481,24 @@ class AgentRunWorker:
             if dependency["state"] != "succeeded" or output is None:
                 raise AgentPayloadError("a required specialist report is unavailable")
             reports.append((dependency["task_key"], output["text"]))
-        prefix = "Original user task:\n" + goal + "\n\nIndependent specialist reports (separate task contexts):\n"
-        suffix = (
-            "\n\nCoordinator assignment: synthesize a useful answer to the original task. "
-            "Preserve meaningful disagreement, label assumptions and evidence gaps, and do not "
-            "invent citations or claim verification that did not occur."
-        )
+        if task_type == "coder_synthesis":
+            if {key for key, _ in reports} != {"coder", "reviewer"}:
+                raise AgentPayloadError("Coder synthesis requires the Coder draft and reviewer report")
+            prefix = "Original user task:\n" + goal + "\n\nCoder draft and reviewer assessment (separate task contexts):\n"
+            suffix = (
+                "\n\nCoordinator assignment: deliver the useful proposed patch and its review findings. "
+                "Preserve blocking issues and evidence gaps. State clearly that no repository, shell or "
+                "test execution occurred; do not claim the patch was applied or verified."
+            )
+        else:
+            if {key for key, _ in reports} != {"researcher", "reviewer"}:
+                raise AgentPayloadError("team synthesis requires researcher and reviewer reports")
+            prefix = "Original user task:\n" + goal + "\n\nIndependent specialist reports (separate task contexts):\n"
+            suffix = (
+                "\n\nCoordinator assignment: synthesize a useful answer to the original task. "
+                "Preserve meaningful disagreement, label assumptions and evidence gaps, and do not "
+                "invent citations or claim verification that did not occur."
+            )
         available = self.max_prompt_chars - len(prefix) - len(suffix)
         if available < 256 * len(reports):
             raise AgentPayloadError("team synthesis context budget is too small for the supplied task")

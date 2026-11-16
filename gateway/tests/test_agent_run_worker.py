@@ -300,3 +300,60 @@ def test_team_review_cancellation_deletes_run_and_every_task_payload(tmp_path):
                 with pytest.raises(AgentPayloadError):
                     vault.get(run_id=reference, kind=kind)
     asyncio.run(scenario())
+
+
+def test_coder_review_runs_sequential_draft_review_and_coordinator_without_execution(tmp_path):
+    calls = []
+
+    async def handler(request):
+        body = json.loads(request.content)
+        calls.append(body)
+        user = body["messages"][1]["content"]
+        if "Assignment: code drafting specialist" in user:
+            answer = "PATCH DRAFT: change the parser with a bounded input check."
+        elif "Coder draft to review:" in user:
+            answer = "REVIEW REPORT: add a malformed-input regression test."
+        else:
+            answer = "COORDINATED CODER PATCH: proposed change plus review finding."
+        return httpx.Response(200, json={
+            "message": {"role": "assistant", "content": answer}, "done": True, "eval_count": 17,
+        })
+
+    async def scenario():
+        db_path, store, vault, client, worker = make_worker(tmp_path, handler)
+        await worker.start()
+        with pytest.raises(AgentRunError, match="profile_id must be general"):
+            worker.submit(prompt="PRIVATE CODER TASK", idempotency_key="coder-review-bad-profile",
+                scope_kind="project", scope_id="alpha", strategy_id="coder_review", profile_id="coder")
+        run = worker.submit(prompt="PRIVATE CODER TASK", idempotency_key="coder-review-1",
+            scope_kind="project", scope_id="alpha", strategy_id="coder_review")
+        snapshot = await wait_for_state(worker, run["run_id"], {"succeeded", "failed"})
+        await worker.stop()
+        await client.aclose()
+
+        assert snapshot["run"]["state"] == "succeeded"
+        assert snapshot["output"] == "COORDINATED CODER PATCH: proposed change plus review finding."
+        assert len(snapshot["tasks"]) == 3
+        tasks = {task["task_key"]: task for task in snapshot["tasks"]}
+        assert set(tasks) == {"coder", "reviewer", "synthesis"}
+        assert all(task["state"] == "succeeded" for task in tasks.values())
+        assert tasks["coder"]["depends_on"] == []
+        assert tasks["reviewer"]["depends_on"] == [tasks["coder"]["task_id"]]
+        assert tasks["synthesis"]["depends_on"] == [tasks["coder"]["task_id"], tasks["reviewer"]["task_id"]]
+        assert len(calls) == 3
+        assert all(call["model"] == MODEL and "tools" not in call for call in calls)
+        coder_prompt, reviewer_prompt, coordinator_prompt = [call["messages"][1]["content"] for call in calls]
+        assert "PRIVATE CODER TASK" in coder_prompt
+        assert "no filesystem access" in calls[0]["messages"][0]["content"].lower()
+        assert "PATCH DRAFT" not in coder_prompt and "REVIEW REPORT" not in coder_prompt
+        assert "PATCH DRAFT" in reviewer_prompt and "PRIVATE CODER TASK" in reviewer_prompt
+        assert "REVIEW REPORT" not in reviewer_prompt
+        assert "PATCH DRAFT" in coordinator_prompt and "REVIEW REPORT" in coordinator_prompt
+        for task in tasks.values():
+            assert json.loads(vault.get(run_id=task["task_id"], kind="input"))["prompt"]
+            assert json.loads(vault.get(run_id=task["task_id"], kind="output"))["text"]
+        raw_db = db_path.read_bytes()
+        for private_text in ("PRIVATE CODER TASK", "PATCH DRAFT", "REVIEW REPORT", "COORDINATED CODER PATCH"):
+            assert private_text.encode("utf-8") not in raw_db
+
+    asyncio.run(scenario())

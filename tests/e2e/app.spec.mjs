@@ -3947,6 +3947,7 @@ test('AgentRun persists the selected safe strategy and submits it without escala
       strategies: [
         { id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
         { id: 'team_review', label: 'Analyst + reviewer + coordinator', status: 'available', task_count: 3, roles: ['researcher', 'reviewer', 'general'], execution_mode: 'fan_out_fan_in', context_isolation: 'per_task', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
+        { id: 'coder_review', label: 'Coder draft + review (no execution)', status: 'available', task_count: 3, roles: ['coder', 'reviewer', 'general'], execution_mode: 'sequential_review', context_isolation: 'per_task', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
         { id: 'unsafe_shell', label: 'Unsafe shell team', status: 'available', task_count: 2, execution_mode: 'parallel', model_concurrency: 2, parallel_inference: true, tools: ['shell'], filesystem: true, network: true }
       ],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
@@ -3978,15 +3979,25 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   await page.locator('#functionsMenuSummary').click();
   await page.locator('#functionsMenu [data-function="agents"]').click();
   await expect(page.locator('#agentRuntimeStrategy')).toBeEnabled();
-  await expect(page.locator('#agentRuntimeStrategy option')).toHaveCount(2);
+  await expect(page.locator('#agentRuntimeStrategy option')).toHaveCount(3);
   await expect(page.locator('#agentRuntimeStrategy option[value="unsafe_shell"]')).toHaveCount(0);
   await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('single');
   await page.locator('#agentRuntimeProfile').selectOption('coder');
+  await page.locator('#agentRuntimeStrategy').selectOption('coder_review');
+  await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('Coder');
+  await expect(page.locator('#agentRuntimeProfile')).toHaveValue('general');
+  await expect(page.locator('#agentRuntimeProfile')).toBeDisabled();
+  const selectedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
+  const savedCoderStrategy = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id)?.agentRuntimeStrategy;
+  });
+  expect(savedCoderStrategy).toBe('coder_review');
   await page.locator('#agentRuntimeStrategy').selectOption('team_review');
   await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('последовательно');
   await expect(page.locator('#agentRuntimeProfile')).toHaveValue('general');
   await expect(page.locator('#agentRuntimeProfile')).toBeDisabled();
-  const selectedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   const saved = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');

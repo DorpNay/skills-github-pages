@@ -1158,7 +1158,7 @@ permalink: /
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
-            agentRuntimeStrategy: ['single','team_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
+            agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
             privateMemoryUsed: item.privateMemoryUsed === true,
             customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
             customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
@@ -2876,7 +2876,7 @@ permalink: /
     const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal','custom']);
     const VALID_AGENT_SCENARIOS = new Set(['general','research','software','product','due-diligence','custom']);
     const VALID_AGENT_ROLES = new Set(['balanced','research','software','product','custom']);
-    const VALID_AGENT_RUNTIME_STRATEGIES = new Set(['single','team_review']);
+    const VALID_AGENT_RUNTIME_STRATEGIES = new Set(['single','team_review','coder_review']);
     function ensureChatFunctionSettings(chat) {
       if (!chat || typeof chat !== 'object') return false;
       let changed = false;
@@ -3745,6 +3745,13 @@ let agentRuntimeRefreshPromise = null;
             && item.roles[2] === 'general') {
           result.push('team_review');
           seen.add('team_review');
+        } else if (item.id === 'coder_review' && item.task_count === 3
+            && item.execution_mode === 'sequential_review' && item.context_isolation === 'per_task'
+            && Array.isArray(item.roles) && item.roles.length === 3
+            && item.roles[0] === 'coder' && item.roles[1] === 'reviewer'
+            && item.roles[2] === 'general') {
+          result.push('coder_review');
+          seen.add('coder_review');
         }
       }
       return result;
@@ -3753,7 +3760,8 @@ let agentRuntimeRefreshPromise = null;
     function agentRuntimeStrategyLabel(strategyId) {
       const english=getUiLanguage()==='en';
       if(strategyId==='single')return english?'One specialist':'Один специалист';
-      if(strategyId==='team_review')return english?'Team · researcher, reviewer, coordinator':'Команда · исследователь, рецензент, координатор';
+      if(strategyId==='team_review')return english?'Team · researcher + reviewer → coordinator':'Команда · исследователь + рецензент → координатор';
+      if(strategyId==='coder_review')return english?'Coder · draft + review (no execution)':'Coder · черновик + проверка (без запуска)';
       return english?'Unavailable':'Недоступно';
     }
 
@@ -3764,8 +3772,11 @@ let agentRuntimeRefreshPromise = null;
           ? 'One task and one model call. The simplest execution path.'
           : 'Одна задача и один вызов модели. Самый простой путь.',
         team_review:english
-          ? 'Three isolated task contexts: researcher → reviewer → coordinator. Model calls are sequential through one slot; no tools, web, shell or filesystem.'
-          : 'Три изолированных контекста: исследователь → рецензент → координатор. Вызовы модели идут последовательно через один слот; без инструментов, веба, shell и файлов.'
+          ? 'Three isolated task contexts: researcher and reviewer work independently, then the coordinator synthesizes. Model calls are sequential through one slot; no tools, web, shell or filesystem.'
+          : 'Три изолированных контекста: исследователь и рецензент работают независимо, затем координатор объединяет результаты. Вызовы модели последовательно через один слот; без инструментов, веба, shell и файлов.',
+        coder_review:english
+          ? 'Coder drafts from text you supply; Reviewer checks that draft; Coordinator returns the result. One model slot, sequential calls, no repository access, tools, shell, filesystem or test execution.'
+          : 'Coder готовит черновик по переданному тексту; Reviewer проверяет черновик; Coordinator формирует итог. Один слот модели, последовательные вызовы; без доступа к репозиторию, инструментов, shell, файлов и запуска тестов.'
       };
       $('agentRuntimeStrategyHelp').textContent=help[strategyId]|| (english?'Select an available strategy.':'Выберите доступную стратегию.');
     }
@@ -3895,10 +3906,10 @@ let agentRuntimeRefreshPromise = null;
     function updateAgentRuntimeStartAvailability() {
       const selectedStrategy=$('agentRuntimeStrategy').value;
       const strategyAvailable=agentRuntimeSafeStrategies.includes(selectedStrategy);
-      const teamReview=selectedStrategy==='team_review';
+      const fixedTeamStrategy=['team_review','coder_review'].includes(selectedStrategy);
       const generalProfileAvailable=[...$('agentRuntimeProfile').options].some(option=>option.value==='general');
-      if(teamReview&&generalProfileAvailable)$('agentRuntimeProfile').value='general';
-      $('agentRuntimeProfile').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||teamReview;
+      if(fixedTeamStrategy&&generalProfileAvailable)$('agentRuntimeProfile').value='general';
+      $('agentRuntimeProfile').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||fixedTeamStrategy;
       $('agentRuntimeStrategy').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||!strategyAvailable;
       $('agentRuntimeStart').disabled=!agentRuntimeReady
         ||Boolean(agentRuntimeActiveRun)
@@ -4052,7 +4063,7 @@ let agentRuntimeRefreshPromise = null;
           );
           agentRuntimeSafeStrategies=normalizeAgentRuntimeStrategies(catalog.strategies);
           const hasGeneralProfile=catalog.profiles.some(profile=>profile?.id==='general');
-          if(!hasGeneralProfile)agentRuntimeSafeStrategies=agentRuntimeSafeStrategies.filter(strategy=>strategy!=='team_review');
+          if(!hasGeneralProfile)agentRuntimeSafeStrategies=agentRuntimeSafeStrategies.filter(strategy=>!['team_review','coder_review'].includes(strategy));
           if(!agentRuntimeSafeStrategies.includes('single'))throw new Error('empty-runtime-strategy-catalog');
           const strategyCount=replaceAgentRuntimeOptions(
             $('agentRuntimeStrategy'),agentRuntimeSafeStrategies,
@@ -4128,7 +4139,7 @@ let agentRuntimeRefreshPromise = null;
         prompt,
         scope_kind:'conversation',
         scope_id:chat.id,
-        profile_id:strategyId==='team_review'?'general':$('agentRuntimeProfile').value,
+        profile_id:['team_review','coder_review'].includes(strategyId)?'general':$('agentRuntimeProfile').value,
         model_id:$('agentRuntimeModel').value,
         strategy_id:strategyId
       };
