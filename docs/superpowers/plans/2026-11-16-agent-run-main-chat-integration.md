@@ -1,6 +1,6 @@
 # Plan 1 — AgentRun main-chat integration and live status
 
-**Status:** PROPOSED — owner review required before code  
+**Status:** APPROVED BY OWNER — implementation authorized on 2026-11-16  
 **Owner request:** OR-2026-11-16-011  
 **Base:** `67ea5ba97e21f527d1eaff28cfddef274d2e98d7`  
 **Spec:** D-024; K.6.2, K.6.3, K.6.16; K.5 row 4.
@@ -87,3 +87,7 @@ Rollback: hide/disable the composer control and keep `ALANDI_AGENT_RUNS_ENABLED=
 ## Review focus
 
 Prompt/source injection, private/global/project memory scope, cross-chat status leakage, event replay, idempotency, cancellation races, stale polling, model allowlist changes, image inputs, XSS, screen-reader announcement spam and feature-off behavior.
+
+## Owner-approved ecosystem boundary — OR-012 / K.6.17
+
+This plan implements Phase A only. Keep interfaces compatible with a future versioned Agent Library and multi-model registry: strategy/profile IDs remain stable and capability-checked; context packets can later include approved Skill/source references; status events are reusable by Research and Skill jobs. Do not implement synthetic swarms, arbitrary browser/database/file tools, autonomous weight training or parallel multi-model execution as part of this first slice. Those require separate K.6.17 phases, policy and eval gates.
