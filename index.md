@@ -696,6 +696,22 @@ permalink: /
   </div>
 
   <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
+  <section id="agentRunChatStatus" class="hidden shrink-0 border-t border-cyan-900/50 bg-gray-900/95 px-3 py-2" aria-label="Статус AgentRun">
+    <div class="flex items-center gap-2">
+      <button id="agentRunChatStatusToggle" type="button" class="min-w-0 flex-1 flex items-center gap-2 text-left text-xs" aria-expanded="false" aria-controls="agentRunChatStatusDetails">
+        <span aria-hidden="true" class="text-cyan-300">◈</span>
+        <span class="font-semibold shrink-0">AgentRun</span>
+        <span id="agentRunChatStatusText" class="min-w-0 truncate text-gray-300" role="status" aria-live="polite">Проверка состояния…</span>
+        <span id="agentRunChatStatusChevron" aria-hidden="true" class="text-gray-500">⌄</span>
+      </button>
+      <button id="agentRunChatCancel" type="button" class="hidden rounded-lg border border-amber-700/60 px-2.5 py-1.5 text-[11px] text-amber-200" aria-label="Отменить AgentRun">Отменить</button>
+      <button id="agentRunChatDismiss" type="button" class="hidden rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-gray-400" aria-label="Скрыть статус AgentRun">×</button>
+    </div>
+    <div id="agentRunChatStatusDetails" class="hidden pt-2 space-y-2">
+      <ol id="agentRunChatTasks" class="space-y-1 text-[11px]" aria-label="Состояние задач AgentRun"></ol>
+      <ol id="agentRunChatEvents" class="max-h-24 overflow-y-auto space-y-1 text-[10px] text-gray-400" aria-label="Последние события AgentRun"></ol>
+    </div>
+  </section>
   <div id="searchStatus" data-tone="info" class="hidden px-4 py-2 bg-gray-800/80 border-t border-gray-700 text-xs text-blue-300 flex items-center gap-2 shrink-0" role="status" aria-live="polite">
     <span class="animate-spin" aria-hidden="true">⏳</span><span id="statusText">Выполняется запрос...</span><span class="status-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span><span id="thinkingTime" class="ml-auto text-[10px]">Прошло 00:00</span>
   </div>
@@ -1162,6 +1178,7 @@ permalink: /
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
             executionMode: ['direct','agent'].includes(item.executionMode) ? item.executionMode : 'direct',
             ...(typeof item.activeAgentRunId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(item.activeAgentRunId) ? { activeAgentRunId: item.activeAgentRunId } : {}),
+            ...(item.agentRunStatusSummary&&typeof item.agentRunStatusSummary.runId==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(item.agentRunStatusSummary.runId)&&['succeeded','failed','cancelled','budget_exhausted','timed_out'].includes(item.agentRunStatusSummary.state)?{agentRunStatusSummary:{runId:item.agentRunStatusSummary.runId,state:item.agentRunStatusSummary.state,updatedAt:Number.isFinite(item.agentRunStatusSummary.updatedAt)?item.agentRunStatusSummary.updatedAt:0}}:{}),
             privateMemoryUsed: item.privateMemoryUsed === true,
             customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
             customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
@@ -2018,6 +2035,8 @@ permalink: /
       projectTitle.classList.toggle('hidden',!activeProject);
       const box = $('chatBox');
       box.replaceChildren();
+      renderAgentRunChatStatus();
+      if(chat.activeAgentRunId&&!agentRuntimeActiveRun)resumeAgentRunForChat(chat);
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
         welcome.className = 'text-center text-gray-500 mt-10';
@@ -3858,6 +3877,99 @@ let agentRuntimeRefreshPromise = null;
       return true;
     }
 
+    const AGENT_RUN_EVENT_LABELS = Object.freeze({
+      run_created: {ru:'Задание принято',en:'Run accepted'},
+      task_enqueued: {ru:'Задача поставлена в очередь',en:'Task queued'},
+      task_claimed: {ru:'Worker начал задачу',en:'Worker claimed task'},
+      task_completed: {ru:'Задача завершена',en:'Task completed'},
+      task_failed: {ru:'Задача завершилась ошибкой',en:'Task failed'},
+      task_cancelled: {ru:'Задача отменена',en:'Task cancelled'},
+      task_lease_expired: {ru:'Задача возвращена в очередь',en:'Task returned to queue'},
+      run_started: {ru:'Выполнение начато',en:'Execution started'},
+      verification_started: {ru:'Проверка результата',en:'Verifying result'},
+      run_needs_human: {ru:'Требуется внимание',en:'Needs attention'},
+      run_succeeded: {ru:'Выполнение завершено',en:'Run completed'},
+      run_failed: {ru:'Выполнение завершилось ошибкой',en:'Run failed'},
+      run_cancelled: {ru:'Выполнение отменено',en:'Run cancelled'}
+    });
+    function agentRuntimeSafeEventLabel(event) {
+      const label=AGENT_RUN_EVENT_LABELS[event?.event_type];
+      if(!label||!Number.isInteger(event?.event_id)||event.event_id<0)return null;
+      return label[getUiLanguage()==='en'?'en':'ru'];
+    }
+    function renderAgentRunChatTasks(tasks) {
+      const list=$('agentRunChatTasks');
+      list.replaceChildren();
+      const english=getUiLanguage()==='en';
+      const roles={researcher:english?'Researcher':'Исследователь',reviewer:english?'Reviewer':'Рецензент',synthesis:english?'Coordinator':'Координатор','model-completion':english?'Specialist':'Специалист'};
+      const states={queued:english?'Queued':'В очереди',leased:english?'Running':'Выполняется',succeeded:english?'Completed':'Завершено',failed:english?'Failed':'Ошибка',cancelled:english?'Cancelled':'Отменено'};
+      const safe=(Array.isArray(tasks)?tasks:[]).filter(task=>task&&typeof task==='object'&&typeof task.task_id==='string'&&Object.prototype.hasOwnProperty.call(roles,task.task_key)).slice(0,12);
+      for(const task of safe) {
+        const item=document.createElement('li');
+        item.className='flex items-center justify-between gap-3 rounded-lg border border-gray-800 px-2 py-1.5';
+        const role=document.createElement('span');role.textContent=roles[task.task_key];
+        const state=document.createElement('span');state.className='text-gray-400';state.textContent=states[task.state]|| (english?'Unknown':'Неизвестно');
+        item.append(role,state);list.appendChild(item);
+      }
+      list.classList.toggle('hidden',safe.length===0);
+    }
+    function renderAgentRunChatEvents(events) {
+      const list=$('agentRunChatEvents');
+      if(!list)return;
+      for(const event of Array.isArray(events)?events:[]) {
+        const label=agentRuntimeSafeEventLabel(event);
+        if(!label||list.querySelector('[data-event-id="'+event.event_id+'"]'))continue;
+        const item=document.createElement('li');item.dataset.eventId=String(event.event_id);item.textContent=label;list.appendChild(item);
+      }
+      while(list.children.length>20)list.firstElementChild.remove();
+      list.scrollTop=list.scrollHeight;
+    }
+    function renderAgentRunChatStatus(run=null,snapshot=null) {
+      const panel=$('agentRunChatStatus'),chat=getCurrentChat();
+      if(!panel||!chat)return;
+      const active=run?.chatId===chat.id?run:(agentRuntimeActiveRun?.chatId===chat.id?agentRuntimeActiveRun:null);
+      const summary=chat.agentRunStatusSummary&&typeof chat.agentRunStatusSummary==='object'?chat.agentRunStatusSummary:null;
+      const runId=active?.id||(typeof chat.activeAgentRunId==='string'?chat.activeAgentRunId:null)||summary?.runId;
+      if(!runId){panel.classList.add('hidden');return;}
+      const state=snapshot?.run?.state||active?.latestSnapshot?.run?.state||summary?.state||'queued';
+      const statusText=active?.observationError
+        ? (getUiLanguage()==='en'?'Connection interrupted · check to resume':'Связь прервана · проверка возобновит наблюдение')
+        : agentRuntimeStatusText(state);
+      panel.classList.remove('hidden');
+      if($('agentRunChatStatusText').textContent!==statusText)$('agentRunChatStatusText').textContent=statusText;
+      const cancellable=Boolean(active)&&!new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']).has(state);
+      $('agentRunChatCancel').classList.toggle('hidden',!cancellable);
+      $('agentRunChatCancel').disabled=active?.cancelPending===true;
+      $('agentRunChatDismiss').classList.toggle('hidden',!summary||Boolean(active));
+      if(snapshot?.tasks)renderAgentRunChatTasks(snapshot.tasks);
+      else if(active?.latestSnapshot?.tasks)renderAgentRunChatTasks(active.latestSnapshot.tasks);
+      if(active?.chatEvents)renderAgentRunChatEvents(active.chatEvents);
+    }
+    function resumeAgentRunForChat(chat) {
+      if(!chat?.activeAgentRunId||agentRuntimeActiveRun)return;
+      let config;
+      try {config=getAlandiGatewayConfig();}
+      catch(_){renderAgentRunChatStatus();return;}
+      const run={id:chat.activeAgentRunId,afterEventId:0,startedAt:Date.now(),origin:'chat',chatId:chat.id,chatEvents:[]};
+      agentRuntimeActiveRun=run;
+      agentRuntimePollController=new AbortController();
+      renderAgentRunChatStatus(run);
+      const signal=agentRuntimePollController.signal;
+      void observeAgentRuntimeRun(config,run,signal).then(snapshot=>{
+        const ownerChat=chats.find(item=>item.id===chat.id);
+        if(!ownerChat||ownerChat.activeAgentRunId!==run.id||!snapshot?.run)return;
+        const state=snapshot.run.state;
+        if(!new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']).has(state))return;
+        ownerChat.agentRunStatusSummary={runId:run.id,state,updatedAt:Date.now()};
+        delete ownerChat.activeAgentRunId;
+        if(state==='succeeded'&&snapshot.output_available===true&&typeof snapshot.output==='string') {
+          ownerChat.messages.push({role:'assistant',content:snapshot.output.slice(0,65536),providerInfo:{provider:'alandi',providerLabel:'aLandi AgentRun',model:'',stage:'agent-run',at:new Date().toISOString()}});
+        } else {
+          ownerChat.messages.push({role:'assistant',content:(getUiLanguage()==='en'?'AgentRun ended: ':'AgentRun завершился: ')+agentRuntimeStatusText(state),error:state!=='cancelled'});
+        }
+        updateState([...chats],currentChatId);
+      });
+    }
     function renderAgentRuntimeTasks(tasks) {
       const list=$('agentRuntimeTasks');
       list.replaceChildren();
@@ -3994,66 +4106,15 @@ let agentRuntimeRefreshPromise = null;
     function renderAgentRuntimeEvents(events) {
       const list=$('agentRuntimeEvents');
       for(const event of events) {
-        if(!event||!Number.isInteger(event.event_id)||event.event_id<0)continue;
-        if(list.querySelector('[data-event-id="'+event.event_id+'"]'))continue;
+        const label=agentRuntimeSafeEventLabel(event);
+        if(!label||list.querySelector('[data-event-id="'+event.event_id+'"]'))continue;
         const item=document.createElement('li');
         item.dataset.eventId=String(event.event_id);
-        const eventType=typeof event.event_type==='string'?event.event_type.slice(0,64):'event';
-        const stage=typeof event.metadata?.stage==='string'?event.metadata.stage.slice(0,80):'';
-        item.textContent=stage?eventType+' · '+stage:eventType;
+        item.textContent=label;
         list.appendChild(item);
       }
       while(list.children.length>100)list.firstElementChild.remove();
       list.scrollTop=list.scrollHeight;
-    }
-
-    async function agentRuntimeFetch(config,path,options={}) {
-      const {signal,...requestOptions}=options;
-      const controller=new AbortController();
-      const abortParent=()=>controller.abort();
-      if(signal) {
-        if(signal.aborted)controller.abort();
-        else signal.addEventListener('abort',abortParent,{once:true});
-      }
-      const timeout=window.setTimeout(()=>controller.abort(),10000);
-      try {
-        const response=await fetch(config.baseUrl+path,{
-          ...requestOptions,
-          signal:controller.signal,
-          headers:{
-            Accept:'application/json',
-            Authorization:'Bearer '+config.key,
-            ...(requestOptions.headers||{})
-          },
-          cache:'no-store',
-          credentials:'omit'
-        });
-        const payload=await response.json().catch(()=>null);
-        if(!response.ok) {
-          const error=new Error('agent-runtime-http');
-          error.status=response.status;
-          throw error;
-        }
-        if(!payload||typeof payload!=='object')throw new Error('agent-runtime-invalid-response');
-        return payload;
-      } finally {
-        window.clearTimeout(timeout);
-        if(signal)signal.removeEventListener('abort',abortParent);
-      }
-    }
-
-    function agentRuntimeErrorText(error) {
-      const english=getUiLanguage()==='en';
-      const status=Number.isInteger(error?.status)?error.status:0;
-      if(error?.name==='AbortError')return english?'The request timed out. The task text is preserved.':'Истекло время запроса. Текст задания сохранён.';
-      if(status===400)return english?'The task or selected options were rejected (400). Check the prompt and selections.':'Gateway отклонил задание или выбранные параметры (400). Проверьте текст и параметры.';
-      if(status===401)return english?'Gateway authentication failed (401). Check the configured key.':'Gateway отклонил ключ доступа (401). Проверьте настройки подключения.';
-      if(status===403)return english?'Gateway denied access (403).':'Gateway запретил доступ (403).';
-      if(status===404)return english?'The AgentRun record was not found (404).':'Запись AgentRun не найдена (404).';
-      if(status===409)return english?'This idempotency key conflicts with another request (409).':'Ключ идемпотентности уже использован для другого задания (409).';
-      if(status===429)return english?'The worker queue is full (429). Retry after an active run completes.':'Очередь worker заполнена (429). Повторите после завершения активного задания.';
-      if(status===503)return english?'AgentRun is unavailable or disabled on the Gateway (503).':'AgentRun недоступен или выключен на Gateway (503).';
-      return english?'The Gateway request failed. The task text is preserved.':'Запрос к Gateway не выполнен. Текст задания сохранён.';
     }
 
     async function refreshAgentRunRuntime() {
@@ -4252,6 +4313,7 @@ let agentRuntimeRefreshPromise = null;
           throw new DOMException('Aborted','AbortError');
         }
         if(typeof options.onAccepted==='function')await options.onAccepted(runId);
+        renderAgentRunChatStatus(agentRuntimeActiveRun,{run:created.run,tasks:[]});
         const snapshot=await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
         const state=snapshot?.run?.state||null;
         const terminal=new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']).has(state);
@@ -4285,12 +4347,18 @@ let agentRuntimeRefreshPromise = null;
         while(Date.now()<deadline&&!signal.aborted&&agentRuntimeActiveRun?.id===run.id) {
           const events=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id)+'/events?after_event_id='+run.afterEventId+'&limit=100',{signal});
           if(Array.isArray(events.events)) {
+            run.chatEvents=Array.isArray(run.chatEvents)?run.chatEvents:[];
+            const knownIds=new Set(run.chatEvents.map(event=>event.event_id));
+            for(const event of events.events)if(event&&Number.isInteger(event.event_id)&&!knownIds.has(event.event_id)){run.chatEvents.push(event);knownIds.add(event.event_id);}
+            run.chatEvents=run.chatEvents.slice(-20);
+            renderAgentRunChatEvents(run.chatEvents);
             renderAgentRuntimeEvents(events.events);
             if(Number.isInteger(events.next_after_event_id))run.afterEventId=Math.max(run.afterEventId,events.next_after_event_id);
           }
           const snapshot=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{signal});
           latestSnapshot=snapshot;
           run.latestSnapshot=snapshot;
+          renderAgentRunChatStatus(run,snapshot);
           const state=snapshot.run?.state;
           $('agentRuntimeStatus').textContent=agentRuntimeStatusText(state);
           if(run.origin==='chat'&&$('statusText'))$('statusText').textContent='AgentRun · '+agentRuntimeStatusText(state);
@@ -4316,11 +4384,20 @@ let agentRuntimeRefreshPromise = null;
         }
       } catch(error) {
         if(error?.name!=='AbortError'&&agentRuntimeActiveRun?.id===run.id) {
+          run.observationError=true;
           $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error)+' '+(getUiLanguage()==='en'?'Use Check to resume observation.':'Нажмите «Проверить», чтобы возобновить наблюдение.');
+          renderAgentRunChatStatus(run);
         }
       } finally {
         const ownsCurrentObserver=agentRuntimePollController?.signal===signal;
         if(ownsCurrentObserver&&(terminalReached||signal.aborted)&&agentRuntimeActiveRun?.id===run.id) {
+          if(terminalReached&&latestSnapshot?.run?.state) {
+            const ownerChat=chats.find(item=>item.id===run.chatId);
+            if(ownerChat?.activeAgentRunId===run.id) {
+              ownerChat.agentRunStatusSummary={runId:run.id,state:latestSnapshot.run.state,updatedAt:Date.now()};
+              persistChats();
+            }
+          }
           agentRuntimeActiveRun=null;
           agentRuntimePollController=null;
           $('agentRuntimeCancel').disabled=true;
@@ -4328,6 +4405,7 @@ let agentRuntimeRefreshPromise = null;
           $('agentRuntimeModel').disabled=false;
           $('agentRuntimePrompt').disabled=false;
           updateAgentRuntimeStartAvailability();
+          renderAgentRunChatStatus();
         } else if(ownsCurrentObserver&&agentRuntimeActiveRun?.id===run.id) {
           $('agentRuntimeCancel').disabled=false;
         }
@@ -4359,6 +4437,7 @@ let agentRuntimeRefreshPromise = null;
       if(run.origin==='chat'&&run.chatId) {
         const chat=chats.find(item=>item.id===run.chatId);
         if(chat?.activeAgentRunId===run.id) {
+          chat.agentRunStatusSummary={runId:run.id,state:run.cancelResultState,updatedAt:Date.now()};
           delete chat.activeAgentRunId;
           const output=run.cancelResultState==='succeeded'&&run.latestSnapshot?.output_available===true&&typeof run.latestSnapshot.output==='string'
             ? run.latestSnapshot.output.slice(0,65536) : agentRuntimeStatusText(run.cancelResultState);
@@ -4370,7 +4449,24 @@ let agentRuntimeRefreshPromise = null;
       $('agentRuntimeModel').disabled=false;
       $('agentRuntimePrompt').disabled=false;
       updateAgentRuntimeStartAvailability();
+      renderAgentRunChatStatus();
     }
+
+    $('agentRunChatStatusToggle').addEventListener('click',()=>{
+      const details=$('agentRunChatStatusDetails'),button=$('agentRunChatStatusToggle');
+      const expanded=button.getAttribute('aria-expanded')!=='true';
+      button.setAttribute('aria-expanded',String(expanded));details.classList.toggle('hidden',!expanded);
+      $('agentRunChatStatusChevron').textContent=expanded?'⌃':'⌄';
+    });
+    $('agentRunChatCancel').addEventListener('click',()=>{
+      if(!agentRuntimeActiveRun||agentRuntimeActiveRun.chatId!==currentChatId)return;
+      agentRuntimeActiveRun.cancelPending=true;renderAgentRunChatStatus(agentRuntimeActiveRun);
+      void cancelAgentRuntimeRun();
+    });
+    $('agentRunChatDismiss').addEventListener('click',()=>{
+      const chat=getCurrentChat();if(!chat?.agentRunStatusSummary)return;
+      delete chat.agentRunStatusSummary;persistChats();renderAgentRunChatStatus();
+    });
 
     $('executionModeToggle').addEventListener('click',()=>{
       const chat=getCurrentChat();
@@ -5339,11 +5435,13 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           }
         });
         if(result?.state==='succeeded'&&result.outputAvailable&&typeof result.output==='string') {
+          chat.agentRunStatusSummary={runId:result.runId,state:'succeeded',updatedAt:Date.now()};
           chat.messages.push({role:'assistant',content:result.output.slice(0,65536),providerInfo:{provider:'alandi',providerLabel:'aLandi AgentRun',model:$('agentRuntimeModel').value,stage:'agent-run',at:new Date().toISOString()}});
           delete chat.activeAgentRunId;
           updateState([...chats]);
           hideStatus();
         } else if(result?.terminal) {
+          chat.agentRunStatusSummary={runId:result.runId,state:result.state,updatedAt:Date.now()};
           chat.messages.push({role:'assistant',content:english?'AgentRun ended without a successful result: '+agentRuntimeStatusText(result.state):'AgentRun завершился без успешного результата: '+agentRuntimeStatusText(result.state),error:true});
           delete chat.activeAgentRunId;
           updateState([...chats]);
