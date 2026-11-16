@@ -36,15 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `25c1dec66f0599ce54bf6fda743bef1c71e7dcc7`; Open PRs: none; Open issue: #111.
-- Gateway #43796730159 failed Python 3.12 `compileall` due duplicate `_remember_key` declaration. Quality #43796730165 was in progress at inspection; Ruff had reported the same syntax defect. Freshness #43796730096, Provenance #43796730135, Pages #43796729855 and Graphify #43796730277 succeeded on the exact parent.
-- Current child removes the duplicate declaration only; exact-child verification pending.
-- AgentRun prototype: additive SQLite dependency table, same-run edges, dependency-ready claims, task-ID-keyed Fernet payloads, `single` and `team_review` API strategies, two isolated specialists plus coordinator synthesis, run-level output compatibility.
-- Model inference serial at concurrency 1; no independent OS processes or parallel inference. Tools, filesystem, network and Coder execution disabled; feature flag off by default.
-- Bonsai PTQ1_0 artifact #14192531688 and Qwen3.5-2B artifact #14032317541 are staged and SHA-verified, not installed on target. No runtime/host verification.
-- Next: verify exact-child checks; only then wire strategy selection and task graph into Agents UI.
-
-
+- Parent main `680ab02289c8517dbe9e36b53abb66317dda5f86`; Open PRs: none; Open issue: #111.
+- Exact-head Gateway #43797179042, Quality #43797179025, Freshness #43797178997, Provenance #43797179026, Graphify #43797179000 and Pages #43797178161 all SUCCESS.
+- AgentRun backend is now a CI-verified native bounded DAG prototype: additive SQLite same-run task dependencies; dependency-ready scheduling; task-ID-keyed Fernet payloads; `single` and three-node `team_review` (researcher + reviewer + synthesis). One worker/model slot, serial inference. Tools/filesystem/network disabled; feature flag off. Agents UI not yet wired.
+- Bonsai PTQ1_0 and Qwen3.5-2B artifacts staged and SHA-verified, not target-installed. No host/runtime/device verification.
+- Owner request OR-2026-11-16-005 must be archived verbatim in NOW.md; K.6.13 is binding for Mini aLandi offline package, reconnect/failover, offline voice, project-scoped reviewed learning, curated Coder/code packs and explicit local-file permissions. K.5 remains the only status table.
+- Assistant tools: GitHub, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers and Superpowers installed/enabled; Exa, Code and Coder tools/skills available. Twilio Developer Kit is available as skills only, with no authenticated Twilio account/provider. No standalone Codex connector surfaced. None implies aLandi runtime integration.
+- Next: archive OR-005 + K.6.13; then Agents UI/Research Save; Coder workspace/sandbox; project-learning memory; Mini aLandi package with offline voice/reconnect; secure local files and pinned code/API packs.
 ## Targeted UI source review — 2026-11-16
 
 Official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav were rechecked. Reuse disclosure semantics, focus return, Escape/Tab/outside dismissal, shallow navigation, visible focus and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.

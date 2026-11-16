@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "25c1dec66f0599ce54bf6fda743bef1c71e7dcc7",
-    "main_commit_subject": "feat(agents): add bounded specialist DAG execution",
-    "main_commit_date": "2026-11-16T03:10:48Z",
+    "main_sha": "680ab02289c8517dbe9e36b53abb66317dda5f86",
+    "main_commit_subject": "fix(agents): remove duplicate worker method declaration",
+    "main_commit_date": "2026-11-16T03:16:20Z",
     "last_functional_checkpoint_sha": "fb9c9d3a1cf06fe0e07606ad816767e00686a83f",
-    "last_functional_milestone": "AgentRun installed-only model discovery is implemented on fb9c9d3: configured allowlist intersects live Ollama /api/tags; Qwen3.5-2B is optional and 4B remains default. Bonsai PTQ1_0 artifact is SHA-verified in Actions but not installed. AgentRun still runs one task per run; no task DAG or per-task context.",
-    "main_quality_run": 43796730165,
-    "main_pages_deployment_run": 43796729855,
+    "last_functional_milestone": "Native bounded AgentRun DAG prototype is implemented on main and exact-head CI verified at 680ab02289c8517dbe9e36b53abb66317dda5f86: same-run task dependencies, task-ID Fernet payloads, single/team_review strategy and synthesis. One worker/model slot keeps inference serial. Agents UI not wired; tools/filesystem/network disabled; feature-off; no sandbox or host installation.",
+    "main_quality_run": 43797179025,
+    "main_pages_deployment_run": 43797178161,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -261,7 +261,7 @@
       "pages_run": 43762493391,
       "revision_verification": "Uncached TinyFish fetch returned alandi-build-revision exact e4b791076d19e312265eee301c417cc257f3fc48."
     },
-    "owner_request": "OR-2026-11-16-004",
+    "owner_request": "OR-2026-11-16-005",
     "main_gateway_status": "SUCCESS across Python 3.12/13/14."
   },
   "interpretation": {
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-AGENT-DAG-FIX-001",
+  "last_volley": "V-2026-11-16-OWNER-MINIALANDI-SCOPE-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "25c1dec66f0599ce54bf6fda743bef1c71e7dcc7",
+    "checkpoint_parent_sha": "680ab02289c8517dbe9e36b53abb66317dda5f86",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Verify corrected AgentRun backend exact HEAD (Gateway, Quality/Chromium, Freshness, Provenance, Graphify and Pages).",
-      "Wire single/team_review strategy selection and per-task DAG status into Agents UI, disclosing serial inference and disabled tools/filesystem/network.",
-      "Connect Research Trace claim/contradiction Save; then continue provider adapters and resumable research in K.5 order."
+      "Wire the real single/team_review strategy selector and per-task DAG state into Agents UI, disclosing the one serial model slot and disabled tool/filesystem/network capabilities; then connect explicit Research Trace claim/contradiction Save.",
+      "Implement a real bounded Coder workspace/sandbox with repo/file-map, patch preview, allowlisted tests and artifacts; collect and license-review small pinned code/API/landing knowledge packs.",
+      "Implement reviewed project-scoped learning memory (distinct from weight training), then Mini aLandi installer/package/runtime with offline chat, local voice, safe long-disconnect reconnect and durable replay; harden explicit local-file permissions, backup/restore and offline tests."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -414,32 +414,33 @@
     "graphify": {
       "run": 43762493514,
       "status": "PASS"
-    }
+    },
+    "owner_request": "OR-2026-11-16-005"
   },
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
-  "owner_task": "LANDING-V2-2026-001: finish the existing 15-point programme; current owner prompts and next step are in NOW.md. No active PR; issue #111 is owner/environment gated.",
-  "main_gateway_run": 43796730159,
-  "main_quality_run": 43796730165,
-  "main_pages_deployment_run": 43796729855,
-  "main_freshness_run": 43796730096,
-  "main_provenance_run": 43796730135,
-  "main_graphify_run": 43796730277,
+  "owner_task": "LANDING-V2-2026-001 / K.5; OR-2026-11-16-005 adds Mini aLandi offline runtime/reconnect/voice, persistent reviewed project-learning agents, curated Coder knowledge packs and explicit scoped local-file workspace. K.6.13 is binding; no parallel backlog.",
+  "main_gateway_run": 43797179042,
+  "main_quality_run": 43797179025,
+  "main_pages_deployment_run": 43797178161,
+  "main_freshness_run": 43797178997,
+  "main_provenance_run": 43797179026,
+  "main_graphify_run": 43797179000,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "In progress at checkpoint; Ruff gate reported duplicate _remember_key declaration.",
-  "main_pages_status": "Pages #43796729855 SUCCESS; live root revision not rechecked.",
-  "main_freshness_status": "Freshness #43796730096 SUCCESS.",
-  "main_provenance_status": "Provenance #43796730135 SUCCESS.",
-  "main_graphify_status": "Graphify #43796730277 SUCCESS.",
-  "main_gateway_status": "Gateway #43796730159 FAILURE: Python 3.12 compileall duplicate _remember_key declaration.",
-  "owner_request": "OR-2026-11-16-004",
+  "main_quality_status": "SUCCESS on exact HEAD.",
+  "main_pages_status": "SUCCESS on exact HEAD; independent public revision fetch pending.",
+  "main_freshness_status": "SUCCESS on exact HEAD.",
+  "main_provenance_status": "SUCCESS on exact HEAD.",
+  "main_graphify_status": "SUCCESS on exact HEAD.",
+  "main_gateway_status": "PASS on exact HEAD.",
+  "owner_request": "OR-2026-11-16-005",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
     "root_revision": "25c1dec66f0599ce54bf6fda743bef1c71e7dcc7",
-    "pages_run": 43796729855,
-    "revision_verification": "Pages #43796729855 SUCCESS for parent main 25c1dec66f0599ce54bf6fda743bef1c71e7dcc7; live root revision pending recheck."
+    "pages_run": 43797178161,
+    "revision_verification": "Pages #43797178161 SUCCESS on main 680ab02289c8517dbe9e36b53abb66317dda5f86; independent live alandi-build-revision check pending."
   }
 }
