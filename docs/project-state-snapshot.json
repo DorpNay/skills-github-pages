@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "9aec46084686077e6975cf7deb504305953725e1",
-    "main_commit_subject": "docs(state): repair exact freshness handoff checkpoint",
-    "main_commit_date": "2026-11-16T05:18:02Z",
+    "main_sha": "37880de8d58462a3b7390d4edf102a5c4689bba4",
+    "main_commit_subject": "docs(state): align freshness snapshot and handoff markers",
+    "main_commit_date": "2026-11-16T05:19:47Z",
     "last_functional_checkpoint_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
     "last_functional_milestone": "AgentRun bounded DAG and safe browser UI verified on 377818c: SQLite dependencies, task-ID Fernet payloads, dependency-gated synthesis, safe single/team_review, per-chat choice, General pin, strategy_id and task-state/dependency UI. One worker/model slot; feature off; tools/shell/filesystem/network disabled; no sandbox or host installation.",
     "main_quality_run": 43804109317,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "9aec46084686077e6975cf7deb504305953725e1",
+    "checkpoint_parent_sha": "37880de8d58462a3b7390d4edf102a5c4689bba4",
     "merged_prs": [
       184,
       185

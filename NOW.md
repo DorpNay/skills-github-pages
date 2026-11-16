@@ -13,6 +13,7 @@
 - **Scope:** existing 15-point programme in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K/K.5; K.6 is binding. No parallel backlog. Exclude owner-supplied primary model.
 - **Authorization:** direct commits to main, assistant-side tools/plugins/skills, automatic Pages publication. No VPS deployment, paid provisioning, secrets, destructive operations, force-push, rebase/reset or history rewrite.
 - **Tracker:** one 15-row K.5 table plus K.6 acceptance contract.
+- **Documentation refresh parent:** `37880de8d58462a3b7390d4edf102a5c4689bba4`.
 - **Live code checkpoint:** parent main `377818cceef7099d6698c07561c715358d5d8ddd`; 0 open PRs; issue #111.
 - **AgentRun UI:** Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests; published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exactly matches 377818c.
 - **Gateway boundary:** UI did not change backend. Latest focused Gateway #43797179042 is on parent `680ab02289c8517dbe9e36b53abb66317dda5f86`, Python 3.12/13/14.
