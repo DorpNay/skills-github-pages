@@ -703,7 +703,7 @@ permalink: /
     <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
     <div class="flex gap-2 items-end" id="inputArea">
       <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
-      <select id="executionModeControl" aria-label="Режим выполнения" title="Режим выполнения: Direct или AgentRun" class="composer-tool rounded-xl border border-gray-700 bg-gray-900 text-[10px] w-[76px] min-w-[76px] px-1.5 py-2.5"><option value="direct">Direct</option><option value="agent">AgentRun</option></select>
+      <select id="executionModeControl" aria-label="Режим выполнения" title="Режим выполнения: Direct или AgentRun" class="composer-tool rounded-xl border border-gray-700 bg-gray-900 text-[9px] w-[54px] min-w-[54px] px-1 py-2.5"><option value="direct">Direct</option><option value="agent">Agent</option></select>
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
@@ -2925,7 +2925,7 @@ permalink: /
       updateOfflineUI();
       updateModeUI();
     }
-    async function setChatExecutionMode(mode) {
+    async function setChatExecutionMode(mode, sequence=executionModeChangeSequence) {
       const chat=getCurrentChat();
       if(!chat||!['direct','agent'].includes(mode)) {
         if($('executionModeControl'))$('executionModeControl').value=chat?.executionMode||'direct';
@@ -2944,6 +2944,7 @@ permalink: /
           return false;
         }
         if(!agentRuntimeReady)await refreshAgentRunRuntime();
+        if(sequence!==executionModeChangeSequence)return false;
         if(!agentRuntimeReady) {
           $('executionModeControl').value=chat.executionMode;
           showToast(getUiLanguage()==='en'?'AgentRun is unavailable. Direct mode remains unchanged.':'AgentRun недоступен. Прямой режим не изменён.','error');
@@ -3758,6 +3759,9 @@ permalink: /
       renderAgentConfiguration();
     }
 let agentRuntimeRefreshPromise = null;
+    let executionModeChangePromise = null;
+    let executionModeChangeSequence = 0;
+    let executionModeChangeTarget = 'direct';
     let agentRuntimeReady = false;
     let agentRuntimeActiveRun = null;
     let agentRuntimePollController = null;
@@ -4193,6 +4197,16 @@ let agentRuntimeRefreshPromise = null;
       }
       const key=agentRuntimePendingSubmission.key;
       const requestController=new AbortController();
+      let acceptedRunId=null;
+      const externalSignal=options.signal;
+      const onExternalAbort=()=>{
+        if(acceptedRunId&&agentRuntimeActiveRun?.id===acceptedRunId)void cancelAgentRuntimeRun();
+        else requestController.abort();
+      };
+      if(externalSignal) {
+        if(externalSignal.aborted)requestController.abort();
+        else externalSignal.addEventListener('abort',onExternalAbort,{once:true});
+      }
       const requestTimeout=window.setTimeout(()=>requestController.abort(),12000);
       $('agentRuntimeStart').disabled=true;
       $('agentRuntimeCancel').disabled=true;
@@ -4215,10 +4229,15 @@ let agentRuntimeRefreshPromise = null;
         const runId=created.run?.run_id;
         if(typeof runId!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(runId))throw new Error('agent-runtime-invalid-run-id');
         agentRuntimePendingSubmission=null;
+        acceptedRunId=runId;
         agentRuntimeActiveRun={id:runId,afterEventId:0,startedAt:Date.now(),origin:options.origin==='chat'?'chat':'panel',chatId:chat.id};
         agentRuntimePollController=new AbortController();
         $('agentRuntimeCancel').disabled=false;
         $('agentRuntimeStatus').textContent=agentRuntimeStatusText(created.run.state||'queued');
+        if(externalSignal?.aborted) {
+          if(agentRuntimeActiveRun?.id===runId)await cancelAgentRuntimeRun();
+          throw new DOMException('Aborted','AbortError');
+        }
         if(typeof options.onAccepted==='function')await options.onAccepted(runId);
         const snapshot=await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
         const state=snapshot?.run?.state||null;
@@ -4240,6 +4259,7 @@ let agentRuntimeRefreshPromise = null;
         return null;
       } finally {
         window.clearTimeout(requestTimeout);
+        if(externalSignal)externalSignal.removeEventListener('abort',onExternalAbort);
       }
     }
 
@@ -4339,6 +4359,17 @@ let agentRuntimeRefreshPromise = null;
       updateAgentRuntimeStartAvailability();
     }
 
+    $('executionModeControl').addEventListener('change',()=>{
+      const sequence=++executionModeChangeSequence;
+      executionModeChangeTarget=$('executionModeControl').value;
+      const target=executionModeChangeTarget;
+      executionModeChangePromise=setChatExecutionMode(target,sequence).catch(error=>{
+        showToast(error?.message||agentRuntimeErrorText(error),'error');
+        return false;
+      }).finally(()=>{
+        if(sequence===executionModeChangeSequence)executionModeChangePromise=null;
+      });
+    });
     $('agentRuntimeStrategy').addEventListener('change',()=>setAgentRuntimeStrategy($('agentRuntimeStrategy').value));
     $('agentRuntimePrompt').addEventListener('input',updateAgentRuntimeStartAvailability);
     $('agentRuntimeProfile').addEventListener('change',updateAgentRuntimeStartAvailability);
@@ -5204,7 +5235,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       if(!chat||!Array.isArray(chat.messages))return null;
       let remaining=Math.max(0,Math.min(12000,Math.floor(maxChars)));
       const sources=[];
-      const cleanText=value=>String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,' ').trim();
+      const cleanText=value=>String(value||'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,' ').trim();
       const addSource=(id,kind,content)=>{
         const clean=cleanText(content);
         if(!clean||remaining<1||sources.length>=40)return;
@@ -5265,6 +5296,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       let accepted=false;
       try {
         if(!agentRuntimeReady)await refreshAgentRunRuntime();
+        if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
         if(!agentRuntimeReady)throw new Error(english?'AgentRun is unavailable or disabled on the Gateway.':'AgentRun недоступен или выключен на Gateway.');
         const strategyId=chat.agentRuntimeStrategy;
         if(!agentRuntimeSafeStrategies.includes(strategyId))throw new Error(english?'The selected AgentRun strategy is not allowlisted.':'Выбранная стратегия AgentRun отсутствует в разрешённом списке.');
@@ -5274,7 +5306,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         if(!profileId||![...$('agentRuntimeProfile').options].some(option=>option.value===profileId))throw new Error(english?'Select an available AgentRun role profile.':'Выбери доступный профиль роли AgentRun.');
         const contextPacket=buildAgentRunContextPacket(chat,requestProjectIds,Math.max(0,11000-prompt.length),isRetry===true);
         const result=await startAgentRuntimeRun({
-          prompt,chat,contextPacket,origin:'chat',strategyId,modelId,profileId,propagateErrors:true,
+          prompt,chat,contextPacket,origin:'chat',strategyId,modelId,profileId,signal:controller.signal,propagateErrors:true,
           onAccepted:(runId)=>{
             accepted=true;
             if(!isRetry) {
@@ -5309,7 +5341,8 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         }
       } catch(error) {
         if(!accepted) {
-          showToast(error?.message||agentRuntimeErrorText(error),'error');
+          if(error?.name==='AbortError')hideStatus();
+          else showToast(error?.message||agentRuntimeErrorText(error),'error');
         } else if(!agentRuntimeActiveRun) {
           delete chat.activeAgentRunId;
           chat.messages.push({role:'assistant',content:'❌ '+(error?.message||agentRuntimeErrorText(error)),error:true});
@@ -5330,6 +5363,15 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
 
     async function sendMessage(isRetry = false) {
       if (isGenerating || isPreparingDocumentAttachments) return;
+      while(executionModeChangePromise) {
+        const sequence=executionModeChangeSequence,target=executionModeChangeTarget,pending=executionModeChangePromise;
+        const accepted=await pending;
+        if(sequence!==executionModeChangeSequence)continue;
+        if(target==='agent'&&!accepted) {
+          showToast(getUiLanguage()==='en'?'AgentRun was not enabled. No message was sent; choose Direct or configure the Gateway.':'AgentRun не включён. Сообщение не отправлено; выбери Direct или настрой Gateway.','error');
+          return;
+        }
+      }
       const input = $('userInput');
       const text = input.value.trim();
       const sourceChatId=currentChatId;

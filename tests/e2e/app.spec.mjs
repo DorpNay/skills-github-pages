@@ -4105,6 +4105,11 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('#executionModeControl').selectOption('agent');
   await expect(page.locator('#executionModeControl')).toHaveValue('agent');
+  await expect.poll(async () => page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id)?.executionMode;
+  })).toBe('agent');
   await page.locator('#userInput').fill('Continue the agreed work.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('AgentRun answer returned to the active chat.');
