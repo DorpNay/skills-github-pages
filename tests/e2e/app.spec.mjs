@@ -229,7 +229,7 @@ test('sidebar order puts Projects and Chats first and keeps memory discreet', as
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectStatusLine')).toHaveClass(/sr-only/);
-  await expect(page.locator('#memoryStatusLine')).toBeHidden();
+  await expect(page.locator('#memoryStatusLine')).toBeVisible(); // Status remains available while details are collapsed.
   await page.locator('#memoryToolsDetails > summary').click();
   await expect(page.locator('#memoryStatusLine')).toBeVisible();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
