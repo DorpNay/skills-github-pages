@@ -104,3 +104,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 
 ## Current checkpoint note (2026-11-16)
 Latest owner-prompt checkpoint parent: `d8d538df3e2c2310ff68df1876b5a808d25c7c57`; 0 open PRs; issue #111. See NOW.md CURRENT and S-068. The bounded AgentRun context packet test file is RED by design; implementation and exact-head verification are pending. Do not treat the tests as shipped capability.
+
+
+## Current implementation checkpoint (2026-11-16)
+OR-013 implementation parent: `8ee3df6022f95dfc907499b7fa152684092f702f`; code commit `1816fa821d7122c069ae4791cc2400a9cb2b1738`; research record `8ee3df6022f95dfc907499b7fa152684092f702f`. Bounded context packet transport is implemented in the direct child. Exact-head Gateway/Quality/Freshness/Provenance/Graphify/Pages checks are pending. Context is explicit untrusted reference data, encrypted in the existing payload vault; it grants no tool/resource permissions. See NOW.md S-069 and INTEL.md OR-013.

@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Documentation refresh parent main d8d538df3e2c2310ff68df1876b5a808d25c7c57; 0 open PRs; issue #111. Owner approved AgentRun Plan 1 and Deep Research Plan 2; OR-012 K.6.17/K.6.18 added. Freshness repair in progress."
+    status: "Active task LANDING-V2-2026-001. Documentation refresh parent main 8ee3df6022f95dfc907499b7fa152684092f702f; 0 open PRs; issue #111. Owner approved AgentRun Plan 1 and Deep Research Plan 2; OR-012 K.6.17/K.6.18 added. OR-013 context packet implementation and research recorded; exact-head gates pending."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,9 +16,9 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main d8d538df3e2c2310ff68df1876b5a808d25c7c57; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified. Owner prompt OR-2026-11-16-013 archived; bounded AgentRun context contract RED tests added at parent; exact-child gates pending."
+    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 8ee3df6022f95dfc907499b7fa152684092f702f; last functional code checkpoint 1816fa821d7122c069ae4791cc2400a9cb2b1738; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified. Owner prompt OR-2026-11-16-013 archived; bounded AgentRun context packet implemented in child; exact-child gates pending."
     branch: "main"
-    base_main: "d8d538df3e2c2310ff68df1876b5a808d25c7c57"
+    base_main: "8ee3df6022f95dfc907499b7fa152684092f702f"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG prototype is CI-verified on code checkpoint 0d34aa1; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Legacy multiAgentEnabled/runMultiAgentResearch still coexists and main chat does not submit to AgentRun. Existing 500 ms event observer renders only inside Agents modal; chat-anchored status overlay is specified in K.6.16, not implemented. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
@@ -294,7 +294,7 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "d8d538df3e2c2310ff68df1876b5a808d25c7c57"
+  verified_main: "8ee3df6022f95dfc907499b7fa152684092f702f"
   last_main_action: "Exact main b81d45e: Pages build #43905601623 successful; Quality #43905603264 static/security/integrity/context/Jekyll/Ruff passed but Chromium was still running; model/voice provenance #43905603268 passed. Freshness/orientation #43905603329 failed because VOLLEY lacked exact parent SHA 400e42ce1d43a2e91410be9041d235167c1907cb. This direct child fixes the full-SHA journal entry and refreshes five state files."
   last_functional_checkpoint: "0d34aa1c70bb68e57a3856ba20d8b5f966c65038"
   main_quality: "On exact main b81d45e, Quality #43905603264 static/security/integrity/context/Jekyll/Ruff passed; Chromium was IN_PROGRESS at last poll. Full Quality result pending exact child."

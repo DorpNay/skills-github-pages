@@ -588,3 +588,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Parent added `gateway/tests/test_agent_run_context.py` defining a bounded packet with explicit message roles, source kinds/scopes/inclusion reasons, total size/item limits, duplicate-ID rejection and untrusted-reference rendering. `gateway/agent_runtime/context.py` does not yet exist: this is a deliberate RED test checkpoint, not an implemented feature.
 - This direct-child documentation refresh updates NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md together. No product source, dependency, model artifact, host setting, credential, connector or deployment changed.
 - Next: exact-child Freshness/Provenance/Quality/Pages; then Exa primary-source research and TDD implementation of the context packet contract.
+
+
+## V-2026-11-16-S-069 — OR-013 bounded context packet implementation
+
+- Parent main exact: `8ee3df6022f95dfc907499b7fa152684092f702f`; implementation commit `1816fa821d7122c069ae4791cc2400a9cb2b1738`; source-research documentation commit `8ee3df6022f95dfc907499b7fa152684092f702f`; 0 open PRs, issue #111.
+- Source review: OWASP prompt-injection/RAG security, OpenAI Agents SDK Sessions/Context, AG-UI Events, IETF HTTPAPI Idempotency-Key draft, Stripe idempotency, Pydantic strict validation and FastAPI body fields. Findings and limits recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md.
+- Added strict v1 packet validator: allowlisted message roles/source kinds/scopes/inclusion reasons, exact field sets, unique opaque IDs, per-item and aggregate bounds, count limits and untrusted-reference rendering. Extended AgentRun POST and encrypted Fernet payload; digest now binds prompt + context + profile + model + strategy. Same-key changed context conflicts. Added worker/API regression tests.
+- No new dependency, connector, model, external account, tool, browser, filesystem or shell capability. AgentRun feature flag remains false; direct chat remains default. Main chat context builder and live status overlay are not implemented yet.
+- This direct-child commit refreshes NOW, AGENTS, PROJECT_STATE, snapshot and VOLLEY together. Exact-head checks pending; no local test command was run because no repository checkout is mounted.
