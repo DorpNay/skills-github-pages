@@ -803,6 +803,10 @@ permalink: /
       <select id="agentRuntimeModel" class="function-panel-field mt-1 w-full rounded-lg border p-2.5" disabled><option value="">Недоступно</option></select>
     </label>
   </div>
+  <label for="agentRuntimeStrategy" id="agentRuntimeStrategyLabel" class="function-panel-muted block text-[11px]">Стратегия выполнения
+    <select id="agentRuntimeStrategy" aria-describedby="agentRuntimeStrategyHelp" class="function-panel-field mt-1 w-full rounded-lg border p-2.5" disabled><option value="single">Один специалист</option></select>
+  </label>
+  <p id="agentRuntimeStrategyHelp" class="function-panel-muted text-[10px] leading-relaxed">Один специалист · один вызов модели.</p>
   <label for="agentRuntimePrompt" id="agentRuntimePromptLabel" class="function-panel-muted block text-[11px]">Отдельный текст задания — передаётся worker напрямую
     <textarea id="agentRuntimePrompt" rows="3" maxlength="12000" class="function-panel-field mt-1 w-full resize-y rounded-lg border p-3 text-sm" placeholder="Задание для одного worker" disabled></textarea>
   </label>
@@ -811,6 +815,7 @@ permalink: /
     <button type="button" id="agentRuntimeStart" data-action="agent-run-start" class="function-panel-action function-panel-action-primary w-full" disabled>Запустить задачу</button>
     <button type="button" id="agentRuntimeCancel" data-action="agent-run-cancel" class="function-panel-action function-panel-action-secondary w-full" disabled>Отменить</button>
   </div>
+  <ol id="agentRuntimeTasks" class="function-panel-card hidden max-h-40 overflow-y-auto space-y-2 p-2 text-[11px]" aria-label="Задачи AgentRun"></ol>
   <ol id="agentRuntimeEvents" class="function-panel-muted max-h-28 overflow-y-auto space-y-1 text-[10px]" aria-label="События AgentRun"></ol>
   <pre id="agentRuntimeOutput" class="function-panel-card hidden max-h-64 overflow-auto whitespace-pre-wrap break-words p-3 text-xs" aria-live="polite"></pre>
 </div>
@@ -1108,7 +1113,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false,  privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false,  privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (rawText === null) return;
@@ -1148,7 +1153,7 @@ permalink: /
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
-            
+            agentRuntimeStrategy: ['single','team_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
             privateMemoryUsed: item.privateMemoryUsed === true,
             customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
             customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
@@ -1219,7 +1224,7 @@ permalink: /
       if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
       const allowedUpdateKeys = new Set([
         'searchMode', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
-        'processingMode', 'skillOutputMode', 'agentTeamSize'
+        'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy'
       ]);
       const updateEntries = Object.entries(updates);
       // Mutations originate from bounded UI handlers; reject unknown keys (including prototype keys).
@@ -2866,12 +2871,14 @@ permalink: /
     const VALID_SKILL_PRESETS = new Set(['auto','planning','research','code-review','data-analysis','agent-systems','multimodal','custom']);
     const VALID_AGENT_SCENARIOS = new Set(['general','research','software','product','due-diligence','custom']);
     const VALID_AGENT_ROLES = new Set(['balanced','research','software','product','custom']);
+    const VALID_AGENT_RUNTIME_STRATEGIES = new Set(['single','team_review']);
     function ensureChatFunctionSettings(chat) {
       if (!chat || typeof chat !== 'object') return false;
       let changed = false;
       if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
       if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
       if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
+      if (!VALID_AGENT_RUNTIME_STRATEGIES.has(chat.agentRuntimeStrategy)) { chat.agentRuntimeStrategy = 'single'; changed = true; }
       if (!VALID_SKILL_PRESETS.has(chat.skillPreset)) { chat.skillPreset = 'auto'; changed = true; }
       if(typeof chat.customSkillName!=='string') {chat.customSkillName='';changed=true;}
       if(typeof chat.customSkillInstructions!=='string') {chat.customSkillInstructions='';changed=true;}
@@ -3689,6 +3696,8 @@ permalink: /
       $('agentTeamSize').value=String(chat.agentTeamSize);$('agentTeamSizeValue').textContent=chat.agentTeamSize+' '+(getUiLanguage()==='en'?(chat.agentTeamSize===1?'agent':'agents'):(chat.agentTeamSize===1?'агент':'агентов'));
       $('agentTeamScenario').value=chat.agentTeamScenario;$('agentRolePreset').value=chat.agentRolePreset;
       $('agentTeamCustomScenario').value=chat.agentTeamCustomScenario;$('agentCustomRoles').value=chat.agentCustomRoles;
+      if([ ...$('agentRuntimeStrategy').options ].some(option=>option.value===chat.agentRuntimeStrategy))$('agentRuntimeStrategy').value=chat.agentRuntimeStrategy;
+      renderAgentRuntimeStrategyHelp(chat.agentRuntimeStrategy);
       $('agentCustomFields').classList.toggle('hidden',chat.agentTeamScenario!=='custom'&&chat.agentRolePreset!=='custom');
       $('agentConfigSummary').textContent=getUiLanguage()==='en'?'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 fixed stages':'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 фиксированных этапа';
     }
@@ -3709,6 +3718,126 @@ let agentRuntimeRefreshPromise = null;
     let agentRuntimeActiveRun = null;
     let agentRuntimePollController = null;
     let agentRuntimePendingSubmission = null;
+    let agentRuntimeSafeStrategies = [];
+
+    function normalizeAgentRuntimeStrategies(items) {
+      if (!Array.isArray(items)) return [];
+      const result = [];
+      const seen = new Set();
+      for (const item of items) {
+        if (!item || typeof item !== 'object' || Array.isArray(item)
+            || !VALID_AGENT_RUNTIME_STRATEGIES.has(item.id) || seen.has(item.id)
+            || item.status !== 'available' || item.model_concurrency !== 1
+            || item.parallel_inference !== false || !Array.isArray(item.tools)
+            || item.tools.length !== 0 || item.filesystem !== false || item.network !== false) continue;
+        if (item.id === 'single' && item.task_count === 1 && item.execution_mode === 'single') {
+          result.push('single');
+          seen.add('single');
+        } else if (item.id === 'team_review' && item.task_count === 3
+            && item.execution_mode === 'fan_out_fan_in' && item.context_isolation === 'per_task'
+            && Array.isArray(item.roles) && item.roles.length === 3
+            && item.roles[0] === 'researcher' && item.roles[1] === 'reviewer'
+            && item.roles[2] === 'general') {
+          result.push('team_review');
+          seen.add('team_review');
+        }
+      }
+      return result;
+    }
+
+    function agentRuntimeStrategyLabel(strategyId) {
+      const english=getUiLanguage()==='en';
+      if(strategyId==='single')return english?'One specialist':'Один специалист';
+      if(strategyId==='team_review')return english?'Team · researcher, reviewer, coordinator':'Команда · исследователь, рецензент, координатор';
+      return english?'Unavailable':'Недоступно';
+    }
+
+    function renderAgentRuntimeStrategyHelp(strategyId) {
+      const english=getUiLanguage()==='en';
+      const help={
+        single:english
+          ? 'One task and one model call. The simplest execution path.'
+          : 'Одна задача и один вызов модели. Самый простой путь.',
+        team_review:english
+          ? 'Three isolated task contexts: researcher → reviewer → coordinator. Model calls are sequential through one slot; no tools, web, shell or filesystem.'
+          : 'Три изолированных контекста: исследователь → рецензент → координатор. Вызовы модели идут последовательно через один слот; без инструментов, веба, shell и файлов.'
+      };
+      $('agentRuntimeStrategyHelp').textContent=help[strategyId]|| (english?'Select an available strategy.':'Выберите доступную стратегию.');
+    }
+
+    function setAgentRuntimeStrategy(strategyId) {
+      const chat=getCurrentChat();
+      if(!chat||!agentRuntimeReady||!agentRuntimeSafeStrategies.includes(strategyId)) {
+        if(chat)$('agentRuntimeStrategy').value=chat.agentRuntimeStrategy;
+        renderAgentRuntimeStrategyHelp(chat?.agentRuntimeStrategy||'single');
+        updateAgentRuntimeStartAvailability();
+        return false;
+      }
+      ensureChatFunctionSettings(chat);
+      if(!persistChatMutation(chat,{agentRuntimeStrategy:strategyId})) {
+        $('agentRuntimeStrategy').value=chat.agentRuntimeStrategy;
+        renderAgentRuntimeStrategyHelp(chat.agentRuntimeStrategy);
+        updateAgentRuntimeStartAvailability();
+        return false;
+      }
+      $('agentRuntimeStrategy').value=strategyId;
+      renderAgentRuntimeStrategyHelp(strategyId);
+      updateAgentRuntimeStartAvailability();
+      return true;
+    }
+
+    function renderAgentRuntimeTasks(tasks) {
+      const list=$('agentRuntimeTasks');
+      list.replaceChildren();
+      if(!Array.isArray(tasks)||!tasks.length) {
+        list.classList.add('hidden');
+        return;
+      }
+      const english=getUiLanguage()==='en';
+      const roles={
+        researcher:english?'Researcher':'Исследователь',
+        reviewer:english?'Reviewer':'Рецензент',
+        synthesis:english?'Coordinator':'Координатор',
+        'model-completion':english?'Specialist':'Специалист'
+      };
+      const states={
+        queued:english?'Queued':'В очереди',
+        leased:english?'Running':'Выполняется',
+        succeeded:english?'Completed':'Завершено',
+        failed:english?'Failed':'Ошибка',
+        cancelled:english?'Cancelled':'Отменено'
+      };
+      const safeTasks=tasks.filter(task=>task&&typeof task==='object'&&typeof task.task_id==='string'
+        &&typeof task.task_key==='string'&&Object.prototype.hasOwnProperty.call(roles,task.task_key));
+      if(!safeTasks.length) {
+        list.classList.add('hidden');
+        return;
+      }
+      const labelsById=new Map(safeTasks.map(task=>[task.task_id,roles[task.task_key]]));
+      for(const task of safeTasks.slice(0,12)) {
+        const item=document.createElement('li');
+        item.className='rounded-lg border border-gray-700/70 p-2 space-y-1';
+        const heading=document.createElement('div');
+        heading.className='flex items-center justify-between gap-2';
+        const role=document.createElement('strong');
+        role.textContent=roles[task.task_key];
+        const state=document.createElement('span');
+        state.textContent=states[task.state]|| (english?'Unknown':'Неизвестно');
+        heading.append(role,state);
+        item.appendChild(heading);
+        if(Array.isArray(task.depends_on)&&task.depends_on.length) {
+          const dependencies=task.depends_on.map(id=>labelsById.get(id)).filter(Boolean);
+          if(dependencies.length) {
+            const detail=document.createElement('p');
+            detail.className='function-panel-muted text-[10px]';
+            detail.textContent=(english?'After: ':'После: ')+dependencies.join(' · ');
+            item.appendChild(detail);
+          }
+        }
+        list.appendChild(item);
+      }
+      list.classList.remove('hidden');
+    }
 
     function setAgentRuntimeCopy() {
       const english=getUiLanguage()==='en';
@@ -3726,16 +3855,22 @@ let agentRuntimeRefreshPromise = null;
         : 'История чата, инструкции и память проекта, а также файлы автоматически не передаются. Проект/чат используется только как ссылка-метаданные запуска, не как разрешение на чтение данных.';
       $('agentRuntimeStart').textContent=english?'Start task':'Запустить задачу';
       $('agentRuntimeCancel').textContent=english?'Cancel':'Отменить';
+      $('agentRuntimeStrategyLabel').firstChild.textContent=english?'Execution strategy':'Стратегия выполнения';
+      $('agentRuntimeTasks').setAttribute('aria-label',english?'AgentRun tasks':'Задачи AgentRun');
+      renderAgentRuntimeStrategyHelp($('agentRuntimeStrategy').value||'single');
     }
 
     function setAgentRuntimeUnavailable(message) {
       agentRuntimeReady=false;
+      agentRuntimeSafeStrategies=[];
       $('agentRuntimeStatus').textContent=message;
+      $('agentRuntimeStrategy').disabled=true;
       $('agentRuntimeProfile').disabled=true;
       $('agentRuntimeModel').disabled=true;
       $('agentRuntimePrompt').disabled=true;
       $('agentRuntimeStart').disabled=true;
       $('agentRuntimeCancel').disabled=true;
+      renderAgentRuntimeTasks([]);
     }
 
     function replaceAgentRuntimeOptions(select, items, getValue, getLabel) {
@@ -3753,10 +3888,14 @@ let agentRuntimeRefreshPromise = null;
     }
 
     function updateAgentRuntimeStartAvailability() {
+      const selectedStrategy=$('agentRuntimeStrategy').value;
+      const strategyAvailable=agentRuntimeSafeStrategies.includes(selectedStrategy);
+      $('agentRuntimeStrategy').disabled=!agentRuntimeReady||Boolean(agentRuntimeActiveRun)||!strategyAvailable;
       $('agentRuntimeStart').disabled=!agentRuntimeReady
         ||Boolean(agentRuntimeActiveRun)
         ||$('agentRuntimePrompt').disabled
-        ||!$('agentRuntimePrompt').value.trim();
+        ||!$('agentRuntimePrompt').value.trim()
+        ||!strategyAvailable;
     }
 
     function agentRuntimeStatusText(state) {
@@ -3884,7 +4023,7 @@ let agentRuntimeRefreshPromise = null;
           }
           const catalog=await agentRuntimeFetch(config,'/agent-runs/profiles',{signal:controller.signal});
           if(!Array.isArray(catalog.profiles)||!catalog.profiles.length
-              ||!Array.isArray(catalog.models)||!catalog.models.length
+              ||!Array.isArray(catalog.strategies)||!Array.isArray(catalog.models)||!catalog.models.length
               ||catalog.worker_concurrency!==1||catalog.tools_enabled!==false
               ||catalog.filesystem_enabled!==false||catalog.network_enabled!==false
               ||catalog.profiles.some(profile=>!profile||typeof profile.id!=='string'
@@ -3902,14 +4041,28 @@ let agentRuntimeRefreshPromise = null;
             $('agentRuntimeModel'),catalog.models,
             model=>model,model=>model
           );
-          if(!profileCount||!modelCount)throw new Error('empty-runtime-catalog');
+          agentRuntimeSafeStrategies=normalizeAgentRuntimeStrategies(catalog.strategies);
+          if(!agentRuntimeSafeStrategies.includes('single'))throw new Error('empty-runtime-strategy-catalog');
+          const strategyCount=replaceAgentRuntimeOptions(
+            $('agentRuntimeStrategy'),agentRuntimeSafeStrategies,
+            strategy=>strategy,strategy=>agentRuntimeStrategyLabel(strategy)
+          );
+          if(strategyCount<1)throw new Error('empty-runtime-strategy-catalog');
+          const chat=getCurrentChat();
+          ensureChatFunctionSettings(chat);
+          const requestedStrategy=chat.agentRuntimeStrategy;
+          const selectedStrategy=agentRuntimeSafeStrategies.includes(requestedStrategy)?requestedStrategy:'single';
+          if(selectedStrategy!==requestedStrategy&&!persistChatMutation(chat,{agentRuntimeStrategy:selectedStrategy}))
+            throw new Error('chat-strategy-not-persisted');
+          $('agentRuntimeStrategy').value=selectedStrategy;
+          renderAgentRuntimeStrategyHelp(selectedStrategy);
           agentRuntimeReady=true;
           $('agentRuntimeProfile').disabled=false;
           $('agentRuntimeModel').disabled=false;
           $('agentRuntimePrompt').disabled=false;
           $('agentRuntimeStatus').textContent=english
-            ? 'Gateway runtime is configured. '+profileCount+' role profiles, '+modelCount+' allowlisted models.'
-            : 'Runtime Gateway настроен. Профилей: '+profileCount+', разрешённых моделей: '+modelCount+'.';
+            ? 'Gateway runtime is configured. '+profileCount+' role profiles, '+modelCount+' allowlisted models, '+strategyCount+' safe strategies.'
+            : 'Runtime Gateway настроен. Профилей: '+profileCount+', моделей: '+modelCount+', безопасных стратегий: '+strategyCount+'.';
           updateAgentRuntimeStartAvailability();
         } catch(error) {
           const english=getUiLanguage()==='en';
@@ -3921,7 +4074,8 @@ let agentRuntimeRefreshPromise = null;
           else if(status===503)message=english?'AgentRun worker is unavailable or disabled (503).':'Worker AgentRun недоступен или выключен (503).';
           else if(status===429)message=english?'Gateway is rate limiting capability checks (429).':'Gateway ограничивает частоту запросов (429).';
           else if(error?.message==='invalid-capability-response'
-              ||error?.message==='invalid-runtime-catalog'||error?.message==='empty-runtime-catalog')
+              ||error?.message==='invalid-runtime-catalog'||error?.message==='empty-runtime-catalog'
+              ||error?.message==='empty-runtime-strategy-catalog'||error?.message==='chat-strategy-not-persisted')
             message=english?'Gateway returned an invalid or incomplete AgentRun capability contract.':'Gateway вернул неполный или некорректный контракт AgentRun.';
           else message=english
             ? 'Connect the aLandi Gateway in Settings before checking AgentRun.'
@@ -3953,12 +4107,19 @@ let agentRuntimeRefreshPromise = null;
       let config;
       try {config=getAlandiGatewayConfig();}
       catch(error) {$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);return;}
+      const strategyId=$('agentRuntimeStrategy').value;
+      if(!agentRuntimeSafeStrategies.includes(strategyId)) {
+        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The selected execution strategy is unavailable.':'Выбранная стратегия выполнения недоступна.';
+        updateAgentRuntimeStartAvailability();
+        return;
+      }
       const submission={
         prompt,
         scope_kind:'conversation',
         scope_id:chat.id,
         profile_id:$('agentRuntimeProfile').value,
-        model_id:$('agentRuntimeModel').value
+        model_id:$('agentRuntimeModel').value,
+        strategy_id:strategyId
       };
       const signature=config.baseUrl+'\n'+JSON.stringify(submission);
       if(!agentRuntimePendingSubmission||agentRuntimePendingSubmission.signature!==signature) {
@@ -3972,9 +4133,12 @@ let agentRuntimeRefreshPromise = null;
       const requestTimeout=window.setTimeout(()=>requestController.abort(),12000);
       $('agentRuntimeStart').disabled=true;
       $('agentRuntimeCancel').disabled=true;
+      $('agentRuntimeStrategy').disabled=true;
       $('agentRuntimeProfile').disabled=true;
       $('agentRuntimeModel').disabled=true;
       $('agentRuntimePrompt').disabled=true;
+      $('agentRuntimeTasks').replaceChildren();
+      $('agentRuntimeTasks').classList.add('hidden');
       $('agentRuntimeEvents').replaceChildren();
       $('agentRuntimeOutput').textContent='';
       $('agentRuntimeOutput').classList.add('hidden');
@@ -4021,6 +4185,7 @@ let agentRuntimeRefreshPromise = null;
           const snapshot=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{signal});
           const state=snapshot.run?.state;
           $('agentRuntimeStatus').textContent=agentRuntimeStatusText(state);
+          renderAgentRuntimeTasks(snapshot.tasks);
           if(snapshot.output_available===true&&typeof snapshot.output==='string') {
             $('agentRuntimeOutput').textContent=snapshot.output.slice(0,65536);
             $('agentRuntimeOutput').classList.remove('hidden');
@@ -4088,6 +4253,7 @@ let agentRuntimeRefreshPromise = null;
       updateAgentRuntimeStartAvailability();
     }
 
+    $('agentRuntimeStrategy').addEventListener('change',()=>setAgentRuntimeStrategy($('agentRuntimeStrategy').value));
     $('agentRuntimePrompt').addEventListener('input',updateAgentRuntimeStartAvailability);
     $('agentRuntimeProfile').addEventListener('change',updateAgentRuntimeStartAvailability);
     $('agentRuntimeModel').addEventListener('change',updateAgentRuntimeStartAvailability);

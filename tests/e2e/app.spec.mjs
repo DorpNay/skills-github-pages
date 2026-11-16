@@ -3906,6 +3906,11 @@ test('AgentRun persists the selected safe strategy and submits it without escala
     } });
     if (url.pathname === '/v1/agent-runs/run-e2e-team-strategy' && route.request().method() === 'GET') return route.fulfill({ json: {
       run: { run_id: 'run-e2e-team-strategy', state: 'succeeded' },
+      tasks: [
+        { task_id: 'task-researcher', task_key: 'researcher', state: 'succeeded', depends_on: [] },
+        { task_id: 'task-reviewer', task_key: 'reviewer', state: 'succeeded', depends_on: [] },
+        { task_id: 'task-synthesis', task_key: 'synthesis', state: 'succeeded', depends_on: ['task-researcher', 'task-reviewer'] }
+      ],
       output: 'Three-task team review completed serially.', output_available: true, events: []
     } });
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
@@ -3919,12 +3924,25 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('single');
   await page.locator('#agentRuntimeStrategy').selectOption('team_review');
   await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('последовательно');
+  const selectedChatId = await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'));
   const saved = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');
     return chats.find(chat => chat.id === id)?.agentRuntimeStrategy;
   });
   expect(saved).toBe('team_review');
+  await page.evaluate(chatId => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const current = chats.find(chat => chat.id === chatId);
+    const secondChat = { ...current, id: 'chat-e2e-secondary', title: 'Secondary chat', messages: [], agentRuntimeStrategy: 'single' };
+    localStorage.setItem('ai_chats_v87', JSON.stringify([...chats, secondChat]));
+    localStorage.setItem('ai_current_chat_v87', secondChat.id);
+  }, selectedChatId);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('single');
+  await page.evaluate(chatId => localStorage.setItem('ai_current_chat_v87', chatId), selectedChatId);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenuSummary').click();
   await page.locator('#functionsMenu [data-function="agents"]').click();
@@ -3932,6 +3950,10 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   await page.locator('#agentRuntimePrompt').fill('Run the bounded team review on this explicit task.');
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Исследователь');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Рецензент');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Координатор');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('После: Исследователь · Рецензент');
   expect(submitted).toEqual({
     prompt: 'Run the bounded team review on this explicit task.',
     scope_kind: 'conversation',
