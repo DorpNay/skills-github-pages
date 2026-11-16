@@ -44,7 +44,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 - Bonsai/Qwen artifacts staged, not target-installed. No host/Ollama/device/offline verification.
 - OR-005/006 archived; K.6.13 binding for Mini aLandi/offline voice/reconnect, reviewed project learning, Coder packs and explicit local files. K.5 remains sole status table.
 - Assistant-side tools: GitHub, Exa, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers, Superpowers, Code/Coder. Twilio skills-only without provider auth; no standalone Codex connector. None is aLandi integration.
-- Next: Research Trace Save, then K.5 order. No shell before tested sandbox and owner approval.
+- Research Trace claim/contradiction Save implemented in this child; exact-head verification pending. Next: durable/resumable Deep Research, Exa/Firecrawl adapters and Notebook/export. No shell before tested sandbox and owner approval.
 
 
 ## Targeted UI source review — 2026-11-16

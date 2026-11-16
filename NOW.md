@@ -9,6 +9,7 @@
 - **Task ID:** LANDING-V2-2026-001.
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. No default PR branch; work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111.
+- **Documentation refresh parent:** `00a8d40bd2af8e8a4c1d4eb0234c6e78f956bd8f`.
 - **Owner task:** OR-2026-11-16-007 resumes the detailed OR-2026-11-16-006 scope archived below.
 - **Scope:** existing 15-point programme in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K/K.5; K.6 is binding. No parallel backlog. Exclude owner-supplied primary model.
 - **Authorization:** direct commits to main, assistant-side tools/plugins/skills, automatic Pages publication. No VPS deployment, paid provisioning, secrets, destructive operations, force-push, rebase/reset or history rewrite.
@@ -18,13 +19,14 @@
 - **AgentRun UI:** Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests; published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exactly matches 377818c.
 - **Gateway boundary:** UI did not change backend. Latest focused Gateway #43797179042 is on parent `680ab02289c8517dbe9e36b53abb66317dda5f86`, Python 3.12/13/14.
 - **Agents maturity:** IMPLEMENTED / VERIFIED PROTOTYPE. Safe `single`/`team_review`; per-chat strategy; General coordinator pinned; explicit `strategy_id`; real researcher/reviewer/synthesis task states/dependencies. Same-run DAG in SQLite, task-ID Fernet payloads. One worker/model slot means sequential inference; logical roles are not OS processes. Feature flag false; tools/shell/filesystem/network disabled. No Coder sandbox or target runtime.
-- **Next:** explicit Research Trace claim/contradiction Save with owner-triggered persistence and chat/project scope; then continue K.5 in order.
+- **Next:** finish remaining Deep Research scope in K.5: durable/resumable runs, independent Exa/Firecrawl adapters and Notebook/report export; then continue the existing K.5 sequence.
 - **Priority:** owner acceptance/maturity → Agent/Deep Research and mode semantics → sidebar/projects/chats → Skills/Connectors/Coder/Notebook/files/RAG/voice/offline → autonomy/reliability/evals/observability → tested owner runbook.
 - **External sources:** Exa rechecked official OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework. Adopt manager-owned delegation, isolated context, durable/idempotent activity and typed fan-in only; no competing runtime installed. Details in INTEL.md.
 - **Assistant-side integrations:** GitHub, Exa and TinyFish used; Firecrawl, Context7, Vercel, OpenAI Developers, Superpowers and Code/Coder available. Twilio is skills-only without authenticated provider; no standalone Codex connector identified. None implies aLandi product integration.
 - **Model boundary:** Bonsai/Qwen artifacts staged and checksum-reviewed, not target-installed. PTQ1_0 needs PrismML llama.cpp and is not an Ollama model.
 - **Owner-only gates:** retain PRE_LAUNCH_STACK_RU.md §8 for host/budget/domain/DNS/credentials/SSH, hardware facts, physical audio and backup/restore.
 - **No overclaim:** CI/Pages prove static publication and browser tests, not VPS/Ollama, parallel agents, sandbox, offline inference or device voice.
+- **Research Trace Save:** IMPLEMENTED / exact-head verification pending in this child. Explicit click persists source excerpts first, then only claims whose referenced excerpts were saved, then contradictions whose claims and all referenced excerpts were saved. IDs are mapped into the trace; partial failures are visible.
 - **Status:** IN PROGRESS — owner-priority Landing 2.0.
 - **Repository:** DorpNay/skills-github-pages / main.
 

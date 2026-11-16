@@ -35,8 +35,8 @@ test('research trace captures a source returned by the webpage tool', async ({ p
       }] };
     } else if (system.includes('Роль: исследователь') && hasToolResult) {
       message = { role: 'assistant', content: 'Draft: the page provided a concrete excerpt for the claim.' };
-    } else if (system.startsWith('Ты независимый проверяющий.')) {
-      message = { role: 'assistant', content: 'No material factual issue.' };
+    } else if (system.startsWith('Ты критик того же выбранного model route')) {
+      message = { role: 'assistant', content: JSON.stringify({ claims: [], contradictions: [] }) };
     } else if (system.includes('Роль: синтезатор')) {
       message = { role: 'assistant', content: 'Final answer based on the retrieved page.' };
     } else {
@@ -94,28 +94,34 @@ test('research trace captures a source returned by the webpage tool', async ({ p
 });
 
 
-test('research trace explicitly persists captured excerpts to the scoped Gateway evidence ledger', async ({ page }) => {
+test('research trace explicitly persists source quotes, claims and contradictions to the scoped Gateway ledger', async ({ page }) => {
   const evidencePosts = [];
+  const claimPosts = [];
+  const contradictionPosts = [];
+  const evidenceIdsBySource = new Map();
   await page.route('https://gateway.example.test/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
-    const cors = {
-      'access-control-allow-origin': '*',
-      'access-control-allow-headers': 'authorization, content-type',
-      'access-control-allow-methods': 'GET, POST, OPTIONS'
-    };
-    if (request.method() === 'OPTIONS') {
-      await route.fulfill({ status: 204, headers: cors });
-    } else if (url.pathname === '/v1/capabilities') {
-      await route.fulfill({ status: 200, headers: cors, contentType: 'application/json',
-        body: JSON.stringify({ rag: { enabled: true, evidence_ledger: true } }) });
-    } else if (url.pathname === '/v1/rag/evidence' && request.method() === 'POST') {
-      evidencePosts.push(request.postDataJSON());
+    const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type',
+      'access-control-allow-methods': 'GET, POST, OPTIONS' };
+    if (request.method() === 'OPTIONS') await route.fulfill({ status: 204, headers: cors });
+    else if (url.pathname === '/v1/capabilities') await route.fulfill({ status: 200, headers: cors,
+      contentType: 'application/json', body: JSON.stringify({ rag: { enabled: true, evidence_ledger: true } }) });
+    else if (url.pathname === '/v1/rag/evidence' && request.method() === 'POST') {
+      const payload = request.postDataJSON(); evidencePosts.push(payload);
+      const sourceKey = payload.source_id.split('-').at(-1), evidenceId = 'evidence-fixture-' + sourceKey;
+      evidenceIdsBySource.set(sourceKey, evidenceId);
       await route.fulfill({ status: 201, headers: cors, contentType: 'application/json',
-        body: JSON.stringify({ status: 'recorded', evidence_id: 'evidence-fixture-1' }) });
-    } else {
-      await route.fulfill({ status: 404, headers: cors, contentType: 'application/json', body: '{}' });
-    }
+        body: JSON.stringify({ status: 'recorded', evidence_id: evidenceId }) });
+    } else if (url.pathname === '/v1/rag/evidence/claims' && request.method() === 'POST') {
+      const payload = request.postDataJSON(); claimPosts.push(payload);
+      await route.fulfill({ status: 201, headers: cors, contentType: 'application/json',
+        body: JSON.stringify({ status: 'recorded', evidence_id: 'claim-fixture-' + payload.claim_id }) });
+    } else if (url.pathname === '/v1/rag/evidence/contradictions' && request.method() === 'POST') {
+      const payload = request.postDataJSON(); contradictionPosts.push(payload);
+      await route.fulfill({ status: 201, headers: cors, contentType: 'application/json',
+        body: JSON.stringify({ status: 'recorded', evidence_id: 'contradiction-fixture-' + payload.contradiction_id }) });
+    } else await route.fulfill({ status: 404, headers: cors, contentType: 'application/json', body: '{}' });
   });
   await page.route('https://api.example.test/v1/chat/completions', async route => {
     const payload = route.request().postDataJSON();
@@ -123,28 +129,38 @@ test('research trace explicitly persists captured excerpts to the scoped Gateway
     const hasToolResult = payload.messages.some(item => item.role === 'tool');
     let message;
     if (system.includes('Роль: планировщик исследования')) {
-      message = { role: 'assistant', content: 'Plan: capture one source excerpt and preserve provenance.' };
+      message = { role: 'assistant', content: 'Plan: capture two sources and compare their dated claims.' };
     } else if (system.includes('Роль: исследователь') && !hasToolResult) {
-      message = { role: 'assistant', content: null, tool_calls: [{
-        id: 'read-evidence-page', type: 'function',
-        function: { name: 'read_webpage', arguments: JSON.stringify({ url: 'https://example.test/research-evidence' }) }
-      }] };
+      message = { role: 'assistant', content: null, tool_calls: [
+        { id: 'read-evidence-page-a', type: 'function', function: { name: 'read_webpage', arguments: JSON.stringify({ url: 'https://example.test/research-evidence-a' }) } },
+        { id: 'read-evidence-page-b', type: 'function', function: { name: 'read_webpage', arguments: JSON.stringify({ url: 'https://example.test/research-evidence-b' }) } }
+      ] };
     } else if (system.includes('Роль: исследователь') && hasToolResult) {
-      message = { role: 'assistant', content: 'Draft: the captured source contains the exact evidence sentence.' };
-    } else if (system.startsWith('Ты независимый проверяющий.')) {
-      message = { role: 'assistant', content: 'No material factual issue.' };
+      message = { role: 'assistant', content: 'Draft: source A states 2025 while source B states 2026.' };
+    } else if (system.startsWith('Ты критик того же выбранного model route')) {
+      message = { role: 'assistant', content: JSON.stringify({
+        claims: [
+          { claim_id: 'C1', claim_text: 'Source A reports 2025.', assessment: 'supported', confidence: 0.91, evidence: [{ source_id: 'S1', relation: 'supports' }], rationale: 'The first excerpt states 2025.' },
+          { claim_id: 'C2', claim_text: 'Source B reports 2026.', assessment: 'supported', confidence: 0.89, evidence: [{ source_id: 'S2', relation: 'supports' }], rationale: 'The second excerpt states 2026.' }
+        ],
+        contradictions: [
+          { contradiction_id: 'X1', claim_ids: ['C1', 'C2'], evidence_source_ids: ['S1', 'S2'], kind: 'temporal',
+            explanation: 'The two source claims report different years.', confidence: 0.87, status: 'open' }
+        ]
+      }) };
     } else if (system.includes('Роль: синтезатор')) {
-      message = { role: 'assistant', content: 'Final answer with the captured source evidence.' };
-    } else {
-      message = { role: 'assistant', content: 'Unexpected test stage.' };
-    }
+      message = { role: 'assistant', content: 'Final answer with two source claims and one contradiction.' };
+    } else message = { role: 'assistant', content: 'Unexpected test stage.' };
     await route.fulfill({ status: 200, contentType: 'application/json',
       body: JSON.stringify({ model: 'e2e-evidence-model', choices: [{ message }] }) });
   });
-  await page.route('https://example.test/research-evidence', async route => {
-    await route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' },
-      contentType: 'text/html',
-      body: '<html><head><title>Evidence Fixture</title></head><body>🌱 The retrieved page contains a unique evidence sentence for this regression test.</body></html>' });
+  await page.route('https://example.test/research-evidence-a', async route => {
+    await route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' }, contentType: 'text/html',
+      body: '<html><head><title>Source A</title></head><body>Source A reports the reference year 2025 in its dated statement.</body></html>' });
+  });
+  await page.route('https://example.test/research-evidence-b', async route => {
+    await route.fulfill({ status: 200, headers: { 'access-control-allow-origin': '*' }, contentType: 'text/html',
+      body: '<html><head><title>Source B</title></head><body>Source B reports the reference year 2026 in its dated statement.</body></html>' });
   });
 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -160,31 +176,55 @@ test('research trace explicitly persists captured excerpts to the scoped Gateway
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.locator('#modeDeep').click();
   await setAgentMode(page, true);
-  await page.locator('#userInput').fill('Deep research: проверь источник и сохрани доказательный фрагмент в выбранный Gateway.');
+  await page.locator('#userInput').fill('Deep research: compare the two dated sources, validate the claims and preserve any contradiction in the selected Gateway.');
   await page.locator('#sendBtn').click();
 
-  await expect(page.locator('#chatBox')).toContainText('Final answer with the captured source evidence.', { timeout: 20000 });
+  await expect(page.locator('#chatBox')).toContainText('Final answer with two source claims and one contradiction.', { timeout: 20000 });
   await page.locator('#chatBox [data-action="open-trace"]').last().click();
   const traceId = await page.locator('#chatBox [data-action="open-trace"]').last().getAttribute('data-trace-id');
   const trace = await page.evaluate(id => JSON.parse(localStorage.getItem('ai_research_trace_' + id) || 'null'), traceId);
   expect(trace.schemaVersion).toBe(4);
   expect(trace.chatId).toBeTruthy();
-  expect(trace.sources).toHaveLength(1);
+  expect(trace.sources).toHaveLength(2);
+  expect(trace.claims).toHaveLength(2);
+  expect(trace.contradictions).toHaveLength(1);
   expect(evidencePosts).toHaveLength(0);
+  expect(claimPosts).toHaveLength(0);
+  expect(contradictionPosts).toHaveLength(0);
 
   const save = page.locator('#traceContent [data-action="persist-trace-evidence"]');
   await expect(save).toBeVisible();
   await save.click();
-  await expect(page.locator('#traceEvidenceStatus')).toContainText('Сохранено');
-  expect(evidencePosts).toHaveLength(1);
-  expect(evidencePosts[0].scope).toBe('conversation');
-  expect(evidencePosts[0].scope_id).toBe(trace.chatId);
-  expect(evidencePosts[0].source_uri).toBe('https://example.test/research-evidence');
-  expect(evidencePosts[0].source_text).toBe(trace.sources[0].excerpt);
-  expect(evidencePosts[0].start_offset).toBe(0);
-  expect(evidencePosts[0].end_offset).toBe(Array.from(evidencePosts[0].source_text).length);
-  expect(evidencePosts[0].metadata.trace_id).toBe(trace.id);
-  expect(evidencePosts[0].metadata.capture_kind).toBe('tool_excerpt');
+  await expect(page.locator('#traceEvidenceStatus')).toContainText('Сохранено: выдержек 2; утверждений 2; противоречий 1');
+  expect(evidencePosts).toHaveLength(2);
+  expect(claimPosts).toHaveLength(2);
+  expect(contradictionPosts).toHaveLength(1);
+  for (const payload of evidencePosts) {
+    expect(payload.scope).toBe('conversation');
+    expect(payload.scope_id).toBe(trace.chatId);
+    expect(payload.start_offset).toBe(0);
+    expect(payload.end_offset).toBe(Array.from(payload.source_text).length);
+    expect(payload.metadata.trace_id).toBe(trace.id);
+    expect(payload.metadata.capture_kind).toBe('tool_excerpt');
+  }
+  const claimOne = claimPosts.find(item => item.claim_id === 'C1');
+  const claimTwo = claimPosts.find(item => item.claim_id === 'C2');
+  expect(claimOne.run_id).toBe(trace.id);
+  expect(claimOne.reviewer_mode).toBe('same-model');
+  expect(claimOne.evidence_ids).toEqual([evidenceIdsBySource.get('S1')]);
+  expect(claimOne.relations).toEqual({ [evidenceIdsBySource.get('S1')]: 'supports' });
+  expect(claimTwo.evidence_ids).toEqual([evidenceIdsBySource.get('S2')]);
+  expect(claimTwo.relations).toEqual({ [evidenceIdsBySource.get('S2')]: 'supports' });
+  expect(contradictionPosts[0].claims).toEqual([
+    { claim_id: 'C1', text: 'Source A reports 2025.' },
+    { claim_id: 'C2', text: 'Source B reports 2026.' }
+  ]);
+  expect(contradictionPosts[0].evidence_ids).toEqual([evidenceIdsBySource.get('S1'), evidenceIdsBySource.get('S2')]);
+  expect(contradictionPosts[0].reviewer_mode).toBe('same-model');
+  expect(trace.evidenceLedger.saved).toBe(2);
+  expect(trace.evidenceLedger.savedClaims).toBe(2);
+  expect(trace.evidenceLedger.savedContradictions).toBe(1);
 });
 

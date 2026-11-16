@@ -3,11 +3,11 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "37880de8d58462a3b7390d4edf102a5c4689bba4",
-    "main_commit_subject": "docs(state): align freshness snapshot and handoff markers",
-    "main_commit_date": "2026-11-16T05:19:47Z",
+    "main_sha": "00a8d40bd2af8e8a4c1d4eb0234c6e78f956bd8f",
+    "main_commit_subject": "docs(state): align exact freshness checkpoint",
+    "main_commit_date": "2026-11-16T05:20:56Z",
     "last_functional_checkpoint_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
-    "last_functional_milestone": "AgentRun bounded DAG and safe browser UI verified on 377818c: SQLite dependencies, task-ID Fernet payloads, dependency-gated synthesis, safe single/team_review, per-chat choice, General pin, strategy_id and task-state/dependency UI. One worker/model slot; feature off; tools/shell/filesystem/network disabled; no sandbox or host installation.",
+    "last_functional_milestone": "AgentRun UI verified on 377818c; Research Trace explicit Save of source quotes, linked claims and contradictions implemented in this child, pending exact-head CI.",
     "main_quality_run": 43804109317,
     "main_pages_deployment_run": 43804108675,
     "functional_parent_gateway_run": 43696995842,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "37880de8d58462a3b7390d4edf102a5c4689bba4",
+    "checkpoint_parent_sha": "00a8d40bd2af8e8a4c1d4eb0234c6e78f956bd8f",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Implement explicit Research Trace claim/contradiction Save with owner-triggered persistence, chat/project scope, source references and idempotency.",
-      "Continue K.5 in existing order; no parallel backlog.",
-      "Keep AgentRun feature off, one model slot, no tools/shell/filesystem/network and no sandbox/host-install claims."
+      "Verify Research Trace explicit Save end-to-end: quote IDs map to claim relations, contradictions require persisted linked claims and two source quotes, no writes before owner click, partial failures visible and retry idempotent.",
+      "Continue durable/resumable Deep Research, independent Exa/Firecrawl adapters and Notebook/report export.",
+      "Continue remaining K.5 in its existing order."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",

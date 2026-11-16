@@ -5942,16 +5942,18 @@ let agentRuntimeRefreshPromise = null;
       if (trace.chatId && persistableSources.length) {
         const controls = document.createElement('div'); controls.className = 'mt-3 space-y-2';
         const note = document.createElement('p'); note.className = 'text-gray-400 text-xs leading-relaxed';
-        note.textContent = 'Передаются только выдержки до 360 символов, а не полные страницы. Сохранение произойдёт только после вашего нажатия.';
+        note.textContent = 'После вашего нажатия передаются выдержки до 360 символов и их проверенные связи с утверждениями/противоречиями. Полные страницы не передаются.';
         const status = document.createElement('p'); status.id = 'traceEvidenceStatus'; status.className = 'text-gray-300 text-xs';
         status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
-        status.textContent = trace.evidenceLedger?.status === 'saved'
-          ? 'Ранее сохранено выдержек: ' + Number(trace.evidenceLedger.saved || 0) + '.'
+        status.textContent = trace.evidenceLedger && ['saved', 'partial'].includes(trace.evidenceLedger.status)
+          ? 'Ранее сохранено: выдержек ' + Number(trace.evidenceLedger.saved || 0) +
+            '; утверждений ' + Number(trace.evidenceLedger.savedClaims || 0) +
+            '; противоречий ' + Number(trace.evidenceLedger.savedContradictions || 0) + '.'
           : 'Не сохранено в Gateway.';
         const save = document.createElement('button'); save.type = 'button'; save.id = 'persistTraceEvidenceButton';
         save.dataset.action = 'persist-trace-evidence';
         save.className = 'rounded-lg border border-cyan-700 px-3 py-2 text-xs text-cyan-200 hover:bg-cyan-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400';
-        save.textContent = trace.evidenceLedger?.status === 'saved' ? 'Повторить сохранение в Gateway' : 'Сохранить выдержки в Gateway';
+        save.textContent = trace.evidenceLedger && (Number(trace.evidenceLedger.saved || 0) + Number(trace.evidenceLedger.savedClaims || 0) + Number(trace.evidenceLedger.savedContradictions || 0)) > 0 ? 'Повторить сохранение в Gateway' : 'Сохранить доказательства в Gateway';
         controls.append(note, status, save); evidenceSection.appendChild(controls);
       } else if (shownSources) {
         const legacy = document.createElement('p'); legacy.className = 'mt-2 text-gray-500 text-xs';
@@ -5963,8 +5965,9 @@ let agentRuntimeRefreshPromise = null;
     }
 
     async function persistTraceEvidence(button) {
-      if (!activeTrace || typeof activeTrace.chatId !== 'string' || !activeTrace.chatId) {
-        throw new Error('Для сохранения доказательств нужен идентификатор разговора.');
+      if (!activeTrace || typeof activeTrace.chatId !== 'string' || !activeTrace.chatId ||
+          typeof activeTrace.id !== 'string' || !activeTrace.id) {
+        throw new Error('Для сохранения доказательств нужен идентификатор разговора и запуска.');
       }
       const trigger = button || $('persistTraceEvidenceButton');
       const status = $('traceEvidenceStatus');
@@ -5984,10 +5987,24 @@ let agentRuntimeRefreshPromise = null;
         if (!capabilities?.rag?.enabled || !capabilities?.rag?.evidence_ledger) {
           throw new Error('Evidence Ledger отключён на выбранном Gateway. Локальный журнал сохранён.');
         }
-        const sources = (Array.isArray(activeTrace.sources) ? activeTrace.sources : [])
-          .slice(0, MAX_RESEARCH_EVIDENCE);
+        const postRecord = async (path, payload) => {
+          try {
+            const response = await fetch(config.baseUrl + path, {
+              method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload), cache: 'no-store', credentials: 'omit', signal: controller.signal
+            });
+            const result = await response.json().catch(() => null);
+            return response.ok && typeof result?.evidence_id === 'string' ? result.evidence_id : '';
+          } catch (_) { return ''; }
+        };
+        const scope = 'conversation';
+        const scopeId = String(activeTrace.chatId).slice(0, 160);
+        const runId = String(activeTrace.id).slice(0, 160);
+        const model = String(activeTrace.model || '').slice(0, 160);
+        const sources = (Array.isArray(activeTrace.sources) ? activeTrace.sources : []).slice(0, MAX_RESEARCH_EVIDENCE);
         let saved = 0, skipped = 0, failed = 0;
         const evidenceIds = [];
+        const sourceEvidenceIds = new Map();
         for (let offset = 0; offset < sources.length; offset += 4) {
           const batch = sources.slice(offset, offset + 4);
           const outcomes = await Promise.all(batch.map(async (source, batchIndex) => {
@@ -5998,55 +6015,121 @@ let agentRuntimeRefreshPromise = null;
             if (parsed.search || parsed.hash) return { status: 'skipped' };
             const excerpt = String(source?.excerpt || '').replace(/\s+/g, ' ').trim().slice(0, 360);
             if (!excerpt) return { status: 'skipped' };
-            const sourceKey = String(source?.id || ('S' + (offset + batchIndex + 1))).slice(0, 40);
+            const sourceId = String(source?.id || ('S' + (offset + batchIndex + 1)));
+            const sourceKey = sourceId.slice(0, 40);
             const payload = {
-              scope: 'conversation',
-              scope_id: String(activeTrace.chatId).slice(0, 160),
-              source_id: (String(activeTrace.id || 'trace').slice(0, 100) + '-' + sourceKey).slice(0, 160),
-              source_uri: sourceUrl,
-              source_text: excerpt,
-              chunk_id: sourceKey.slice(0, 160),
-              start_offset: 0,
-              end_offset: Array.from(excerpt).length,
+              scope, scope_id: scopeId,
+              source_id: (runId.slice(0, 100) + '-' + sourceKey).slice(0, 160),
+              source_uri: sourceUrl, source_text: excerpt, chunk_id: sourceKey,
+              start_offset: 0, end_offset: Array.from(excerpt).length,
               section: String(source?.title || '').slice(0, 256),
               metadata: {
-                capture_kind: 'tool_excerpt',
-                trace_id: String(activeTrace.id || '').slice(0, 64),
+                capture_kind: 'tool_excerpt', trace_id: runId.slice(0, 64),
                 source_label: String(source?.source || '').slice(0, 80),
                 tool: String(source?.tool || '').slice(0, 80),
                 title: String(source?.title || '').slice(0, 180),
                 captured_at: String(source?.capturedAt || activeTrace.createdAt || '').slice(0, 40),
-                provider: String(activeTrace.provider || '').slice(0, 120),
-                model: String(activeTrace.model || '').slice(0, 160)
+                provider: String(activeTrace.provider || '').slice(0, 120), model
               }
             };
-            try {
-              const response = await fetch(config.baseUrl + '/rag/evidence', {
-                method: 'POST',
-                headers: { ...headers, 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload), cache: 'no-store', credentials: 'omit',
-                signal: controller.signal
-              });
-              const result = await response.json().catch(() => null);
-              if (!response.ok || typeof result?.evidence_id !== 'string') return { status: 'failed' };
-              return { status: 'saved', evidenceId: result.evidence_id };
-            } catch (_) { return { status: 'failed' }; }
+            const evidenceId = await postRecord('/rag/evidence', payload);
+            return evidenceId ? { status: 'saved', sourceId, evidenceId } : { status: 'failed' };
           }));
           for (const outcome of outcomes) {
-            if (outcome.status === 'saved') { saved++; evidenceIds.push(outcome.evidenceId); }
-            else if (outcome.status === 'skipped') skipped++;
+            if (outcome.status === 'saved') {
+              saved++; evidenceIds.push(outcome.evidenceId);
+              sourceEvidenceIds.set(outcome.sourceId, outcome.evidenceId);
+            } else if (outcome.status === 'skipped') skipped++;
             else failed++;
           }
         }
+
+        const claims = Array.isArray(activeTrace.claims) ? activeTrace.claims.slice(0, 40) : [];
+        const claimsById = new Map();
+        const savedClaimIds = new Set();
+        const claimRecordIds = [];
+        let savedClaims = 0, skippedClaims = 0, failedClaims = 0;
+        for (const claim of claims) {
+          const claimId = String(claim?.claim_id || '');
+          const claimText = String(claim?.claim_text || '').trim();
+          const assessment = String(claim?.assessment || '');
+          const confidence = Number(claim?.confidence);
+          const relations = claim?.relations && typeof claim.relations === 'object' && !Array.isArray(claim.relations)
+            ? Object.entries(claim.relations) : [];
+          const relationByEvidenceId = {};
+          let allSourcesSaved = relations.length > 0;
+          for (const [sourceId, relation] of relations) {
+            const evidenceId = sourceEvidenceIds.get(sourceId);
+            if (!evidenceId || !['supports', 'contradicts', 'qualifies', 'context'].includes(relation)) {
+              allSourcesSaved = false; break;
+            }
+            relationByEvidenceId[evidenceId] = relation;
+          }
+          if (!/^[A-Za-z0-9_-]{1,64}$/.test(claimId) || !claimText || claimText.length > 8000 ||
+              !['supported', 'contradicted', 'mixed', 'insufficient', 'unverified'].includes(assessment) ||
+              !Number.isFinite(confidence) || confidence < 0 || confidence > 1 || !allSourcesSaved) {
+            skippedClaims++; continue;
+          }
+          claimsById.set(claimId, claim);
+          const payload = {
+            scope, scope_id: scopeId, claim_id: claimId, claim_text: claimText, assessment, confidence,
+            evidence_ids: Object.keys(relationByEvidenceId), relations: relationByEvidenceId,
+            rationale: String(claim?.rationale || '').slice(0, 4000),
+            reviewer_mode: 'same-model', run_id: runId, reviewer_model: model,
+            metadata: { trace_id: runId.slice(0, 64), review_parse_status: String(activeTrace.reviewParseStatus || '').slice(0, 40) }
+          };
+          const recordId = await postRecord('/rag/evidence/claims', payload);
+          if (recordId) { savedClaims++; savedClaimIds.add(claimId); claimRecordIds.push(recordId); }
+          else failedClaims++;
+        }
+
+        const contradictions = Array.isArray(activeTrace.contradictions) ? activeTrace.contradictions.slice(0, 20) : [];
+        const contradictionRecordIds = [];
+        let savedContradictions = 0, skippedContradictions = 0, failedContradictions = 0;
+        for (const item of contradictions) {
+          const contradictionId = String(item?.contradiction_id || '');
+          const claimIds = Array.isArray(item?.claim_ids) ? item.claim_ids.map(String) : [];
+          const evidenceSourceIds = Array.isArray(item?.evidence_source_ids) ? [...new Set(item.evidence_source_ids.map(String))] : [];
+          const linkedEvidenceIds = evidenceSourceIds.map(sourceId => sourceEvidenceIds.get(sourceId));
+          const linkedClaims = claimIds.map(claimId => claimsById.get(claimId));
+          const kind = String(item?.kind || ''), explanation = String(item?.explanation || '').trim();
+          const confidence = Number(item?.confidence), recordStatus = String(item?.status || 'open');
+          if (!/^[A-Za-z0-9_-]{1,64}$/.test(contradictionId) || claimIds.length < 2 || claimIds.length > 10 ||
+              new Set(claimIds).size !== claimIds.length || claimIds.some((id, index) => !savedClaimIds.has(id) || !linkedClaims[index]) ||
+              evidenceSourceIds.length < 2 || linkedEvidenceIds.some(id => !id) || new Set(linkedEvidenceIds).size < 2 ||
+              !['direct', 'partial', 'temporal', 'scope', 'methodological'].includes(kind) ||
+              !explanation || explanation.length > 4000 || !Number.isFinite(confidence) || confidence < 0 || confidence > 1 ||
+              !['open', 'resolved', 'accepted', 'dismissed'].includes(recordStatus)) {
+            skippedContradictions++; continue;
+          }
+          const payload = {
+            scope, scope_id: scopeId, contradiction_id: contradictionId,
+            claims: linkedClaims.map((claim, index) => ({ claim_id: claimIds[index], text: String(claim.claim_text).slice(0, 8000) })),
+            evidence_ids: linkedEvidenceIds, kind, explanation, status: recordStatus, confidence,
+            reviewer_mode: 'same-model', run_id: runId, reviewer_model: model,
+            metadata: { trace_id: runId.slice(0, 64), review_parse_status: String(activeTrace.reviewParseStatus || '').slice(0, 40) }
+          };
+          const recordId = await postRecord('/rag/evidence/contradictions', payload);
+          if (recordId) { savedContradictions++; contradictionRecordIds.push(recordId); }
+          else failedContradictions++;
+        }
+
+        const savedTotal = saved + savedClaims + savedContradictions;
+        const skippedTotal = skipped + skippedClaims + skippedContradictions;
+        const failedTotal = failed + failedClaims + failedContradictions;
         activeTrace.evidenceLedger = {
-          status: failed ? (saved ? 'partial' : 'failed') : (saved ? 'saved' : 'empty'),
-          saved, skipped, failed, evidenceIds, scope: 'conversation',
-          scopeId: String(activeTrace.chatId), savedAt: new Date().toISOString()
+          status: failedTotal ? (savedTotal ? 'partial' : 'failed')
+            : skippedTotal ? (savedTotal ? 'partial' : 'empty') : (savedTotal ? 'saved' : 'empty'),
+          saved, skipped, failed, evidenceIds, savedClaims, skippedClaims, failedClaims, claimRecordIds,
+          savedContradictions, skippedContradictions, failedContradictions, contradictionRecordIds,
+          sourceEvidenceIds: Object.fromEntries(sourceEvidenceIds), scope, scopeId, savedAt: new Date().toISOString()
         };
         safeSet('ai_research_trace_' + activeTrace.id, JSON.stringify(activeTrace));
-        if (status) status.textContent = 'Сохранено: ' + saved + '; пропущено: ' + skipped + '; ошибок: ' + failed + '.';
-        if (failed) showToast('Часть выдержек не сохранена. Повтор безопасен: одинаковые записи дедуплицируются.', 'error');
-        else showToast('Доказательные выдержки сохранены в Gateway.');
+        if (status) status.textContent = 'Сохранено: выдержек ' + saved + '; утверждений ' + savedClaims +
+          '; противоречий ' + savedContradictions + '; пропущено ' + skippedTotal + '; ошибок ' + failedTotal + '.';
+        if (failedTotal || skippedTotal) showToast('Сохранение частичное: проверь статус выдержек, утверждений и противоречий в журнале.', 'error');
+        else if (savedTotal) showToast('Выдержки, утверждения и противоречия сохранены в Gateway.');
+        else showToast('Нет записей, пригодных для сохранения в Gateway.', 'error');
         return activeTrace.evidenceLedger;
       } catch (error) {
         if (status) status.textContent = (timedOut ? 'Истекло время ожидания. ' : 'Сохранение не завершено: ') + String(error?.message || 'Gateway недоступен.').slice(0, 180);
