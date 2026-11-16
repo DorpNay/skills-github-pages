@@ -36,13 +36,17 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `680ab02289c8517dbe9e36b53abb66317dda5f86`; Open PRs: none; Open issue: #111.
-- Exact-head Gateway #43797179042, Quality #43797179025, Freshness #43797178997, Provenance #43797179026, Graphify #43797179000 and Pages #43797178161 all SUCCESS.
-- AgentRun backend is now a CI-verified native bounded DAG prototype: additive SQLite same-run task dependencies; dependency-ready scheduling; task-ID-keyed Fernet payloads; `single` and three-node `team_review` (researcher + reviewer + synthesis). One worker/model slot, serial inference. Tools/filesystem/network disabled; feature flag off. Agents UI not yet wired.
-- Bonsai PTQ1_0 and Qwen3.5-2B artifacts staged and SHA-verified, not target-installed. No host/runtime/device verification.
-- Owner request OR-2026-11-16-005 must be archived verbatim in NOW.md; K.6.13 is binding for Mini aLandi offline package, reconnect/failover, offline voice, project-scoped reviewed learning, curated Coder/code packs and explicit local-file permissions. K.5 remains the only status table.
-- Assistant tools: GitHub, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers and Superpowers installed/enabled; Exa, Code and Coder tools/skills available. Twilio Developer Kit is available as skills only, with no authenticated Twilio account/provider. No standalone Codex connector surfaced. None implies aLandi runtime integration.
-- Next: archive OR-005 + K.6.13; then Agents UI/Research Save; Coder workspace/sandbox; project-learning memory; Mini aLandi package with offline voice/reconnect; secure local files and pinned code/API packs.
+- Parent main `377818cceef7099d6698c07561c715358d5d8ddd`; 0 open PRs; issue #111.
+- Quality #43804109317 SUCCESS (7/7 jobs, 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exact.
+- AgentRun native bounded DAG and browser UI IMPLEMENTED / VERIFIED PROTOTYPE: same-run SQLite dependencies, dependency-gated synthesis, task-ID Fernet payloads; safe single/team_review; per-chat choice, General coordinator pin, strategy_id and actual task-state/dependency rendering.
+- One worker/model slot; Team Review calls sequential. Logical roles are not OS processes. Tools/shell/filesystem/network disabled; ALANDI_AGENT_RUNS_ENABLED=false. No Coder sandbox/browser worker.
+- Gateway unchanged by UI slice; latest Gateway #43797179042 on parent 680ab022 across Python 3.12/13/14.
+- Bonsai/Qwen artifacts staged, not target-installed. No host/Ollama/device/offline verification.
+- OR-005/006 archived; K.6.13 binding for Mini aLandi/offline voice/reconnect, reviewed project learning, Coder packs and explicit local files. K.5 remains sole status table.
+- Assistant-side tools: GitHub, Exa, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers, Superpowers, Code/Coder. Twilio skills-only without provider auth; no standalone Codex connector. None is aLandi integration.
+- Next: Research Trace Save, then K.5 order. No shell before tested sandbox and owner approval.
+
+
 ## Targeted UI source review — 2026-11-16
 
 Official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav were rechecked. Reuse disclosure semantics, focus return, Escape/Tab/outside dismissal, shallow navigation, visible focus and modal boundaries without adding a React/UI runtime. Detailed findings and URLs are in INTEL.md.

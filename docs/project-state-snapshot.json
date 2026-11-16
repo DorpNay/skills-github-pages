@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7",
-    "main_commit_subject": "test(agents): require advertised AgentRun strategy selection",
-    "main_commit_date": "2026-11-16T03:32:34Z",
-    "last_functional_checkpoint_sha": "fb9c9d3a1cf06fe0e07606ad816767e00686a83f",
-    "last_functional_milestone": "Native bounded AgentRun DAG prototype is implemented on main and exact-head CI verified at 680ab02289c8517dbe9e36b53abb66317dda5f86: same-run task dependencies, task-ID Fernet payloads, single/team_review strategy and synthesis. One worker/model slot keeps inference serial. Agents UI not wired; tools/filesystem/network disabled; feature-off; no sandbox or host installation.",
-    "main_quality_run": 43798806788,
-    "main_pages_deployment_run": 43798806597,
+    "main_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
+    "main_commit_subject": "fix(agents): constrain team review to its supported profile",
+    "main_commit_date": "2026-11-16T04:26:22Z",
+    "last_functional_checkpoint_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
+    "last_functional_milestone": "AgentRun bounded DAG and safe browser UI verified on 377818c: SQLite dependencies, task-ID Fernet payloads, dependency-gated synthesis, safe single/team_review, per-chat choice, General pin, strategy_id and task-state/dependency UI. One worker/model slot; feature off; tools/shell/filesystem/network disabled; no sandbox or host installation.",
+    "main_quality_run": 43804109317,
+    "main_pages_deployment_run": 43804108675,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -184,7 +184,7 @@
     ],
     "main_provenance_run": 43762493641,
     "main_freshness_run": 43762493531,
-    "main_graphify_run": 43762493514,
+    "main_graphify_run": 43804109318,
     "owner_task": "OR-2026-11-15-012",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
     "pr131_exact_head_verified": false,
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-AGENT-UI-ORIENT-001",
+  "last_volley": "V-2026-11-16-AGENT-UI-VERIFIED-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7",
+    "checkpoint_parent_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Implement real AgentRun strategy selector with strict allowlist for single and team_review, reject unsafe catalog entries and persist selection per chat.",
-      "Submit selected strategy_id and render researcher/reviewer/coordinator task states and dependency edges from run snapshots; disclose serial inference and disabled tools/filesystem/network.",
-      "Run exact-head Quality/Chromium, Gateway where code changes warrant it, Freshness, Provenance, Graphify and Pages; then connect explicit Research Trace Save."
+      "Implement explicit Research Trace claim/contradiction Save with owner-triggered persistence, chat/project scope, source references and idempotency.",
+      "Continue K.5 in existing order; no parallel backlog.",
+      "Keep AgentRun feature off, one model slot, no tools/shell/filesystem/network and no sandbox/host-install claims."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -419,28 +419,28 @@
   },
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
-  "owner_task": "LANDING-V2-2026-001 / K.5; OR-2026-11-16-005 adds Mini aLandi offline runtime/reconnect/voice, persistent reviewed project-learning agents, curated Coder knowledge packs and explicit scoped local-file workspace. K.6.13 is binding; no parallel backlog.",
+  "owner_task": "LANDING-V2-2026-001 / K.5; OR-2026-11-16-007 resumes OR-006: AgentRun UI verified, next Research Trace Save, then K.5 order.",
   "main_gateway_run": 43797179042,
-  "main_quality_run": 43798806788,
-  "main_pages_deployment_run": 43798806597,
+  "main_quality_run": 43804109317,
+  "main_pages_deployment_run": 43804108675,
   "main_freshness_run": 43797178997,
   "main_provenance_run": 43797179026,
-  "main_graphify_run": 43798806804,
+  "main_graphify_run": 43804109318,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "Quality #43798806788 FAILURE only in Chromium: 133 passed, one new AgentRun strategy selector test failed because #agentRuntimeStrategy is missing; six other Quality jobs passed; published-site contract skipped.",
-  "main_pages_status": "Pages #43798806597 SUCCESS on exact main 9835e; live public root revision marker pending.",
-  "main_freshness_status": "Not triggered on exact main 9835e; code-bearing parent 680ab022 Freshness #43797178997 PASS.",
-  "main_provenance_status": "Not triggered on exact main 9835e; code-bearing parent 680ab022 Provenance #43797179026 PASS.",
-  "main_graphify_status": "Graphify #43798806804 SUCCESS on exact main.",
-  "main_gateway_status": "Not triggered on test-only exact main; last code-bearing parent 680ab022 Gateway #43797179042 PASS across Python 3.12/13/14.",
-  "owner_request": "OR-2026-11-16-006",
+  "main_quality_status": "SUCCESS: Quality #43804109317 all 7 jobs; 134 Chromium tests and published-site contract passed on 377818c.",
+  "main_pages_status": "SUCCESS: Pages #43804108675 build/status/deploy; uncached public root revision exact.",
+  "main_freshness_status": "Not triggered on code-only 377818c; next on documentation refresh.",
+  "main_provenance_status": "Not triggered on code-only 377818c; next on documentation refresh.",
+  "main_graphify_status": "SUCCESS: Graphify #43804109318 on exact main.",
+  "main_gateway_status": "Gateway unchanged by UI slice; latest focused pass #43797179042 on backend parent 680ab022, Python 3.12/13/14.",
+  "owner_request": "OR-2026-11-16-007",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7",
-    "pages_run": 43798806597,
-    "revision_verification": "Pages #43798806597 SUCCESS for exact main 9835e; uncached public root meta not yet independently fetched."
+    "root_revision": "377818cceef7099d6698c07561c715358d5d8ddd",
+    "pages_run": 43804108675,
+    "revision_verification": "Uncached TinyFish fetch returned alandi-build-revision exact 377818cceef7099d6698c07561c715358d5d8ddd."
   }
 }

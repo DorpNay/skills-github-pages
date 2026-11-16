@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001; owner acceptance includes OR-2026-11-15-014. Parent main be7337cbc5e839747b3fe7377ac5a9a27a35a24b; 0 open PRs; issue #111. Gateway #43737581208 RED on test-only parent; Quality #43737581226 IN_PROGRESS; Freshness #43737581194 stale snapshot on test-only parent; Graphify #43737581219 SUCCESS; Pages #43737580201 SUCCESS. This child implements scoped EvidenceLedger persistence and refreshes the checkpoint."
+    status: "Active task LANDING-V2-2026-001. Parent main 377818cceef7099d6698c07561c715358d5d8ddd; 0 open PRs; issue #111. AgentRun UI Quality #43804109317 SUCCESS (7 jobs; 134 Chromium tests + published-site contract), Graphify #43804109318 SUCCESS, Pages #43804108675 SUCCESS; public root revision exact. Latest focused Gateway #43797179042 is on unchanged backend parent 680ab022."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -294,19 +294,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7"
-  last_main_action: "Exact main 9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7 changes only tests/e2e/app.spec.mjs. Quality #43798806788 fails only Chromium: 133 passed, one new AgentRun UI test fails because #agentRuntimeStrategy is absent; six other Quality jobs passed; published-site contract skipped. Graphify #43798806804 SUCCESS; Pages #43798806597 SUCCESS. Gateway/Freshness/Provenance not triggered on this test-only commit."
-  last_functional_checkpoint: "680ab02289c8517dbe9e36b53abb66317dda5f86"
-  main_quality: "Quality #43798806788 FAILURE: one expected-red AgentRun strategy selector UI test; 133 Chromium tests passed; six other jobs passed."
-  main_freshness: "Not triggered on exact main 9835e; last pass #43797178997 on code-bearing parent 680ab022."
-  main_graphify: "Graphify #43798806804 SUCCESS on exact main."
-  main_gateway: "Not triggered on test-only exact main; last pass #43797179042 across Python 3.12/13/14 on code-bearing parent 680ab022."
-  main_provenance: "Not triggered on exact main 9835e; last pass #43797179026 on code-bearing parent 680ab022."
-  main_pages: "Pages #43798806597 SUCCESS for exact main 9835e; live public revision marker pending."
+  verified_main: "377818cceef7099d6698c07561c715358d5d8ddd"
+  last_main_action: "Safe AgentRun UI on exact main 377818c. Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Public root revision exact."
+  last_functional_checkpoint: "377818cceef7099d6698c07561c715358d5d8ddd"
+  main_quality: "Quality #43804109317 SUCCESS: all 7 jobs; 134 Chromium tests and published-site contract passed."
+  main_freshness: "Not triggered on code-only main 377818c; next on docs refresh."
+  main_graphify: "Graphify #43804109318 SUCCESS on exact main."
+  main_gateway: "Gateway unchanged by UI slice; latest pass #43797179042 on backend parent 680ab022, Python 3.12/13/14."
+  main_provenance: "Not triggered on code-only main 377818c; next on docs refresh."
+  main_pages: "Pages #43804108675 SUCCESS; public root revision exact."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
-  runtime_boundary: "AgentRun bounded single/team_review DAG backend is implemented and code-bearing parent CI verified. Current exact main adds the missing UI acceptance test and is red because strategy selector and task graph UI are not implemented. One worker/model slot, serial inference, tools/filesystem/network disabled, feature flag off. Bonsai and Qwen3.5-2B staged, not installed. Coder sandbox, VPS, backup/restore and Mini aLandi remain unverified."
-  next: "Implement strict safe strategy selection, per-chat persistence, API strategy_id submission and per-task task graph/status rendering; verify exact-head CI. Then Research Trace Save and remaining K.5 in order."
+  runtime_boundary: "AgentRun exposes safe single/team_review; bounded three-node same-run DAG, task-ID Fernet payloads, dependency-gated synthesis, per-chat choice, strategy_id and task-state/dependency UI. One worker/model slot, serial inference; tools/shell/filesystem/network disabled; feature off; no independent processes, sandbox, target install or offline runtime."
+  next: "Implement explicit Research Trace claim/contradiction Save; verify owner-triggered persistence, chat/project scope, source references and idempotency; then continue K.5."
 
 
 
