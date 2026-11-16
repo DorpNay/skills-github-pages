@@ -416,8 +416,8 @@ test('published app boots with aServi selected and concise navigation', async ({
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#searchModeSummary')).toBeVisible();
-  await expect(page.locator('#searchModeSummary')).toContainText('Обычный');
-  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#functionsMenu .toolbar-menu-option')).toHaveCount(4);
   const stopButtonBackground = await page.locator('#stopBtn').evaluate(element => {
     element.classList.remove('hidden');
@@ -747,6 +747,79 @@ test('settings profile import restores preferences while preserving existing pro
   expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-provider-secret');
   expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-tavily-secret');
 });
+test('new Direct chats default to model-only while saved per-chat search modes survive reload', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      { id: 'chat-search-offline', title: 'Offline chat', searchMode: 'offline', messages: [] },
+      { id: 'chat-search-normal', title: 'Web-enabled chat', searchMode: 'normal', messages: [] },
+      { id: 'chat-search-legacy', title: 'Legacy chat', messages: [] }
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'chat-search-offline');
+    localStorage.setItem('ai_web_search', 'false');
+    localStorage.setItem('ai_offline_mode', 'true');
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
+  const migratedModes = await page.evaluate(() => Object.fromEntries(
+    JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').map(chat => [chat.id, chat.searchMode])
+  ));
+  expect(migratedModes).toEqual({
+    'chat-search-offline': 'offline',
+    'chat-search-normal': 'normal',
+    'chat-search-legacy': 'offline'
+  });
+
+  await page.evaluate(() => localStorage.setItem('ai_current_chat_v87', 'chat-search-normal'));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
+
+  await ensureSidebarOpen(page);
+  await page.locator('#sidebar [data-action="new-chat"]').click();
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
+  const newChatMode = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id)?.searchMode;
+  });
+  expect(newChatMode).toBe('offline');
+
+  let webToolsAvailable = null;
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    const body = route.request().postDataJSON();
+    const lastUserMessage = [...(body.messages || [])].reverse().find(message => message.role === 'user')?.content;
+    if (lastUserMessage === 'Reply with exactly OK. No other words.') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ model: 'direct-default-model', choices: [{ message: { role: 'assistant', content: 'OK' } }] })
+      });
+    }
+    webToolsAvailable = Array.isArray(body.tools) && body.tools.some(tool =>
+      ['web_search', 'public_knowledge_search', 'read_webpage'].includes(tool.function?.name)
+    );
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ model: 'direct-default-model', choices: [{ message: { role: 'assistant', content: 'Completed without web tools.' } }] })
+    });
+  });
+  await configureCustomProvider(page, 'direct-default-model');
+  await page.locator('#userInput').fill('Explain how Direct mode works.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Completed without web tools.', { timeout: 20000 });
+  expect(webToolsAvailable).toBe(false);
+
+  await chooseSearchMode(page, 'normal');
+  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toggleSearch')).toBeChecked();
+});
+
 test('legacy chat research preference migrates to an explicit Deep Research method', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('ai_chats_v87', JSON.stringify([
@@ -2887,16 +2960,16 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   }
   await page.locator('#sidebar [data-action="new-chat"]').click();
   await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#toggleSearch')).toBeChecked();
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).not.toBeChecked();
-  await expect(page.locator('#searchModeSummary')).toContainText(/обычный/i);
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
 
   await selectLanguage(page, 'en');
   await expect(page.locator('#modeDeep')).toContainText('Thorough');
   await expect(page.locator('#modeToolbar [role="group"]')).toHaveAttribute('aria-label', 'Effort');
   await expect(page.locator('#functionsMenu')).toHaveCount(1);
   await expect(page.locator('#searchModeSummary')).toContainText('Web');
-  await expect(page.locator('#modeHint')).toContainText('Quick · Web: standard · Direct · Auto');
+  await expect(page.locator('#modeHint')).toContainText('Quick · Web: off · Direct · Auto');
 });
 
 test('Functions menu exposes four truthful independent panels with blurred backdrop', async ({ page }) => {

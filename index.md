@@ -663,7 +663,7 @@ permalink: /
   </header>
 
   <div id="modeToolbar" class="bg-gray-950 px-3 py-2 border-b border-gray-800 shrink-0 space-y-1.5">
-    <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" aria-live="polite" title="Объём работы и ширина веб-поиска управляются независимо.">Быстро · Веб: обычный · Прямой · Авто</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
+    <div class="mode-hint-row"><p id="modeHint" class="mode-hint text-[10px] text-gray-500 leading-tight" aria-live="polite" title="Объём работы и ширина веб-поиска управляются независимо.">Быстро · Веб: выкл. · Прямой · Авто</p><span id="pyStatus" class="hidden sm:inline-flex shrink-0 text-[9px] text-gray-500" title="Python загрузится только после запуска блока кода">Py: по запросу</span></div>
     <div class="flex items-center gap-2 text-xs">
       <span class="text-gray-400 shrink-0" data-i18n="modeLabel">Объём:</span>
       <div class="flex flex-1 min-w-0 rounded-lg bg-gray-900 p-1 gap-1" role="group" aria-label="Объём работы" data-i18n-aria-label="modeGroupAria">
@@ -673,7 +673,7 @@ permalink: /
     </div>
     <div class="flex items-center gap-2 text-xs">
       <details id="searchModeMenu" class="toolbar-menu flex-1 min-w-0">
-        <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Веб: обычный ▾</summary>
+        <summary id="searchModeSummary" class="toolbar-menu-summary">🌐 Веб: выкл. ▾</summary>
         <div class="toolbar-menu-panel">
           <button type="button" data-action="select-search-mode" data-search-mode="normal" class="toolbar-menu-option"><strong data-i18n="searchModeNormal">Обычный</strong><small data-i18n="searchModeNormalHelp">Стандартный охват результатов и источников; не меняет бюджет обработки.</small></button>
           <button type="button" data-action="select-search-mode" data-search-mode="more" class="toolbar-menu-option"><strong data-i18n="searchModeMore">Расширенный</strong><small data-i18n="searchModeMoreHelp">Больше результатов и источников на каждый поиск; не увеличивает число раундов.</small></button>
@@ -690,7 +690,7 @@ permalink: /
         </div>
       </details>
     </div>
-    <input type="checkbox" id="toggleSearch" class="hidden" checked>
+    <input type="checkbox" id="toggleSearch" class="hidden">
     <input type="checkbox" id="toggleMultiAgent" class="hidden">
     <span id="offlineToggle" class="sr-only" aria-live="polite"></span>
   </div>
@@ -1140,7 +1140,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, executionMode: 'direct', privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', deepResearchMethod: 'none', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, executionMode: 'direct', privateMemoryUsed: false, processingMode: 'fast', searchMode: 'offline', deepResearchMethod: 'none', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (rawText === null) return;
@@ -1180,6 +1180,7 @@ permalink: /
             title: typeof item.title === 'string' ? item.title.slice(0, 160) : 'Новый чат',
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
+            searchMode: ['normal','more','offline'].includes(item.searchMode) ? item.searchMode : undefined,
             deepResearchMethod: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod : (item.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'),
             multiAgentEnabled: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod === 'multi_step_evidence_report' : item.multiAgentEnabled === true,
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
