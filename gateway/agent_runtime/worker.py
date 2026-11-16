@@ -500,17 +500,18 @@ class AgentRunWorker:
                 "Preserve meaningful disagreement, label assumptions and evidence gaps, and do not "
                 "invent citations or claim verification that did not occur."
             )
-        available = self.max_prompt_chars - len(prefix) - len(suffix)
+        section_headers = [f"\n[{task_key}]\n" for task_key, _ in reports]
+        available = self.max_prompt_chars - len(prefix) - len(suffix) - sum(map(len, section_headers))
         if available < 256 * len(reports):
             raise AgentPayloadError("team synthesis context budget is too small for the supplied task")
         per_report = available // len(reports)
         sections = []
-        for task_key, report in reports:
+        for (task_key, report), section_header in zip(reports, section_headers):
             truncation_marker = "\n[report truncated to the configured synthesis context budget]"
             clipped = report
             if len(report) > per_report:
                 clipped = report[:max(0, per_report - len(truncation_marker))] + truncation_marker
-            sections.append(f"\n[{task_key}]\n{clipped}")
+            sections.append(section_header + clipped)
         prompt = prefix + "".join(sections) + suffix
         if len(prompt) > self.max_prompt_chars:
             raise AgentPayloadError("team synthesis prompt exceeds the configured context limit")
