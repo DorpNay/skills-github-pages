@@ -3,7 +3,7 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "55d68e07d33cb8192c164062d47bedcbf11d7561",
+    "main_sha": "3aa42bcb0a989f23f17909e3752f2dcc278ae892",
     "main_commit_subject": "docs(research): record provenance and tracing source review",
     "main_commit_date": "2026-11-16T05:37:43Z",
     "last_functional_checkpoint_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "55d68e07d33cb8192c164062d47bedcbf11d7561",
+    "checkpoint_parent_sha": "3aa42bcb0a989f23f17909e3752f2dcc278ae892",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Complete K.1.1 owner-designed sidebar, project and chat UX from the archived owner acceptance contract.",
-      "Complete K.1.2 Functions menu with explicit capability dimensions and safe mode compatibility; do not conflate blueprint settings with executable capabilities.",
-      "Return to remaining K.1.3 Deep Research: durable/resumable runs, real Exa/Firecrawl adapters, budgets and Notebook/report export."
+      "Verify equal-height, differently shaded Projects/Chats panels at desktop and mobile; persistent create rows while collapsed; subtle collapsed Memory section; correct sidebar title; project filtering remains view-only.",
+      "Verify blank global prompt, legacy-default/placeholder migration and explicit settings-profile import/export round-trip.",
+      "Then proceed to K.1.2 Functions menu and capability/mode compatibility."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",

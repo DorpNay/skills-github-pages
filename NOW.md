@@ -9,16 +9,16 @@
 - **Task ID:** LANDING-V2-2026-001.
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. No default PR branch; work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111.
-- **Documentation refresh parent:** `55d68e07d33cb8192c164062d47bedcbf11d7561`.
+- **Documentation refresh parent:** `3aa42bcb0a989f23f17909e3752f2dcc278ae892`.
 - **Owner task:** OR-2026-11-16-007 resumes the detailed OR-2026-11-16-006 scope archived below.
 - **Scope:** existing 15-point programme in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K/K.5; K.6 is binding. No parallel backlog. Exclude owner-supplied primary model.
 - **Authorization:** direct commits to main, assistant-side tools/plugins/skills, automatic Pages publication. No VPS deployment, paid provisioning, secrets, destructive operations, force-push, rebase/reset or history rewrite.
 - **Tracker:** one 15-row K.5 table plus K.6 acceptance contract.
-- **Live code checkpoint:** `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e` — verified Research Trace Save; documentation refresh parent `55d68e07d33cb8192c164062d47bedcbf11d7561`; 0 open PRs; issue #111.
+- **Live code checkpoint:** `3aa42bcb0a989f23f17909e3752f2dcc278ae892` — Research Trace Save verified; K.1.1 sidebar refinement is implemented in this child, exact-head checks pending; 0 open PRs; issue #111.
 - **AgentRun UI:** Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests; published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exactly matches 377818c.
 - **Gateway boundary:** UI did not change backend. Latest focused Gateway #43797179042 is on parent `680ab02289c8517dbe9e36b53abb66317dda5f86`, Python 3.12/13/14.
 - **Agents maturity:** IMPLEMENTED / VERIFIED PROTOTYPE. Safe `single`/`team_review`; per-chat strategy; General coordinator pinned; explicit `strategy_id`; real researcher/reviewer/synthesis task states/dependencies. Same-run DAG in SQLite, task-ID Fernet payloads. One worker/model slot means sequential inference; logical roles are not OS processes. Feature flag false; tools/shell/filesystem/network disabled. No Coder sandbox or target runtime.
-- **Next in K.5 order:** (1) K.1.1 owner-designed sidebar/projects/chats UX; (2) K.1.2 Functions menu and capability/mode compatibility; then return to remaining K.1.3 Deep Research work (durable runs, Exa/Firecrawl adapters, budgets and Notebook/export).
+- **Next in K.5 order:** complete K.1.1 owner-designed sidebar/projects/chats UX and its remaining owner acceptance; then K.1.2 Functions menu and capability/mode compatibility; then return to remaining K.1.3 Deep Research work.
 - **Priority:** owner acceptance/maturity → Agent/Deep Research and mode semantics → sidebar/projects/chats → Skills/Connectors/Coder/Notebook/files/RAG/voice/offline → autonomy/reliability/evals/observability → tested owner runbook.
 - **External sources:** Exa rechecked official OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework. Adopt manager-owned delegation, isolated context, durable/idempotent activity and typed fan-in only; no competing runtime installed. Details in INTEL.md.
 - **Assistant-side integrations:** GitHub, Exa and TinyFish used; Firecrawl, Context7, Vercel, OpenAI Developers, Superpowers and Code/Coder available. Twilio is skills-only without authenticated provider; no standalone Codex connector identified. None implies aLandi product integration.

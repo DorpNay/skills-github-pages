@@ -286,8 +286,13 @@ permalink: /
     #chatNavigationContent > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
     #sidebar #chatList { flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto; }
     #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:8px 12px; }
-    .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:42px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
-    .project-create-row { color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border-color:color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
+    #memoryToolsDetails { border-color:transparent!important;background:transparent; }
+    #memoryToolsDetails > summary { padding:7px 9px;font-size:10px;font-weight:600;color:var(--ui-text-muted);border-radius:8px; }
+    #memoryToolsDetails > summary:hover { color:var(--ui-text);background:var(--ui-surface); }
+    #memoryToolsDetails[open] { border-color:var(--ui-border)!important;background:var(--ui-surface); }
+    #memoryToolsDetails[open] > summary { color:var(--ui-tiffany);border-bottom:1px solid var(--ui-border);border-radius:8px 8px 0 0; }
+    .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
+    .project-create-row { min-height:48px;color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border-color:color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
     .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border-color:color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
     .chat-scope-back { min-height:36px;padding:0 10px;border-radius:9px;color:var(--ui-text-muted);font-size:11px;text-align:left; }
     .project-nav-item { display:flex;align-items:center;gap:6px;padding:4px;border:1px solid var(--ui-border);border-radius:11px;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
@@ -450,7 +455,7 @@ permalink: /
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
     <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
-      <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Диалоги и память</h2>
+      <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Проекты и чаты</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
     </div>
     
@@ -479,10 +484,10 @@ permalink: /
       </div>
     </section>
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl p-2 space-y-2" aria-label="Настройки памяти">
-      <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
-            <summary class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Общая память и факты</summary>
+            <summary data-i18n="memoryMenuTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Память</summary>
             <div class="p-2 space-y-2">
+              <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
               <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
               <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
               <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
@@ -1541,7 +1546,7 @@ permalink: /
     const UI_TEXT={
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
-        memoryLabel:'🧠 Долгосрочная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
+        memoryLabel:'🧠 Долгосрочная память',memoryMenuTitle:'🧠 Память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
         appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
@@ -1567,7 +1572,7 @@ permalink: /
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
-        memoryLabel:'🧠 Long-term memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
+        memoryLabel:'🧠 Long-term memory',memoryMenuTitle:'🧠 Memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
         appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',

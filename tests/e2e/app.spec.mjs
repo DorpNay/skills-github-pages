@@ -146,6 +146,12 @@ test('legacy built-in assistant instructions are migrated out of the global prom
   await page.locator('[data-action="toggle-settings"]').click();
   await expect(page.locator('#systemPromptInput')).toHaveValue('');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
+
+  await page.evaluate(() => localStorage.setItem('ai_system_prompt', 'Свои правила для всех запросов'));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#systemPromptInput')).toHaveValue('');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
 });
 
 test('global prompt saves explicit owner text and persists an intentional clear', async ({ page }) => {
@@ -173,6 +179,39 @@ test('global prompt saves explicit owner text and persists an intentional clear'
   await expect(page.locator('#systemPromptInput')).toHaveValue('');
 });
 
+test('Projects and Chats panels stay balanced and create actions remain available when collapsed', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#sidebar h2')).toHaveText('💬 Проекты и чаты');
+  const desktop = await page.evaluate(() => {
+    const projects = document.getElementById('projectPanel');
+    const chats = document.getElementById('chatSection');
+    return {
+      projectHeight: projects.getBoundingClientRect().height,
+      chatHeight: chats.getBoundingClientRect().height,
+      projectSurface: getComputedStyle(projects).backgroundColor,
+      chatSurface: getComputedStyle(chats).backgroundColor
+    };
+  });
+  expect(Math.abs(desktop.projectHeight - desktop.chatHeight)).toBeLessThanOrEqual(1);
+  expect(desktop.projectSurface).not.toBe(desktop.chatSurface);
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await page.locator('#chatNavToggle').click();
+  await expect(page.locator('#chatNavigationContent')).toBeHidden();
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobile = await page.evaluate(() => ({
+    projectHeight: document.getElementById('projectPanel').getBoundingClientRect().height,
+    chatHeight: document.getElementById('chatSection').getBoundingClientRect().height
+  }));
+  expect(Math.abs(mobile.projectHeight - mobile.chatHeight)).toBeLessThanOrEqual(1);
+});
+
 test('sidebar order puts Projects and Chats first and keeps memory discreet', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -190,8 +229,10 @@ test('sidebar order puts Projects and Chats first and keeps memory discreet', as
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
   await expect(page.locator('#memoryToolsDetails')).not.toHaveAttribute('open', '');
   await expect(page.locator('#projectStatusLine')).toHaveClass(/sr-only/);
-  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
+  await expect(page.locator('#memoryStatusLine')).toBeHidden();
   await page.locator('#memoryToolsDetails > summary').click();
+  await expect(page.locator('#memoryStatusLine')).toBeVisible();
+  await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
   await page.locator('#globalMemoryToggle').check();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
 });
@@ -676,6 +717,7 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#providerPreset')).toHaveValue('custom');
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.example.test/v1');
   await expect(page.locator('#modelName')).toHaveValue('imported-model-id');
+  await expect(page.locator('#systemPromptInput')).toHaveValue('Профильный системный промпт');
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
@@ -686,6 +728,13 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#apiKey')).toHaveValue('e2e-preserved-provider-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_api_key_custom'))).toBe('e2e-preserved-provider-secret');
   expect(await page.evaluate(() => localStorage.getItem('ai_tavily_key'))).toBe('e2e-preserved-tavily-secret');
+  const roundTripDownloadPromise = page.waitForEvent('download');
+  await page.locator('[data-action="export-settings-profile"]').click();
+  const roundTripDownload = await roundTripDownloadPromise;
+  const roundTripProfile = JSON.parse(await readFile(await roundTripDownload.path(), 'utf8'));
+  expect(roundTripProfile.settings.systemPrompt).toBe('Профильный системный промпт');
+  expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-provider-secret');
+  expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-tavily-secret');
 });
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
