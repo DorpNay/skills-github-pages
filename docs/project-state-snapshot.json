@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "6830e5cdc14ae3138ba4d61125c7db8f7f353ba5",
-    "main_commit_subject": "docs(models): record verified ternary artifact",
-    "main_commit_date": "2026-11-16T02:26:24Z",
+    "main_sha": "fe7bad6e366136a9b9fc5ad323e0eac32fba508d",
+    "main_commit_subject": "docs(agents): record bounded specialist DAG continuation",
+    "main_commit_date": "2026-11-16T02:51:18Z",
     "last_functional_checkpoint_sha": "fb9c9d3a1cf06fe0e07606ad816767e00686a83f",
     "last_functional_milestone": "AgentRun installed-only model discovery is implemented on fb9c9d3: configured allowlist intersects live Ollama /api/tags; Qwen3.5-2B is optional and 4B remains default. Bonsai PTQ1_0 artifact is SHA-verified in Actions but not installed. AgentRun still runs one task per run; no task DAG or per-task context.",
-    "main_quality_run": 43792176788,
-    "main_pages_deployment_run": 43792176634,
+    "main_quality_run": 43794659797,
+    "main_pages_deployment_run": 43794659816,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -247,7 +247,7 @@
     "active_ui_pr": 174,
     "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
-    "last_volley": "V-2026-11-16-AGENT-DAG-ORIENTATION-001",
+    "last_volley": "V-2026-11-16-AGENT-DAG-BACKEND-001",
     "owner_priority_task": "LANDING-V2-2026-001",
     "owner_priority_summary": "LANDING-V2-2026-001 / Section K in the existing addendum. Required: owner-designed UI; four separate Functions panels (Deep Research, Agents, Skills, Connectors); real AgentRun and live status; mandatory local-file Coder workspace and desired GitHub repository access; installed Whisper/ASR, TTS, VAD/audio with target-device RU/EN/TH tests; full RAG; safe document/book/web/image parsing, OCR and converters; mode-combination tests; lean conditional model routing; cache, observability and N₂O in main; complete tested VPS runbook. Current model/runtime/database and weight selection is an evidence task, not yet frozen.",
     "main_external_acquisition_run": 43420046411,
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-AGENT-DAG-ORIENTATION-001",
+  "last_volley": "V-2026-11-16-AGENT-DAG-BACKEND-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "6830e5cdc14ae3138ba4d61125c7db8f7f353ba5",
+    "checkpoint_parent_sha": "fe7bad6e366136a9b9fc5ad323e0eac32fba508d",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Implement D-024 native AgentRun task dependency DAG and task-scoped encrypted payloads; keep the worker/model slot at concurrency 1 and feature flag off.",
-      "Add coordinator-owned team_review strategy with two isolated specialist contexts and a synthesis task; prove dependency gating, recovery, failure propagation, cancellation and ciphertext-only persistence.",
-      "Wire strategy selection and truthful runtime status into Agents UI; then connect explicit Research Trace Save to claim/contradiction endpoints and continue K.5."
+      "Verify the AgentRun native DAG backend prototype on exact HEAD (Gateway, Quality/Chromium, Freshness, Provenance, Graphify and Pages as applicable).",
+      "Wire single/team_review strategy selection and per-task DAG status into Agents UI; disclose serial model inference, no tools, no filesystem and no network.",
+      "Connect explicit Research Trace claim/contradiction Save to the Evidence Ledger; then continue local provider adapters and resumable research in K.5 order."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -420,26 +420,26 @@
   "open_prs": "0 live open PRs.",
   "owner_task": "LANDING-V2-2026-001: finish the existing 15-point programme; current owner prompts and next step are in NOW.md. No active PR; issue #111 is owner/environment gated.",
   "main_gateway_run": 43790945491,
-  "main_quality_run": 43792176788,
-  "main_pages_deployment_run": 43792176634,
-  "main_freshness_run": 43792176798,
-  "main_provenance_run": 43792176803,
+  "main_quality_run": 43794659797,
+  "main_pages_deployment_run": 43794659816,
+  "main_freshness_run": 43794659822,
+  "main_provenance_run": 43794659808,
   "main_graphify_run": 43790945459,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "Quality #43792176788 SUCCESS on exact HEAD.",
-  "main_pages_status": "Pages #43792176634 SUCCESS; live root meta exactly matches main 6830e5cdc14ae3138ba4d61125c7db8f7f353ba5.",
-  "main_freshness_status": "Freshness #43792176798 SUCCESS on exact HEAD.",
-  "main_provenance_status": "Provenance #43792176803 SUCCESS on exact HEAD.",
-  "main_graphify_status": "Not triggered on docs-only HEAD; last Graphify #43790945459 SUCCESS on code-bearing parent fb9c9d3.",
-  "main_gateway_status": "Not triggered on docs-only HEAD; last Gateway #43790945491 PASS across Python 3.12/13/14 on code-bearing parent fb9c9d3.",
+  "main_quality_status": "Quality #43794659797 SUCCESS on exact parent HEAD; all seven jobs including Chromium and published-site contract.",
+  "main_pages_status": "Pages #43794659816 SUCCESS; live root meta exactly matches parent main fe7bad6e366136a9b9fc5ad323e0eac32fba508d.",
+  "main_freshness_status": "Freshness #43794659822 SUCCESS on exact parent HEAD.",
+  "main_provenance_status": "Provenance #43794659808 SUCCESS on exact parent HEAD.",
+  "main_graphify_status": "Not triggered on docs-only parent; last Graphify #43790945459 SUCCESS on code-bearing parent fb9c9d3.",
+  "main_gateway_status": "Not triggered on docs-only parent; last Gateway #43790945491 PASS across Python 3.12/13/14 on code-bearing parent fb9c9d.",
   "owner_request": "OR-2026-11-16-004",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "6830e5cdc14ae3138ba4d61125c7db8f7f353ba5",
-    "pages_run": 43792176634,
-    "revision_verification": "Verified uncached live root meta alandi-build-revision=6830e5cdc14ae3138ba4d61125c7db8f7f353ba5 after Pages #43792176634; /landing/ returns HTTP 404."
+    "root_revision": "fe7bad6e366136a9b9fc5ad323e0eac32fba508d",
+    "pages_run": 43794659816,
+    "revision_verification": "Verified uncached live root meta alandi-build-revision=fe7bad6e366136a9b9fc5ad323e0eac32fba508d after Pages #43794659816; /landing/ returns HTTP 404."
   }
 }

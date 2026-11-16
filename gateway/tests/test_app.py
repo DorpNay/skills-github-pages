@@ -979,3 +979,65 @@ def test_rag_evidence_capability_is_explicit_and_disabled_by_default(tmp_path):
     assert disabled.json()["rag"] == {"enabled": False, "evidence_ledger": False}
     assert unavailable.status_code == 503
 
+
+
+
+def test_agent_run_api_exposes_and_executes_team_review_strategy(tmp_path):
+    calls = []
+    async def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": MODEL}]})
+        if request.url.path != "/api/chat":
+            return httpx.Response(404, json={})
+        body = json.loads(request.content)
+        calls.append(body)
+        user = body["messages"][1]["content"]
+        answer = (
+            "RESEARCH REPORT: facts." if "Assignment: independent research analyst" in user else
+            "REVIEW REPORT: risks." if "Assignment: independent reviewer" in user else
+            "API TEAM ANSWER."
+        )
+        return httpx.Response(200, json={
+            "message": {"role": "assistant", "content": answer}, "done": True, "eval_count": 7,
+        })
+
+    config = settings(
+        agent_runs_enabled=True, agent_runs_path=str(tmp_path / "agent-runs.sqlite3"),
+        agent_runs_encryption_key=Fernet.generate_key().decode("ascii"),
+        agent_runs_retention_seconds=3600, agent_runs_max_payload_bytes=256_000,
+        agent_runs_max_prompt_chars=2000, agent_runs_max_output_tokens=128,
+        agent_runs_max_output_bytes=4096, agent_runs_max_pending_runs=4,
+        agent_runs_poll_interval_seconds=0.05,
+    )
+    headers = {"Authorization": f"Bearer {API_KEY}", "Idempotency-Key": "api-team-review-1"}
+    with client_for(config, handler) as client:
+        profiles = client.get("/v1/agent-runs/profiles", headers=headers)
+        assert profiles.status_code == 200
+        assert profiles.json()["worker_concurrency"] == 1
+        strategies = {item["id"]: item for item in profiles.json()["strategies"]}
+        assert strategies["team_review"]["task_count"] == 3
+        assert strategies["team_review"]["parallel_inference"] is False
+        assert strategies["team_review"]["tools"] == []
+        created = client.post("/v1/agent-runs", headers=headers, json={
+            "prompt": "PRIVATE API TEAM TASK", "scope_kind": "project", "scope_id": "alpha",
+            "profile_id": "general", "strategy_id": "team_review",
+        })
+        assert created.status_code == 202, created.text
+        run_id = created.json()["run"]["run_id"]
+        for _ in range(300):
+            snapshot = client.get(f"/v1/agent-runs/{run_id}", headers=headers).json()
+            if snapshot["run"]["state"] in {"succeeded", "failed"}:
+                break
+            time.sleep(0.01)
+        assert snapshot["run"]["state"] == "succeeded"
+        assert snapshot["output"] == "API TEAM ANSWER."
+        assert [task["task_key"] for task in snapshot["tasks"]] == ["researcher", "reviewer", "synthesis"]
+        assert len(calls) == 3
+        invalid = client.post("/v1/agent-runs",
+            headers={**headers, "Idempotency-Key": "api-team-invalid-1"},
+            json={"prompt": "must not run", "scope_kind": "project", "scope_id": "alpha",
+                  "strategy_id": "pretend-50-agents"})
+        assert invalid.status_code == 400
+    raw_db = (tmp_path / "agent-runs.sqlite3").read_bytes()
+    assert b"PRIVATE API TEAM TASK" not in raw_db
+    assert b"API TEAM ANSWER." not in raw_db

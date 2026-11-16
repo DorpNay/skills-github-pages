@@ -36,13 +36,14 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `6830e5cdc14ae3138ba4d61125c7db8f7f353ba5`; Open PRs: none; Open issue: #111.
-- Exact-head Quality #43792176788 SUCCESS; Freshness #43792176798 SUCCESS; Provenance #43792176803 SUCCESS; Pages #43792176634 SUCCESS. Live root meta exactly matches main; `/landing/` returns HTTP 404.
-- Gateway #43790945491 and Graphify #43790945459 passed on the prior code-bearing parent `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; neither was triggered by the current docs-only parent.
-- AgentRun has an authenticated single-worker Ollama executor, durable SQLite run/task journal, lease fencing, bounded retries, cancellation/events and encrypted run-level payloads. It still executes one task per run; task dependency DAG and per-task encrypted context are not implemented. Tools, filesystem and network remain disabled; feature flag remains off by default.
+- Parent main `fe7bad6e366136a9b9fc5ad323e0eac32fba508d`; Open PRs: none; Open issue: #111.
+- Exact-parent Quality #43794659797 SUCCESS (all seven jobs, including Chromium and published-site contract); Freshness #43794659822 SUCCESS; Provenance #43794659808 SUCCESS; Pages #43794659816 SUCCESS. Live root meta exactly matches parent; `/landing/` returns HTTP 404.
+- Gateway #43790945491 and Graphify #43790945459 passed on the prior code-bearing parent `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; neither was triggered by the docs-only parent.
+- AgentRun native DAG backend prototype is implemented in the current child commit: additive SQLite dependency table, same-run edges, dependency-ready claims, per-task encrypted payloads, `single` and `team_review` API strategies, two isolated specialists plus coordinator synthesis, and run-level output compatibility. Exact-child CI is pending.
+- Model inference remains serial at concurrency 1; no independent OS processes or parallel model calls. Tools, filesystem, network and Coder execution remain disabled; feature flag remains off by default.
 - Bonsai PTQ1_0 artifact #14192531688 and Qwen3.5-2B artifact #14032317541 are staged and SHA-verified, not installed on target. No runtime/host verification.
-- Focused source review: OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework. Adapt handoffs, isolated contexts, durable checkpoints and typed fan-out/fan-in; no framework dependency adopted.
-- Next: implement the bounded native AgentRun DAG and task-scoped encrypted payloads under D-024; keep model concurrency at 1, and do not expose Coder execution before a tested sandbox.
+- Focused sources: OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework workflow/edges/checkpoints/durable-extension docs. Patterns only; no framework dependency adopted.
+- Next: verify backend exact-head checks; then wire strategy selection and task graph into Agents UI with explicit serial-inference and no-tools disclosure.
 
 
 ## Targeted UI source review — 2026-11-16

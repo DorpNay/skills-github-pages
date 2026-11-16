@@ -1,4 +1,4 @@
-"""Durable, single-worker AgentRun executor backed by SQLite and encrypted payloads."""
+"""Durable AgentRun executor with bounded specialist DAGs and encrypted task payloads."""
 from __future__ import annotations
 
 import asyncio
@@ -115,16 +115,22 @@ class AgentRunWorker:
     @staticmethod
     def profiles() -> list[dict[str, Any]]:
         return [
-            {
-                "id": profile_id,
-                "label": PROFILE_LABELS[profile_id],
-                "status": "configured",
-                "tools": [],
-                "filesystem": False,
-                "network": False,
-                "independent_process": False,
-            }
+            {"id": profile_id, "label": PROFILE_LABELS[profile_id], "status": "configured",
+             "tools": [], "filesystem": False, "network": False, "independent_process": False}
             for profile_id in PROFILE_PROMPTS
+        ]
+
+    @staticmethod
+    def strategies() -> list[dict[str, Any]]:
+        return [
+            {"id": "single", "label": "Один специалист", "status": "available",
+             "task_count": 1, "execution_mode": "single", "model_concurrency": 1,
+             "parallel_inference": False, "tools": [], "filesystem": False, "network": False},
+            {"id": "team_review", "label": "Команда: аналитик + ревьюер + координатор",
+             "status": "available", "task_count": 3, "roles": ["researcher", "reviewer", "general"],
+             "execution_mode": "fan_out_fan_in", "context_isolation": "per_task",
+             "model_concurrency": 1, "parallel_inference": False,
+             "tools": [], "filesystem": False, "network": False},
         ]
 
     async def start(self) -> None:
@@ -135,14 +141,8 @@ class AgentRunWorker:
         self._runner = asyncio.create_task(self._serve(), name="alandi-agent-run-worker")
 
     def submit(
-        self,
-        *,
-        prompt: str,
-        idempotency_key: str,
-        scope_kind: str,
-        scope_id: str,
-        profile_id: str = "general",
-        model_id: str | None = None,
+        self, *, prompt: str, idempotency_key: str, scope_kind: str, scope_id: str,
+        profile_id: str = "general", model_id: str | None = None, strategy_id: str = "single",
     ) -> dict[str, Any]:
         if self._stopping or self._runner is None or self._runner.done():
             raise AgentRunUnavailable("AgentRun worker is unavailable")
@@ -151,69 +151,87 @@ class AgentRunWorker:
         prompt = prompt.strip()
         if len(prompt) > self.max_prompt_chars:
             raise AgentRunError("prompt exceeds the configured size limit")
-        if profile_id not in PROFILE_PROMPTS:
+        if not isinstance(strategy_id, str) or strategy_id not in {"single", "team_review"}:
+            raise AgentRunError("unknown AgentRun strategy")
+        if not isinstance(profile_id, str) or profile_id not in PROFILE_PROMPTS:
             raise AgentRunError("unknown agent profile")
+        if strategy_id == "team_review" and profile_id != "general":
+            raise AgentRunError("team_review uses fixed researcher, reviewer and coordinator roles; profile_id must be general")
         selected_model = model_id or (self.allowed_models[0] if self.allowed_models else "")
         if selected_model not in self.allowed_models:
             raise AgentRunError("model is not in the configured allowlist")
-        if (not isinstance(idempotency_key, str)
-                or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}", idempotency_key)):
+        if not isinstance(idempotency_key, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}", idempotency_key):
             raise AgentRunError("a bounded Idempotency-Key is required")
-
+        team_inputs: dict[str, str] = {}
+        if strategy_id == "team_review":
+            team_inputs = {
+                "researcher": self._team_specialist_prompt(prompt,
+                    "independent research analyst: structure the problem, identify relevant facts and unknowns from the supplied task only, and state evidence limits."),
+                "reviewer": self._team_specialist_prompt(prompt,
+                    "independent reviewer: challenge assumptions, identify risks, edge cases, counterarguments and missing information without seeing another specialist's work."),
+            }
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
-        metadata = {"origin": "agent_api", "model_id": selected_model, "stage": profile_id}
+        stage = profile_id if strategy_id == "single" else f"team_review:{profile_id}"
         run_args = {
-            "idempotency_key": idempotency_key,
-            "scope_kind": scope_kind,
-            "scope_id": scope_id,
+            "idempotency_key": idempotency_key, "scope_kind": scope_kind, "scope_id": scope_id,
             "goal_ref": f"prompt-sha256:{prompt_hash}",
-            "metadata": metadata,
+            "metadata": {"origin": "agent_api", "model_id": selected_model, "stage": stage},
         }
-        if idempotency_key in self._known_idempotency:
-            run = self.store.create_run(**run_args)
-            self._known_idempotency.move_to_end(idempotency_key)
-            return run
-        pending = self.store.list_runnable_runs(limit=self.max_pending_runs + 1)
-        if len(pending) >= self.max_pending_runs:
-            raise AgentRunBusy("AgentRun queue is full; retry after an active run completes")
-
+        if idempotency_key not in self._known_idempotency:
+            pending = self.store.list_runnable_runs(limit=self.max_pending_runs + 1)
+            if len(pending) >= self.max_pending_runs:
+                raise AgentRunBusy("AgentRun queue is full; retry after an active run completes")
         run = self.store.create_run(**run_args)
         self._remember_key(idempotency_key, run["run_id"])
         if run["state"] in TERMINAL_RUN_STATES or run["state"] == "needs_human":
             return run
-
-        input_record = json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":"))
+        run_id = run["run_id"]
         try:
-            self.payload_vault.put(run_id=run["run_id"], kind="input", plaintext=input_record)
-            tasks = self.store.list_tasks(run_id=run["run_id"])
-            if not tasks:
-                self.store.enqueue_task(
-                    run_id=run["run_id"],
-                    task_key="model-completion",
-                    idempotency_key=f"model:{idempotency_key}",
-                    payload={
-                        "task_type": "model_completion",
-                        "model_id": selected_model,
-                        "worker_profile_id": profile_id,
-                        "max_output_tokens": self.max_output_tokens,
-                    },
+            self.payload_vault.put(run_id=run_id, kind="input",
+                plaintext=json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":")))
+            if strategy_id == "single":
+                tasks = self.store.list_tasks(run_id=run_id)
+                if not tasks:
+                    self.store.enqueue_task(run_id=run_id, task_key="model-completion",
+                        idempotency_key=f"{idempotency_key}:model-completion",
+                        payload={"task_type": "model_completion", "model_id": selected_model,
+                                 "worker_profile_id": profile_id, "max_output_tokens": self.max_output_tokens},
+                        max_attempts=self.max_attempts)
+                elif len(tasks) != 1 or tasks[0]["task_key"] != "model-completion":
+                    raise AgentRunError("single strategy does not match the existing task graph")
+            else:
+                root_tasks: dict[str, dict[str, Any]] = {}
+                for task_key, specialist_profile in (("researcher", "researcher"), ("reviewer", "reviewer")):
+                    task = self.store.enqueue_task(run_id=run_id, task_key=task_key,
+                        idempotency_key=hashlib.sha256(f"{idempotency_key}:{task_key}".encode()).hexdigest(),
+                        payload={"task_type": "specialist_completion", "model_id": selected_model,
+                                 "worker_profile_id": specialist_profile, "max_output_tokens": self.max_output_tokens},
+                        max_attempts=self.max_attempts)
+                    self.payload_vault.put(run_id=task["task_id"], kind="input",
+                        plaintext=json.dumps({"prompt": team_inputs[task_key]}, ensure_ascii=False, separators=(",", ":")))
+                    root_tasks[task_key] = task
+                self.store.enqueue_task(run_id=run_id, task_key="synthesis",
+                    idempotency_key=hashlib.sha256(f"{idempotency_key}:synthesis".encode()).hexdigest(),
+                    payload={"task_type": "team_synthesis", "model_id": selected_model,
+                             "worker_profile_id": "general", "max_output_tokens": self.max_output_tokens},
                     max_attempts=self.max_attempts,
-                )
+                    depends_on=[root_tasks["researcher"]["task_id"], root_tasks["reviewer"]["task_id"]])
         except Exception as exc:
             try:
-                current = self.store.get_run(run["run_id"])
+                current = self.store.get_run(run_id)
                 if current["state"] in {"queued", "running"}:
-                    self.store.transition_run(
-                        run_id=run["run_id"], expected_state=current["state"], new_state="failed",
-                        event_type="run_failed", metadata={"reason_code": "payload_enqueue_failed"},
-                    )
-                self.payload_vault.delete_run(run_id=run["run_id"])
+                    self.store.transition_run(run_id=run_id, expected_state=current["state"],
+                        new_state="failed", event_type="run_failed", metadata={"reason_code": "payload_enqueue_failed"})
+                self.payload_vault.delete_run(run_id=run_id)
+                for task in self.store.list_tasks(run_id=run_id):
+                    self.payload_vault.delete_run(run_id=task["task_id"])
             except Exception:
                 pass
-            raise AgentRunError("AgentRun could not persist its encrypted input or task") from exc
+            raise AgentRunError("AgentRun could not persist encrypted inputs or the dependency graph") from exc
         self._wake.set()
-        return self.store.get_run(run["run_id"])
+        return self.store.get_run(run_id)
 
+    def _remember_key(self, key: str, run_id: str) -> None:
     def _remember_key(self, key: str, run_id: str) -> None:
         self._known_idempotency[key] = run_id
         self._known_idempotency.move_to_end(key)
@@ -262,71 +280,68 @@ class AgentRunWorker:
         tasks = self.store.list_tasks(run_id=run_id)
         if not tasks:
             return False
-        task = next((item for item in tasks if item.get("task_key") == "model-completion"), tasks[0])
-        if task["state"] == "succeeded":
-            self._finalize_success(run_id)
-            return True
-        if task["state"] == "failed":
-            self._finalize_failed(run_id, task)
-            return True
         if run["state"] == "queued":
-            self.store.transition_run(
-                run_id=run_id, expected_state="queued", new_state="running",
-                event_type="run_started", metadata={"stage": "model_execution"},
-            )
-        claim = self.store.claim_task(
-            run_id=run_id, worker_id=self.worker_id, lease_seconds=self.lease_seconds
-        )
+            self.store.transition_run(run_id=run_id, expected_state="queued", new_state="running",
+                event_type="run_started", metadata={"stage": "model_execution"})
+        claim = self.store.claim_task(run_id=run_id, worker_id=self.worker_id, lease_seconds=self.lease_seconds)
         if claim is None:
+            tasks = self.store.list_tasks(run_id=run_id)
+            failed_task = next((item for item in tasks if item["state"] == "failed"), None)
+            if failed_task is not None:
+                self._finalize_failed(run_id, failed_task)
+                return True
+            if tasks and all(item["state"] == "succeeded" for item in tasks):
+                stage = str(run.get("metadata", {}).get("stage", ""))
+                if stage.startswith("team_review:"):
+                    synthesis = next((item for item in tasks if item["task_key"] == "synthesis"), None)
+                    final_output = self._read_output(synthesis["task_id"]) if synthesis is not None else None
+                    if final_output is None:
+                        self._transition_needs_human(run_id, "team_output_unavailable")
+                        return True
+                    self._persist_run_output(run_id, final_output)
+                elif self._read_output(run_id) is None:
+                    self._transition_needs_human(run_id, "output_unavailable")
+                    return True
+                self._finalize_success(run_id)
+                return True
             return False
-
         task = self.store.get_task(claim.task_id)
         payload = self._json_object(task.get("payload", task.get("payload_json")))
+        task_type = payload.get("task_type", "model_completion")
+        if task_type not in {"model_completion", "specialist_completion", "team_synthesis"}:
+            self._fail_claim(run_id, claim, "worker_policy_rejected", retryable=False)
+            return True
         model_id = payload.get("model_id", "")
         profile_id = payload.get("worker_profile_id", "general")
         if model_id not in self.allowed_models or profile_id not in PROFILE_PROMPTS:
             self._fail_claim(run_id, claim, "worker_policy_rejected", retryable=False)
             return True
-
+        payload_owner = run_id if task_type == "model_completion" else claim.task_id
         started = time.monotonic()
         try:
-            saved_output = self._read_output(run_id)
+            saved_output = self._read_output(payload_owner)
             if saved_output is None:
-                input_raw = self.payload_vault.get(run_id=run_id, kind="input")
-                input_record = json.loads(input_raw)
-                prompt = input_record.get("prompt") if isinstance(input_record, dict) else None
-                if not isinstance(prompt, str) or not prompt.strip():
-                    raise AgentPayloadError("input payload has an invalid shape")
-                output_record = await self._generate(
-                    prompt=prompt, model_id=model_id, profile_id=profile_id, started=started
-                )
+                prompt = self._build_task_prompt(run_id=run_id, task=task, task_type=task_type)
+                output_record = await self._generate(prompt=prompt, model_id=model_id, profile_id=profile_id, started=started)
                 serialized = json.dumps(output_record, ensure_ascii=False, separators=(",", ":"))
                 try:
-                    self.payload_vault.put(run_id=run_id, kind="output", plaintext=serialized)
+                    self.payload_vault.put(run_id=payload_owner, kind="output", plaintext=serialized)
                 except AgentPayloadError:
-                    saved_output = self._read_output(run_id)
+                    saved_output = self._read_output(payload_owner)
                     if saved_output is None:
                         raise
                     output_record = saved_output
             else:
                 output_record = saved_output
-
+            if task_type == "team_synthesis":
+                self._persist_run_output(run_id, output_record)
             output_text = output_record["text"]
-            self.store.complete_task(
-                claim=claim,
-                result={
-                    "status": "succeeded",
-                    "output_bytes": len(output_text.encode("utf-8")),
-                    "token_count": output_record.get("token_count", 0),
-                    "duration_ms": output_record.get("duration_ms", 0),
-                    "stage": profile_id,
-                    "worker_id": self.worker_id,
-                },
-            )
-            self._finalize_success(run_id)
+            self.store.complete_task(claim=claim, result={
+                "status": "succeeded", "output_bytes": len(output_text.encode("utf-8")),
+                "token_count": output_record.get("token_count", 0), "duration_ms": output_record.get("duration_ms", 0),
+                "stage": profile_id, "worker_id": self.worker_id})
             return True
         except asyncio.CancelledError:
-            # Keep the lease and encrypted payload so another process can recover after expiry.
             raise
         except AgentPayloadError:
             self._fail_claim(run_id, claim, "payload_unavailable", retryable=False)
@@ -359,9 +374,9 @@ class AgentRunWorker:
             value = json.loads(value)
         return value if isinstance(value, dict) else {}
 
-    def _read_output(self, run_id: str) -> dict[str, Any] | None:
+    def _read_output(self, payload_ref: str) -> dict[str, Any] | None:
         try:
-            raw = self.payload_vault.get(run_id=run_id, kind="output")
+            raw = self.payload_vault.get(run_id=payload_ref, kind="output")
         except AgentPayloadError:
             return None
         record = self._json_object(raw)
@@ -371,6 +386,80 @@ class AgentRunWorker:
         if len(text.encode("utf-8")) > self.max_output_bytes:
             raise AgentPayloadError("saved output payload exceeds the size limit")
         return record
+
+    def _read_input(self, payload_ref: str) -> str:
+        try:
+            raw = self.payload_vault.get(run_id=payload_ref, kind="input")
+        except AgentPayloadError as exc:
+            raise AgentPayloadError("encrypted input payload is unavailable") from exc
+        record = self._json_object(raw)
+        prompt = record.get("prompt")
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise AgentPayloadError("input payload has an invalid shape")
+        if len(prompt) > self.max_prompt_chars:
+            raise AgentPayloadError("input payload exceeds the configured prompt limit")
+        return prompt
+
+    def _team_specialist_prompt(self, prompt: str, assignment: str) -> str:
+        combined = (
+            "User task:\n" + prompt + f"\n\nAssignment: {assignment}\n"
+            "Use only the supplied task. Do not assume another specialist's findings. "
+            "Do not claim web access, tools, filesystem access or execution. "
+            "Return concise findings, uncertainties and concrete risks."
+        )
+        if len(combined) > self.max_prompt_chars:
+            raise AgentRunError("team_review prompt is too long for isolated specialist instructions; shorten it or use single")
+        return combined
+
+    def _build_task_prompt(self, *, run_id: str, task: dict[str, Any], task_type: str) -> str:
+        if task_type == "model_completion":
+            return self._read_input(run_id)
+        if task_type == "specialist_completion":
+            return self._read_input(task["task_id"])
+        if task_type != "team_synthesis":
+            raise AgentRunError("unsupported AgentRun task type")
+        goal = self._read_input(run_id)
+        dependency_ids = self.store.list_task_dependencies(task_id=task["task_id"])
+        if len(dependency_ids) != 2:
+            raise AgentPayloadError("team synthesis requires exactly two completed specialist reports")
+        reports = []
+        for dependency_id in dependency_ids:
+            dependency = self.store.get_task(dependency_id)
+            output = self._read_output(dependency_id)
+            if dependency["state"] != "succeeded" or output is None:
+                raise AgentPayloadError("a required specialist report is unavailable")
+            reports.append((dependency["task_key"], output["text"]))
+        prefix = "Original user task:\n" + goal + "\n\nIndependent specialist reports (separate task contexts):\n"
+        suffix = (
+            "\n\nCoordinator assignment: synthesize a useful answer to the original task. "
+            "Preserve meaningful disagreement, label assumptions and evidence gaps, and do not "
+            "invent citations or claim verification that did not occur."
+        )
+        available = self.max_prompt_chars - len(prefix) - len(suffix)
+        if available < 256 * len(reports):
+            raise AgentPayloadError("team synthesis context budget is too small for the supplied task")
+        per_report = available // len(reports)
+        sections = []
+        for task_key, report in reports:
+            clipped = report[:per_report]
+            if len(report) > per_report:
+                clipped += "\n[report truncated to the configured synthesis context budget]"
+            sections.append(f"\n[{task_key}]\n{clipped}")
+        prompt = prefix + "".join(sections) + suffix
+        if len(prompt) > self.max_prompt_chars:
+            raise AgentPayloadError("team synthesis prompt exceeds the configured context limit")
+        self.payload_vault.put(run_id=task["task_id"], kind="input",
+            plaintext=json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":")))
+        return prompt
+
+    def _persist_run_output(self, run_id: str, output_record: dict[str, Any]) -> None:
+        serialized = json.dumps(output_record, ensure_ascii=False, separators=(",", ":"))
+        try:
+            self.payload_vault.put(run_id=run_id, kind="output", plaintext=serialized)
+        except AgentPayloadError:
+            saved = self._read_output(run_id)
+            if saved is None or saved.get("text") != output_record.get("text"):
+                raise
 
     async def _generate(
         self, *, prompt: str, model_id: str, profile_id: str, started: float
@@ -487,8 +576,11 @@ class AgentRunWorker:
         current = self.store.get_run(run_id)
         if current["state"] in TERMINAL_RUN_STATES:
             return current
+        tasks = self.store.list_tasks(run_id=run_id)
         cancelled = self.store.cancel_run(run_id=run_id)
         self.payload_vault.delete_run(run_id=run_id)
+        for task in tasks:
+            self.payload_vault.delete_run(run_id=task["task_id"])
         active = self._active.get(run_id)
         if active is not None:
             active.cancel()

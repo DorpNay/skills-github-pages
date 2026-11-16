@@ -558,3 +558,78 @@ def test_worker_queue_listing_is_bounded_and_excludes_terminal_runs(tmp_path):
     assert [item["task_key"] for item in store.list_tasks(run_id=queued["run_id"])] == ["primary"]
     with pytest.raises(AgentRunError, match="limit"):
         store.list_runnable_runs(limit=0)
+
+
+
+def test_task_dependencies_gate_claims_until_every_predecessor_succeeds(tmp_path):
+    store = AgentRunStore(tmp_path / "task-dag.sqlite3")
+    store.initialize()
+    run = make_running(store, key="task-dag")
+    analyst = store.enqueue_task(run_id=run["run_id"], task_key="researcher",
+        idempotency_key="dag-researcher", payload={"task_type": "specialist_completion"}, now=103)
+    reviewer = store.enqueue_task(run_id=run["run_id"], task_key="reviewer",
+        idempotency_key="dag-reviewer", payload={"task_type": "specialist_completion"}, now=104)
+    synthesis = store.enqueue_task(run_id=run["run_id"], task_key="synthesis",
+        idempotency_key="dag-synthesis", payload={"task_type": "team_synthesis"},
+        depends_on=[analyst["task_id"], reviewer["task_id"]], now=105)
+    assert synthesis["depends_on"] == [analyst["task_id"], reviewer["task_id"]]
+    first_claim = store.claim_task(run_id=run["run_id"], worker_id="dag-worker-1", now=106)
+    second_claim = store.claim_task(run_id=run["run_id"], worker_id="dag-worker-2", now=107)
+    assert first_claim is not None and first_claim.task_id == analyst["task_id"]
+    assert second_claim is not None and second_claim.task_id == reviewer["task_id"]
+    assert store.claim_task(run_id=run["run_id"], worker_id="dag-worker-3", now=108) is None
+    store.complete_task(claim=first_claim, result={"status": "succeeded"}, now=109)
+    assert store.claim_task(run_id=run["run_id"], worker_id="dag-worker-3", now=110) is None
+    store.complete_task(claim=second_claim, result={"status": "succeeded"}, now=111)
+    final_claim = store.claim_task(run_id=run["run_id"], worker_id="dag-worker-3", now=112)
+    assert final_claim is not None and final_claim.task_id == synthesis["task_id"]
+    assert store.complete_task(claim=final_claim, result={"status": "succeeded"}, now=113)["state"] == "succeeded"
+    assert store.claim_task(run_id=run["run_id"], worker_id="dag-worker-3", now=114) is None
+
+
+def test_task_dependencies_reject_cross_run_missing_duplicates_and_changed_replay(tmp_path):
+    store = AgentRunStore(tmp_path / "task-dag-validation.sqlite3")
+    store.initialize()
+    run_a = make_running(store, key="task-dag-a")
+    run_b = make_running(store, key="task-dag-b")
+    local = store.enqueue_task(run_id=run_a["run_id"], task_key="local",
+        idempotency_key="dag-local", payload={}, now=103)
+    foreign = store.enqueue_task(run_id=run_b["run_id"], task_key="foreign",
+        idempotency_key="dag-foreign", payload={}, now=104)
+    with pytest.raises(AgentRunError, match="same run"):
+        store.enqueue_task(run_id=run_a["run_id"], task_key="cross-run",
+            idempotency_key="dag-cross", payload={}, depends_on=[foreign["task_id"]], now=105)
+    with pytest.raises(AgentRunError, match="not found"):
+        store.enqueue_task(run_id=run_a["run_id"], task_key="missing",
+            idempotency_key="dag-missing", payload={}, depends_on=["f" * 32], now=106)
+    with pytest.raises(AgentRunError, match="unique"):
+        store.enqueue_task(run_id=run_a["run_id"], task_key="duplicate",
+            idempotency_key="dag-duplicate", payload={},
+            depends_on=[local["task_id"], local["task_id"]], now=107)
+    child = store.enqueue_task(run_id=run_a["run_id"], task_key="child",
+        idempotency_key="dag-child", payload={"task_type": "team_synthesis"},
+        depends_on=[local["task_id"]], now=108)
+    replay = store.enqueue_task(run_id=run_a["run_id"], task_key="child",
+        idempotency_key="dag-child", payload={"task_type": "team_synthesis"},
+        depends_on=[local["task_id"]], now=109)
+    assert replay["task_id"] == child["task_id"]
+    with pytest.raises(IdempotencyConflict):
+        store.enqueue_task(run_id=run_a["run_id"], task_key="child",
+            idempotency_key="dag-child", payload={"task_type": "team_synthesis"},
+            depends_on=[], now=110)
+
+
+def test_failed_task_prevents_claiming_its_dependent_task(tmp_path):
+    store = AgentRunStore(tmp_path / "task-dag-failure.sqlite3")
+    store.initialize()
+    run = make_running(store, key="task-dag-failure")
+    predecessor = store.enqueue_task(run_id=run["run_id"], task_key="predecessor",
+        idempotency_key="dag-fail-source", payload={}, now=103)
+    dependent = store.enqueue_task(run_id=run["run_id"], task_key="dependent",
+        idempotency_key="dag-fail-dependent", payload={},
+        depends_on=[predecessor["task_id"]], now=104)
+    claim = store.claim_task(run_id=run["run_id"], worker_id="dag-worker", now=105)
+    assert claim is not None and claim.task_id == predecessor["task_id"]
+    assert store.fail_task(claim=claim, error_code="source_failed", retryable=False, now=106)["state"] == "failed"
+    assert store.claim_task(run_id=run["run_id"], worker_id="dag-worker", now=107) is None
+    assert store.get_task(dependent["task_id"])["state"] == "queued"

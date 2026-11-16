@@ -1117,8 +1117,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(503, "AgentRun is disabled")
         available_models = await installed_allowed_models(request)
         return JSONResponse(
-            {"profiles": worker.profiles(), "models": available_models,
-             "worker_concurrency": 1, "max_pending_runs": config.agent_runs_max_pending_runs,
+            {"profiles": worker.profiles(), "strategies": worker.strategies(),
+             "models": available_models, "worker_concurrency": 1,
+             "max_pending_runs": config.agent_runs_max_pending_runs,
              "tools_enabled": False, "filesystem_enabled": False, "network_enabled": False},
             headers={"Cache-Control": "no-store"},
         )
@@ -1147,6 +1148,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 scope_id=payload.get("scope_id"),
                 profile_id=payload.get("profile_id", "general"),
                 model_id=payload.get("model_id"),
+                strategy_id=payload.get("strategy_id", "single"),
             )
         except AgentRunBusy as exc:
             raise HTTPException(429, str(exc), headers={"Retry-After": "2"}) from None

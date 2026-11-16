@@ -228,3 +228,75 @@ def test_worker_rejects_unapproved_model_and_unknown_profile_before_persisting(t
         assert calls == 0
 
     asyncio.run(scenario())
+
+
+
+def test_team_review_runs_two_isolated_specialists_then_coordinator_synthesis(tmp_path):
+    calls = []
+    async def handler(request):
+        body = json.loads(request.content)
+        calls.append(body)
+        user = body["messages"][1]["content"]
+        if "Assignment: independent research analyst" in user:
+            answer = "RESEARCH REPORT: supplied facts and unknowns."
+        elif "Assignment: independent reviewer" in user:
+            answer = "REVIEW REPORT: assumptions, risks and edge cases."
+        else:
+            answer = "COORDINATED TEAM ANSWER."
+        return httpx.Response(200, json={
+            "message": {"role": "assistant", "content": answer}, "done": True, "eval_count": 11,
+        })
+
+    async def scenario():
+        db_path, store, vault, client, worker = make_worker(tmp_path, handler)
+        await worker.start()
+        run = worker.submit(prompt="PRIVATE TEAM TASK", idempotency_key="team-review-1",
+            scope_kind="project", scope_id="alpha", strategy_id="team_review")
+        snapshot = await wait_for_state(worker, run["run_id"], {"succeeded", "failed"})
+        await worker.stop()
+        await client.aclose()
+        assert snapshot["run"]["state"] == "succeeded"
+        assert snapshot["output"] == "COORDINATED TEAM ANSWER."
+        assert len(snapshot["tasks"]) == 3
+        tasks = {task["task_key"]: task for task in snapshot["tasks"]}
+        assert set(tasks) == {"researcher", "reviewer", "synthesis"}
+        assert all(task["state"] == "succeeded" for task in tasks.values())
+        assert tasks["synthesis"]["depends_on"] == [tasks["researcher"]["task_id"], tasks["reviewer"]["task_id"]]
+        assert len(calls) == 3
+        assert all(call["model"] == MODEL and "tools" not in call for call in calls)
+        research_prompt, review_prompt, synthesis_prompt = [call["messages"][1]["content"] for call in calls]
+        assert "PRIVATE TEAM TASK" in research_prompt and "Assignment: independent research analyst" in research_prompt
+        assert "PRIVATE TEAM TASK" in review_prompt and "Assignment: independent reviewer" in review_prompt
+        assert "RESEARCH REPORT" not in review_prompt and "REVIEW REPORT" not in research_prompt
+        assert "RESEARCH REPORT" in synthesis_prompt and "REVIEW REPORT" in synthesis_prompt
+        for task in tasks.values():
+            assert json.loads(vault.get(run_id=task["task_id"], kind="input"))["prompt"]
+            assert json.loads(vault.get(run_id=task["task_id"], kind="output"))["text"]
+        raw_db = db_path.read_bytes()
+        for private_text in ("PRIVATE TEAM TASK", "RESEARCH REPORT", "REVIEW REPORT", "COORDINATED TEAM ANSWER"):
+            assert private_text.encode("utf-8") not in raw_db
+    asyncio.run(scenario())
+
+
+def test_team_review_cancellation_deletes_run_and_every_task_payload(tmp_path):
+    started = asyncio.Event()
+    async def handler(_request):
+        started.set()
+        await asyncio.Event().wait()
+
+    async def scenario():
+        _db_path, store, vault, client, worker = make_worker(tmp_path, handler)
+        await worker.start()
+        run = worker.submit(prompt="cancel private team", idempotency_key="team-cancel-1",
+            scope_kind="project", scope_id="alpha", strategy_id="team_review")
+        await asyncio.wait_for(started.wait(), timeout=1)
+        tasks = store.list_tasks(run_id=run["run_id"])
+        cancelled = worker.cancel(run["run_id"])
+        await worker.stop()
+        await client.aclose()
+        assert cancelled["state"] == "cancelled"
+        for reference in [run["run_id"], *(task["task_id"] for task in tasks)]:
+            for kind in ("input", "output"):
+                with pytest.raises(AgentPayloadError):
+                    vault.get(run_id=reference, kind=kind)
+    asyncio.run(scenario())

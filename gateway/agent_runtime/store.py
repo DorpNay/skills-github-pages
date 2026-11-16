@@ -297,6 +297,25 @@ class AgentRunStore:
                 );
                 CREATE INDEX IF NOT EXISTS idx_agent_tasks_claim
                     ON agent_tasks(run_id, state, created_at);
+                CREATE TABLE IF NOT EXISTS agent_task_dependencies (
+                    task_id TEXT NOT NULL REFERENCES agent_tasks(task_id) ON DELETE CASCADE,
+                    depends_on_task_id TEXT NOT NULL REFERENCES agent_tasks(task_id) ON DELETE CASCADE,
+                    dependency_order INTEGER NOT NULL CHECK(dependency_order BETWEEN 0 AND 7),
+                    PRIMARY KEY(task_id, dependency_order),
+                    UNIQUE(task_id, depends_on_task_id),
+                    CHECK(task_id <> depends_on_task_id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_agent_task_dependencies_predecessor
+                    ON agent_task_dependencies(depends_on_task_id, task_id);
+                CREATE TRIGGER IF NOT EXISTS trg_agent_task_dependency_same_run
+                BEFORE INSERT ON agent_task_dependencies
+                BEGIN
+                    SELECT CASE WHEN
+                        (SELECT run_id FROM agent_tasks WHERE task_id=NEW.task_id) IS NULL
+                        OR (SELECT run_id FROM agent_tasks WHERE task_id=NEW.task_id)
+                           != (SELECT run_id FROM agent_tasks WHERE task_id=NEW.depends_on_task_id)
+                    THEN RAISE(ABORT, 'dependency must be in same run') END;
+                END;
                 CREATE TABLE IF NOT EXISTS agent_run_events (
                     event_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     run_id TEXT NOT NULL REFERENCES agent_runs(run_id) ON DELETE CASCADE,
@@ -456,6 +475,7 @@ class AgentRunStore:
 
     def enqueue_task(self, *, run_id: str, task_key: str, idempotency_key: str,
                      payload: dict[str, Any], max_attempts: int = 3,
+                     depends_on: list[str] | tuple[str, ...] | None = None,
                      now: float | None = None) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
         key = _bounded_identifier(task_key, field="task_key", max_chars=128)
@@ -466,6 +486,16 @@ class AgentRunStore:
         payload_hash = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         if isinstance(max_attempts, bool) or not isinstance(max_attempts, int) or not 1 <= max_attempts <= 10:
             raise AgentRunError("max_attempts must be between 1 and 10")
+        if depends_on is None:
+            dependency_ids: list[str] = []
+        elif isinstance(depends_on, (list, tuple)):
+            dependency_ids = [_bounded_identifier(item, field="dependency task_id", max_chars=128) for item in depends_on]
+        else:
+            raise AgentRunError("depends_on must be a list of existing task IDs")
+        if len(dependency_ids) > 8:
+            raise AgentRunError("a task may have at most 8 dependencies")
+        if len(set(dependency_ids)) != len(dependency_ids):
+            raise AgentRunError("task dependencies must be unique")
         timestamp = time.time() if now is None else float(now)
         task_id = uuid.uuid4().hex
         with closing(self._connect()) as db:
@@ -480,22 +510,45 @@ class AgentRunStore:
             prior = db.execute("""SELECT * FROM agent_tasks WHERE run_id=?
                 AND (task_key=? OR idempotency_key=?)""", (run_id, key, idem)).fetchone()
             if prior is not None:
-                if prior["task_key"] != key or prior["idempotency_key"] != idem or prior["payload_sha256"] != payload_hash:
+                prior_dependencies = [row["depends_on_task_id"] for row in db.execute(
+                    "SELECT depends_on_task_id FROM agent_task_dependencies WHERE task_id=? ORDER BY dependency_order",
+                    (prior["task_id"],),
+                ).fetchall()]
+                if (prior["task_key"] != key or prior["idempotency_key"] != idem
+                        or prior["payload_sha256"] != payload_hash or prior_dependencies != dependency_ids):
                     db.rollback()
-                    raise IdempotencyConflict("task key/idempotency key belongs to a different task")
+                    raise IdempotencyConflict("task key/idempotency key belongs to a different task or dependency set")
                 db.commit()
-                return self._task_dict(prior)
-            task_count = db.execute(
-                "SELECT COUNT(*) FROM agent_tasks WHERE run_id=?", (run_id,)
-            ).fetchone()[0]
+                return self._task_dict(prior) | {"depends_on": prior_dependencies}
+            if task_id in dependency_ids:
+                db.rollback()
+                raise AgentRunError("a task cannot depend on itself")
+            if dependency_ids:
+                placeholders = ",".join("?" for _ in dependency_ids)
+                rows = db.execute(f"SELECT task_id,run_id,state FROM agent_tasks WHERE task_id IN ({placeholders})",
+                                  tuple(dependency_ids)).fetchall()
+                if len(rows) != len(dependency_ids):
+                    db.rollback()
+                    raise AgentRunError("task dependency was not found")
+                if any(row["run_id"] != run_id for row in rows):
+                    db.rollback()
+                    raise AgentRunError("task dependencies must belong to the same run")
+                if any(row["state"] in {"failed", "cancelled"} for row in rows):
+                    db.rollback()
+                    raise AgentRunError("task dependency is already failed or cancelled")
+            task_count = db.execute("SELECT COUNT(*) FROM agent_tasks WHERE run_id=?", (run_id,)).fetchone()[0]
             if task_count >= self.max_tasks_per_run:
                 db.rollback()
                 raise AgentRunError("AgentRun task limit reached")
+            # Dependencies may reference only already-persisted tasks; insertion order prevents cycles.
             db.execute("""INSERT INTO agent_tasks
                 (task_id,run_id,task_key,idempotency_key,payload_sha256,payload_json,state,
                  attempt,max_attempts,created_at,updated_at)
                 VALUES (?,?,?,?,?,?,'queued',0,?,?,?)""",
                 (task_id, run_id, key, idem, payload_hash, payload_json, max_attempts, timestamp, timestamp))
+            for order, dependency_id in enumerate(dependency_ids):
+                db.execute("INSERT INTO agent_task_dependencies(task_id,depends_on_task_id,dependency_order) VALUES (?,?,?)",
+                           (task_id, dependency_id, order))
             self._event(db, run_id=run_id, task_id=task_id, event_type="task_enqueued",
                         from_state=None, to_state="queued", metadata={"task_key": key}, now=timestamp)
             db.commit()
@@ -510,17 +563,24 @@ class AgentRunStore:
         item.pop("lease_token_sha256", None)
         return item
 
+    def list_task_dependencies(self, *, task_id: str) -> list[str]:
+        _bounded_text(task_id, field="task_id", max_chars=128)
+        with closing(self._connect()) as db:
+            rows = db.execute("SELECT depends_on_task_id FROM agent_task_dependencies WHERE task_id=? ORDER BY dependency_order",
+                              (task_id,)).fetchall()
+        return [row["depends_on_task_id"] for row in rows]
+
     def list_tasks(self, *, run_id: str) -> list[dict[str, Any]]:
         """Return a run's bounded task records in stable creation order."""
         _bounded_text(run_id, field="run_id", max_chars=128)
         self.get_run(run_id)
         with closing(self._connect()) as db:
-            rows = db.execute(
-                """SELECT * FROM agent_tasks WHERE run_id=?
-                   ORDER BY created_at,task_key,task_id""",
-                (run_id,),
-            ).fetchall()
-        return [self._task_dict(row) for row in rows]
+            rows = db.execute("SELECT * FROM agent_tasks WHERE run_id=? ORDER BY created_at,task_key,task_id",
+                              (run_id,)).fetchall()
+        items = [self._task_dict(row) for row in rows]
+        for item in items:
+            item["depends_on"] = self.list_task_dependencies(task_id=item["task_id"])
+        return items
 
     def get_task(self, task_id: str) -> dict[str, Any]:
         _bounded_text(task_id, field="task_id", max_chars=128)
@@ -528,7 +588,9 @@ class AgentRunStore:
             row = db.execute("SELECT * FROM agent_tasks WHERE task_id=?", (task_id,)).fetchone()
         if row is None:
             raise AgentRunError("task not found")
-        return self._task_dict(row)
+        item = self._task_dict(row)
+        item["depends_on"] = self.list_task_dependencies(task_id=task_id)
+        return item
 
     def claim_task(self, *, run_id: str, worker_id: str, lease_seconds: int = 30,
                    now: float | None = None) -> TaskClaim | None:
@@ -547,18 +609,28 @@ class AgentRunStore:
             if run["state"] != "running":
                 db.rollback()
                 raise InvalidTransition("tasks can only be claimed by running AgentRuns")
-            # Expired leases are fenced and returned to the queue, unless their retry budget is spent.
-            expired = db.execute("""SELECT task_id,attempt,max_attempts FROM agent_tasks
-                WHERE run_id=? AND state='leased' AND lease_expires_at<=?""", (run_id, timestamp)).fetchall()
+            expired = db.execute("SELECT task_id,attempt,max_attempts FROM agent_tasks WHERE run_id=? AND state='leased' AND lease_expires_at<=?",
+                                 (run_id, timestamp)).fetchall()
             for row in expired:
                 next_state = "queued" if row["attempt"] < row["max_attempts"] else "failed"
                 db.execute("""UPDATE agent_tasks SET state=?,worker_id=NULL,lease_token_sha256=NULL,
-                    lease_expires_at=NULL,error_code='lease_expired',updated_at=?
-                    WHERE task_id=? AND state='leased'""", (next_state, timestamp, row["task_id"]))
+                    lease_expires_at=NULL,error_code='lease_expired',updated_at=? WHERE task_id=? AND state='leased'""",
+                    (next_state, timestamp, row["task_id"]))
                 self._event(db, run_id=run_id, task_id=row["task_id"], event_type="task_lease_expired",
                             from_state="leased", to_state=next_state, metadata={}, now=timestamp)
-            task = db.execute("""SELECT * FROM agent_tasks WHERE run_id=? AND state='queued'
-                AND attempt < max_attempts ORDER BY created_at,task_key,task_id LIMIT 1""", (run_id,)).fetchone()
+            failed = db.execute("SELECT 1 FROM agent_tasks WHERE run_id=? AND state='failed' LIMIT 1",
+                                (run_id,)).fetchone()
+            if failed is not None:
+                db.commit()
+                return None
+            task = db.execute("""SELECT t.* FROM agent_tasks t
+                WHERE t.run_id=? AND t.state='queued' AND t.attempt < t.max_attempts
+                  AND NOT EXISTS (
+                    SELECT 1 FROM agent_task_dependencies d
+                    JOIN agent_tasks dependency ON dependency.task_id=d.depends_on_task_id
+                    WHERE d.task_id=t.task_id AND dependency.state!='succeeded'
+                  )
+                ORDER BY t.created_at,t.task_key,t.task_id LIMIT 1""", (run_id,)).fetchone()
             if task is None:
                 db.commit()
                 return None
