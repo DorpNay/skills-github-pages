@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-17"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Direct-child checkpoint parent main 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; 0 open PRs; issue #111. OR-014 confirms existing K.5/K.6.14–K.6.18 scope. Plan 1 main-chat AgentRun context/routing/status is implemented partially; exact-child CI is pending."
+    status: "Active task LANDING-V2-2026-001. Direct-child checkpoint parent main b1e0565908295fd11945107f701081065b1acc98; 0 open PRs; issues #111 and #186 (#186 is a bot-created GitHub Skills Pages exercise, out of product scope). Existing K.5/K.6.14–K.6.18 scope remains binding. Plan 2 code is implemented but exact-head Chromium verification failed; repair is active."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; last functional checkpoint 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified; OR-2026-11-17-001 archived. Main-chat AgentRun routing, non-blocking observer and chat status surface implemented partially; exact-child gates pending."
+    status: "NOW.md is the sole first-read checkpoint. Parent main b1e0565908295fd11945107f701081065b1acc98; last functional checkpoint b1e0565908295fd11945107f701081065b1acc98; 0 open PRs; issues #111 and #186 (#186 is a bot-created GitHub Skills exercise, out of scope). Plan 1/2 owner-approved; Plan 2 implementation needs regression repair; K.6.17–K.6.18 remain specified; OR-2026-11-17-002 archived."
     branch: "main"
-    base_main: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
+    base_main: "b1e0565908295fd11945107f701081065b1acc98"
     open_prs_at_checkpoint: 0
-    open_issues_at_checkpoint: 1
-    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and main-chat path are implemented; bounded context, same-chat result delivery, background observer and collapsible chat status are present. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Legacy multiAgentEnabled/runMultiAgentResearch remains until Plan 2 parity. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
-    next: "Complete exact-child Freshness/Quality/Chromium/Provenance/Pages and public revision verification; then implement approved Plan 2 Deep Research method separation."
+    open_issues_at_checkpoint: 2
+    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and main-chat path remain partial; bounded context, same-chat result delivery, background observer and collapsible status are present. Plan 2 separates per-chat Deep Research method from AgentRun; exact Quality/Chromium failed on missing browser-client helpers, profile-import migration and stale E2E selectors/copy. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; no offline package is installed."
+    next: "Repair the confirmed Plan 2 regressions and verify exact-head Quality/Chromium, Freshness, Provenance, Pages and public revision; then continue K.5/K.6.17–K.6.18."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -294,15 +294,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
-  last_main_action: "Main-chat AgentRun now submits bounded context and returns control to the composer while the shared durable observer continues. Chat status panel includes safe event projection, task state, server-created elapsed time, persisted terminal summary, reload recovery, 44px controls and retryable cancellation. Exact parent Quality #43932615960: static/security/integrity/context/Jekyll pass, Chromium in progress; Gateway #43932615910 pass across Python 3.12/13/14; Graphify #43932615895 pass; Provenance #43932615991 pass; Pages #43932615598 success and public root revision exact. Freshness #43932615859 failed because prior snapshot SHA was e178bf1; all 21 checker unit tests passed. Direct-child state refresh realigns the checkpoint."
-  last_functional_checkpoint: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
-  main_quality: "IN_PROGRESS on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; static/security/integrity/context/Jekyll PASS; Chromium pending."
-  main_freshness: "FAILED on parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e only because snapshot main_sha remained e178bf1a1ad78326b4886a802e8e0e7bccd33296; 21/21 freshness unit tests passed. This direct-child refresh sets the exact parent SHA in all required state files."
-  main_graphify: "SUCCESS #43932615895 on exact code parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
-  main_gateway: "SUCCESS #43932615910 across Python 3.12/13/14; no Gateway source changed in this slice."
-  main_provenance: "SUCCESS #43932615991 on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
-  main_pages: "SUCCESS #43932615598 on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; public root meta alandi-build-revision exactly matches 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
+  verified_main: "b1e0565908295fd11945107f701081065b1acc98"
+  last_main_action: "Plan 2 separation code is on exact parent b1e0565908295fd11945107f701081065b1acc98. Quality #43938748351 failed (123/139 Chromium, 16 failures) while static/Ruff, security, integrity, context and Jekyll passed; Pages #43938748771 and Graphify #43938748449 succeeded. Playwright diagnostics confirmed missing agentRuntimeFetch/agentRuntimeErrorText definitions, incomplete settings-profile deepResearchMethod migration, stale AgentRun/Research E2E selectors and menu copy. Direct-child intake checkpoint records OR-2026-11-17-002 and the exact queue."
+  last_functional_checkpoint: "b1e0565908295fd11945107f701081065b1acc98"
+  main_quality: "FAILED #43938748351 on exact parent b1e0565908295fd11945107f701081065b1acc98: 123/139 Chromium passed; 16 failed. Static/Ruff, security, integrity, context and Jekyll passed; published release-contract step skipped. Fix regressions and rerun exact head."
+  main_freshness: "PENDING direct-child intake checkpoint; snapshot main_sha and PROJECT_STATE root/current SHAs are aligned to exact parent b1e0565908295fd11945107f701081065b1acc98."
+  main_graphify: "SUCCESS #43938748449 on exact code parent b1e0565908295fd11945107f701081065b1acc98."
+  main_gateway: "Not rerun on exact code parent b1e0565908295fd11945107f701081065b1acc98 because no Gateway/backend source changed; prior Gateway #43932615910 passed on the previous code baseline."
+  main_provenance: "PENDING direct-child intake checkpoint."
+  main_pages: "SUCCESS #43938748771 on exact code parent b1e0565908295fd11945107f701081065b1acc98; direct-child deployment and public-root release-contract verification pending."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
   runtime_boundary: "AgentRun explicit main-chat route with bounded selected context, same-chat result return and background status observer; collapsible chat status and cancel/recovery. One worker/model slot, serial inference; host feature-off; no tools/shell/filesystem/network; legacy evidence pipeline retained pending Plan 2. Browser Workspace is not an AI Coder sandbox; offline package not installed."
