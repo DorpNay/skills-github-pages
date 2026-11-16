@@ -1068,7 +1068,8 @@ def test_agent_run_api_accepts_bounded_context_and_rejects_unknown_fields(tmp_pa
         run_id = created.json()["run"]["run_id"]
         for _ in range(200):
             snapshot = client.get(f"/v1/agent-runs/{run_id}", headers=headers).json()
-            if snapshot["run"]["state"] in {"succeeded", "failed"}: break
+            if snapshot["run"]["state"] in {"succeeded", "failed"}:
+                break
             time.sleep(0.01)
         assert snapshot["run"]["state"] == "succeeded"
         assert len(calls) == 1

@@ -56,7 +56,8 @@ def normalize_context_packet(packet: object, *, max_chars: int) -> dict[str, Any
         if not isinstance(item, dict) or set(item) != _MESSAGE_FIELDS:
             raise ContextPacketError(f"messages[{index}] has an unsupported shape")
         item_id = _identifier(item.get("id"), field=f"messages[{index}].id")
-        if item_id in seen: raise ContextPacketError(f"context packet contains duplicate id: {item_id}")
+        if item_id in seen:
+            raise ContextPacketError(f"context packet contains duplicate id: {item_id}")
         seen.add(item_id)
         role = item.get("role")
         if not isinstance(role, str) or role not in _MESSAGE_ROLES:
@@ -72,13 +73,17 @@ def normalize_context_packet(packet: object, *, max_chars: int) -> dict[str, Any
         if item_id in seen: raise ContextPacketError(f"context packet contains duplicate id: {item_id}")
         seen.add(item_id)
         kind, scope, reason = item.get("kind"), item.get("scope"), item.get("inclusion_reason")
-        if not isinstance(kind, str) or kind not in _SOURCE_KINDS: raise ContextPacketError(f"sources[{index}].kind is unsupported")
-        if not isinstance(scope, str) or scope not in _SOURCE_SCOPES: raise ContextPacketError(f"sources[{index}].scope is unsupported")
-        if not isinstance(reason, str) or reason not in _INCLUSION_REASONS: raise ContextPacketError(f"sources[{index}].inclusion_reason is unsupported")
+        if not isinstance(kind, str) or kind not in _SOURCE_KINDS:
+            raise ContextPacketError(f"sources[{index}].kind is unsupported")
+        if not isinstance(scope, str) or scope not in _SOURCE_SCOPES:
+            raise ContextPacketError(f"sources[{index}].scope is unsupported")
+        if not isinstance(reason, str) or reason not in _INCLUSION_REASONS:
+            raise ContextPacketError(f"sources[{index}].inclusion_reason is unsupported")
         content = _bounded_text(item.get("content"), field=f"sources[{index}].content", max_chars=min(max_chars, _MAX_ITEM_CHARS))
         total_chars += len(content)
         clean_sources.append({"id": item_id, "kind": kind, "scope": scope, "inclusion_reason": reason, "content": content})
-    if total_chars > max_chars: raise ContextPacketError("context packet exceeds the total character limit")
+    if total_chars > max_chars:
+        raise ContextPacketError("context packet exceeds the total character limit")
     return {"version": 1, "messages": clean_messages, "sources": clean_sources}
 
 def render_context_packet(packet: dict[str, Any]) -> str:
