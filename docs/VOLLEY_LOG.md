@@ -597,3 +597,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Added strict v1 packet validator: allowlisted message roles/source kinds/scopes/inclusion reasons, exact field sets, unique opaque IDs, per-item and aggregate bounds, count limits and untrusted-reference rendering. Extended AgentRun POST and encrypted Fernet payload; digest now binds prompt + context + profile + model + strategy. Same-key changed context conflicts. Added worker/API regression tests.
 - No new dependency, connector, model, external account, tool, browser, filesystem or shell capability. AgentRun feature flag remains false; direct chat remains default. Main chat context builder and live status overlay are not implemented yet.
 - This direct-child commit refreshes NOW, AGENTS, PROJECT_STATE, snapshot and VOLLEY together. Exact-head checks pending; no local test command was run because no repository checkout is mounted.
+
+
+## V-2026-11-16-S-070 — OR-013 context transport, Ruff repair and exact code checks
+
+- Parent main exact: `f3608cd3253eeb5fb04a9960a620e3c0985956ba`; implementation commit `1816fa821d7122c069ae4791cc2400a9cb2b1738`; Ruff corrections `edbbac8c352527897f8d17bdc8605a1a82ac602a` and `f3608cd3253eeb5fb04a9960a620e3c0985956ba`.
+- Gateway #43914028219 PASS across Python 3.12/13/14; Graphify #43914028152 PASS; Pages #43914027020 SUCCESS. Quality #43914028299: Security, Jekyll, Ruff, Integrity and Context passed; Chromium remains in progress. Earlier Quality #43913239978 failed Ruff E701 only; all reported lines were corrected, and current Ruff gate passes.
+- Freshness/Provenance did not run on code-only commits; this five-file direct-child refresh is intended to trigger them. Exact-child Quality/Pages remain pending.
+- Plan 1 Task 1 context packet/worker/API implementation recorded; next is main chat routing and shared live status overlay. No tools, filesystem, browser, shell, network, model download or host activation added.

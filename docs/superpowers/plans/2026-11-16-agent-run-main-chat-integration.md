@@ -1,6 +1,6 @@
 # Plan 1 — AgentRun main-chat integration and live status
 
-**Status:** APPROVED BY OWNER — implementation authorized on 2026-11-16  
+**Status:** Task 1 IMPLEMENTED; exact-head verification partial; Tasks 2–4 remain NEXT  
 **Owner request:** OR-2026-11-16-011  
 **Base:** `67ea5ba97e21f527d1eaff28cfddef274d2e98d7`  
 **Spec:** D-024; K.6.2, K.6.3, K.6.16; K.5 row 4.
@@ -91,3 +91,11 @@ Prompt/source injection, private/global/project memory scope, cross-chat status 
 ## Owner-approved ecosystem boundary — OR-012 / K.6.17
 
 This plan implements Phase A only. Keep interfaces compatible with a future versioned Agent Library and multi-model registry: strategy/profile IDs remain stable and capability-checked; context packets can later include approved Skill/source references; status events are reusable by Research and Skill jobs. Do not implement synthetic swarms, arbitrary browser/database/file tools, autonomous weight training or parallel multi-model execution as part of this first slice. Those require separate K.6.17 phases, policy and eval gates.
+
+
+## Execution record — 2026-11-16
+
+- **Task 1 implementation:** `gateway/agent_runtime/context.py` strict v1 packet; worker/API accepts explicit bounded packet, encrypts prompt+packet in Fernet, and fingerprints prompt+packet+profile+model+strategy for idempotent replay/conflict. Added validator, worker and API tests. Code SHA `f3608cd3253eeb5fb04a9960a620e3c0985956ba`.
+- **Evidence:** Gateway #43914028219 PASS on Python 3.12/13/14; Graphify #43914028152 PASS; Pages #43914027020 SUCCESS. Quality #43914028299 had Security/Jekyll/Ruff/Integrity/Context pass; Chromium was still running at checkpoint. Exact state-child Freshness/Provenance/Quality/Pages remain pending.
+- **Not yet implemented:** browser-side context builder from current chat, Direct/AgentRun composer routing, return of AgentRun output into originating chat, chat-scoped active-run restore, shared collapsible status window. Direct chat remains the default and AgentRun host flag remains false.
+- **Research boundary:** OWASP requires tool authorization outside the model; packet delimiters are not a security boundary. Packet inclusion is data-only and grants no permissions. See INTEL.md OR-013 and TECHNIQUE_REGISTER_RU.md OR-013.
