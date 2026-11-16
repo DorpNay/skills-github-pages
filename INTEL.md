@@ -1068,3 +1068,12 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - [W3C WCAG 2.2](https://www.w3.org/TR/WCAG22/): normative accessibility baseline for focus, target size, contrast, keyboard and predictable interaction. Keep WCAG CSS-pixel criteria distinct from Apple points and Android dp recommendations.
 
 **Disposition:** retain a small complementary assistant-side toolchain; keep the existing aLandi stack and GitHub Pages source of truth. Product connectors and hosting/runtime migrations require a separate explicit architecture decision, credentials/scopes, data-flow threat model, budget and contract tests.
+
+### Mobile Safari form-focus zoom diagnosis — 2026-11-16
+
+- **FACT:** index.md sets viewport width=device-width, initial-scale=1, viewport-fit=cover. Multiple text controls use Tailwind text-sm (14 CSS px), including project creation, API keys, model search and project/server settings.
+- **HYPOTHESIS (strong):** iPhone Safari automatically zooms focused form controls when computed font-size is below 16 CSS px. This plausibly explains the owner's reported page zoom on text entry/select. It is not yet verified on a physical device.
+- **PROPOSAL:** apply a mobile-only minimum 16px font-size to input/select/textarea controls, preserving pinch-to-zoom and accessible user scaling. Do not add maximum-scale=1 or user-scalable=no as a workaround.
+- References: [WebKit — New Interaction Behaviors in iOS 10](https://webkit.org/blog/7367/new-interaction-behaviors-in-ios-10/); [CSS-Tricks — 16px or Larger Text Prevents iOS Form Zoom](https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/); [iOS WebKit auto-zoom technical analysis](https://nahidmahamud.com/disable-auto-zoom-in-input-text-tag-safari-on-iphone/).
+- **Acceptance:** test text, URL, password, search and select controls on real iPhone Safari, verify no focus zoom, keyboard visibility, voice controls and preserved pinch zoom.
+

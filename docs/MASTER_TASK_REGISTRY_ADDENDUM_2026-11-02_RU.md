@@ -659,3 +659,16 @@ This addendum reconciles the two latest owner prompts with K.6.1–K.6.14 and th
 - The four studio names, the exact Auto-transfer policy defaults and any cross-origin/subdomain choice remain owner-confirmation gates. All other requirements above can be designed from existing project evidence.
 - No implementation, runtime activation, connector OAuth, hosting migration, paid provisioning or model download is implied by this specification update.
 - Continue using the single K.5 15-point progress table. Update its existing rows only when a real implementation milestone has evidence.
+
+#### F. Live Pages and browser-local Workspace baseline — VERIFIED 2026-11-16
+
+- Fresh live fetch (cache bypass, TTL 0) after Pages run #43840213780 returned root metadata alandi-build-revision = 2cc6573a79aae374575f4e55b0c2aa6deef844c8. The earlier cached /landing response was stale; fresh /landing/ returns HTTP 404. Do not restore it.
+- Live route results: /workspace/ is available; /notebook/ and /research/ return HTTP 404. The existing route set therefore contains a Coder Workspace, not four finished studios. The four studio names/boundaries remain unresolved in the owner archive.
+- Existing browser-local Workspace is a real, bounded file-editing foundation:
+  - assets/js/browser-local-provider.js uses the File System Access API; the user explicitly chooses a directory or files and grants browser-managed read/write permission.
+  - It supports bounded file enumeration, reads, exact multi-file diff preview, explicit write confirmation, pre-write hash revalidation, IndexedDB recovery snapshots, rollback attempts and explicit restore after reselecting the original folder.
+  - Capabilities explicitly report persistentPermission=false, backgroundWatch=false, arbitraryPaths=false and networkTransfer=false.
+  - E2E coverage includes diff/approval/recovery, changed-file conflict detection, partial-write recovery, directory bounds and legacy snapshot restore.
+- This is IMPLEMENTED browser-local file editing, not a local AI Coder agent or OS sandbox. It has no AgentRun/model integration, shell/command execution, test runner, autonomous repository access or offline model package. Keep the existing feature; extend it through a permissioned Workspace adapter rather than replacing it.
+- Mobile zoom diagnosis: index.md has the correct device-width viewport, but several text inputs/selects/textareas use Tailwind text-sm (14 CSS px). This is a strong iPhone Safari focus-auto-zoom hypothesis. Target a 16px minimum for mobile form controls while preserving pinch zoom; do not use user-scalable=no or maximum-scale=1 as a shortcut. Verify on physical iPhone Safari before marking VERIFIED.
+
