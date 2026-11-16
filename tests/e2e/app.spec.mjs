@@ -42,11 +42,10 @@ async function chooseSearchMode(page, mode) {
   await page.locator('#searchModeSummary').click();
   await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
 }
-async function setAgentMode(page, enabled) {
-  await page.locator('#agentModeControl').evaluate((control, value) => {
-    control.checked = value;
-    control.dispatchEvent(new Event('change', { bubbles: true }));
-  }, enabled);
+async function setDeepResearchMethod(page, method) {
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="research"]').click();
+  await page.locator('#deepResearchMethodSelect').selectOption(method);
 }
 async function setSkillPreset(page, preset) {
   await page.locator('#skillPresetSelect').evaluate((control, value) => {
@@ -742,6 +741,31 @@ test('settings profile import restores preferences while preserving existing pro
   expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-provider-secret');
   expect(JSON.stringify(roundTripProfile)).not.toContain('e2e-preserved-tavily-secret');
 });
+test('legacy chat research preference migrates to an explicit Deep Research method', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      { id: 'legacy-research-on', title: 'Legacy enabled', multiAgentEnabled: true, messages: [{ role: 'user', content: 'Preserve this message.' }] },
+      { id: 'legacy-research-off', title: 'Legacy disabled', multiAgentEnabled: false, messages: [] },
+      { id: 'legacy-research-missing', title: 'Legacy missing', messages: [] }
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'legacy-research-on');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return Object.fromEntries(chats.map(chat => [chat.id, {
+      method: chat.deepResearchMethod,
+      legacy: chat.multiAgentEnabled,
+      message: chat.messages[0]?.content || ''
+    }]));
+  })).toEqual({
+    'legacy-research-on': { method: 'multi_step_evidence_report', legacy: true, message: 'Preserve this message.' },
+    'legacy-research-off': { method: 'none', legacy: false, message: '' },
+    'legacy-research-missing': { method: 'none', legacy: false, message: '' }
+  });
+  await expect(page.locator('#executionModeToggle')).toHaveAttribute('data-mode', 'direct');
+});
+
 test('research trace supports a structured JSON download', async ({ page }) => {
   const trace = {
     schemaVersion: 2, id: 'e2e-json-trace', createdAt: '2026-10-15T00:00:00.000Z',
@@ -817,7 +841,7 @@ test('research trace records prompt fingerprint, run settings, timings, and mode
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await chooseSearchMode(page, 'offline');
-  await setAgentMode(page, true);
+  await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Deep research: исследуй и проверь процесс проверки фактов по источникам; составь доказательный отчёт с планом, сравнением и итоговой проверкой.');
   await page.locator('#sendBtn').click();
 
@@ -882,7 +906,7 @@ test('multi-agent preference skips a greeting and shows the actual route', async
   await page.locator('#apiKey').fill('not-a-real-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await setAgentMode(page, true);
+  await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Привет!');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Привет! Рад помочь.');
@@ -2838,7 +2862,7 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Веб: выкл.');
   await chooseSearchMode(page, 'normal');
 
-  await setAgentMode(page, true);
+  await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
   await expect(page.locator('#modeHint')).toContainText('Конвейер');
   await setSkillPreset(page, 'code-review');
