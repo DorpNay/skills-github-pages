@@ -310,7 +310,7 @@ def test_coder_review_runs_sequential_draft_review_and_coordinator_without_execu
         calls.append(body)
         user = body["messages"][1]["content"]
         if "Assignment: code drafting specialist" in user:
-            answer = "PATCH DRAFT: change the parser with a bounded input check."
+            answer = "PATCH DRAFT: " + ("x" * 2500)
         elif "Coder draft to review:" in user:
             answer = "REVIEW REPORT: add a malformed-input regression test."
         else:
@@ -347,8 +347,12 @@ def test_coder_review_runs_sequential_draft_review_and_coordinator_without_execu
         assert "no filesystem access" in calls[0]["messages"][0]["content"].lower()
         assert "PATCH DRAFT" not in coder_prompt and "REVIEW REPORT" not in coder_prompt
         assert "PATCH DRAFT" in reviewer_prompt and "PRIVATE CODER TASK" in reviewer_prompt
+        assert "[Coder draft truncated to the configured review context budget]" in reviewer_prompt
         assert "REVIEW REPORT" not in reviewer_prompt
         assert "PATCH DRAFT" in coordinator_prompt and "REVIEW REPORT" in coordinator_prompt
+        assert "[report truncated to the configured synthesis context budget]" in coordinator_prompt
+        assert len(reviewer_prompt) <= worker.max_prompt_chars
+        assert len(coordinator_prompt) <= worker.max_prompt_chars
         for task in tasks.values():
             assert json.loads(vault.get(run_id=task["task_id"], kind="input"))["prompt"]
             assert json.loads(vault.get(run_id=task["task_id"], kind="output"))["text"]
