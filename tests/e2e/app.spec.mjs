@@ -4039,3 +4039,98 @@ test('AgentRun persists the selected safe strategy and submits it without escala
   });
 });
 
+
+
+test('chat composer defaults to Direct execution mode', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#executionModeControl')).toHaveValue('direct');
+  const saved = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id)?.executionMode;
+  });
+  expect(saved).toBe('direct');
+});
+
+test('AgentRun composer sends bounded chat history and returns output to the same chat', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const chatId = await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    const chat = chats.find(item => item.id === id);
+    chat.messages = [
+      { role: 'user', content: 'Earlier user question in this conversation.' },
+      { role: 'assistant', content: 'Earlier assistant answer that must remain in context.' }
+    ];
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats));
+    return id;
+  });
+  let submitted = null;
+  let completionCalls = 0;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: {
+      agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false }
+    } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') {
+      submitted = route.request().postDataJSON();
+      return route.fulfill({ status: 202, json: {
+        run: { run_id: 'run-e2e-chat', state: 'queued' },
+        status_url: '/v1/agent-runs/run-e2e-chat',
+        events_url: '/v1/agent-runs/run-e2e-chat/events'
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-chat/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-chat', events: [], next_after_event_id: 0, state: 'succeeded'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-chat' && route.request().method() === 'GET') return route.fulfill({ json: {
+      run: { run_id: 'run-e2e-chat', state: 'succeeded' },
+      output: 'AgentRun answer returned to the active chat.',
+      output_available: true, output_expired: false, tasks: [], events: []
+    } });
+    if (url.pathname.endsWith('/chat/completions')) completionCalls += 1;
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#executionModeControl').selectOption('agent');
+  await expect(page.locator('#executionModeControl')).toHaveValue('agent');
+  await page.locator('#userInput').fill('Continue the agreed work.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('AgentRun answer returned to the active chat.');
+  expect(submitted).toMatchObject({
+    prompt: 'Continue the agreed work.',
+    scope_kind: 'conversation',
+    scope_id: chatId,
+    profile_id: 'general',
+    model_id: 'qwen3.5:4b',
+    strategy_id: 'single',
+    context_packet: {
+      version: 1,
+      messages: [
+        { id: 'chat-message-1', role: 'user', content: 'Earlier user question in this conversation.' },
+        { id: 'chat-message-2', role: 'assistant', content: 'Earlier assistant answer that must remain in context.' }
+      ],
+      sources: []
+    }
+  });
+  expect(completionCalls).toBe(0);
+  const persisted = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id);
+  });
+  expect(persisted.executionMode).toBe('agent');
+  expect(persisted.messages.at(-2)).toMatchObject({ role: 'user', content: 'Continue the agreed work.' });
+  expect(persisted.messages.at(-1)).toMatchObject({ role: 'assistant', content: 'AgentRun answer returned to the active chat.' });
+});
