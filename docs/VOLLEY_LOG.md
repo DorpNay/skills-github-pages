@@ -579,3 +579,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - This direct-child refresh records full exact SHA values `400e42ce1d43a2e91410be9041d235167c1907cb` and `b81d45ee6653dcc0f3d92f4275354ade7c7ba202`, and atomically refreshes NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md.
 - No product code, dependencies, models, host settings, credentials or runtime activation changed.
 - Next: exact-child Freshness/Quality/Chromium/Provenance/Pages and public root verification; then continue Plan 1 TDD.
+
+
+## V-2026-11-16-S-068 — owner prompt archive and context-contract RED checkpoint
+
+- Parent main exact: `d8d538df3e2c2310ff68df1876b5a808d25c7c57`; live queue: 0 open PRs, issue #111.
+- Owner message `Продолжим 🙏🏻 @Поиск @GitHub` archived verbatim as OR-2026-11-16-013 in NOW.md.
+- Parent added `gateway/tests/test_agent_run_context.py` defining a bounded packet with explicit message roles, source kinds/scopes/inclusion reasons, total size/item limits, duplicate-ID rejection and untrusted-reference rendering. `gateway/agent_runtime/context.py` does not yet exist: this is a deliberate RED test checkpoint, not an implemented feature.
+- This direct-child documentation refresh updates NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md together. No product source, dependency, model artifact, host setting, credential, connector or deployment changed.
+- Next: exact-child Freshness/Provenance/Quality/Pages; then Exa primary-source research and TDD implementation of the context packet contract.

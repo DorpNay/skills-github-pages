@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "b81d45ee6653dcc0f3d92f4275354ade7c7ba202",
-    "main_commit_subject": "docs: refresh five-file OR-012 project checkpoint",
-    "main_commit_date": "2026-11-16T16:16:04Z",
+    "main_sha": "d8d538df3e2c2310ff68df1876b5a808d25c7c57",
+    "main_commit_subject": "test: define bounded AgentRun context packet contract",
+    "main_commit_date": "2026-11-16T16:34:52Z",
     "last_functional_checkpoint_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
     "last_functional_milestone": "AgentRun single/team_review/coder_review UI and coder_review strategy; feature flag false, one worker/model slot, no tools/filesystem/shell; legacy main-chat pipeline still separate.",
     "main_quality_run": 43869711819,

@@ -100,3 +100,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 
 ## Freshness repair — exact source
 - Failed job #43905603329 printed: `docs/VOLLEY_LOG.md: missing checkpoint main SHA 400e42ce1d43a2e91410be9041d235167c1907cb`. The earlier VOLLEY entry mentioned only abbreviated `400e42c`, not the required full SHA. No source-code or test failure caused this gate. This child logs the full checkpoint SHA and exact parent b81d45ee6653dcc0f3d92f4275354ade7c7ba202; rerun Freshness/Quality/Pages on the child.
+
+
+## Current checkpoint note (2026-11-16)
+Latest owner-prompt checkpoint parent: `d8d538df3e2c2310ff68df1876b5a808d25c7c57`; 0 open PRs; issue #111. See NOW.md CURRENT and S-068. The bounded AgentRun context packet test file is RED by design; implementation and exact-head verification are pending. Do not treat the tests as shipped capability.
