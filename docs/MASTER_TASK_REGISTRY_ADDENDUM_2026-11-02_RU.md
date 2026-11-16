@@ -610,3 +610,52 @@ This section captures the 2026-11-16 owner continuation in addition to the verba
 - All changes remain within the existing 15 K.5 rows and current feature boundaries. Each implementation slice needs deterministic tests, mobile Chromium coverage, focused accessibility checks, exact-HEAD CI and a reversible feature flag where applicable.
 - Research and design references are candidates until reviewed against the existing source register, current versions, license and actual user/device evidence. Do not copy design systems wholesale or introduce new runtime dependencies merely to imitate a reference.
 - This documentation update does not implement any UI, plugin integration, offline package, local Coder, speech engine or agent-runtime capability.
+
+### K.6.15 Owner continuation OR-2026-11-16-009/010 — four studio routes, aNoteBooki, code efficiency and chat core
+
+This addendum reconciles the two latest owner prompts with K.6.1–K.6.14 and the existing K.5 15-point tracker. It creates no parallel backlog. Requirements remain SPECIFIED until implementation and exact-head evidence exist.
+
+#### A. Four dedicated studio pages without a second deployment
+
+- Keep the canonical aLandi application at the Pages root path / and preserve the existing GitHub Actions → GitHub Pages publication pipeline. Do not recreate the retired /landing/ page or introduce a second marketing landing.
+- Deliver four focused studio pages as same-origin routes in the same Pages build. Each route must have a stable deep link, a clear return path to the main chat, shared authentication/session and project/chat identity, and explicit route-level tests. Routes are product workspaces, not separate Pages sites.
+- Existing owner archive OR-2026-11-15-007 and K.6.9 establish the route principle and mention Notebook plus other studios; they do not record a definitive list of all four studio names. OR-2026-11-16-009 asks for four pages, but the four names are not recoverable from the saved requirements reviewed in this checkpoint. Do not invent the missing names or equate the four Functions panels (Deep Research, Agents, Skills, Connectors) with the four studios. Keep the route set provisional until the owner confirms the fourth name and intended studio boundaries.
+- Prefer same-origin paths to share origin-scoped browser data. A custom subdomain remains a separate origin and requires owner-controlled DNS plus an authenticated API or explicit cross-origin synchronization contract. Never assume a subdomain can read main-app IndexedDB/localStorage/OPFS.
+- Each studio must be a focused workspace with only its relevant tools visible; the main chat remains the shared center for conversation, project context, and task continuity.
+
+#### B. aNoteBooki — Notebook as a shared project workspace
+
+- Product name: aNoteBooki. It is a first-class Notebook workspace, not a chat preset and not a second isolated database.
+- Define one versioned shared data contract for main chat, projects, aNoteBooki, Memory and studio routes. Use stable IDs and explicit provenance for chat, project, notebook, source, excerpt, claim, artifact, task/run and event relationships.
+- A notebook can be attached to a project and linked to one canonical development chat. Notes, selected excerpts, transformations and research artifacts can be transferred into that chat with source IDs, citations, timestamps and origin metadata.
+- Support an owner-configurable Auto-transfer mode, but make the destination chat, transferred item, scope and sync state visible. Never silently inject an entire notebook/library or all project files into every model request. Use selective retrieval and explicit context budgets.
+- Distinguish Notebook sources and research evidence from Global Memory, Personal Memory and Project Memory. Promotion into memory is a separate, explicit action with scope and deletion semantics.
+- Same-origin local persistence should reuse the existing storage architecture where justified (IndexedDB for structured records and sync metadata; OPFS for larger app-owned files/artifacts; Cache API for the app shell). Add SQLite/WASM or another store only if measured transactional/query needs justify it.
+- Define online/offline/server synchronization, idempotent event delivery, versioning, conflict resolution, tombstones, export/backup, quota behavior and recovery. Switching local/server execution must preserve canonical chat/project/notebook IDs and provenance without silently uploading private content.
+
+#### C. Chat is the primary execution surface; remove hidden defaults and duplicate orchestration
+
+**Observed code facts at the inspected main snapshot:** index.md creates new chats with searchMode normal; the hidden toggleSearch checkbox is initially checked; initialization treats an absent legacy search flag as enabled; and the request path attaches web_search, public_knowledge_search and read_webpage definitions with tool_choice auto whenever useSearch is true. The direct request path omits those tools only when search is disabled/offline. This means ordinary new chats currently receive web tools by default, even when the user did not explicitly request research.
+
+- Target behavior: direct main-model chat is the default and sends no web/tool schema unless the user explicitly enables or invokes that capability. Search must be an explicit, visible, per-chat choice; the UI must distinguish search availability from processing effort and Deep Research method. Offline means no web tool availability, not proof that the cloud model is local.
+- Migration must not silently turn on web search. Preserve an explicitly saved user opt-in where its provenance is reliable; treat missing/legacy implicit defaults as off. Add tests for fresh chats, old chat records, imports/exports, per-chat persistence, offline state and the exact outbound request body.
+- The current UI/code contains two orchestration controls: legacy multiAgentEnabled/agentModeControl drives a separate four-stage same-model runMultiAgentResearch pipeline, while agentRuntimeStrategy drives the durable AgentRun strategies single, team_review and coder_review. These are not the same execution path and currently create overlapping concepts in the Agents panel.
+- Unify around one truthful execution-strategy contract. Keep the direct single-model route as default; route specialist/team/Coder workflows through AgentRun only when their capabilities, context grants, budgets, recovery and permissions are real. Retire the legacy four-stage toggle/pipeline only after an equivalent supported workflow and migration/regression tests exist. Do not market sequential same-model roles as parallel independent agents.
+- Keep the dimensions orthogonal: processing effort, web access/breadth, execution topology, task skill, model/provider, data scope and output preference. Deep Research methods are actual research workflows (for example focused lookup, multi-step report, comparison, literature review, fact-check/source audit and Notebook research), not duplicate controls for Thorough/effort.
+- Keep chat history/context continuity central. AgentRun should receive only an explicit bounded context packet from the active chat/project, with source provenance and permission checks; scope IDs alone never grant access. Return task events, citations, diffs and final results to the originating chat with an auditable link.
+
+#### D. Lossless code and document optimization
+
+- Audit index.md and related assets for duplication, dead settings, repeated handlers, oversized inline scripts/styles, synchronous startup work, unnecessary DOM scans, eager loading and avoidable context/token payload. The inspected index.md snapshot is approximately 538 KB / 6,673 lines and contains a large inline JavaScript IIFE; this is a measurement baseline, not a reason to minify blindly.
+- Preserve behavior, data compatibility, migrations, accessibility and all owner-approved controls. Never remove a setting or data field solely because its name looks old; first trace reads/writes, imports/exports, migration paths, runtime consumers and tests.
+- Prefer maintainable language/runtime techniques where justified: explicit state schemas and normalization, small pure functions, event delegation for repeated controls, lazy loading of heavy panels, memoization only for measured repeated work, stable module boundaries, asynchronous work outside initial rendering and selective retrieval. Avoid clever one-liners or abstractions that make behavior harder to audit.
+- Consider extracting the large inline script/styles into versioned same-origin assets and progressively separating modules. Preserve Jekyll baseurl/relative_url behavior, CSP/security assumptions, cache invalidation, source maps for debug builds and current no-build deployment unless a build step proves worthwhile. Do not add a bundler/minifier dependency before measuring its benefit and supply-chain cost.
+- Optimize documentation losslessly: merge duplicated explanations, move historical detail to the existing canonical records, keep NOW.md short and append-only archive/journal intact, preserve all unique decisions, constraints, evidence and owner wording. Do not paraphrase away a requirement or delete history to make a file smaller.
+- Record before/after raw and compressed asset sizes, request count, JS parse/evaluation cost, startup/render timing and mobile interaction metrics. Tests must prove functional parity, import/export compatibility, keyboard/touch behavior and no regression in Pages routes.
+
+#### E. Acceptance and scope control
+
+- The plugin inventory and role boundaries are maintained in INTEL.md; a ChatGPT-side plugin is not automatically aLandi product runtime integration.
+- The four studio names, the exact Auto-transfer policy defaults and any cross-origin/subdomain choice remain owner-confirmation gates. All other requirements above can be designed from existing project evidence.
+- No implementation, runtime activation, connector OAuth, hosting migration, paid provisioning or model download is implied by this specification update.
+- Continue using the single K.5 15-point progress table. Update its existing rows only when a real implementation milestone has evidence.

@@ -128,3 +128,15 @@ Studio — отдельное рабочее окно для составлен�
 ## Owner override — 2026-11-15
 
 This document preserves earlier semantic findings, but current binding requirements are in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6. Prioritize the full function/mode compatibility matrix and distinct real Agent/Deep Research choices. Remove obsolete Twilio tools and Twilio web-search controls from Settings; eliminate duplicate controls and long explanatory text. Reorganize Settings by task and priority, keep web scope orthogonal to effort, make sound actions single-click and keep memory controls discreet. K.6 wins if this historical design conflicts.
+
+## Current implementation audit — 2026-11-16
+
+This section records the current code behavior and supersedes the historical default values above where they conflict with the owner-directed target in K.6.15.
+
+- createChat() initializes searchMode: normal.
+- The hidden toggleSearch checkbox is authored as checked, and initialization treats a missing legacy ai_web_search flag as enabled.
+- The send path sets useSearch from that checkbox and, when true, attaches web_search, public_knowledge_search and read_webpage tool schemas with tool_choice: auto. Thus a new chat can send web tools to the model without an explicit per-request opt-in.
+- The main chat also retains multiAgentEnabled / agentModeControl and the legacy runMultiAgentResearch pipeline, separately from the durable AgentRun agentRuntimeStrategy selector. This is a duplicate orchestration surface, not one unified execution strategy.
+- **Target, not yet implemented:** ordinary chat defaults to direct model execution with no web/tool schema; search is explicitly enabled per chat/request; missing legacy flags do not opt users into web access; existing intentional choices are migrated safely; AgentRun becomes the sole supported specialist orchestration contract after equivalent chat-context and result-return behavior is verified.
+- processingMode remains independent from web access and from Deep Research method selection. Deep Research methods must represent distinct research procedures, not repeat Thorough/effort.
+- Required regression coverage: new chat default request body, legacy chat migration, imported chat profiles, explicit web opt-in/offline, per-chat persistence, tool-call absence/presence, and AgentRun versus direct execution routing.

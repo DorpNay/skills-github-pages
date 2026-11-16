@@ -9,6 +9,16 @@
 
 The four-panel UI described in §0 is an implementation snapshot, not the final accepted design. The owner requires several real selectable Agent execution methods and a separate Deep Research method selector, not one fixed four-stage pipeline or navigation links to unrelated features. The full contract is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6 and supersedes conflicting descriptions below. A saved Team Blueprint or same-model sequential pipeline is not an independent multi-agent runtime.
 
+## 0.2 Current AgentRun and legacy pipeline audit — 2026-11-16
+
+The earlier UI snapshot below is historical and is superseded by D-024 and K.6.14/K.6.15.
+
+- Current AgentRun API/UI expose single, team_review and coder_review; the SQLite DAG and task-scoped encrypted payloads are a verified prototype, with the host feature flag still false. One worker/model slot means serial inference; no tool, web, shell, filesystem or repository execution is enabled.
+- The main chat still contains a separate legacy multiAgentEnabled / agentModeControl switch. It invokes runMultiAgentResearch (planner → researcher → critic → synthesizer) on the selected model for qualifying prompts. This is distinct from agentRuntimeStrategy and AgentRun.
+- The Agents panel therefore currently contains two overlapping orchestration concepts. Do not describe the legacy sequential pipeline as independent multi-agent execution. The target is one truthful strategy selector backed by AgentRun, but retire the legacy path only after chat-context transfer, permissions, evidence return, migration and regression tests are complete.
+- AgentRun currently receives an explicit task prompt and opaque chat/project attribution; it does not automatically receive the full chat history, project memory or attached files. Scope IDs are not data-access grants. A bounded, provenance-preserving context packet must be designed before making it the primary chat orchestration path.
+- The four top-level Functions panels (Deep Research, Agents, Skills, Connectors) are navigation/panels, not the owner's four separate studio pages. The saved route architecture does not yet identify all four studio names; see K.6.15.
+
 ## 0. Verified Functions UI on main — 2026-11-13
 
 **Source snapshot:** main parent `1760cb0391bd0257737bf72db4ea4c5e01d2dde4`. The top-level Functions menu now has four independent entry points, in owner-defined order: **Deep Research, Agents, Skills and Connectors**. The Connectors entry opens the existing independent empty-state panel; it does not claim a connector is registered or connected. Exact-head Quality/Chromium and Freshness are required for this new main commit.

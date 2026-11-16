@@ -1024,3 +1024,47 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - [W3C Trace Context](https://www.w3.org/TR/trace-context/): `traceparent`/`tracestate` support cross-service correlation. If future provider adapters propagate context, validate external headers and never treat trace context as authentication or durable identity.
 
 **Disposition for aLandi:** keep durable `run_id`, checkpoints, dependencies, attempts and cancellation state in SQLite. Use telemetry `trace_id`/`span_id` only for observability correlation; telemetry is not a recovery database. Add spans/events when the K.1.13 observability work and real provider adapters are implemented. No RDF, OpenTelemetry SDK/exporter, or new runtime dependency was installed.
+
+## 2026-11-16 — Complete owner plugin/tool map and usage policy
+
+**Scope:** the owner's full requested set is mapped below. Availability refers to the current assistant-side tool/skill surface, not to aLandi runtime integration. No OAuth, app creation, hosting change, paid provisioning, deployment or secret handling was performed.
+
+| Owner-listed tool | Current assistant-side surface / best use | Boundary and disposition |
+|---|---|---|
+| Code | No distinct @Code tool namespace or skill surfaced in the active tool registry for this session. | Do not claim availability or invent a connector. Use repository-aware GitHub tools and local code inspection. Recheck if the owner enables a distinct Code app later. |
+| Coder | Build-link service available; Coder value tools reported unavailable in the service check. | Build link opens a separate hosted builder and does not edit this canonical repo. Not used for aLandi implementation; not a local Coder sandbox. |
+| Context.dev | Web search/scrape/crawl/answers, brand/styleguide retrieval and monitors are available. | Use for website/design-reference extraction, structured page research and monitored changes; avoid duplicate queries already covered by Exa/Firecrawl. |
+| Cloudflare | Docs/search/execute and account identity tools are available. | Existing Tunnel/edge remains baseline. Use docs and current account state when an edge/API task requires it; do not add Workers, Durable Objects or Agents SDK as a competing runtime without a specific decision. |
+| Exa | Web search and page fetch are available and were used for recent multi-angle discovery. | Primary broad discovery/research tool; verify important claims against primary pages and current repo evidence. |
+| Superpowers | Process skills are available and were invoked for brainstorming, planning, TDD, execution and verification workflow. | Engineering method only; not an aLandi runtime or subagent executor. No separate subagent dispatch capability was available in this session. |
+| TinyFish | Browser workflow tools are available. | Use for read-only public-site workflows and live interactions not covered by deterministic Playwright. Never expose owner credentials or private browser data. |
+| Base44 | App builder, sandbox/code tools and app inventory are available; prior inventory check found no existing aLandi app. | Use only for a disposable design spike or separately authorized prototype. Do not fork the canonical product or move GitHub Pages code/data into Base44 by default. |
+| BrowserAct | BrowserAct skill exists, but the CLI is not installed (browser-act --version → command not found); uv 0.10.0 is present. | No install was performed. Use Playwright for deterministic tests and TinyFish for live browser work; install BrowserAct only after explicit approval if a concrete gap remains. |
+| Railway | Project/service/deployment/log/metrics/automation APIs are available. | Hosting and background automation alternative; no migration or resource creation. Not the current Pages/FastAPI/Ollama baseline. |
+| Render | Service, database, workflow, logs and deployment APIs are available. | Hosting/database alternative; no resource creation or migration. Do not create a parallel backend. |
+| Floot | Project/file/database/preview/build/publish tools are available. | Full app builder overlaps Base44/Hercules/Coder; use only for a bounded prototype if needed, never a second canonical app. |
+| Keenable | Web search and page-content fetch are available. | Fallback discovery/extraction when Exa or Firecrawl cannot access a source; avoid parallel duplicate searches. |
+| Hercules | App builder and agent/app APIs are available. | Alternative app-builder surface; no app creation or agent runtime adoption. |
+| Hostinger Connector / Hostinger | The Hostinger search/execute/multi-execute API surface and related skills are available; these two names resolve to the same underlying connector family here. | Use for read-only account/host audit or explicit Hostinger work only. No VPS/domain/DNS changes or provisioning. |
+| Firecrawl | Search, scrape, map/crawl, developer research, document parsing and agent tools are available and were used for targeted research. | Use after discovery for deep extraction, code/docs lookup and ingestion research. Bound credits and avoid unnecessary autonomous crawls. |
+| Vercel | Documentation, project/deployment, workflow, agent and sandbox tools/skills are available. | Use as comparative reference or a task-specific existing Vercel resource. Vercel Sandbox is hosted, not offline on-device; no project/runtime migration. |
+
+### Complementary workflow (avoid duplicate tool calls)
+
+1. **Canonical engineering truth:** GitHub repository, exact main SHA, tests and Actions.
+2. **Broad discovery:** Exa.
+3. **Deep page/code/document extraction:** Firecrawl; use Context.dev for page/brand/styleguide or structured web extraction where it adds a distinct field.
+4. **Fallback:** Keenable only when the primary search/fetch route has a material access or coverage gap.
+5. **Browser verification:** Playwright for deterministic app regression; TinyFish for live public-site workflows; BrowserAct only when installed and justified.
+6. **Engineering process:** Superpowers; use Coder only for an isolated builder link/prototype or when its value tools become available.
+7. **Platform/hosting references:** Cloudflare, Vercel, Railway, Render and Hostinger are not interchangeable runtime dependencies. Base44, Floot, Hercules and Coder are overlapping builders. Choose one only for a separately scoped need; do not provision parallel products.
+
+### Recent source review (2026-05-16 → 2026-11-16)
+
+- [Agent 4: Teamwork and Collaboration for Vibe-Coding, ACM CAIS '26](https://dl.acm.org/doi/full/10.1145/3786335.3813211), published 2026-05-26: planning agent decomposes a request into a dependency DAG; task agents work on isolated application-state forks; intra-task subagents can share a workspace; validation combines type checks, replayable regression tests and code review. This is a Replit platform paper, not a drop-in runtime for aLandi.
+- [Aegis OS preprint](https://arxiv.org/html/2611.08516v1), 2026-10-22: proposes transactional copy-on-write workspaces, OS sandbox boundaries, scoped egress/credentials and human approval at workspace commit rather than every mutation. It is a preprint with author-reported results, not an independently established production guarantee; candidate patterns only.
+- [Microsoft Agent Framework Durable Extension](https://learn.microsoft.com/en-us/agent-framework/hosting/durable-extension): describes persisted sessions, checkpointed workflows, crash recovery, pause/resume and self-hosted workers. Useful comparison; adopting it would add its durable-task infrastructure and is not justified before extending the existing SQLite contract.
+- [Material Design 3 — Designing/Structure](https://m3.material.io/foundations/designing/structure): emphasizes clear hierarchy, task-focused navigation, top/bottom placement for important actions, semantic reading order and landmarks. Apply as design guidance, not as wholesale visual cloning.
+- [W3C WCAG 2.2](https://www.w3.org/TR/WCAG22/): normative accessibility baseline for focus, target size, contrast, keyboard and predictable interaction. Keep WCAG CSS-pixel criteria distinct from Apple points and Android dp recommendations.
+
+**Disposition:** retain a small complementary assistant-side toolchain; keep the existing aLandi stack and GitHub Pages source of truth. Product connectors and hosting/runtime migrations require a separate explicit architecture decision, credentials/scopes, data-flow threat model, budget and contract tests.
