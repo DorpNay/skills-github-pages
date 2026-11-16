@@ -36,7 +36,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Documentation parent main: 4f19cd4d82994194d384762b7f4c9a1fcf6013e3; this five-file state refresh must be its direct child. Live queue: 0 open PRs, issue #111.
+- Documentation parent main: 0c217fcca1ad968d0af7a9a85ba9708ea6f79f0b; this five-file state refresh must be its direct child. Live queue: 0 open PRs, issue #111.
 - Last functional code checkpoint: 0d34aa1c70bb68e57a3856ba20d8b5f966c65038. Quality #43827521092 SUCCESS (7/7 jobs; 135 built-app Chromium + 1 live-site); Graphify #43827521090 SUCCESS (2,519 nodes / 5,868 edges / 90 files); Pages #43827520134 SUCCESS. Gateway #43826933347 SUCCESS (279 tests) on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.
 - Exact-main documentation/code audit before this refresh: Quality #43829377264, Freshness #43829377165, Provenance #43829377155 and Pages #43829376154 passed on 6ccd58f143c07d02a37878b98c395247090d10a9. Current 4f19 docs-only commit is awaiting exact-child checks.
 - AgentRun: IMPLEMENTED / VERIFIED PROTOTYPE. Strategies single, team_review and coder_review; same-run SQLite DAG, task-ID Fernet payloads and bounded context. One worker/model slot; team inference sequential; feature flag false; no tools, web, shell, filesystem, repository or local Coder sandbox.

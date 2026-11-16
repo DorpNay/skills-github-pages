@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3",
-    "main_commit_subject": "docs: reconcile studios notebook chat and plugin strategy",
-    "main_commit_date": "2026-11-16T09:22:10Z",
+    "main_sha": "0c217fcca1ad968d0af7a9a85ba9708ea6f79f0b",
+    "main_commit_subject": "docs(state): refresh owner continuation checkpoint",
+    "main_commit_date": "2026-11-16T09:27:06Z",
     "last_functional_checkpoint_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
     "last_functional_milestone": "Verified AgentRun coder_review strategy, task-ID encrypted DAG payloads, bounded context and compact Memory status visibility; feature flag remains false, one worker/model slot and no tool/filesystem/shell execution.",
     "main_quality_run": null,
@@ -270,7 +270,7 @@
     "queue_policy": "Direct main only, zero open PRs; issue #111 remains owner/environment gated. Owner authorizes direct main commits/merges and Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
     "note": "Parent f2b6 adds a pinned, push-triggered model acquisition workflow and provenance manifest, not application runtime code. Exact-head Quality (133 Chromium tests), Freshness, Provenance, Pages and artifact acquisition all passed; live root revision exact. Bonsai PTQ1_0 is staged as Actions artifact 14192531688; Qwen3.5-2B artifact 14032317541 also remains staged. Neither is installed on target; no live inference is claimed.",
-    "last_volley": "V-2026-11-16-OWNER-CONTINUATION-002",
+    "last_volley": "V-2026-11-16-OWNER-CONTINUATION-004",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3",
+    "checkpoint_parent_sha": "0c217fcca1ad968d0af7a9a85ba9708ea6f79f0b",
     "merged_prs": [
       184,
       185
@@ -445,10 +445,10 @@
   },
   "owner_request_delta": {
     "status": "SPECIFIED",
-    "scope": "AgentRun/main-chat unification; explicit no-tools-by-default chat; complete plugin strategy; four same-origin studio pages; aNoteBooki project/chat/Memory synchronization; lossless code/docs optimization; Landing 2.0 UX; offline model/API/storage/voice/Coder package and local/server continuity.",
-    "implementation_status": "Documentation and source audit only. AgentRun coder_review remains a feature-off prototype with one worker/model slot. Plugin map and K.6.15 are recorded. Default web tools and legacy multiAgentEnabled pipeline remain in code. Four studio names, aNoteBooki runtime, offline package, local Coder sandbox, Memory/Sources UX and mobile redesign are not implemented.",
+    "scope": "AgentRun/main-chat unification; explicit no-tools-by-default chat; complete plugin strategy; four same-origin studio pages; aNoteBooki project/chat/Memory synchronization; lossless code/docs optimization; Landing 2.0 UX; offline model/API/storage/voice/Coder package and local/server continuity. NOW journal formatting repaired in direct five-file checkpoint refresh.",
+    "implementation_status": "Documentation and source audit only. AgentRun coder_review remains a feature-off prototype with one worker/model slot. Plugin map and K.6.15 are recorded. Default web tools and legacy multiAgentEnabled pipeline remain in code. Four studio names, aNoteBooki runtime, offline package, local Coder sandbox, Memory/Sources UX and mobile redesign are not implemented. Journal line break repaired; no code change.",
     "next": "First approve a single AgentRun-backed chat execution contract and bounded context/permission model; then plan and TDD the unified runtime. Next remove implicit web tool injection safely, then continue K.5 mobile UX, studios/aNoteBooki and offline package.",
-    "parent_main_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3"
+    "parent_main_sha": "0c217fcca1ad968d0af7a9a85ba9708ea6f79f0b"
   },
   "next": [
     "Approve one AgentRun-backed execution strategy integrated with the main chat using bounded, provenance-preserving context, durable pause/resume and permissioned Coder workspace gates.",

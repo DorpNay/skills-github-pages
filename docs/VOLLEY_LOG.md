@@ -510,3 +510,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Research candidates: ACM Agent 4 (2026-05-26), Aegis OS preprint (2026-10-22), Microsoft Agent Framework Durable Extension, Material Design 3 and W3C WCAG 2.2; see INTEL.md for limits and disposition.
 - Next: design one AgentRun-backed main-chat execution contract and bounded permissioned context, then obtain owner approval before implementation plan/TDD. Exact-child state refresh and CI are pending.
 
+
+
+## V-2026-11-16-OWNER-CONTINUATION-004 — journal formatting checkpoint repair
+
+- Parent main 0c217fcca1ad968d0af7a9a85ba9708ea6f79f0b; this commit refreshes NOW.md, AGENTS.md, docs/PROJECT_STATE.yaml, docs/project-state-snapshot.json and docs/VOLLEY_LOG.md together as a direct child.
+- Repaired the literal escaped newline between S-059 and S-058 in NOW.md; archived owner prompts remain unchanged.
+- All five checkpoint files record the exact parent SHA and live queue (0 open PRs, issue #111). No product code or runtime change.
+- Exact-child Freshness, Provenance, Quality, Pages and public revision are pending.
