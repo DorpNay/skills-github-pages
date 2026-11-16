@@ -1,6 +1,6 @@
 # Реестр проектов, техник и инженерных решений aLandi
 
-**Срез источников: октябрь 2026 г.** Этот документ отвечает на практический вопрос: что именно мы переносим в текущий aLandi, что оставляем справочником, а что сознательно не ставим. Ссылка на проект не означает его установки.
+**Срез источников: 2026-11-16.** Этот документ отвечает на практический вопрос: что именно мы переносим в текущий aLandi, что оставляем справочником, а что сознательно не ставим. Ссылка на проект не означает его установки.
 
 ## Базовый принцип
 
@@ -154,3 +154,45 @@ The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as
 ## 2026-11-08 — AgentRun SQLite state store prototype (PR #169 candidate)
 
 **Status: PROTOTYPE / offline persistence only; exact Gateway CI pending.** `gateway/agent_runtime/store.py` provides a bounded local SQLite run/task state journal with idempotency keys, explicit run transitions, typed metadata schemas, task leases/fencing, retry budgets, cancellation, immutable event records, scope checks, SQLite busy timeout/foreign keys/secure_delete and restrictive DB file mode. It deliberately does not call models, execute tools, grant capabilities, schedule workers, coordinate multiple hosts, provide sandbox/approval enforcement or guarantee exactly-once external side effects. Backup/restore and retention are operationally out of scope; use SQLite online backup or quiesced consistent copies. The tests are isolated offline in `gateway/tests/test_agent_run_store.py`. This is a storage building block; Agent Blueprint/Worker Capability contract remains separate and DEFERRED until runtime policy, trace, approval, recovery and adversarial evals are implemented.
+
+
+## 2026-11-16 — owner-directed agent, model and tooling review
+
+**Status: SOURCE-VALIDATED / design dispositions recorded; no runtime or dependency adopted.** This work maps to the existing K.5 programme (Deep Research, Agents, Skills, Coder, modes/efficiency and model/runtime decision pack). It creates no parallel backlog.
+
+| Source | Evidence-backed capability | aLandi disposition |
+|---|---|---|
+| [Ternary Bonsai 2 2B](https://huggingface.co/prism-ml/Ternary-Bonsai-2-2B-gguf) | Apache-2.0; 0.43 GB PTQ1_0, 0.52 GB PQ2_0, 0.55 GB Q2_0; PTQ/PQ require PrismML llama.cpp fork; Q2_0 uses upstream llama.cpp b11556+. | **CANDIDATE.** No Ollama compatibility claim. Prove adapter, exact hash, RAM/KV/latency, RU/EN/TH quality and baseline before staging or selecting. |
+| [Needle 2](https://huggingface.co/Cactus-Compute/needle2) | 45M, 14 MB binary, ~28 MB RAM; constrained tool JSON, confidence gate, top-five tool retrieval; v2.0.4 has a repeat-initialization crash report. | **DEFER.** Model card does not establish RU/EN/TH quality; benchmark only in an isolated process after lifecycle and schema-size tests. |
+| [ghost-infer](https://github.com/affifuddin-hazam/ghost-infer) | Apache-2.0 Rust GGUF runtime, OpenAI-compatible API, NVIDIA-GPU-first; upstream benchmark uses 8 GB RTX 2060 SUPER with 24 GB host RAM. | **RESEARCH ONLY.** Current 8-GB VPS has no verified GPU/host memory fit. |
+| [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) / [Codex](https://github.com/openai/codex) | Specialist-as-tool vs handoff, guardrails, approvals, sessions/traces/resume; local coding harness and workspace lifecycle. | **PATTERNS ONLY.** Extend existing AgentRun/SQLite and capability contracts; do not add a second orchestrator or grant shell from a role name. |
+| [Stakpak](https://github.com/stakpak/agent) | Warden network guardrails, secret substitution, isolated subagents, async task/progress lifecycle. | **PATTERNS ONLY.** Reuse deterministic tool/network policy, secret redaction, per-worker scopes and recovery. |
+| [Cloudroom](https://github.com/davidondrej/cloudroom) | One sandbox/branch per thread and persistent event history; README/docs conflict on sandbox admin rights; approval prompts are not used by default. | **PATTERNS ONLY.** Learn isolation/event model; reject no-approval default and resolve upstream permission claims before reuse. |
+| [Kiri](https://github.com/LeeCheneler/kiri) and [control plane](https://github.com/Yeshwanthyk/kiri) | Local-first workspace, allow/ask/off permissions, worker delegation, keyboard-first session control. | **UX/WORKFLOW REFERENCE.** Two distinct projects; no dependency. |
+| [Obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 V8/CDP/MCP browser; private-network blocking, DNS checks, token/origin/resource guards. | **DEFER browser adapter.** Only isolated worker with URL/SSRF policy and no ambient credentials. |
+| [Memorilla](https://github.com/snap-stanford/memorilla) | Apache-2.0 latent query-conditioned memory; documented H100 80-GB CUDA workflows and GRPO training. | **RESEARCH CANDIDATE.** Compare idea against current MemoryManager/RAG; not suitable for current 8-GB host training. |
+| [React Bits](https://github.com/DavidHDev/react-bits) | Animated React components; MIT + Commons Clause restricts redistribution/porting of components. | **VISUAL REFERENCE ONLY.** Implement original vanilla HTML/CSS/JS; no copying/porting or React dependency. |
+| [OpenAI support-agent demo](https://github.com/openai/openai-support-agent-demo) | MIT Next.js example of File Search, suggested actions and human-in-the-loop review. | **FLOW REFERENCE ONLY.** Exact chat-demo identity remains ambiguous; no Next.js migration. |
+| [KL divergence](https://spinningup.openai.com/en/latest/algorithms/trpo.html) / [critic-free RL](https://arxiv.org/html/2605.08666) | Policy-divergence constraint and GRPO/RLOO-style training methods. | **TRAINING/EVAL RESEARCH ONLY.** Neither is a runtime agent or independent reviewer. |
+| VoxCPM2 | Owner explicitly asked to defer voice-context review. | **DEFERRED.** |
+
+### aLandi-native agent execution design direction
+
+- One coordinator owns the run, task graph and final result. It may call a specialist as a bounded tool (manager retains control) or hand off only when the specialist should own the rest of the turn.
+- Every worker receives a minimal typed packet: run/task/parent IDs, idempotency key, objective, bounded input references, output schema, model policy, deadline, token/tool/output budgets, explicit read/write/execute/network/data scopes, approval, cancellation and eval contract. Never pass the full conversation by default.
+- Effective capability is the intersection of task request, agent profile, owner grant and environment policy; an empty intersection fails closed. Imported Skills remain inert and cannot grant permissions.
+- Parallel workers require separate execution contexts, bounded fan-out/concurrency, queue leases/fencing, durable events/checkpoints, retry/idempotency, cancellation and recovery. One model slot remains the baseline until a measured need justifies more.
+- Independent review requires an actually independent verifier or deterministic checks. A same-model critic is useful structured feedback but is not independent evidence.
+- Coder requires an isolated workspace manifest, patch preview, command/test allowlist, approval tickets bound to exact arguments, redacted logs, recoverable file operations and a tested sandbox. OpenShell v0.1.8 remains staged, not installed.
+- Model routing is task-based: deterministic code first; a small model only for bounded classification/extraction/reranking/tool selection; the main model for complex planning/synthesis. Do not assign one model to each of 64 role labels.
+
+### Next implementation order
+
+1. Correct the two stale Research Trace E2E assertions on exact main and restore green Quality/Chromium.
+2. Finish explicit Research Trace → EvidenceLedger save using only returned source-quote IDs; then add provider adapters and resumable run state.
+3. Extend existing AgentRun to a real bounded specialist/worker lifecycle; add isolated contexts, task graph, leases, event resume, approval and failure-injection tests before exposing parallel modes.
+4. Wire Coder only to a tested isolated workspace; no host shell or broad filesystem access.
+5. Run the task-based RU/EN/TH model bake-off on the actual target hardware. Bonsai 2 2B is a candidate only after a supported runtime path; Needle 2 is not a default multilingual model.
+6. Keep browser automation, latent memory and RL training behind separate opt-in experiments and measurable acceptance gates.
+
+No external package, runtime, model weights or UI framework was installed in this review.

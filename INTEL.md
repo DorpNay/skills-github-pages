@@ -1,6 +1,6 @@
 # aLandi Intelligence / Source Register (INTEL.md)
 
-**Review date:** 2026-11-04. Recheck upstream releases and model cards before shipping an artifact. Recheck upstream releases and model cards before shipping an artifact.
+**Review date:** 2026-11-16. Recheck upstream releases and model cards before shipping an artifact.
 
 ## Voice and model licensing
 
@@ -891,3 +891,74 @@ Decision: reuse the existing SQLite EvidenceLedger, add authenticated scoped API
 - No provider keys were read, no paid provider requests were made, and no provider was marked configured or live. The Research Trace critic remains same-model until a separate verifier runtime is implemented.
 - UI design sources (Apple HIG, W3C APG/WCAG, GitHub Primer, Microsoft Fluent and Singapore Government Design System) remain in the existing source inventory; no new UI dependency was adopted.
 
+
+
+## Owner-directed agent, model and tooling source review — 2026-11-16
+
+**Inventory method:** the pre-sweep file contained 568 HTTP(S) occurrences and 478 distinct URLs after trimming trailing Markdown punctuation. This pass added 29 distinct primary-source references, bringing the normalized unique count to 507. An earlier note reported 490; that figure is not reproducible with this parser and is treated as a stale overcount. Existing inventory was searched by agent orchestration, small models, memory, RL, browser automation and UI themes; this is a focused thematic review, not a claim that all 507 pages were freshly fetched.
+
+### Research tools available to the assistant
+
+- Exa Search / Contents: https://docs.exa.ai/reference/search and https://docs.exa.ai/reference/get-contents
+- Firecrawl Search / Scrape: https://docs.firecrawl.dev/api-reference/endpoint/search and https://docs.firecrawl.dev/api-reference/endpoint/scrape
+- Both tool families returned successful results in this session. No provider keys were read, no paid request was made, and no Exa/Firecrawl runtime dependency was added to aLandi. They are research tools here; product adapters remain a separate, explicit implementation task.
+
+### Small models and local inference
+
+- PrismML Bonsai 2: https://github.com/PrismML-Eng/Bonsai-demo ; model card: https://huggingface.co/prism-ml/Ternary-Bonsai-2-2B-gguf ; format/runtime docs: https://docs.prismml.com/download/formats ; model catalogue: https://docs.prismml.com/download/models
+  - The 2B language model is derived from Qwen3.5-2B and its model card declares Apache-2.0. The smallest GGUF pack, PTQ1_0, is approximately 0.43 GB; PQ2_0 is 0.52 GB; Q2_0 is 0.55 GB. The optional Q8 vision projector is another ~0.36 GB.
+  - PTQ1_0 and PQ2_0 require PrismML's llama.cpp fork. Q2_0 is the stock-upstream path (official documentation currently specifies llama.cpp b11556+). This is not evidence of Ollama compatibility. A 262K context headline is not a usable 8-GB host budget.
+  - **Disposition: CANDIDATE / NOT INSTALLED.** First prove a supported runtime adapter, exact artifact digest, cold/warm RSS, KV memory, TTFT, p50/p95, tokens/sec, cancellation, RU/EN/TH quality and regression versus the current Ollama baseline. Do not make it the default or load it beside another model.
+- Cactus Needle 2: https://huggingface.co/Cactus-Compute/needle2 ; engine/package source: https://github.com/cactus-compute/needle ; v2 lifecycle report: https://github.com/cactus-compute/needle/issues/130
+  - The model card describes a 45M tool-calling/extraction model in a 14 MB binary and roughly 28 MB session RAM, with schema-constrained JSON, confidence gating, top-five tool retrieval and a 256-token sliding window. Its public card does not establish RU/EN/TH quality; Russian and Thai remain unverified.
+  - A v2.0.4 issue documents deterministic crashes when a second session is initialized in the same process on macOS arm64 and Linux x86_64; the report also records tool-schema size sensitivity. **Disposition: DEFER for production.** Keep as a possible isolated English/tool-call benchmark only after the exact shipped engine passes repeated-init, long-session, schema-size and concurrency tests.
+- ghost-infer: https://github.com/affifuddin-hazam/ghost-infer
+  - Apache-2.0 Rust GGUF runtime with an OpenAI-compatible streaming/tool-call API, speculative decoding and GPU offload. Upstream benchmarks use a consumer NVIDIA GPU (including an 8 GB RTX 2060 SUPER) paired with 24 GB system RAM; the installer is Windows-focused. Figures are upstream claims, not aLandi measurements.
+  - **Disposition: RESEARCH ONLY.** Current target facts are an 8-GB VPS and no verified GPU/host memory fit; do not replace the Ollama-first baseline without a same-hardware benchmark.
+- Needle, Bonsai and ghost-infer are separate model/runtime options; do not conflate weights, tokenizer/template, engine, quantization and API compatibility.
+
+### Agent orchestration, coding and operations
+
+- OpenAI GitHub organization: https://github.com/openai
+  - Agents SDK Python: https://github.com/openai/openai-agents-python (MIT). Study manager-owned specialist calls versus handoffs, guardrails, human approval, sessions, tracing and resumable run state. **Reuse concepts; do not add the SDK until an exact gap in current AgentRun is demonstrated.**
+  - Codex: https://github.com/openai/codex (Apache-2.0). A local terminal coding agent; use as a harness/workspace benchmark for repository scoping, tool execution, review and event lifecycle, not as a drop-in backend or permission grant.
+  - Cookbook: https://github.com/openai/openai-cookbook ; agent improvement loop turns real traces and human/model feedback into repeatable evals and then proposes harness changes. Reuse the evidence → eval → improvement cycle.
+  - Evals: https://github.com/openai/evals ; study dataset/graded-eval patterns, but preserve aLandi's deterministic local tests and RU/EN/TH golden sets.
+  - The closest official chat/HITL demo found is https://github.com/openai/openai-support-agent-demo (MIT, Next.js, Responses API, File Search and suggested actions for human review). The exact name chat-demo did not resolve to one canonical OpenAI repository; do not silently treat this demo as the intended exact project. No Next.js migration is proposed.
+- Stakpak: https://github.com/stakpak/agent ; Warden design: https://stakpak.gitbook.io/docs/how-it-works/warden-guardrails
+  - Apache-2.0 DevOps agent with isolated subagents, asynchronous task/progress handling, network policy enforcement and secret substitution before model exposure.
+  - **Disposition: PATTERN SOURCE.** Reuse deterministic network/tool policy, secret redaction/substitution, per-worker tool scopes, resumable task state and reversible file operations. Do not install its 24/7 DevOps runtime into aLandi.
+- Cloudroom: https://github.com/davidondrej/cloudroom ; cloud-thread architecture: https://www.cloudroom.dev/docs/cloud-threads
+  - Apache-2.0 Rust core; one Linux sandbox and Git branch per thread, persistent event history, queued turns and resume. Its docs conflict: the cloud-threads page says the agent has full admin rights inside the sandbox, while the README security section says agents run as a separate Linux user without admin rights. Both describe no approval prompts. Treat its permission boundary as UNVERIFIED until code audit; do not copy its no-approval default.
+  - **Disposition: PATTERN SOURCE ONLY.** Per-thread isolation and event persistence are useful; no assumption that 1,000-agent scale fits an 8-GB VPS.
+- Kiri candidates: https://github.com/LeeCheneler/kiri and https://github.com/Yeshwanthyk/kiri
+  - These are two distinct projects: a MIT local-first workspace with user-set allow/ask/off permissions, worker delegation and YAML workflows; and a keyboard-first local agent control plane. Both are useful UX/workflow references, not one verified interchangeable dependency.
+- Obscura: https://github.com/h4ckf0r0day/obscura ; MCP contract: https://github.com/h4ckf0r0day/obscura/blob/main/docs/Use-the-MCP-server.md
+  - Apache-2.0 Rust/V8 headless browser with CDP and MCP. Private/internal IP navigation is blocked by default with DNS checks; non-loopback HTTP MCP requires a bearer token, allowed origins and bounded requests/connections.
+  - **Disposition: DEFERRED BROWSER ADAPTER CANDIDATE.** If adopted, run as an isolated browser worker with URL policy, DNS/IP revalidation, per-run state and no ambient host credentials. It is not installed.
+- Existing aLandi architecture remains authoritative: use the current AgentRun/SQLite state and typed worker capability contracts. The manager owns the task/result; specialists receive minimal typed task packets and isolated context. Effective permissions remain the intersection of requested scope, agent profile, owner grant and environment policy. No role/Skill expands permissions. Do not add a second orchestrator or persistence engine.
+
+### Memory, RL and policy divergence
+
+- Memorilla: https://github.com/snap-stanford/memorilla ; paper: https://arxiv.org/html/2610.21375v1
+  - Apache-2.0 research implementation that learns query-conditioned latent memory tokens for a frozen model. The README specifies Linux/CUDA/Python 3.11 and H100 80-GB training/evaluation examples; TextWorld memory training uses GRPO. Dataset licenses remain separate.
+  - **Disposition: RESEARCH CANDIDATE / NOT A VPS INSTALL.** Study its compression/evaluation idea against existing SQLite FTS5/RAG and current MemoryManager; no replacement or model training on the 8-GB host.
+- KL divergence: https://github.com/openai/spinningup ; https://spinningup.openai.com/en/latest/algorithms/trpo.html
+  - A mathematical measure/constraint on policy distribution change, not a deployable module. Useful in model fine-tuning/evaluation to detect policy drift; not a new runtime subsystem.
+- Critic-free RL: https://arxiv.org/html/2605.08666 ; literature index: https://github.com/smiles724/Awesome-LLM-RLVR
+  - The cited paper studies token-level effects in critic-free RL such as GRPO and proposes query-preserved and reward-balanced batching interventions. This is a model-training method, not an inference-time agent reviewer. Do not confuse it with the current same-model research critic, which is explicitly not independent.
+  - **Disposition: RESEARCH ONLY.** No RL training pipeline or dependency is justified on the current target hardware. If later explored, require licensed data, reproducible baseline, held-out evals and KL/policy-drift monitoring.
+
+### Interface source
+
+- React Bits: https://github.com/DavidHDev/react-bits ; license: https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md
+  - Large animated React component collection. Its current license is MIT plus Commons Clause restrictions: do not sell, sublicense or redistribute the components themselves, including ported versions.
+  - **Disposition: VISUAL REFERENCE ONLY.** Borrow interaction inspiration and implement original aLandi-native HTML/CSS/JS; do not copy/port its components or add React/Radix/Tailwind runtime dependencies.
+
+### Explicit deferral
+
+- VoxCPM2 is **DEFERRED** per owner instruction; do not spend this pass on voice/audio model integration.
+
+### Consolidated decision
+
+No external runtime, UI framework, model, agent platform or new package was installed in this documentation pass. Exa and Firecrawl were used as assistant-side research tools. Adopt only evidence-backed patterns into aLandi's own contracts: coordinator-owned bounded workers, isolated context, typed scopes, deterministic guardrails, explicit approvals, durable event state, source-grounded research, local-first data and measurable small-model routing. Keep all capabilities disabled or unavailable until their runtime and exact-head acceptance gates pass.
