@@ -36,7 +36,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Docs-refresh parent main `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
+- Docs-refresh parent main `d6e1bf912cb082537c986044b8f35b5b0a865eab`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
 - Quality #43804109317 SUCCESS (7/7 jobs, 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exact.
 - AgentRun native bounded DAG and browser UI IMPLEMENTED / VERIFIED PROTOTYPE: same-run SQLite dependencies, dependency-gated synthesis, task-ID Fernet payloads; safe single/team_review; per-chat choice, General coordinator pin, strategy_id and actual task-state/dependency rendering.
 - One worker/model slot; Team Review calls sequential. Logical roles are not OS processes. Tools/shell/filesystem/network disabled; ALANDI_AGENT_RUNS_ENABLED=false. No Coder sandbox/browser worker.
@@ -44,7 +44,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 - Bonsai/Qwen artifacts staged, not target-installed. No host/Ollama/device/offline verification.
 - OR-005/006 archived; K.6.13 binding for Mini aLandi/offline voice/reconnect, reviewed project learning, Coder packs and explicit local files. K.5 remains sole status table.
 - Assistant-side tools: GitHub, Exa, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers, Superpowers, Code/Coder. Twilio skills-only without provider auth; no standalone Codex connector. None is aLandi integration.
-- Research Trace claim/contradiction Save implemented in this child; exact-head verification pending. Next: durable/resumable Deep Research, Exa/Firecrawl adapters and Notebook/export. No shell before tested sandbox and owner approval.
+- Research Trace source→claim→contradiction Save is IMPLEMENTED / VERIFIED on `+codeDocsFinal+`; Quality #43810404022 passed 134 Chromium tests. Next: durable/resumable Deep Research, real Exa/Firecrawl adapters, provider budgets and Notebook/export. No shell before tested sandbox and owner approval.
 
 
 ## Targeted UI source review — 2026-11-16

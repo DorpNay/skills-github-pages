@@ -243,19 +243,15 @@
 ## D-023 — Typed claim and contradiction records in the existing EvidenceLedger
 
 - **Date:** 2026-11-16
-- **Status:** PROPOSED — backend implementation is included in the current feature-gated change; exact-head CI pending; Research Trace integration remains a separate step.
-- **Problem:** exact source-quote capture is not sufficient to represent which claim an excerpt supports, contradicts or qualifies, nor to preserve a contradiction between claims.
-- **Evidence:** the existing `evidence_records` schema already permits `claim` and `contradiction` kinds; the Deep Research 2.0 plan requires retrievable source links and explicit contradictions. The current critic is a stage in the same selected model run, not an independent model.
-- **Decision:** reuse the existing SQLite `evidence_records` table without a migration. Add authenticated `POST /v1/rag/evidence/claims` and `POST /v1/rag/evidence/contradictions` operations. Claim records must reference source-quote IDs in the same scope; claim IDs are unique within a research run; contradiction records must match existing claim text and may reference only source evidence already linked to those claims. Use deterministic idempotent record IDs. Restrict `reviewer_mode` to `same-model` until a genuinely independent reviewer exists. Prevent deletion of source quotes or claims while derived records reference them (HTTP 409). Existing RAG enablement and API authentication remain authoritative.
-- **Alternatives:** new relational tables/migration; storing claims as ordinary source quotes; graph database; automatic semantic contradiction detection. Deferred because the current table supports typed records and the project has no measured need for another storage system.
-- **Assumptions:** source quotes are saved before claims; claim IDs are stable within one run; the existing Gateway scope and authentication contracts remain unchanged.
-- **Affected files:** `gateway/rag/evidence_ledger.py`, `gateway/app.py`, `gateway/tests/test_coder_packet.py`, `gateway/tests/test_app.py`.
-- **Risks:** reviewer assessments and confidence are model-generated and not calibrated; same-model review is not independent; SQLite remains a single-writer store; UI is not yet connected to the new endpoints.
-- **Acceptance:** unit/API tests prove scope isolation, exact source-quote linkage, status/relation consistency, claim-ID uniqueness, contradiction claim-text/evidence linkage, idempotent retry, authentication and deletion conflict behavior; exact-head Gateway/Quality/Provenance/Freshness pass.
-- **Kill criteria:** any cross-scope link, unknown source ID accepted, duplicate claim ID ambiguity, contradiction referencing unrelated evidence, or deletion that leaves a dangling reference.
-- **Rollback:** revert the implementation commit; keep `ALANDI_RAG_ENABLED=false`. No schema migration is required.
-- **Owner / merge SHA:** owner retains final acceptance; implementation commit SHA and CI evidence pending.
-
+- **Status:** IMPLEMENTED / VERIFIED PROTOTYPE on functional code commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; exact-main Quality #43810404022 and state/provenance/publication gates passed on docs checkpoint `d6e1bf912cb082537c986044b8f35b5b0a865eab`.
+- **Problem:** source-quote capture alone cannot represent which claim an excerpt supports, contradicts or qualifies, or preserve a contradiction between claims.
+- **Evidence:** existing `evidence_records` schema supports typed claim and contradiction records; authenticated Gateway routes and schema-v4 Research Trace parser already existed. The browser Save path is now wired to those routes.
+- **Decision:** reuse SQLite `evidence_records` without migration. Explicit user-click Save first writes bounded source excerpts, maps source IDs to returned evidence IDs, then writes claims only if all referenced quotes exist, then contradictions only if all linked claims and all referenced quotes have been saved. Persist returned IDs by source/claim/contradiction ID in the local trace. Use conversation scope by default, deterministic IDs for retry, and `reviewer_mode=same-model`.
+- **Limits:** critic uses the same selected model route; not independent verification and confidence is not calibrated. Full page content and chat history are not uploaded. RAG remains disabled by default; no host activation.
+- **Acceptance evidence:** E2E uses two fetched sources, two claims and one temporal contradiction; verifies no writes before explicit click, evidence-ID mapping, claim relations, contradiction links and local record-ID persistence. Quality #43810404022 passed all 7 jobs, including 134 Chromium tests and published-site release contract. Freshness #43810404041, Provenance #43810403933 and Pages #43810403266 passed; public root revision exact. Backend EvidenceLedger API was previously Gateway-verified on Python 3.12/13/14; latest Gateway pass #43797179042 on parent 680ab022.
+- **Remaining scope:** durable/resumable research-run lifecycle, independent Exa/Firecrawl adapters, provider budget/cost accounting, and Notebook/report export.
+- **Rollback:** keep `ALANDI_RAG_ENABLED=false`; existing records remain; no schema migration.
+- **Owner:** project owner retains final acceptance.
 
 
 ## D-024 — Native bounded AgentRun specialist DAG on existing SQLite runtime
