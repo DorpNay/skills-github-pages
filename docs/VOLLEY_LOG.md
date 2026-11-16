@@ -535,3 +535,15 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Freshness #43841950546 failed because docs/VOLLEY_LOG.md was not included in the changed-file set. The required path list explicitly includes all five state files; V-005 and this repair record make VOLLEY_LOG.md change in the direct child.
 - Parent Provenance #43841950694 and Pages #43841949330 passed; live root revision exact. Quality #43841950679 was running at checkpoint time.
 - No product code or runtime change. Rerun exact-child Freshness, Provenance, Quality, Pages and live root verification.
+
+
+## V-2026-11-16-OWNER-CONTINUATION-007 — OR-011 agent status acceptance and checkpoint refresh
+
+- Parent main: `72652b74d0253858449737ffd7efee65b8e9915f`; direct-child checkpoint refresh updates NOW.md, AGENTS.md, docs/PROJECT_STATE.yaml, docs/project-state-snapshot.json and docs/VOLLEY_LOG.md together.
+- OR-011 was already archived verbatim in the parent commit `72652b7`; no duplicate archive entry was created.
+- Source audit: `index.md` has the AgentRun task/event list and a 500 ms observer only inside the Agents modal. The main chat still routes through legacy `multiAgentEnabled` / `runMultiAgentResearch`; there is no AgentRun main-chat submission or bounded context packet.
+- Added K.6.16 for the compact collapsible chat-anchored live status surface: durable event cursor/replay, snapshot reconciliation, task/role state, terminal outcomes, cancellation truth, accessibility/reduced motion and no chain-of-thought exposure. Updated K.5 row 4 and Agent Functions IA.
+- Reviewed official OpenAI Agents SDK streaming, OpenAI Agents events/items, AG-UI lifecycle/activity/subagent events and Temporal Event History; Firecrawl surfaced Dify's durable event-store/run route patterns. Disposition: keep current SQLite event journal and AgentRun runtime; no Redis/Temporal/framework dependency.
+- Exact parent checks: Quality #43842541004 SUCCESS (7/7), Pages #43842540462 SUCCESS; Freshness #43842540858 FAILED because snapshot main SHA lagged at a7a33ec. Latest Provenance #43841950694 was on the earlier parent; exact 72652 Provenance was not observed. Exact-child checks pending.
+- No product code, dependencies, model downloads, credentials, host changes or runtime activation.
+- Next: verify this exact child; then TDD the unified AgentRun/main-chat context path before implementing the K.6.16 overlay.

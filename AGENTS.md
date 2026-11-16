@@ -36,16 +36,16 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Documentation parent main: a7a33ec688134571b4fb95606537e5d73ca5190e; this five-file state refresh must be its direct child. Live queue: 0 open PRs, issue #111.
-- Exact-parent checks on a7a33ec: Provenance #43841950694 SUCCESS; Pages #43841949330 SUCCESS and fresh uncached root metadata matched a7a33ec; Quality #43841950679 was still running when this checkpoint was written. Project State Freshness #43841950546 FAILED because the commit did not modify required docs/VOLLEY_LOG.md; the repair below adds the missing log entry and refreshes all five required state files.
+- Documentation parent main: 72652b74d0253858449737ffd7efee65b8e9915f; this five-file state refresh must be its direct child. Live queue: 0 open PRs, issue #111.
+- Exact-parent checks on 72652b7: Quality #43842541004 SUCCESS (7/7, including Chromium/Jekyll/release contract); Pages #43842540462 SUCCESS; Freshness #43842540858 FAILED because the snapshot still recorded a7a33ec instead of this parent. Latest Provenance #43841950694 passed on the earlier parent a7a33ec; no exact-parent Provenance run was observed. This direct-child refresh updates all five required state files.
 - Last functional code checkpoint: 0d34aa1c70bb68e57a3856ba20d8b5f966c65038. Graphify #43827521090 SUCCESS (2,519 nodes / 5,868 edges / 90 files); Gateway #43826933347 SUCCESS (279 tests) on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.
 - AgentRun: IMPLEMENTED / VERIFIED PROTOTYPE. Strategies single, team_review and coder_review; same-run SQLite DAG, task-ID Fernet payloads and bounded context. One worker/model slot; team inference sequential; feature flag false; no tools, web, shell, filesystem, repository or local Coder sandbox.
 - Main chat still contains the legacy multiAgentEnabled / runMultiAgentResearch four-stage path beside AgentRun agentRuntimeStrategy. AgentRun does not yet receive full main-chat history, project memory or attachments; scope IDs do not grant access. Unification and explicit context grants are next.
 - Chat audit: new chats and hidden toggleSearch default web search on; request can include web_search, public_knowledge_search and read_webpage. Target direct-chat default has no web tools and requires explicit search opt-in; not implemented.
 - Browser-local Workspace is already implemented: user-picked File System Access API handles, explicit read/write permission, exact diff, approval, IndexedDB recovery snapshot, rollback and restore. No AI AgentRun integration, shell, test runner, arbitrary paths, background watch or network transfer.
-- Fresh Pages route audit: root revision exact a7a33ec; /landing/ is 404; /workspace/ exists; /notebook/ and /research/ are 404. Four studio names remain unresolved in saved owner prompts.
+- Fresh Pages route audit: last independently verified public root revision was a7a33ec; Pages deployment #43842540462 succeeded on 72652, but its public root revision was not separately fetched in this checkpoint. /landing/ is 404; /workspace/ exists; /notebook/ and /research/ are 404. Four studio names remain unresolved in saved owner prompts.
 - Mobile zoom: text-sm (14px) form controls likely trigger iPhone Safari focus zoom; mobile 16px controls proposed, physical iPhone validation pending.
-- Owner requests OR-009 and OR-010 are archived verbatim in NOW.md. K.6.14/15 binding; K.5 remains the sole 15-point tracker. Offline model package, local AI Coder sandbox, full Memory/Sources UX and mobile redesign remain incomplete.
+- Owner requests OR-009, OR-010 and OR-011 are archived verbatim in NOW.md. K.6.14/15/16 binding; K.5 remains the sole 15-point tracker. AgentRun live status overlay is specified in K.6.16 but not yet implemented. Offline model package, local AI Coder sandbox, full Memory/Sources UX and mobile redesign remain incomplete.
 - Assistant-side plugin inventory is in INTEL.md. Exa, Firecrawl, Context.dev, Superpowers and TinyFish were used. Coder value tools unavailable; BrowserAct CLI not installed. No app builder, OAuth, product connector or hosting/runtime migration was performed.
 - No new product code, dependencies, model downloads, secrets, host changes or external service provisioning in this documentation slice.
 
@@ -78,3 +78,9 @@ The current implementation is one durable model worker, not a multi-agent team. 
 - Continue on main only; direct commits and automatic Pages publication are authorized. No VPS deployment, paid provisioning, credentials/secrets, destructive operations, force-push, rebase/reset or history rewrite.
 
 - Current documentation checkpoint parent for OR-2026-11-16-008: `a0d3856ebf63c4f48d76f60bce425bafb27aab8f`. Keep PROJECT_STATE.yaml root_orienter.base_main/current_checkpoint.verified_main aligned with project-state-snapshot.json checkpoint.main_sha; refresh the five state files together as a direct child of that snapshot SHA.
+
+
+## Owner continuation — OR-2026-11-16-011
+- OR-011 is already archived verbatim in root NOW.md; do not duplicate it. K.6.16 is the canonical acceptance for a compact, collapsible, chat-anchored live AgentRun status window backed by durable run/task events; no chain-of-thought or invented progress.
+- First implementation priority remains one AgentRun-backed main-chat orchestration path with bounded, provenance-preserving context, explicit data grants, durable lifecycle, result/evidence return and migration parity. Retire `multiAgentEnabled` / `runMultiAgentResearch` only after regression coverage proves parity.
+- Current UI status events remain confined to the Agents modal; the requested chat-level status overlay is SPECIFIED, not implemented. Current polling is 500 ms and uses the existing event cursor; evaluate streaming only against measured latency/load, without introducing a second queue/runtime.

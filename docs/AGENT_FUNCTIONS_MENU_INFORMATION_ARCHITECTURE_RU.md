@@ -11,12 +11,13 @@ The four-panel UI described in §0 is an implementation snapshot, not the final 
 
 ## 0.2 Current AgentRun and legacy pipeline audit — 2026-11-16
 
-The earlier UI snapshot below is historical and is superseded by D-024 and K.6.14/K.6.15.
+The earlier UI snapshot below is historical and is superseded by D-024 and K.6.14/K.6.15/K.6.16.
 
 - Current AgentRun API/UI expose single, team_review and coder_review; the SQLite DAG and task-scoped encrypted payloads are a verified prototype, with the host feature flag still false. One worker/model slot means serial inference; no tool, web, shell, filesystem or repository execution is enabled.
 - The main chat still contains a separate legacy multiAgentEnabled / agentModeControl switch. It invokes runMultiAgentResearch (planner → researcher → critic → synthesizer) on the selected model for qualifying prompts. This is distinct from agentRuntimeStrategy and AgentRun.
 - The Agents panel therefore currently contains two overlapping orchestration concepts. Do not describe the legacy sequential pipeline as independent multi-agent execution. The target is one truthful strategy selector backed by AgentRun, but retire the legacy path only after chat-context transfer, permissions, evidence return, migration and regression tests are complete.
-- AgentRun currently receives an explicit task prompt and opaque chat/project attribution; it does not automatically receive the full chat history, project memory or attached files. Scope IDs are not data-access grants. A bounded, provenance-preserving context packet must be designed before making it the primary chat orchestration path.
+- AgentRun currently receives an explicit task prompt and opaque chat/project attribution; it does not automatically receive the full chat history, project memory or attached files. Scope IDs are not data-access grants. A bounded, provenance-preserving context packet with explicit per-source grants must be implemented before making it the primary chat orchestration path.
+- AgentRun status and task events are currently rendered only inside the Agents settings modal. The observer polls the event endpoint and status snapshot every 500 ms; there is no chat-anchored collapsible live status surface. K.6.16 defines the required overlay, replay/reconnect and accessible state semantics; it is SPECIFIED, not implemented.
 - Existing /workspace/ is a browser-local file editor, not an AI Coder sandbox: File System Access API, user-selected folder/files, explicit read/write permission, exact diff, confirmation, IndexedDB recovery snapshot and rollback; no arbitrary paths, persistent permission, background watch, network transfer, shell, test runner or AgentRun/model integration. Preserve it as a foundation for a permissioned Workspace adapter. E2E tests cover conflict detection and partial-write recovery.
 - The four top-level Functions panels (Deep Research, Agents, Skills, Connectors) are navigation/panels, not the owner's four separate studio pages. The saved route architecture does not yet identify all four studio names; see K.6.15.
 

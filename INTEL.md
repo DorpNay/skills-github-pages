@@ -1077,3 +1077,20 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - References: [WebKit — New Interaction Behaviors in iOS 10](https://webkit.org/blog/7367/new-interaction-behaviors-in-ios-10/); [CSS-Tricks — 16px or Larger Text Prevents iOS Form Zoom](https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/); [iOS WebKit auto-zoom technical analysis](https://nahidmahamud.com/disable-auto-zoom-in-input-text-tag-safari-on-iphone/).
 - **Acceptance:** test text, URL, password, search and select controls on real iPhone Safari, verify no focus zoom, keyboard visibility, voice controls and preserved pinch zoom.
 
+
+
+### AgentRun live status and event transport review — 2026-11-16
+
+**Official protocol/runtime references**
+- [OpenAI Agents SDK — Streaming](https://openai.github.io/openai-agents-python/streaming/): `Runner.run_streamed()` exposes typed run events; the event iterator must be fully drained before treating a run as complete because persistence/approval/history post-processing may continue after visible output. Cancellation and interruption are explicit lifecycle outcomes. Pattern adopted: distinguish user-visible token output from run completion and reconcile terminal state from the runtime.
+- [OpenAI API — Agents events and items](https://developers.openai.com/api/docs/guides/agents-api/sessions/events): events are the real-time update channel; persisted items are the durable history. Pattern adopted: live activity and saved conversation history are separate projections.
+- [AG-UI — Events](https://docs.ag-ui.com/concepts/events): run lifecycle events, step events, activity snapshots/deltas and subagent lifecycle events give the frontend structured status without conflating it with assistant text. [AG-UI — Subagents](https://docs.ag-ui.com/concepts/subagents): attribution identifies which child produced an event; it is not a permission grant. Pattern adopted: explicit typed status/task activity and attribution, with no raw chain-of-thought in the user-facing panel.
+- [Temporal — Understanding Event History](https://docs.temporal.io/evaluate/understanding-temporal): a durable ordered event history enables replay/recovery after worker failure. Pattern adopted conceptually: event cursor + persisted run state + snapshot reconciliation; do not adopt Temporal service for the current single-host SQLite deployment.
+- [Dify Agent Run Store](https://github.com/langgenius/dify/blob/d90f9759d2f251223d90dd500a6603fd320df905/dify-agent/src/dify_agent/storage/redis_run_store.py) and [Dify run routes](https://github.com/langgenius/dify/blob/d90f9759d2f251223d90dd500a6603fd320df905/dify-agent/src/dify_agent/server/routes/runs.py): request digests/idempotency, event cursor replay, retention and explicit run status. Pattern adopted: event log and status endpoint remain independently readable; reconnect must re-authorize. Do not add Redis or copy Dify's scheduler.
+
+**aLandi source comparison**
+- Current AgentRun already persists run/task events in SQLite and exposes authenticated status + cursor-based event endpoints. The browser observer polls events and snapshot every 500 ms, but only while the Agents modal owns the UI.
+- No second orchestration engine, Redis/Temporal dependency or separate agent runtime is justified. Keep SQLite/DAG/lease/payload vault as the current base; optimize transport only after measuring the current polling cost/latency.
+- For the requested status UX, show a collapsed chat-anchored summary with truthful state text; expand to a bounded activity/task list. Use the existing event cursor and server snapshot to recover after navigation/reconnect. Deduplicate by event ID; don't announce unchanged poll snapshots.
+- Never expose hidden reasoning, prompts, secrets, encrypted payloads or source text in activity status. Color/animation is secondary to server-reported state; respect reduced motion and keyboard/screen-reader semantics.
+- Full acceptance and maturity boundary: `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K.6.16. No new dependency or runtime adopted.
