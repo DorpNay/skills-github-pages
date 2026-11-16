@@ -36,13 +36,14 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `f2b6de1cdb5f95ca14d421ab028dc3591ab4187a`; Open PRs: none; Open issues: #111.
-- Exact-head Quality #43791622156 SUCCESS (133 Chromium tests + published release contract); Freshness #43791622162 SUCCESS; Provenance #43791622145 SUCCESS; Pages #43791621597 SUCCESS; Bonsai acquisition #43791622097 SUCCESS. Live root meta `alandi-build-revision=f2b6de1cdb5f95ca14d421ab028dc3591ab4187a` verified. Gateway/Graphify not triggered on this workflow/docs-only commit; last Gateway #43790945491 and Graphify #43790945459 passed on prior code-bearing checkpoint.
-- The owner-directed source sweep is recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md: 507 normalized unique URLs after adding 29 primary-source refs. Exa and Firecrawl are assistant-side research tools, not aLandi runtime dependencies.
-- Qwen3.5-2B Q4_K_M is staged in Actions artifact #14032317541 and SHA-verified, but not installed on target. AgentRun exposes only installed, allowlisted models; main 4B remains default.
-- Bonsai PTQ1_0 is staged in Actions artifact #14192531688 (429,196,247 bytes; archive SHA-256 41ced309f0ff10e4bd9b0c464bf3fe42013e60e4d27cd308666744618c18655a; expires 2026-12-16). Embedded 429,183,456-byte model SHA-256 36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa. It is a packing of the same 1.88B model, not a smaller parameter model; no runtime or target-host install.
-- AgentRun remains one worker/task per run, concurrency 1, no tools/filesystem/network. Multi-agent DAG, task-scoped payloads and isolated Coder workspace are specified but not implemented. Needle 2 is deferred; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
-- Next: implement generic local OpenAI-compatible runtime adapter and exclusive model slot; then task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
+- Parent main `6830e5cdc14ae3138ba4d61125c7db8f7f353ba5`; Open PRs: none; Open issue: #111.
+- Exact-head Quality #43792176788 SUCCESS; Freshness #43792176798 SUCCESS; Provenance #43792176803 SUCCESS; Pages #43792176634 SUCCESS. Live root meta exactly matches main; `/landing/` returns HTTP 404.
+- Gateway #43790945491 and Graphify #43790945459 passed on the prior code-bearing parent `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; neither was triggered by the current docs-only parent.
+- AgentRun has an authenticated single-worker Ollama executor, durable SQLite run/task journal, lease fencing, bounded retries, cancellation/events and encrypted run-level payloads. It still executes one task per run; task dependency DAG and per-task encrypted context are not implemented. Tools, filesystem and network remain disabled; feature flag remains off by default.
+- Bonsai PTQ1_0 artifact #14192531688 and Qwen3.5-2B artifact #14032317541 are staged and SHA-verified, not installed on target. No runtime/host verification.
+- Focused source review: OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework. Adapt handoffs, isolated contexts, durable checkpoints and typed fan-out/fan-in; no framework dependency adopted.
+- Next: implement the bounded native AgentRun DAG and task-scoped encrypted payloads under D-024; keep model concurrency at 1, and do not expose Coder execution before a tested sandbox.
+
 
 ## Targeted UI source review — 2026-11-16
 
@@ -59,3 +60,7 @@ Use `INTEL.md` as the external-source register. It contains 450 distinct URL str
 ## Targeted Deep Research source review — 2026-11-15
 
 Exa Search/Contents, Firecrawl Search/Scrape, LangChain Deep Agents Subagents, LangGraph Persistence, FastAPI BackgroundTasks/Lifespan and Context7 FastAPI docs were checked. Search and extraction should remain separate adapters; isolated subagents are justified only for independent work; in-memory savers are not durable; FastAPI BackgroundTasks are not a persistent queue. Reuse the existing SQLite EvidenceLedger and AgentRun persistence patterns before adding LangGraph/Deep Agents SDK dependencies. Full findings and URLs are in INTEL.md.
+
+## AgentRun orchestration source refresh — 2026-11-16
+
+The current implementation is one durable model worker, not a multi-agent team. Use the existing SQLite journal and encrypted payload vault as the base; add per-task payload references and same-run dependency edges before exposing specialist teams. Reuse the concepts in OpenAI Agents SDK, Deep Agents, Temporal and Microsoft Agent Framework, but do not add a second orchestration runtime or imply parallel model inference while the configured model slot is 1. Details and primary URLs are in INTEL.md and D-024 in DECISIONS.md.

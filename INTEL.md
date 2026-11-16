@@ -962,3 +962,20 @@ Decision: reuse the existing SQLite EvidenceLedger, add authenticated scoped API
 ### Consolidated decision
 
 No external runtime, UI framework, model, agent platform or new package was installed in this documentation pass. Exa and Firecrawl were used as assistant-side research tools. Adopt only evidence-backed patterns into aLandi's own contracts: coordinator-owned bounded workers, isolated context, typed scopes, deterministic guardrails, explicit approvals, durable event state, source-grounded research, local-first data and measurable small-model routing. Keep all capabilities disabled or unavailable until their runtime and exact-head acceptance gates pass.
+
+
+## 2026-11-16 — AgentRun specialist orchestration: focused upstream refresh
+
+**Live aLandi baseline audited at main `6830e5cdc14ae3138ba4d61125c7db8f7f353ba5`:**
+- `gateway/agent_runtime/store.py` already provides durable SQLite run/task records, versioned transitions, idempotency, bounded task/event counts, leases with fencing, bounded retries, cancellation and an event journal.
+- `gateway/agent_runtime/worker.py` currently runs one local Ollama model-completion task per run, with one worker and an exclusive model semaphore. The API is authenticated; installed-model discovery intersects the configured allowlist with Ollama's live model catalog.
+- `gateway/agent_runtime/payloads.py` encrypts run-level input/output with Fernet. The store has no dependency-edge table, the worker has no per-task encrypted context or ready-node scheduler, and the Agents panel still describes the team size/scenario as a saved blueprint.
+- Tools, filesystem, shell and network are disabled in AgentRun. The current Coder profile can only draft code from supplied context; it cannot inspect repositories or execute commands.
+
+**Primary sources rechecked (2026-11-16):**
+- OpenAI Agents SDK — [running agents](https://developers.openai.com/api/docs/guides/agents/running-agents), [agent definitions](https://openai.github.io/openai-agents-python/agents/), [results and resumable state](https://openai.github.io/openai-agents-python/results/). Useful patterns: explicit runner loop, manager/specialist handoffs, typed outputs, sessions, resumable state and trace metadata. The SDK manages its own runtime and defaults to OpenAI Responses; it is not installed into the local Ollama path.
+- LangChain Deep Agents — [overview](https://docs.langchain.com/oss/python/deepagents/overview), [subagent architecture](https://docs.langchain.com/oss/python/langchain/multi-agent/subagents). Useful patterns: supervisor-owned routing, isolated subagent context, one compact final handoff, sync/async trade-offs and bounded parallelism. Deep Agents uses the LangGraph runtime; adding it would introduce a second execution/state stack.
+- Temporal — [AI/durable execution](https://docs.temporal.io/ai), [durable agent orchestration](https://temporal.io/pages/durable-agent-orchestration-white-paper). Useful patterns: persist completed activity results, idempotent side effects, durable waits, replay/recovery and failure-injection tests. A separate Temporal service is deferred until a measured multi-host/long-running workload justifies it.
+- Microsoft Agent Framework — [repository](https://github.com/microsoft/agent-framework), [durable agent patterns](https://learn.microsoft.com/en-us/azure/durable-task/sdks/durable-agents-patterns). Useful patterns: deterministic workflow code owns sequence/branching/fan-out/fan-in; LLMs perform bounded work inside nodes; human input is a pause/resume event. Durable Task infrastructure is not part of the current single-host stack.
+
+**Disposition:** adapt patterns into the existing aLandi-native FastAPI + SQLite + encrypted payload runtime. The first prototype is a bounded coordinator-owned DAG with task-ID-keyed encrypted inputs/outputs, same-run dependency edges and fail-closed dependency gating. Keep one model slot/concurrency 1 on the current target profile; independent logical contexts do not imply parallel inference or separate OS processes. No framework, package, provider credential or host runtime is added. See D-024 for acceptance, risks and rollback.
