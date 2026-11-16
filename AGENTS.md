@@ -36,12 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `3da2a0865458898f9c3a4923a15f0485bdeda6f3`; Open PRs: none; Open issues: #111.
-- Exact-head Quality #43790021314 SUCCESS (133 Chromium tests); Freshness #43790021248 SUCCESS; Provenance #43790021345 SUCCESS; Graphify #43790021246 SUCCESS; Pages #43790020168 SUCCESS. Live root meta `alandi-build-revision=3da2a0865458898f9c3a4923a15f0485bdeda6f3` verified. Gateway was not triggered on this test/state-only commit; last Gateway #43762493535 passed on prior Gateway-bearing checkpoint.
+- Parent main `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; Open PRs: none; Open issues: #111.
+- Exact-head Gateway #43790945491 SUCCESS (Python 3.12/13/14); Quality #43790945388 SUCCESS (133 Chromium tests + published release contract); Freshness #43790945342 SUCCESS; Provenance #43790945416 SUCCESS; Graphify #43790945459 SUCCESS; Pages #43790945021 SUCCESS. Live root meta `alandi-build-revision=fb9c9d3a1cf06fe0e07606ad816767e00686a83f` verified.
 - The owner-directed source sweep is recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md: 507 normalized unique URLs after adding 29 primary-source refs. Exa and Firecrawl are assistant-side research tools, not aLandi runtime dependencies.
-- Qwen3.5-2B Q4_K_M is staged in Actions artifact #14032317541 and SHA-verified, but not installed on target. Current child exposes only installed, allowlisted models to AgentRun; main 4B remains default. No target-host inference claim.
-- AgentRun is still one worker/task per run, concurrency 1, no tools/filesystem/network. Multi-agent DAG, task-scoped payloads and isolated Coder workspace are specified but not implemented. Bonsai 2 remains a candidate; Needle 2 is deferred; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
-- Next: verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision. Then implement task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
+- Qwen3.5-2B Q4_K_M is staged in Actions artifact #14032317541 and SHA-verified, but not installed on target. AgentRun exposes only installed, allowlisted models; main 4B remains default.
+- The pinned 430 MB Bonsai PTQ1_0 candidate is the smallest packing of the same 1.88B model, not a smaller parameter model. The new acquisition workflow is pending its first run; no runtime or target-host install.
+- AgentRun remains one worker/task per run, concurrency 1, no tools/filesystem/network. Multi-agent DAG, task-scoped payloads and isolated Coder workspace are specified but not implemented. Needle 2 is deferred; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
+- Next: verify the Bonsai artifact, then implement task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
 
 ## Targeted UI source review — 2026-11-16
 

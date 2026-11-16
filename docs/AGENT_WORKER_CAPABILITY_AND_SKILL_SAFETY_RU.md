@@ -93,3 +93,8 @@ Skill instructions не могут расширить allowlist, отключи�
 7. **Browser worker:** optional isolated runtime with strict URL/SSRF policy, DNS/IP revalidation, no ambient credentials and per-run resource limits. Do not expose a browser worker as available until live negative security tests pass.
 
 Acceptance gates: deterministic unit/contract tests; concurrency and race tests; cross-scope/secret-exfiltration/path-traversal tests; timeout/cancellation/restart/lease-expiry tests; RU/EN/TH golden tasks; resource budgets; exact-head CI; feature flags off by default; tested rollback. The current safe rollback is to keep AgentRun disabled and omit unverified models from the live catalog.
+
+
+### Additional small-model candidate — 2026-11-16
+
+The pinned 430 MB PTQ1_0 file for the same 1.88B ternary model is being staged through a checksum-verifying Actions workflow. It requires a PrismML llama.cpp fork; it is not an Ollama model and is not available to AgentRun yet. A generic aLandi-owned OpenAI-compatible local runtime adapter, exclusive model-slot policy, and RU/EN/TH/resource eval are prerequisites. No host install or live inference is claimed.

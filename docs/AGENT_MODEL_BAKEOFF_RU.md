@@ -256,3 +256,13 @@ To install the verified artifact on an owner-controlled host after checking free
 4. Verify memory, KV cache, TTFT, p50/p95, tokens/sec, cancellation and RU/EN/TH quality on the actual host before enabling it for workers.
 
 The installer copies only verified Ollama blobs and manifest metadata; it does not restart Ollama, alter service ownership or run inference. The Actions artifact is not a host installation.
+
+
+## PrismML ternary helper — acquisition and runtime boundary (2026-11-16)
+
+- Source: [Ternary Bonsai 2 2B model card](https://huggingface.co/prism-ml/Ternary-Bonsai-2-2B-gguf), immutable revision a6032a5089ac27e96be3a80c7b42d1ad0bd89887.
+- The 430 MB PTQ1_0 file (429,183,456 bytes, SHA-256 36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa) is the smallest packing of the same 1.88B language model; it is not a separate lower-parameter model. License Apache-2.0.
+- Official README: PQ2_0 is the default packing; PTQ1_0 is smallest; Q2_0 is the stock-upstream option from llama.cpp b11556+. PTQ1_0 and PQ2_0 require the PrismML fork. The optional Q8 vision projector is separate and is not included in the text-only 430 MB artifact.
+- Added a pinned, push-triggered acquisition workflow: .github/workflows/acquire-prismml-bonsai.yml. It downloads only the PTQ1_0 file, verifies the immutable revision, official SHA256SUMS entry, SHA-256 and exact byte size, then uploads a 30-day Actions artifact. Model weights are never committed to Git.
+- **Status before first workflow result:** acquisition workflow is committed; artifact download pending. No runtime or target-host installation.
+- The current aServi inference adapter speaks Ollama-specific endpoints. Bonsai requires a local llama.cpp-compatible server and an aLandi-owned generic OpenAI-compatible runtime adapter; do not expose vendor-specific product labels or run a second model concurrently on the 8-GB host without a measured model-slot policy.

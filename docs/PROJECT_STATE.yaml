@@ -16,15 +16,15 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 3da2a0865458898f9c3a4923a15f0485bdeda6f3; 0 open PRs; issue #111. Exact-head Quality #43790021314 SUCCESS (133 Chromium tests), Freshness #43790021248 SUCCESS, Provenance #43790021345 SUCCESS, Graphify #43790021246 SUCCESS and Pages #43790020168 SUCCESS; live root meta exact. Owner source review in INTEL/TECHNIQUE_REGISTER (507 normalized URLs). Qwen3.5-2B artifact staged/hash-verified, not installed. Current child adds installed-only AgentRun model catalog and optional 2B allowlist; no host install."
+    status: "NOW.md is the sole first-read checkpoint. Parent main fb9c9d3a1cf06fe0e07606ad816767e00686a83f; 0 open PRs; issue #111. Exact-head Gateway #43790945491 SUCCESS (Python 3.12/13/14), Quality #43790945388 SUCCESS (133 Chromium tests + published release contract), Freshness #43790945342 SUCCESS, Provenance #43790945416 SUCCESS, Graphify #43790945459 SUCCESS and Pages #43790945021 SUCCESS; live root meta exact. Qwen3.5-2B artifact staged/hash-verified, not installed. Bonsai PTQ1_0 manifest and acquisition workflow added; first download pending. No runtime/host install."
     branch: "main"
-    base_main: "3da2a0865458898f9c3a4923a15f0485bdeda6f3"
+    base_main: "fb9c9d3a1cf06fe0e07606ad816767e00686a83f"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     merged_changes: "PR #185 model/runtime acquisition pack merged at f1fc737; PR #184 Browser Local workspace merged at f7cc9a4; PR #176 Coder research ported at e79e70d. Stale/stacked #175/#178/#179/#180/#182 closed with evidence; branches retained."
     exact_head_checks: "Exact parent 2ca78e7bf1bdadff56bfa61018f6735b4dee1cfa: Quality #43735565023 ran 131 Chromium tests: 130 pass, one strict locator failure (nested data-chat-id attributes); Freshness #43735565149, Provenance #43735565027, Graphify #43735565011 and Pages #43735564555 SUCCESS. Quality release-contract skipped. Narrowed locator to .chat-row; verify exact child."
     runtime_boundary: "13,783,272,859 bytes of model/runtime artifacts are SHA-verified in Actions (#43420046411 external; #43418126506 Ollama), expire 2026-12-13, and are not installed. Python cache #43423610986 passed offline sync and pip-check for Ubuntu 24.04 x86_64 / CPython 3.12–3.14, not installed. Owner-supplied primary checkpoint excluded. Actual host OS/architecture, disk/RAM/VRAM, Ollama, Piper, Whisper, OCR, API wiring and RU/EN/TH eval remain unverified."
-    next: "Verify exact-child Freshness, Provenance, Quality/Chromium, Graphify, Pages and public revision for installed-only model discovery. If green, implement task-scoped encrypted payloads and a dependency DAG for coordinator-owned specialists; keep Coder command execution behind a tested sandbox."
+    next: "Verify the pinned Bonsai PTQ1_0 Actions artifact and exact digest. Then decide whether to implement a generic local OpenAI-compatible runtime adapter; separately implement task-scoped encrypted payloads and dependency DAG for coordinator-owned specialists. Keep Coder command execution behind a tested sandbox."
 
 
 
@@ -46,7 +46,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-16-MODEL-CATALOG-001"
+  last_volley: "V-2026-11-16-BONSAI-STAGING-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -298,8 +298,8 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "3da2a0865458898f9c3a4923a15f0485bdeda6f3"
-  last_main_action: "Parent 3da2a0865458898f9c3a4923a15f0485bdeda6f3 passed exact-head Quality #43790021314 (133 Chromium tests), Freshness #43790021248, Provenance #43790021345, Graphify #43790021246 and Pages #43790020168; live root meta exact. Current child adds installed-only model discovery and optional Qwen3.5-2B allowlisting; no target install."
+  verified_main: "fb9c9d3a1cf06fe0e07606ad816767e00686a83f"
+  last_main_action: "Parent fb9c9d3a1cf06fe0e07606ad816767e00686a83f passed exact-head Gateway #43790945491 (Python 3.12/13/14), Quality #43790945388 (133 Chromium tests + published release contract), Freshness #43790945342, Provenance #43790945416, Graphify #43790945459 and Pages #43790945021; live root meta exact. Current child adds pinned Bonsai PTQ1_0 acquisition workflow; artifact result pending."
   last_functional_checkpoint: "1851b7204b1efc6216d139d97653e0dbfc5c4668"
   main_quality: "Quality #43790021314 SUCCESS; 133 Chromium tests passed on exact parent 3da2a0865458898f9c3a4923a15f0485bdeda6f3."
   main_freshness: "Freshness #43790021248 SUCCESS on exact parent 3da2a0865458898f9c3a4923a15f0485bdeda6f3."
