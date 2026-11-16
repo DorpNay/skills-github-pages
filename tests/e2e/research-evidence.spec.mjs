@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
-async function setAgentMode(page, enabled) {
-  await page.locator('#agentModeControl').evaluate((control, value) => {
-    control.checked = value;
-    control.dispatchEvent(new Event('change', { bubbles: true }));
-  }, enabled);
+async function setDeepResearchMethod(page, method) {
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="research"]').click();
+  await page.locator('#deepResearchMethodSelect').selectOption(method);
+  await page.locator('#functionPanelModal .function-panel-close[data-action="close-function-panel"]').click();
 }
 
 
@@ -68,7 +68,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
-  await setAgentMode(page, true);
+  await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Deep research: проверь публичную страницу, проведи исследование источника, сопоставь утверждения и составь короткий доказательный отчёт.');
   await page.locator('#sendBtn').click();
 
@@ -177,7 +177,7 @@ test('research trace explicitly persists source quotes, claims and contradiction
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#modeDeep').click();
-  await setAgentMode(page, true);
+  await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Deep research: compare the two dated sources, validate the claims and preserve any contradiction in the selected Gateway.');
   await page.locator('#sendBtn').click();
 

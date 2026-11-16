@@ -684,7 +684,7 @@ permalink: /
         <summary id="functionsMenuSummary" class="toolbar-menu-summary" data-i18n="functionsMenuLabel">Функции ▾</summary>
         <div class="toolbar-menu-panel toolbar-menu-panel-right">
           <button type="button" data-action="open-function-panel" data-function="research" class="toolbar-menu-option"><strong data-i18n="functionDeepResearch">🔬 Исследования</strong><small data-i18n="functionResearchHelp">Deep Research · тщательность и веб-поиск отдельно</small></button>
-          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option"><strong data-i18n="functionAgents">🧭 Агенты</strong><small data-i18n="functionAgentsHelp">Структурированный разбор · 4 этапа на одной модели</small></button>
+          <button type="button" data-action="open-function-panel" data-function="agents" class="toolbar-menu-option"><strong data-i18n="functionAgents">🧭 Агенты</strong><small data-i18n="functionAgentsHelp">AgentRun · ограниченное выполнение через Gateway</small></button>
           <button type="button" data-action="open-function-panel" data-function="skills" class="toolbar-menu-option"><strong data-i18n="functionSkills">🧩 Скиллы</strong><small data-i18n="functionSkillsHelp">Профиль задачи · инструкции только для этого чата</small></button>
           <button type="button" data-action="open-function-panel" data-function="connectors" class="toolbar-menu-option"><strong data-i18n="functionConnectors">🔌 Интеграции</strong><small data-i18n="functionConnectorsHelp">Подключения появятся после регистрации реальных интеграций</small></button>
         </div>
@@ -1585,7 +1585,7 @@ permalink: /
         skillAutoShort:'Авто',skillPlanningShort:'План',skillResearchShort:'Исслед.',skillCodeReviewShort:'Код',skillDataAnalysisShort:'Данные',skillAgentSystemsShort:'Агентные',skillMultimodalShort:'Мультимод.',taskProfileHelp:'Профиль меняет только инструкции и не включает инструменты или доступ к данным.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Сторонние провайдеры',
         functionsMenuLabel:'Функции ▾',functionAgents:'🧭 Агенты',functionAgentsHelp:'AgentRun · ограниченное выполнение задач через Gateway',functionDeepResearch:'🔬 Исследования',functionResearchHelp:'Deep Research · тщательность и веб-поиск отдельно',functionSkills:'🧩 Скиллы',functionSkillsHelp:'Профиль задачи · инструкции только для этого чата',functionConnectors:'🔌 Интеграции',functionConnectorsHelp:'Подключения появятся после регистрации реальных интеграций',functionPanelClose:'Закрыть',
-        functionAgentsTitle:'Структурированный разбор',functionAgentsDescription:'Для подходящих сложных задач aLandi использует четыре этапа: планирование, исследование, критика и синтез. Все этапы работают на выбранной модели; режим Быстро/Тщательно задаёт бюджет инструментов в исследовательском этапе. Это не независимая команда агентов.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
+        functionAgentsTitle:'Агенты · AgentRun',functionAgentsDescription:'AgentRun отправляет явное задание в настроенный Gateway с выбранной ролью, разрешённой моделью и стратегией. Текущий runtime использует один worker; инструменты, веб, shell и файловая система отключены.',functionDeepResearchTitle:'Глубокое исследование',functionDeepResearchDescription:'Панель показывает текущие режимы тщательного запроса. Отдельный автономный Research Studio не используется.',
         researchModeStatusLabel:'Режим обработки',researchModeStatusHelp:'Быстро ограничивает прямой запрос одним раундом и одним вызовом инструмента; Тщательно — до 4 раундов, 3 вызовов за раунд и 8 за запуск. В структурированном pipeline лимит относится к этапу исследования.',researchUseThorough:'Включить режим «Тщательно»',
         researchSearchStatusLabel:'Веб-поиск',researchSearchStatusHelp:'Охват результатов задаётся отдельно в меню Веб: обычный, расширенный или выключен. Он не увеличивает число раундов.',researchOpenSearchSettings:'Настроить охват веб-поиска',
         researchWorkflowStatusLabel:'Метод Deep Research',researchWorkflowStatusHelp:'Метод Deep Research независим от режима Агентов и бюджета Быстро/Тщательно. Доступен один проверяемый workflow.',researchOpenAgentSettings:'Настроить Agents / structured analysis',
@@ -1611,7 +1611,7 @@ permalink: /
         skillAutoShort:'Auto',skillPlanningShort:'Plan',skillResearchShort:'Research',skillCodeReviewShort:'Code',skillDataAnalysisShort:'Data',skillAgentSystemsShort:'Agents',skillMultimodalShort:'Multimodal',taskProfileHelp:'A task profile changes instructions only; it does not enable tools or data access.',
         aserviGroupTitle:'aLandi aServi',thirdPartySettingsTitle:'Third-party providers',
         functionsMenuLabel:'Functions ▾',functionAgents:'🧭 Agents',functionAgentsHelp:'AgentRun · bounded task execution through the Gateway',functionDeepResearch:'🔬 Research',functionResearchHelp:'Deep Research · effort and web search stay separate',functionSkills:'🧩 Skills',functionSkillsHelp:'Task profile · instructions for this chat only',functionConnectors:'🔌 Integrations',functionConnectorsHelp:'Connections appear after real integrations are registered',functionPanelClose:'Close',
-        functionAgentsTitle:'Structured workflow',functionAgentsDescription:'For suitable complex tasks, aLandi uses four stages: planning, research, critique and synthesis. All stages use the selected model; Quick/Thorough controls the tool budget in the research stage. This is not an independent team of agents.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
+        functionAgentsTitle:'Agents · AgentRun',functionAgentsDescription:'AgentRun submits an explicit task to the configured Gateway with a selected role, allowlisted model and strategy. The current runtime uses one worker; tools, web, shell and filesystem access are disabled.',functionDeepResearchTitle:'Deep research',functionDeepResearchDescription:'This panel shows the current Thorough request settings. A separate autonomous Research Studio is not used.',
         researchModeStatusLabel:'Processing effort',researchModeStatusHelp:'Quick limits a direct request to one round and one tool call; Thorough allows up to 4 rounds, 3 calls per round and 8 calls per run. In the structured pipeline, the budget applies to the research stage.',researchUseThorough:'Enable Thorough mode',
         researchSearchStatusLabel:'Web search',researchSearchStatusHelp:'Result breadth is configured separately in the Web menu: standard, expanded or off. It does not increase the number of rounds.',researchOpenSearchSettings:'Configure web search breadth',
         researchWorkflowStatusLabel:'Deep Research method',researchWorkflowStatusHelp:'Deep Research method is independent from Agent mode and Fast/Thorough effort. One verified workflow is available.',researchOpenAgentSettings:'Configure Agents / structured analysis',
@@ -3159,6 +3159,7 @@ permalink: /
         const nextChatSettings = {
           processingMode: settings.mode === 'deep' ? 'deep' : 'fast',
           searchMode: settings.offline === true || settings.search === false ? 'offline' : 'normal',
+          deepResearchMethod: settings.multiAgent === true ? 'multi_step_evidence_report' : 'none',
           multiAgentEnabled: settings.multiAgent === true
         };
         const profileWrites = [
@@ -3205,6 +3206,7 @@ permalink: /
         const previousChatSettings = {
           processingMode: activeChat.processingMode,
           searchMode: activeChat.searchMode,
+          deepResearchMethod: activeChat.deepResearchMethod,
           multiAgentEnabled: activeChat.multiAgentEnabled,
           skillPreset: activeChat.skillPreset
         };
@@ -3223,7 +3225,8 @@ permalink: /
         $('modelName').value = settings.model.trim();
         $('systemPromptInput').value = normalizeUserSystemPrompt(settings.systemPrompt);
         $('toggleSearch').checked = settings.search !== false;
-        $('toggleMultiAgent').checked = settings.multiAgent === true;
+        $('toggleMultiAgent').checked = nextChatSettings.deepResearchMethod !== 'none';
+        if ($('deepResearchMethodSelect')) $('deepResearchMethodSelect').value = nextChatSettings.deepResearchMethod;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
         processingMode = nextChatSettings.processingMode;
         applyProviderPreset(settings.provider, true);
@@ -3231,7 +3234,8 @@ permalink: /
         $('baseUrl').value = baseUrl;
         $('systemPromptInput').value = String(settings.systemPrompt || DEFAULT_SYSTEM);
         $('toggleSearch').checked = settings.search !== false;
-        $('toggleMultiAgent').checked = settings.multiAgent === true;
+        $('toggleMultiAgent').checked = nextChatSettings.deepResearchMethod !== 'none';
+        if ($('deepResearchMethodSelect')) $('deepResearchMethodSelect').value = nextChatSettings.deepResearchMethod;
         $('allowCrossProviderFallback').checked = settings.crossProviderFallback === true;
         if (nextReadability) applyReadabilitySettings(nextReadability);
         updateModeUI();
@@ -4078,6 +4082,81 @@ let agentRuntimeRefreshPromise = null;
       $('agentRuntimeStrategyLabel').firstChild.textContent=english?'Execution strategy':'Стратегия выполнения';
       $('agentRuntimeTasks').setAttribute('aria-label',english?'AgentRun tasks':'Задачи AgentRun');
       renderAgentRuntimeStrategyHelp($('agentRuntimeStrategy').value||'single');
+    }
+
+    async function agentRuntimeFetch(config, path, options = {}) {
+      if (!config || typeof config.baseUrl !== 'string' || typeof config.key !== 'string' || !config.key
+          || typeof path !== 'string' || !path.startsWith('/agent-runs')) throw new Error('agent-runtime-invalid-request');
+      let url;
+      try {
+        const base = new URL(config.baseUrl);
+        const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname);
+        const basePath = base.pathname.replace(/\\/+$/, '');
+        if ((base.protocol !== 'https:' && !(base.protocol === 'http:' && loopback))
+            || base.username || base.password || base.search || base.hash || !/\\/v1$/i.test(basePath)) {
+          throw new Error('agent-runtime-invalid-base-url');
+        }
+        const pathOnly = path.split('?')[0];
+        const queryText = path.includes('?') ? path.slice(path.indexOf('?') + 1) : '';
+        const method = String(options.method || 'GET').toUpperCase();
+        const runPath = /^\\/agent-runs\\/[A-Za-z0-9_-]{1,128}$/.test(pathOnly);
+        const eventPath = /^\\/agent-runs\\/[A-Za-z0-9_-]{1,128}\\/events$/.test(pathOnly);
+        const allowed = (pathOnly === '/agent-runs/profiles' && method === 'GET')
+          || (pathOnly === '/agent-runs' && method === 'POST')
+          || (runPath && ['GET', 'DELETE'].includes(method))
+          || (eventPath && method === 'GET');
+        if (!allowed) throw new Error('agent-runtime-invalid-endpoint');
+        if (eventPath) {
+          const params = new URLSearchParams(queryText);
+          const keys = [...params.keys()];
+          if (keys.length !== 2 || !keys.includes('after_event_id') || !keys.includes('limit')
+              || !/^\\d{1,12}$/.test(params.get('after_event_id') || '') || params.get('limit') !== '100') {
+            throw new Error('agent-runtime-invalid-query');
+          }
+        } else if (queryText) throw new Error('agent-runtime-invalid-query');
+        url = new URL(base.origin + basePath + path);
+        if (url.origin !== base.origin || !url.pathname.startsWith(basePath + '/agent-runs')) {
+          throw new Error('agent-runtime-invalid-endpoint');
+        }
+      } catch (error) {
+        if (error?.message?.startsWith('agent-runtime-')) throw error;
+        throw new Error('agent-runtime-invalid-endpoint');
+      }
+      const headers = {
+        ...(options.headers && typeof options.headers === 'object' ? options.headers : {}),
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + config.key
+      };
+      let response;
+      try {
+        response = await fetch(url.href, { ...options, headers, credentials: 'omit', cache: 'no-store', redirect: 'error' });
+      } catch (error) {
+        if (error?.name === 'AbortError') throw error;
+        throw new Error('agent-runtime-network-error');
+      }
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        const error = new Error('agent-runtime-http-' + response.status);
+        error.status = response.status;
+        throw error;
+      }
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) throw new Error('agent-runtime-invalid-response');
+      return payload;
+    }
+
+    function agentRuntimeErrorText(error) {
+      const english = getUiLanguage() === 'en';
+      const status = Number.isInteger(error?.status) ? error.status : 0;
+      if (error?.name === 'AbortError') return english ? 'The Gateway request was cancelled or timed out.' : 'Запрос к Gateway отменён или превысил время ожидания.';
+      if (status === 401) return english ? 'Gateway authentication failed (401). Check the configured key.' : 'Gateway отклонил ключ доступа (401). Проверь настройки подключения.';
+      if (status === 403) return english ? 'Gateway denied this operation (403).' : 'Gateway запретил эту операцию (403).';
+      if (status === 404) return english ? 'The AgentRun endpoint was not found (404).' : 'Маршрут AgentRun не найден (404).';
+      if (status === 409) return english ? 'The AgentRun request conflicts with the current run state (409).' : 'Запрос AgentRun конфликтует с текущим состоянием задания (409).';
+      if (status === 429) return english ? 'Gateway rate limit reached (429). Try again later.' : 'Gateway ограничил частоту запросов (429). Повтори позже.';
+      if (status === 503) return english ? 'The AgentRun worker is unavailable or disabled (503).' : 'Worker AgentRun недоступен или выключен (503).';
+      if (status >= 400) return english ? 'Gateway request failed (HTTP ' + status + ').' : 'Запрос к Gateway завершился ошибкой (HTTP ' + status + ').';
+      if (error?.message === 'agent-runtime-network-error') return english ? 'Cannot reach the Gateway. Check the connection and try again.' : 'Не удалось связаться с Gateway. Проверь подключение и повтори.';
+      return english ? 'The Gateway request failed. Check the connection and try again.' : 'Запрос к Gateway не выполнен. Проверь подключение и повтори.';
     }
 
     function setAgentRuntimeUnavailable(message) {

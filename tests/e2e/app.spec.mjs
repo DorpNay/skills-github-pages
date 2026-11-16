@@ -46,7 +46,7 @@ async function setDeepResearchMethod(page, method) {
   await page.locator('#functionsMenuSummary').click();
   await page.locator('[data-action="open-function-panel"][data-function="research"]').click();
   await page.locator('#deepResearchMethodSelect').selectOption(method);
-  await page.locator('#functionPanelModal [data-action="close-function-panel"]').click();
+  await page.locator('#functionPanelModal .function-panel-close[data-action="close-function-panel"]').click();
 }
 async function setSkillPreset(page, preset) {
   await page.locator('#skillPresetSelect').evaluate((control, value) => {
@@ -727,6 +727,11 @@ test('settings profile import restores preferences while preserving existing pro
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
   await expect(page.locator('#toggleMultiAgent')).toBeChecked();
+  expect(await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const currentId = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === currentId)?.deepResearchMethod;
+  })).toBe('multi_step_evidence_report');
   await expect(page.locator('#offlineToggle')).toContainText('Веб-поиск выключен');
   await expect(page.locator('#readingFontSize')).toHaveValue('19');
   await expect(page.locator('#readingLineHeight')).toHaveValue('1.7');
@@ -2908,7 +2913,7 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(menu.locator('.toolbar-menu-option')).toHaveCount(4);
   await expect(menu.locator('[data-function="agents"]')).toBeVisible();
   await expect(menu.locator('[data-function="agents"]')).toContainText('Агенты');
-  await expect(menu.locator('[data-function="agents"]')).toContainText('4 этапа на одной модели');
+  await expect(menu.locator('[data-function="agents"]')).toContainText('AgentRun');
   await expect(menu.locator('[data-function="research"]')).toBeVisible();
   await expect(menu.locator('[data-function="research"]')).toContainText('Исследования');
   await expect(menu.locator('[data-function="research"]')).toContainText('веб-поиск отдельно');
