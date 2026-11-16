@@ -1,0 +1,73 @@
+name: Acquire OpenShell sandbox runtime
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/acquire-openshell.yml"
+      - "infra/sandbox/openshell-v0.1.8-manifest.yaml"
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Pinned upstream release
+        required: true
+        type: choice
+        options:
+          - v0.1.8
+        default: v0.1.8
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openshell-acquire-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  acquire:
+    name: Download and verify Ubuntu 24.04 x86_64 assets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out pinned acquisition manifest
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Download pinned release assets and verify SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ inputs.release || 'v0.1.8' }}"
+          base="https://github.com/NVIDIA/OpenShell/releases/download/${version}"
+          out="dist/openshell-${version}-ubuntu24.04-x86_64"
+          mkdir -p "$out"
+          download_verify() {
+            local name="$1" digest="$2" bytes="$3"
+            curl --fail --location --silent --show-error --retry 3 "$base/$name" -o "$out/$name"
+            local actual_bytes
+            actual_bytes="$(stat -c '%s' "$out/$name")"
+            test "$actual_bytes" = "$bytes"
+            printf '%s  %s\n' "$digest" "$out/$name" | sha256sum --check --status
+            printf '%s  %s\n' "$digest" "$name" >> "$out/SHA256SUMS"
+          }
+          download_verify openshell_0.1.8-1_amd64.deb b3339527085d9b44afc0d5e4f835c2d34e44e33d0b67d6a4cac9d96f25a656b1 84681476
+          download_verify openshell-gateway-x86_64-unknown-linux-gnu.tar.gz d2e5e7f80811b7cfbad0d48f0b561ea5e301401d311e4402bbfc419b3d08cbd3 46101072
+          download_verify openshell-sandbox-x86_64-unknown-linux-musl.tar.gz ad62b050387a7e3e9d0537aaac6de4c31430d05a08964dbb261af9ba4ef6e6d4 4723930
+          download_verify openshell-supervisor-x86_64-unknown-linux-gnu.tar.gz fe29a3f5083ea912f1855337ff5c6bdaa9e11897ea6a8446d7a737fc0cfcb6ba 19930508
+          download_verify openshell-driver-vm-x86_64-unknown-linux-gnu.tar.gz 6e85ae05b7330520dbdc6589d30fc4825f76be7ff3ca7ed201243fe3eda37418 37400209
+          download_verify openshell-prover-x86_64-unknown-linux-musl.tar.gz 34123490c9934857089753e986d6173500542d67ed295b38772c9b67f25fe068 14573814
+          dpkg-deb -f "$out/openshell_0.1.8-1_amd64.deb" Package Version Architecture
+          test "$(dpkg-deb -f "$out/openshell_0.1.8-1_amd64.deb" Package)" = "openshell"
+          test "$(dpkg-deb -f "$out/openshell_0.1.8-1_amd64.deb" Version)" = "0.1.8-1"
+          test "$(dpkg-deb -f "$out/openshell_0.1.8-1_amd64.deb" Architecture)" = "amd64"
+          for archive in "$out"/*.tar.gz; do tar -tzf "$archive" >/dev/null; done
+          cp infra/sandbox/openshell-v0.1.8-manifest.yaml "$out/"
+          ( cd "$out" && sha256sum --check SHA256SUMS )
+      - name: Upload verified staging artifact (not installed)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: openshell-v0.1.8-ubuntu24.04-x86_64
+          path: dist/openshell-v0.1.8-ubuntu24.04-x86_64/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0

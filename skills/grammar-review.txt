@@ -1,0 +1,19 @@
+GRAMMAR REVIEW — aLandi task skill
+
+Purpose
+Review or improve grammar, spelling, punctuation, clarity, and tone while preserving the author's meaning and voice.
+
+Rules
+- Detect the language from the supplied text; do not translate unless asked.
+- If the user asks only for correction, return the corrected text first. Avoid a long explanation.
+- Preserve names, technical identifiers, URLs, code, quoted source text, and intentional dialect/style unless explicitly asked to edit them.
+- Do not invent facts, citations, commitments, or stronger claims.
+- For ambiguous meaning, flag the ambiguity and offer the smallest safe edit instead of silently rewriting intent.
+- When useful, provide a concise change list: grammar/spelling, punctuation, clarity. Distinguish required corrections from optional stylistic improvements.
+- Keep formatting and Markdown structure intact. For code, edit comments/prose only unless asked to refactor.
+- For multilingual text, keep the original language and script. Do not treat a language variety as an error merely because it differs from a preferred dialect.
+- Do not claim a text was checked by a deterministic grammar engine unless such a tool actually ran.
+
+Output
+1. Corrected version.
+2. Optional: up to three material notes, only if they help the user.

@@ -1,0 +1,33 @@
+MULTIMODAL MODEL SELECTION — aLandi task skill
+
+Use in Deep / Multi-agent research for OCR, PDFs, document understanding, ASR, audio, voice UI and multimodal RAG.
+
+ARCHITECTURE REALITY
+- Current site is static GitHub Pages AI Mobile Agent v10.0 with on-demand task skills and an aLandi Lite FastAPI/Ollama text gateway.
+- Current UI has no finished image/PDF upload or microphone capture. Gateway has no dedicated media endpoints. Do not claim OCR, transcription or TTS already works.
+- VPS budget is 8 GB RAM; gateway concurrency is bounded. Do not keep several multi-GB model workers resident.
+
+DEFAULT CANDIDATES
+- Simple OCR: PP-OCRv6 Tiny/Medium only for languages explicitly listed upstream. Do not assume Russian or Thai support.
+- Complex documents: benchmark GLM-OCR against PaddleOCR-VL-1.6 on the same set. Add Surya 2 for multilingual/layout challenge only after reviewing its modified Open Rail-M weights license.
+- Russian/Thai speech: Qwen3-ASR-0.6B is the first benchmark candidate; upstream lists both languages and offline/streaming. Measure CPU RTF, first-hypothesis latency, peak RSS and WER before selecting it.
+- Language-specific candidates: Moonshine only for languages supported by the exact streaming checkpoint; ASR4ALL-S/L and Distil-Whisper for English; Canary 180M for EN/DE/FR/ES; ZIPFORMER VI for Vietnamese.
+- dots.mocr, DeepSeek-OCR2, HunyuanOCR-1.5 and LightOnOCR-3-4B are separate research-host candidates. LightOnOCR-3-4B BF16 weights alone take roughly 8 GB for 4B parameters before runtime, so do not run on the 8-GB VPS.
+- ASR does not produce speech. Full voice needs TTS, mic permission, VAD/chunking, cancellation/interruption and a confirmation UI. Consider the official Moonshine Voice JS/WASM on-device toolkit for supported language models, but inspect the exact license of every TTS voice/data asset and benchmark the target mobile browser. Do not promise Russian/Thai TTS without an official artifact and local test.
+
+MANDATORY CHECKS
+1. Read docs/MULTIMODAL_MODEL_STACK_RU.md and docs/TECHNIQUE_REGISTER_RU.md. Record checkpoint/version/hash, target language, code/weights/runtime license, infrastructure and privacy route.
+2. Benchmark OCR: text error, number/date correctness, tables, reading order, page/bbox provenance, p50/p95 and peak RSS. Benchmark ASR: WER per language, names/numbers, first-result latency, real-time factor, VAD and long-audio stability.
+3. Do not compare a leaderboard directly if datasets/hardware/evaluation differ. Treat OCR/ASR outputs as fallible text and give the user a correction step.
+4. Keep raw media out of localStorage, chat exports and logs by default. Do not send private documents/audio to hosted inference without explicit consent. Do not cache raw media, live audio or sensitive extracted content.
+5. Media endpoints must enforce auth, MIME allowlist, size/duration, timeout, bounded concurrency, cancellation and temp-file cleanup. Never expose Ollama's port publicly.
+6. Preserve the v10.0 design. Make minimal additive changes only and check mobile/desktop, keyboard/focus and reduced-motion behavior.
+7. Mock tests first, heavy model benchmarks outside mandatory CI, then review diff, run quality sentinels + Jekyll build + Chromium E2E, document rollback.
+
+TECHNIQUE POLICY
+- RAG-Anything: adopt parser → structured blocks → provenance → retrieval → citations; not the whole heavyweight runtime yet.
+- CLI-Anything: use reproducible CLI/JSON/exit-status/dry-run conventions for future allowlisted admin tools; no unrestricted shell in the browser.
+- AI Engineering from Scratch: build-test-compare. taste-skill: audit-first visual QA.
+- Do not integrate AirLLM as 8-GB CPU runtime, dsh-our-free-model public relay or Pliny/L1B3RT4S jailbreak prompts. Keep only inert, controlled prompt-injection regression fixtures.
+
+A model is not integrated because it appears in a document. Integration requires an actual route, UI, tests, quality/resource results, license review, privacy defaults and rollback.

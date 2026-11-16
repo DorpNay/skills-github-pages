@@ -1,0 +1,42 @@
+schema_version: 1
+profiles:
+  - id: laptop_8gb_cpu_mvp
+    purpose: development_reference
+    status: target_not_benchmarked
+    architecture: x86_64
+    os: Linux
+    ram_gb: 8
+    gpu: none
+    expected_cpus: "4+ logical CPUs; record exact CPU"
+    runtimes:
+      voice: "future native ONNX Runtime CPU/PyO3"
+      llm: "Ollama; bounded one-model concurrency"
+    limits:
+      max_total_tier0_system_rss_mb: 6500
+      max_hot_voice_core_pss_mb: 1200
+      max_audio_drop_rate: 0.001
+    required_report_fields:
+      - kernel_and_distribution
+      - cpu_model_and_cores
+      - ram_and_swap
+      - python_onnx_ollama_versions
+      - model_and_voice_sha256
+      - cold_and_warm_latency_percentiles
+      - pss_rss_and_peak_system_memory
+      - ru_cer_en_wer_audio_drop_rate
+    note: "Targets are not measured results. No voice runtime ships until a report is attached."
+
+  - id: oracle_arm_24gb_optional
+    purpose: optional_deployment_upgrade
+    status: not_provisioned
+    architecture: arm64
+    os: Ubuntu LTS ARM64
+    ram_gb: 24
+    ocpus: 4
+    gpu: none
+    runtimes:
+      llm: "Ollama single bounded model by default"
+      voice: "only after ARM64 wheel/native library compatibility tests"
+    limits:
+      max_inflight_llm_requests: 1
+    note: "Availability, account quota, region capacity and price are not guaranteed. Operator must verify current terms before provisioning."

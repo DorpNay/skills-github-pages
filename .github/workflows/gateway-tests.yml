@@ -1,0 +1,87 @@
+name: Lite Gateway Tests
+
+on:
+  push:
+    paths:
+      - "gateway/**"
+      - "gateway/requirements*.txt"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
+      - "scripts/check_deploy_preflight.py"
+      - ".github/workflows/gateway-tests.yml"
+  pull_request:
+    paths:
+      - "gateway/**"
+      - "intel/**"
+      - "latency/**"
+      - "router/**"
+      - "scripts/manifest_state.py"
+      - "scripts/check_intel_triad.py"
+      - "scripts/check_deploy_preflight.py"
+      - ".github/workflows/gateway-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gateway-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gateway-tests:
+    name: FastAPI gateway contract and security tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Resolve and sync the universal Python lockfile
+        run: |
+          python -m pip install --disable-pip-version-check uv==0.13.6
+          uv --version
+          uv lock
+          uv lock --check
+          uv sync --locked --all-groups --no-install-project
+      - name: Compile Python source
+        run: uv run --locked python -m compileall -q gateway
+      - name: Validate V-016 state fingerprint and INTEL triad
+        run: |
+          uv run --locked python scripts/manifest_state.py
+          uv run --locked python scripts/check_intel_triad.py
+      - name: Run gateway tests without a real model or API key
+        run: uv run --locked python -m pytest -q gateway/tests
+      - name: Run deployment template preflight
+        run: uv run --locked python scripts/check_deploy_preflight.py
+      - name: Run deterministic six-layer offline evaluation
+        run: uv run --locked python gateway/evals/run_six_layer_eval.py
+      - name: Upload generated universal lockfile for initial review
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: uv-lockfile-python-${{ matrix.python-version }}
+          path: uv.lock
+          if-no-files-found: error
+          retention-days: 7
+      - name: Emit exact lockfile content for repository bootstrap
+        if: always() && matrix.python-version == '3.13'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          encoded = base64.b64encode(Path("uv.lock").read_bytes()).decode("ascii")
+          for index in range(0, len(encoded), 40000):
+              print(f"UV_LOCK_B64_{index // 40000:03d}={encoded[index:index + 40000]}")
+          PY

@@ -1,0 +1,7 @@
+# CPU-first isolated Qwen3-ASR evaluation environment.
+# The package's pyproject pins Transformers, Accelerate, Nagisa and SoyNLP.
+qwen-asr==0.0.6
+transformers==4.57.6
+accelerate==1.12.0
+nagisa==0.2.11
+soynlp==0.0.493

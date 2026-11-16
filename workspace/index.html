@@ -1,0 +1,104 @@
+---
+layout: null
+title: aLandi Coder Workspace
+permalink: /workspace/
+---
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>aLandi · Coder Workspace</title>
+  <style>
+    :root{color-scheme:dark;--bg:#08111d;--panel:#101d2d;--panel2:#15263a;--line:#2a4056;--text:#edf5fb;--muted:#9fb2c4;--accent:#68e8d0;--danger:#ff858b;--ok:#63ddb0;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#16314a 0,transparent 40%),var(--bg);color:var(--text)}
+    button,input,textarea{font:inherit}button{border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:.65rem .9rem;cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:#087f72;border-color:#35bfa8;color:white;font-weight:700}button.danger{border-color:#87474c;color:#ffc4c7}
+    button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    header{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:1rem;padding:1rem max(1rem,calc((100vw - 1180px)/2));border-bottom:1px solid var(--line);background:#0b1725ed;backdrop-filter:blur(16px)}
+    header a{color:var(--accent);text-decoration:none}header strong{font-size:1.1rem}header span{color:var(--muted);font-size:.85rem}
+    main{max-width:1180px;margin:1.5rem auto;padding:0 1rem 4rem;display:grid;gap:1rem}
+    .panel{border:1px solid var(--line);border-radius:16px;background:#101d2de8;padding:1rem;min-width:0}
+    h1{font-size:1.35rem;margin:0 0 .3rem}h2{font-size:1rem;margin:0 0 .8rem}p{margin:.35rem 0;color:var(--muted)}.toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center}
+    .status{min-height:1.5rem;color:var(--muted);font-size:.9rem}.status.error{color:var(--danger)}.status.success{color:var(--ok)}
+    .columns{display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.4fr);gap:1rem}
+    .file-list{display:grid;gap:.35rem;max-height:420px;overflow:auto}.file-row{display:flex;align-items:center;gap:.6rem;padding:.55rem;border:1px solid transparent;border-radius:9px;background:#0b1725}.file-row:hover{border-color:var(--line)}.file-row input{accent-color:var(--accent)}.file-name{min-width:0;overflow-wrap:anywhere;flex:1}.file-size{font-size:.75rem;color:var(--muted);white-space:nowrap}
+    .editors{display:grid;gap:.75rem}.editor{border:1px solid var(--line);border-radius:12px;overflow:hidden}.editor label{display:block;padding:.5rem .7rem;background:#16283b;font-size:.85rem;overflow-wrap:anywhere}.editor textarea{display:block;width:100%;min-height:180px;resize:vertical;padding:.8rem;border:0;background:#07111d;color:#e7f1f8;font:13px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+    .diff-list{display:grid;gap:.8rem}.diff-card{border:1px solid var(--line);border-radius:12px;overflow:hidden}.diff-card h3{margin:0;padding:.55rem .75rem;background:#16283b;font-size:.85rem;overflow-wrap:anywhere}.diff-card pre{margin:0;padding:.8rem;overflow:auto;max-height:420px;background:#07111d;color:#dbe9f5;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+    .recovery-row{display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.65rem 0;border-top:1px solid var(--line)}.recovery-row:first-child{border-top:0}.recovery-meta{min-width:0}.recovery-meta small{display:block;color:var(--muted);overflow-wrap:anywhere}
+    .consent{display:flex;align-items:flex-start;gap:.6rem;margin:.7rem 0;color:var(--text);font-size:.9rem}.consent input{margin-top:.3rem;accent-color:var(--accent)}
+    dialog{width:min(900px,calc(100vw - 2rem));max-height:85vh;border:1px solid var(--line);border-radius:16px;background:#101d2d;color:var(--text);padding:1rem;box-shadow:0 25px 90px #000b}dialog::backdrop{background:#020812bb;backdrop-filter:blur(5px)}dialog h2{margin-bottom:.35rem}dialog .dialog-diff{max-height:55vh;overflow:auto;display:grid;gap:.7rem;margin:1rem 0}
+    .empty{padding:1rem;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center}
+    @media(max-width:760px){.columns{grid-template-columns:1fr}header{flex-wrap:wrap}.toolbar button{flex:1 1 auto}.panel{padding:.8rem}}
+  </style>
+  <script src="../assets/js/browser-local-provider.js" defer></script>
+  <script src="workspace.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="../" aria-label="Вернуться в aLandi">← aLandi</a>
+    <strong>Coder Workspace</strong>
+    <span>Browser Local · доступ только к выбранным файлам</span>
+  </header>
+  <main>
+    <section class="panel">
+      <h1>Рабочее пространство файлов</h1>
+      <p>Выберите папку или отдельные файлы в системном диалоге браузера. Coder не может читать произвольные пути и не отправляет файлы в сеть.</p>
+      <div class="toolbar" style="margin-top:.8rem">
+        <button class="primary" id="chooseFolder">Выбрать папку</button>
+        <button id="chooseFiles">Выбрать файлы</button>
+        <button id="refreshFiles" disabled>Обновить список</button>
+      </div>
+      <div class="status" id="workspaceStatus" role="status" aria-live="polite">Ожидается выбор файлов пользователем.</div>
+    </section>
+
+    <section class="columns">
+      <section class="panel">
+        <h2>Файлы выбранной области</h2>
+        <div class="toolbar" style="margin-bottom:.65rem">
+          <button id="selectAll" disabled>Выбрать все</button>
+          <button id="loadSelected" class="primary" disabled>Открыть выбранные</button>
+        </div>
+        <div id="fileList" class="file-list"><div class="empty">Сначала выберите папку или файлы.</div></div>
+      </section>
+      <section class="panel">
+        <h2>Редактор</h2>
+        <p>Изменения пока находятся только в памяти этой вкладки. Сначала подготовьте diff.</p>
+        <div id="editors" class="editors"><div class="empty">Выберите файлы слева.</div></div>
+        <div class="toolbar" style="margin-top:.8rem">
+          <button id="previewChanges" class="primary" disabled>Подготовить diff</button>
+          <button id="discardChanges" disabled>Отменить черновик</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel" id="diffPanel" hidden>
+      <h2>Точный diff перед записью</h2>
+      <div id="diffList" class="diff-list"></div>
+      <label class="consent"><input id="recoveryConsent" type="checkbox">
+        <span>Создать локальную recovery-копию исходного содержимого в IndexedDB этого браузерного профиля. Это отдельная локальная копия; она не загружается и не синхронизируется.</span>
+      </label>
+      <div class="toolbar">
+        <button id="writeChanges" class="primary" disabled>Подтвердить запись файлов</button>
+        <button id="cancelPreview">Вернуться к редактору</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Восстановление версий</h2>
+      <p>Снимки создаются только после явного согласия перед записью. Для восстановления нужно снова выбрать исходную папку или те же файлы.</p>
+      <div id="recoveryList"><div class="empty">Локальных снимков пока нет.</div></div>
+    </section>
+  </main>
+
+  <dialog id="approvalDialog">
+    <h2 id="approvalTitle">Подтверждение</h2>
+    <p id="approvalDescription"></p>
+    <div id="approvalDiffs" class="dialog-diff"></div>
+    <div class="toolbar">
+      <button id="approveAction" class="primary">Подтвердить</button>
+      <button id="rejectAction">Отмена</button>
+    </div>
+  </dialog>
+</body>
+</html>
