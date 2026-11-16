@@ -518,3 +518,20 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Repaired the literal escaped newline between S-059 and S-058 in NOW.md; archived owner prompts remain unchanged.
 - All five checkpoint files record the exact parent SHA and live queue (0 open PRs, issue #111). No product code or runtime change.
 - Exact-child Freshness, Provenance, Quality, Pages and public revision are pending.
+
+
+## V-2026-11-16-OWNER-CONTINUATION-005 — live route and local Workspace evidence
+
+- Parent main 2cc6573a79aae374575f4e55b0c2aa6deef844c8; exact-parent Freshness #43840215198, Provenance #43840215012, Quality #43840215191 (7/7) and Pages #43840213780 passed.
+- Fresh uncached public root returned revision 2cc6573. /landing/ 404; /workspace/ available; /notebook/ and /research/ 404. Four studio names remain unresolved.
+- Browser-local Workspace supports explicit user-selected file editing, exact diff, approval, IndexedDB recovery and rollback; it is not an AI Coder sandbox and has no shell/test runner/model integration.
+- Mobile zoom hypothesis: text-sm (14px) controls likely trigger iPhone Safari focus zoom; use 16px mobile form controls while preserving pinch zoom, then verify on physical device.
+- No product code, dependency, runtime, OAuth, app, model or host change.
+
+
+## V-2026-11-16-OWNER-CONTINUATION-006 — repair required state refresh path
+
+- Parent main a7a33ec688134571b4fb95606537e5d73ca5190e; this commit refreshes NOW.md, AGENTS.md, PROJECT_STATE.yaml, project-state-snapshot.json and VOLLEY_LOG.md together as a direct child.
+- Freshness #43841950546 failed because docs/VOLLEY_LOG.md was not included in the changed-file set. The required path list explicitly includes all five state files; V-005 and this repair record make VOLLEY_LOG.md change in the direct child.
+- Parent Provenance #43841950694 and Pages #43841949330 passed; live root revision exact. Quality #43841950679 was running at checkpoint time.
+- No product code or runtime change. Rerun exact-child Freshness, Provenance, Quality, Pages and live root verification.
