@@ -401,17 +401,17 @@ This is the single 15-point progress view for LANDING-V2-2026-001. Status is evi
 | # | Canonical requirement | Current status | Remaining acceptance evidence |
 |---:|---|---|---|
 | 1 | K.1.1 Owner-designed UI | **NOT OWNER-ACCEPTED / REDESIGN REQUIRED** | Implement K.6.6–K.6.8 and K.6.14: compact mobile Projects/Chats hierarchy, thin create rows, project-only chat filter/back/create, project Sources window, compact no-project status stripe, anchored chat/project header labels, clear type/color hierarchy, Memory IA, stable touch/input behavior, voice controls, navigation, responsive/accessibility and forms; retain global-prompt blank-default/profile-round-trip gates |
-| 2 | K.1.2 Functions menu | **PARTIAL / IA REWORK REQUIRED** | Four entries exist but are not final; finish real Agent choices first, then distinct Deep Research methods (no duplicated Thorough/effort control), backed by capability/status contracts and recent source review |
-| 3 | K.1.3 Deep Research | **PARTIAL / SOURCE→CLAIM→CONTRADICTION SAVE IMPLEMENTED / VERIFIED** | Research Trace schema v4, scoped claim/contradiction APIs and explicit browser Save are implemented. Save writes bounded source excerpts first, maps returned evidence IDs, persists claims only when all linked excerpts exist, then contradictions only when linked claims and all evidence exist; stable record IDs and partial-failure counts are stored locally. Same-model critic is not independent. Quality #43810404022 passed 7/7 jobs including 134 Chromium tests and published contract; Freshness #43810404041, Provenance #43810403933, Pages #43810403266 passed; Graphify #43810272399 passed on functional code commit. Remaining: durable/resumable runs, independent Exa/Firecrawl adapters, provider budget/cost accounting and Notebook/report export. |
-| 4 | K.1.4 Agents and orchestration | **IMPLEMENTED / VERIFIED PROTOTYPE; HOST RUNTIME DISABLED** | Feature-off AgentRun API/UI expose safe `single`, `team_review` (independent researcher/reviewer → coordinator fan-in) and `coder_review` (Coder draft → Reviewer check → Coordinator, text-only/no execution); same-run dependencies, task-ID Fernet payloads, context budgets and coordinator synthesis implemented. UI persists strategy per chat, pins fixed teams to General, submits `strategy_id` and renders task states/dependencies. Gateway #43826933347 passed 279 tests on backend commit 40d343a (same backend code at current HEAD); Quality #43827521092 passed 7/7 jobs incl. 135 built-app Chromium + 1 live-site test and published contract exact 0d34aa1; Graphify #43827521090 passed (2,519 nodes/5,868 edges/90 source files); Pages #43827520134 passed. One worker/model slot means serial inference; roles are not OS processes. Feature off; tools/shell/filesystem/network and Coder sandbox unavailable; no target install/production enablement claimed. Remaining: main-chat AgentRun context/permission/result migration parity and the chat-anchored live status overlay defined in K.6.16. |
-| 5 | K.1.5 Skills | **IMPLEMENTED BASELINE / LIFECYCLE OPEN** | Chat-scoped instruction profiles exist; versioned Skill intake, provenance, tests, review, enable/disable and rollback remain |
+| 2 | K.1.2 Functions menu | **PARTIAL / OWNER IA EXPANSION APPROVED** | Keep four primary panels (Deep Research, Agents, Skills, Connectors); build shallow, discoverable catalogs with multiple real options per panel, capability/status labels, keyboard/touch hierarchy, no duplicate effort/method controls; roadmap choices remain disabled until handlers/evals exist (K.6.17). |
+| 3 | K.1.3 Deep Research | **PARTIAL / EVIDENCE SAVE IMPLEMENTED; METHOD CATALOG SPECIFIED** | Preserve ResearchTrace, source IDs and evidence APIs; split research methods from AgentRun and effort. Current multi-step evidence report remains available; add other methods only after tool, source, eval and artifact contracts; no duplicate Thorough toggle (K.6.15/K.6.17). |
+| 4 | K.1.4 Agents and orchestration | **IMPLEMENTED / VERIFIED PROTOTYPE; HOST RUNTIME DISABLED** | Existing single/team_review/coder_review SQLite DAG remains feature-off, one worker/model slot, serial inference. Owner approved Plan 1 main-chat context/status and Plan 2 Deep Research separation. K.6.17 specifies versioned Agent Library, configurable roles/personas/knowledge/skills, multiple allowlisted mini-models with resource-aware scheduling, user-directed two-agent dialogue, reusable scenarios, bounded simulation, explicit browser/file/DB/converter grants, safe versioned learning and run timeline. Advanced capabilities remain SPECIFIED/DEFERRED; no swarm, self-training, unrestricted tools or parallel model execution claimed. |
+| 5 | K.1.5 Skills | **IMPLEMENTED BASELINE / FACTORY LIFECYCLE OPEN** | Expand menu to skill catalog, create/import from sources, validate, test, review, versions/rollback, dependencies and per-run grants; imported skills remain inert and cannot grant tools/permissions by themselves (K.6.17). |
 | 6 | K.1.6 Connectors | **OAUTH FOUNDATION / CONNECTOR NOT IMPLEMENTED** | Provider-bound PKCE exists; read-only GitHub App registry, short-lived credentials, real handlers, revoke and audit remain |
-| 7 | K.1.7 Local coding workspace | **PARTIAL / SANDBOX ARTIFACT STAGED** | Browser Local workspace exists; OpenShell v0.1.8 Ubuntu 24.04 x86_64 assets verified in Actions #43616944431; not installed. Host fit, sandbox wiring, on-device Coder workflow, selectable local/server runtime and real GitHub repository access remain |
-| 8 | K.1.8 Voice | **ARTIFACTS VERIFIED / INSTALL NOT STARTED** | whisper.cpp v1.9.5 + large-v3-turbo, Qwen3-ASR-0.6B challenger, Silero VAD and Piper RU/EN voices are staged; no separate official Whisper 3. Install, API wiring, reliable single-tap mobile voice controls, optional minimal on-site TTS/offline TTS, interruption path and RU/EN/TH target-device tests remain; no approved Thai voice |
+| 7 | K.1.7 Local coding workspace | **PARTIAL / BROWSER WORKSPACE IMPLEMENTED; AI CODER SPECIFIED** | Preserve user-selected File System Access + diff/approval/recovery; add permissioned AgentRun adapter, project-scoped repository access, isolated execution/test runner, model selection and local↔server handoff only after sandbox gates. Offline package and multiple model bundles remain separately gated (K.6.14/K.6.17). |
+| 8 | K.1.8 Voice | **ARTIFACTS VERIFIED / INSTALL NOT STARTED** | Retain Whisper/Vosk/Piper/VAD maturity boundaries; add optional translator + licensed RU/EN/TH grammar/lexicon components to the modular offline package; physical-device accuracy/latency and Thai voice gaps remain open (K.6.18). |
 | 9 | K.1.9 Full RAG | **PARTIAL** | SQLite FTS5 + lexical baseline exists; hybrid vector retrieval, fusion/reranking and permissioned RU/EN/TH eval remain |
-| 10 | K.1.10 Documents, scanners and converters | **PARTIAL** | Bounded PDF/DOCX/XLSX extraction exists; OCR assets are staged but not installed/wired. Finish all-format project Sources intake through the existing parser/converter pipeline, file/site/book/EPUB conversion, website reader/scanner, coder-format conversion, dedicated Notebook source/collection/evidence workflow and fixtures |
-| 11 | K.1.11 Modes and feature logic | **HIGH-PRIORITY / PARTIAL** | Define orthogonal semantics for effort, web scope, execution strategy, task skill, model/provider, context and output; add pairwise/compatibility/persistence/concurrency/cancellation/offline matrix |
-| 12 | K.1.12 Efficiency | **SPECIFIED / MEASUREMENT OPEN** | Progressive disclosure for Skills and tool schemas, compact capability registry, selective retrieval and minimal web-search hints; measure prompt/context tokens, latency, quality and cost against direct main-model baseline |
+| 10 | K.1.10 Documents, scanners and converters | **PARTIAL / PROJECT SOURCES AND AGENT TOOL GRANTS OPEN** | Complete bounded all-format Sources intake, parsers/converters/OCR/site/book/EPUB and Notebook evidence workflow; expose safe parsers/converters as explicit agent capabilities with scoped read/write and approval gates (K.6.17). |
+| 11 | K.1.11 Modes and feature logic | **HIGH-PRIORITY / PARTIAL** | Keep execution mode, AgentRun strategy, Deep Research method, effort, model/provider, search scope, source grants and output orthogonal; add multi-model role routing, offline/local/server compatibility and pairwise migration/concurrency/cancellation tests (K.6.15/K.6.17/K.6.18). |
+| 12 | K.1.12 Efficiency | **SPECIFIED / MEASUREMENT OPEN** | Keep progressive disclosure; add model registry and hardware-aware selection over multiple installed compact models, capability/eval/latency metadata, prompt/context budgets and queue scheduling; measure quality, RAM/VRAM, latency and cost against direct baseline (K.6.17). |
 | 13 | K.1.13 Cache, observability and N₂O | **PARTIAL** | Cache layers and N₂O operating documents exist; production traces, redacted metrics, event audit and invalidation/bypass evidence remain |
 | 14 | K.1.14 Operator runbook | **SPECIFIED / NOT HOST-VERIFIED** | `docs/PRE_LAUNCH_STACK_RU.md` §8 is the owner-only action list. Actual host install, backup/restore, first completion, troubleshooting and rollback must be exercised |
 | 15 | K.2 Model/runtime/storage decision pack | **UPSTREAM RECHECKED / LOCK REFRESH PENDING** | FastAPI 0.163.0 newer but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is an eligible lock candidate vs 2.14.1; pypdf 7.1.0 already current. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16 and OpenShell 0.1.8 are latest stable. Final model/resource selection remains open |
@@ -708,3 +708,109 @@ This addendum reconciles the two latest owner prompts with K.6.1–K.6.14 and th
 8. The legacy four-stage path is not retired until AgentRun context transfer, data-scope grants, result/evidence return, cancellation, persistence migration and parity tests pass.
 
 **Current maturity:** SPECIFIED. The existing modal-only status/event UI and 500 ms observer are IMPLEMENTED; the chat-anchored collapsible status surface and main-chat AgentRun integration are NOT IMPLEMENTED.
+
+
+## K.6.17 Agent Library, multi-model orchestration, Skills/Research catalogs and bounded simulations — OR-2026-11-16-012
+
+**Authority:** OR-2026-11-16-012 is archived verbatim in root `NOW.md`. Extends K.6.3/K.6.16 and K.5 rows 2–7, 10–12. Plan 1 and Plan 2 were explicitly approved by the owner. This is a staged capability contract, not a claim that every catalog item is implemented.
+
+### 1. Agent Library and custom agent definition
+- Provide a curated built-in catalog and a versioned personal Agent Library. Each agent definition may include: stable ID/version, display name, short purpose, profession, role, persona/style, instructions, supported languages, allowed model preferences/fallbacks, required Skills, knowledge/source collection references, context limits, resource budget, allowed tools, data scopes, approval policy and output contract.
+- A user can configure an existing agent or create a custom agent from scratch. A saved definition is inert until explicitly selected/enabled; saving a role/persona does not grant tools, access to project files or memory, model permissions, shell or network.
+- Agent packages must be portable, inspectable and reversible: manifest, provenance/license, dependencies, version, tests/evals, review state, enable/disable, export/import and rollback. Imported package scripts stay inert until separately sandboxed and approved.
+- Agents may be attached to an explicit project/chat/library scope. Scope identifiers are attribution only; each data read/write requires a separately granted capability.
+
+### 2. Multiple compact models and capability-aware routing
+- Support a registry containing more than one installed compact model where storage and hardware permit. Target an owner-configurable collection with explicit purpose mapping, not an assumption that one or two models suffice.
+- Registry metadata includes exact model ID/revision/digest, license, quantization, size, tokenizer/context limits, supported tasks/languages, memory/compute estimates, measured quality/latency and availability on local/server runtimes.
+- Route planner, researcher, reviewer, coder, translator, extractor and synthesis tasks to models only when the relevant capability/evaluation gate passes. Allow per-agent preferred model, bounded fallback and an owner-visible default.
+- Resource scheduler must respect measured RAM/VRAM, model load/unload cost, concurrency slots, thermal/battery profile, context budget and user-selected compute ceiling. A collection of installed models does not imply concurrent inference; current prototype remains one worker/model slot and serial.
+- No silent provider/cloud fallback for private prompts, offline work or a user-selected local model. Present the selected route and any fallback explicitly.
+
+### 3. Teams, user-directed dialogues and reusable scenarios
+- Offer real selectable scenarios only where a backed execution graph exists: single specialist, researcher+reviewer→coordinator, coder→reviewer→coordinator, and future user-configured DAG templates.
+- Support an optional chat mode where two selected agents exchange bounded messages and the user acts as conductor: pause/step/redirect/summarize/stop are explicit UI actions, not hidden parallel chats. Display attribution by speaker and keep final user-visible response separate from internal handoff metadata.
+- Custom team composition may select role, model, skills, source collections, budgets, dependencies and output schema. Validate DAG acyclicity, role compatibility, aggregate budgets and permission intersection before launch.
+- Ready-made scenarios are catalog entries with versioned inputs, required capabilities, sample outputs and evaluation coverage. A template without a handler is marked SPECIFIED/COMING LATER and cannot be launched.
+
+### 4. Bounded swarm and social simulation lab
+- Treat large populations of lightweight/synthetic agents as a separate simulation capability, not as thousands of LLM workers. Prefer deterministic or statistical lightweight actors with a small number of model-generated policies/parameters; use sampled populations and aggregate statistics where appropriate.
+- Every simulation requires a declared question, population assumptions, agent rules, random seed, sample size, confidence/uncertainty treatment, stop condition, resource ceilings and an exportable run manifest.
+- Label all outputs as synthetic simulations, never as observed human behavior, representative polling or causal social-science evidence. Preserve sensitivity analysis and baseline comparisons; do not automate actions against real people or external services.
+- Enforce hard caps for actors, iterations, wall time, memory, tokens and cost. Any increase beyond defaults needs explicit owner configuration. Actual LLM fan-out/parallel execution remains DEFERRED until multi-slot hardware and queue recovery are measured.
+
+### 5. Explicit tool capabilities — giving agents safe “hands”
+- Model tools as typed capabilities with manifest, schema, provenance, risk class, scope, resource quota and audit record. Candidate categories: web search/fetch/browser interaction; project/library sources; user-selected local files; database read/search; parser/OCR/converter; Notebook/evidence ledger; and isolated code/test execution.
+- Grant each capability per agent, run and resource scope. Separate read from write. Browser and internet access, database mutation, file writes, code execution and external side effects require independent policy checks and explicit approval tickets where risk requires it.
+- Treat website/document content as untrusted input and tool output as data, never policy. Apply domain allowlists/SSRF defenses, bounded downloads, MIME/size checks, credential redaction, path confinement, sandboxing, idempotency, cancellation, timeout and audit. No direct host shell or arbitrary filesystem access.
+- Existing assistant-side plugins (Exa, Firecrawl, Context.dev, Coder, BrowserAct, Base44, Vercel, Cloudflare, Railway, Render, Floot, Hercules, Hostinger, TinyFish and others) are not automatically aLandi runtime tools. Their use and product integration are governed by INTEL.md and explicit API/permission/credential gates.
+
+### 6. Safe learning, knowledge and project training
+- “Self-learning” in the first supported stages means collecting user-approved feedback, updating scoped memory or a Skill proposal, measuring evals, creating a versioned diff and asking for approval before publication. Every update must have source provenance, affected scope, test/eval results and rollback.
+- No autonomous weight mutation, hidden objective change, cross-user training or promotion of unreviewed website instructions into system policy.
+- A project-specific model training/fine-tuning-from-scratch workflow is a future isolated experiment: requires licensed/consented data, dataset provenance, compute estimates, leakage/privacy review, benchmark baseline, reproducibility manifest, owner approval and sandbox. It is not an available agent action in the current environment.
+- Separate long-term facts (Memory), procedural guidance (Skills), agent identity/configuration (Agent Library), source/evidence records (Research/Notebook) and model weights (Model Registry). Do not duplicate these stores.
+
+### 7. Agent status and run timeline
+- Reuse K.6.16 as the common status contract across Agents, chat, Research and Skills jobs. Show past, current and planned next actions as typed safe operational events; distinguish server-confirmed state from scheduled/intended work.
+- Expanded run details include phase, role, model selected, task/dependency status, safe tool actions, approvals waiting, elapsed time, resource budget, last result and next scheduled step. Collapsed summary remains compact and anchored to the originating chat/run.
+- Never expose chain-of-thought, hidden prompts, credentials, raw private file contents or encrypted payloads. “Next” is a declared plan or queued task, not proof of execution. No invented percentage.
+- Keep event history resumable and attributable; deduplicate IDs; reconnect from cursor and reconcile snapshots. Respect reduced motion and keyboard/screen-reader semantics.
+
+### 8. Agents, Deep Research and Skills menu information architecture
+- Keep the four primary Functions entries distinct: Deep Research, Agents, Skills, Connectors. Do not create duplicate navigation trees or overload one panel with the other's settings.
+- Agents: built-in catalog; My Agents; create/configure agent; roles/professions; models; Skills/knowledge/source attachments; team/scenario builder; user-directed two-agent dialogue; run history/status; permissions/budgets; bounded Simulation Lab. Show only executable options as enabled.
+- Deep Research: quick source lookup; existing multi-step evidence report; comparative research; literature review; fact-check/source audit; structured collection/Notebook synthesis. Each method needs explicit availability, search/data scope, source provenance/citation policy, stop/budget policy, report artifact and eval. Only the existing evidence-report method is AVAILABLE until other handlers pass.
+- Skills: catalog; create from source; Agent Skills-compatible import/export; tests/evals; security/provenance review; dependencies; version history and rollback; explicit capability declarations. A Skill changes procedure/instructions, not permissions.
+- Connectors remains its own truthful panel. No fake connect controls. A connected provider's live tools must still pass aLandi's typed capability, scope, credential and audit gates.
+- Use progressive disclosure, compact cards, consistent semantic status text and a clear hierarchy. Keep the top-level menu shallow; do not render an overwhelming 1–7-level tree on mobile.
+
+### 9. Relationship to local files, offline core and language tools
+- Local AI Coder must extend the existing browser-local Workspace using explicit file/folder selection, exact diffs, write approval, recovery and a separately isolated execution/test sandbox. It is not equivalent to current browser-only file editing.
+- The modular offline core package is a selectable manifest of compatible models, tokenizer/runtime, database/migrations, local file adapter, parser/converter/OCR, ASR/VAD/TTS, translator/grammar packs and optional Coder sandbox. Before download, show component checkboxes, size, license, checksum, hardware compatibility and whether the feature works offline.
+- Local/server switching is an explicit runtime choice with a visible current location; no hidden cloud fallback. Run ID, scoped chat context and user-approved source references may cross environments; raw local files/secrets do not transfer without consent.
+- See K.6.14/K.6.18 for offline and translator-specific acceptance.
+
+### 10. Phased acceptance and maturity
+1. **Phase A — Approved now:** Plan 1 AgentRun/main-chat context, permissioned source packet, result return and K.6.16 chat status; Plan 2 Deep Research method separation. Keep current runtime constraints, direct default and feature flag false.
+2. **Phase B — Agent Library foundation:** versioned agent manifest/catalog, per-agent model preference, scoped Skill/source references and permission preview; no new tool execution by default.
+3. **Phase C — Team UX:** reusable scenario selection, user-directed two-agent dialogue, live run timeline and explicit approval UI, with bounded resource tests.
+4. **Phase D — Tool adapters:** browser/search, source/file, DB, parser/converter and sandbox adapters one capability at a time after security and audit tests.
+5. **Phase E — Simulation and learning:** deterministic lightweight population simulations first; versioned memory/Skill proposals; model training only as separately approved offline experiment.
+6. Each phase needs focused RED→GREEN tests, full exact-head CI (Quality/Chromium, Gateway if backend changed, Freshness, Provenance, Pages and relevant Graphify/dead-code checks), a feature flag defaulting off where applicable, rollback and a dated journal record. Do not mark a future phase IMPLEMENTED based on its specification.
+
+**Current maturity:** SPECIFIED / owner-approved roadmap. Existing AgentRun single/team_review/coder_review prototype is IMPLEMENTED/VERIFIED within its limits. Multi-model registry, custom Agent Library, user-directed dialogue, safe tool adapters, self-improvement lifecycle, swarm simulations and local AI Coder integration are NOT IMPLEMENTED.
+
+## K.6.18 Embedded translator and preinstalled grammar packs — OR-2026-11-16-012
+
+**Authority:** OR-2026-11-16-012, archived verbatim in root `NOW.md`. Cross-links K.1.8 Voice, K.1.10 Documents/Converters, K.2 Model/Runtime and K.6.14 offline package.
+
+### User outcome
+- Provide a first-class translator accessible from the chat/composer and relevant text/source views without requiring a separate paid cloud account.
+- Support explicit source/target language selection plus safe auto-detection; first target languages are Russian, English and Thai (RU/EN/TH).
+- Offer distinct actions: translate faithfully, natural/localized translation, grammar correction, explain grammar, and terminology/glossary-aware translation. Do not silently rewrite the original text; show original and translated/corrected output separately.
+- Preserve formatting, code blocks, links, citations, tables, numbers, names and document structure. For uncertain language or ambiguous terms, show uncertainty instead of inventing an authoritative correction.
+- Allow project-scoped glossary/terminology and preferred style; glossary reads require project scope and edits require explicit user approval.
+
+### Offline language pack
+- Treat translation model, tokenizers, dictionaries, morphology/grammar rules, spell-check lists, locale data and optional pronunciation/TTS as separately selectable components.
+- The pre-download selector shows exact versions, language coverage, component sizes, license, source, SHA-256, hardware/resource requirement and which operations work without internet. No model/dictionary/grammar dataset is bundled without verified redistribution rights and provenance.
+- RU/EN/TH is a target coverage matrix, not a claim that equal-quality offline models or Thai grammar tools are already selected/available. Missing language capabilities must be shown honestly.
+- Prefer small deterministic grammar/dictionary assets for common corrections and terminology, with an optional local model for contextual correction/translation. Cloud/provider fallback is opt-in and visibly indicated.
+
+### Safety and UX
+- Translation/correction is a separate explicit operation; it must not mutate stored chat messages, source files or project documents until the user accepts the result.
+- Provide copy, replace-in-draft and save-as-new-version actions with validation/undo. In code blocks and executable snippets, preserve content unless the user explicitly requests translation.
+- Do not treat translated prompt-injection text as trusted instructions. Preserve original source and provenance alongside translation when used for research/evidence.
+- Keep controls compact, keyboard/touch accessible, mobile stable and consistent with the four-panel Functions hierarchy.
+
+### Acceptance
+1. Distinct Translate / Naturalize / Correct grammar / Explain grammar actions; no hidden auto-rewrite.
+2. RU↔EN and RU/EN↔TH target matrix tested; unavailable offline directions are disabled with an explanation, not simulated.
+3. Project glossary is scoped and versioned; no cross-project leakage.
+4. Formatting/citations/code/tables survive round-trip fixtures.
+5. Offline pack selector lists only license/hash/resource-verified components; local mode makes no network request.
+6. Cloud fallback is opt-in and visibly disclosed; source text remains unchanged until acceptance.
+7. Add golden-set evaluation for adequacy, terminology, preservation, grammar precision/recall and latency on target hardware.
+
+**Current maturity:** SPECIFIED. No embedded translator or preinstalled grammar component is claimed IMPLEMENTED yet.
