@@ -9,7 +9,7 @@
 - **Task ID:** LANDING-V2-2026-001.
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. No default PR branch; work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111.
-- **Documentation refresh parent:** `0d34aa1c70bb68e57a3856ba20d8b5f966c65038` (current verified main; this update is its direct child).
+- **Documentation refresh parent:** `a39c851a9b31fea06190eecd285237080cea55d7` (state-format repair; direct child of the verified AgentRun/plugin checkpoint).
 - **Owner task:** OR-2026-11-16-008 — prompt archived verbatim; K.6.14 added; AgentRun first vertical slice verified; next plugin/source strategy, then remaining Landing 2.0 acceptance.
 - **Scope:** existing 15-point programme in `docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md` §K/K.5; K.6 is binding. No parallel backlog. Exclude owner-supplied primary model.
 - **Authorization:** direct commits to main, assistant-side tools/plugins/skills, automatic Pages publication. No VPS deployment, paid provisioning, secrets, destructive operations, force-push, rebase/reset or history rewrite.
