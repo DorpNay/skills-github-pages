@@ -4091,16 +4091,16 @@ let agentRuntimeRefreshPromise = null;
       try {
         const base = new URL(config.baseUrl);
         const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname);
-        const basePath = base.pathname.replace(/\\/+$/, '');
+        const basePath = base.pathname.replace(/\/+$/, '');
         if ((base.protocol !== 'https:' && !(base.protocol === 'http:' && loopback))
-            || base.username || base.password || base.search || base.hash || !/\\/v1$/i.test(basePath)) {
+            || base.username || base.password || base.search || base.hash || !/\/v1$/i.test(basePath)) {
           throw new Error('agent-runtime-invalid-base-url');
         }
         const pathOnly = path.split('?')[0];
         const queryText = path.includes('?') ? path.slice(path.indexOf('?') + 1) : '';
         const method = String(options.method || 'GET').toUpperCase();
-        const runPath = /^\\/agent-runs\\/[A-Za-z0-9_-]{1,128}$/.test(pathOnly);
-        const eventPath = /^\\/agent-runs\\/[A-Za-z0-9_-]{1,128}\\/events$/.test(pathOnly);
+        const runPath = /^\/agent-runs\/[A-Za-z0-9_-]{1,128}$/.test(pathOnly);
+        const eventPath = /^\/agent-runs\/[A-Za-z0-9_-]{1,128}\/events$/.test(pathOnly);
         const allowed = (pathOnly === '/agent-runs/profiles' && method === 'GET')
           || (pathOnly === '/agent-runs' && method === 'POST')
           || (runPath && ['GET', 'DELETE'].includes(method))
@@ -4110,7 +4110,7 @@ let agentRuntimeRefreshPromise = null;
           const params = new URLSearchParams(queryText);
           const keys = [...params.keys()];
           if (keys.length !== 2 || !keys.includes('after_event_id') || !keys.includes('limit')
-              || !/^\\d{1,12}$/.test(params.get('after_event_id') || '') || params.get('limit') !== '100') {
+              || !/^\d{1,12}$/.test(params.get('after_event_id') || '') || params.get('limit') !== '100') {
             throw new Error('agent-runtime-invalid-query');
           }
         } else if (queryText) throw new Error('agent-runtime-invalid-query');
