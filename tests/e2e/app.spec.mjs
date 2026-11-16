@@ -4043,7 +4043,7 @@ test('AgentRun persists the selected safe strategy and submits it without escala
 
 test('chat composer defaults to Direct execution mode', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('#executionModeControl')).toHaveValue('direct');
+  await expect(page.locator('#executionModeToggle')).toHaveText('D');
   const saved = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');
@@ -4103,8 +4103,8 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.locator('#executionModeControl').selectOption('agent');
-  await expect(page.locator('#executionModeControl')).toHaveValue('agent');
+  await page.locator('#executionModeToggle').click();
+  await expect(page.locator('#executionModeToggle')).toHaveText('A');
   await expect.poll(async () => page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');

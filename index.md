@@ -703,7 +703,7 @@ permalink: /
     <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
     <div class="flex gap-2 items-end" id="inputArea">
       <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
-      <select id="executionModeControl" aria-label="Режим выполнения" title="Режим выполнения: Direct или AgentRun" class="composer-tool rounded-xl border border-gray-700 bg-gray-900 text-[9px] w-[54px] min-w-[54px] px-1 py-2.5"><option value="direct">Direct</option><option value="agent">Agent</option></select>
+      <button id="executionModeToggle" type="button" data-mode="direct" aria-label="Режим выполнения Direct. Переключить на AgentRun" title="Direct · обычный чат. Нажми, чтобы переключить на AgentRun" class="composer-tool rounded-xl border border-gray-700 px-2 py-2.5 w-[38px] min-w-[38px] text-[11px] font-semibold">D</button>
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
@@ -2915,7 +2915,20 @@ permalink: /
       processingMode = chat.processingMode;
       $('toggleSearch').checked = chat.searchMode !== 'offline';
       $('toggleMultiAgent').checked = chat.multiAgentEnabled;
-      if ($('executionModeControl')) $('executionModeControl').value = chat.executionMode;
+      const executionModeToggle=$('executionModeToggle');
+      if(executionModeToggle) {
+        const agentMode=chat.executionMode==='agent',english=getUiLanguage()==='en';
+        executionModeToggle.textContent=agentMode?'A':'D';
+        executionModeToggle.dataset.mode=agentMode?'agent':'direct';
+        executionModeToggle.title=agentMode
+          ? (english?'AgentRun · bounded Gateway execution. Click to switch to Direct.':'AgentRun · ограниченное выполнение через Gateway. Нажми, чтобы переключить на Direct.')
+          : (english?'Direct · ordinary chat. Click to switch to AgentRun.':'Direct · обычный чат. Нажми, чтобы переключить на AgentRun.');
+        executionModeToggle.setAttribute('aria-label',agentMode
+          ? (english?'Execution mode AgentRun. Activate to switch to Direct.':'Режим выполнения AgentRun. Переключить на Direct.')
+          : (english?'Execution mode Direct. Activate to switch to AgentRun.':'Режим выполнения Direct. Переключить на AgentRun.'));
+        executionModeToggle.classList.toggle('border-cyan-500',agentMode);
+        executionModeToggle.classList.toggle('text-cyan-300',agentMode);
+      }
       safeSet(STORAGE.mode, chat.processingMode);
       safeSet(STORAGE.searchMode, chat.searchMode);
       safeSet(STORAGE.search, String(chat.searchMode !== 'offline'));
@@ -2928,34 +2941,34 @@ permalink: /
     async function setChatExecutionMode(mode, sequence=executionModeChangeSequence) {
       const chat=getCurrentChat();
       if(!chat||!['direct','agent'].includes(mode)) {
-        if($('executionModeControl'))$('executionModeControl').value=chat?.executionMode||'direct';
+        syncCurrentChatFunctionSettings();
         return false;
       }
       ensureChatFunctionSettings(chat);
       if(mode==='agent') {
         if(currentProvider()!=='alandi') {
-          $('executionModeControl').value=chat.executionMode;
+          syncCurrentChatFunctionSettings();
           showToast(getUiLanguage()==='en'?'AgentRun requires the explicitly selected aLandi Gateway.':'AgentRun требует явно выбранный aLandi Gateway.','error');
           return false;
         }
         if(agentRuntimeActiveRun) {
-          $('executionModeControl').value=chat.executionMode;
+          syncCurrentChatFunctionSettings();
           showToast(getUiLanguage()==='en'?'An AgentRun is already active on the single worker.':'На единственном worker уже выполняется AgentRun.','error');
           return false;
         }
         if(!agentRuntimeReady)await refreshAgentRunRuntime();
         if(sequence!==executionModeChangeSequence)return false;
         if(!agentRuntimeReady) {
-          $('executionModeControl').value=chat.executionMode;
+          syncCurrentChatFunctionSettings();
           showToast(getUiLanguage()==='en'?'AgentRun is unavailable. Direct mode remains unchanged.':'AgentRun недоступен. Прямой режим не изменён.','error');
           return false;
         }
       }
       if(!persistChatMutation(chat,{executionMode:mode})) {
-        $('executionModeControl').value=chat.executionMode;
+        syncCurrentChatFunctionSettings();
         return false;
       }
-      $('executionModeControl').value=mode;
+      syncCurrentChatFunctionSettings();
       return true;
     }
 
@@ -4359,10 +4372,11 @@ let agentRuntimeRefreshPromise = null;
       updateAgentRuntimeStartAvailability();
     }
 
-    $('executionModeControl').addEventListener('change',()=>{
+    $('executionModeToggle').addEventListener('click',()=>{
+      const chat=getCurrentChat();
+      const target=chat?.executionMode==='agent'?'direct':'agent';
       const sequence=++executionModeChangeSequence;
-      executionModeChangeTarget=$('executionModeControl').value;
-      const target=executionModeChangeTarget;
+      executionModeChangeTarget=target;
       executionModeChangePromise=setChatExecutionMode(target,sequence).catch(error=>{
         showToast(error?.message||agentRuntimeErrorText(error),'error');
         return false;
