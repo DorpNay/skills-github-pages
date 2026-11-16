@@ -2990,9 +2990,16 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await page.locator('#searchModeSummary').click();
   await expect(searchMenu).not.toHaveAttribute('open', '');
 
+  // Opening Search settings closes the Research panel. Reopen it before
+  // exercising its close control; do not click a hidden, stale panel element.
+  await summary.click();
+  await menu.locator('[data-function="research"]').click();
+  await expect(modal).toBeVisible();
   await modal.locator('[data-action="close-function-panel"]').first().click();
   await expect(modal).toBeHidden();
-  await page.locator('#functionsMenuSummary').click();
+  await expect(summary).toBeFocused();
+
+  await summary.click();
   await menu.locator('[data-function="agents"]').click();
   await expect(modal).toBeVisible();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
