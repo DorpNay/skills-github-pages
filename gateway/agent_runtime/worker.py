@@ -12,9 +12,11 @@ from typing import Any
 import httpx
 
 try:
+    from .context import ContextPacketError, normalize_context_packet, render_context_packet
     from .payloads import AgentPayloadError, AgentPayloadVault
     from .store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
 except ImportError:  # supports "uvicorn app:app" from the gateway directory
+    from agent_runtime.context import ContextPacketError, normalize_context_packet, render_context_packet
     from agent_runtime.payloads import AgentPayloadError, AgentPayloadVault
     from agent_runtime.store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
 
@@ -148,6 +150,7 @@ class AgentRunWorker:
     def submit(
         self, *, prompt: str, idempotency_key: str, scope_kind: str, scope_id: str,
         profile_id: str = "general", model_id: str | None = None, strategy_id: str = "single",
+        context_packet: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if self._stopping or self._runner is None or self._runner.done():
             raise AgentRunUnavailable("AgentRun worker is unavailable")
@@ -162,6 +165,13 @@ class AgentRunWorker:
             raise AgentRunError("unknown agent profile")
         if strategy_id in {"team_review", "coder_review"} and profile_id != "general":
             raise AgentRunError("team_review and coder_review use fixed specialist roles; profile_id must be general")
+        try:
+            normalized_context = normalize_context_packet(context_packet, max_chars=self.max_prompt_chars) if context_packet is not None else None
+        except ContextPacketError as exc:
+            raise AgentRunError(str(exc)) from None
+        model_prompt = prompt + ("\n\n" + render_context_packet(normalized_context) if normalized_context is not None else "")
+        if len(model_prompt) > self.max_prompt_chars:
+            raise AgentRunError("prompt and selected context exceed the configured combined size limit")
         selected_model = model_id or (self.allowed_models[0] if self.allowed_models else "")
         if selected_model not in self.allowed_models:
             raise AgentRunError("model is not in the configured allowlist")
@@ -170,16 +180,17 @@ class AgentRunWorker:
         team_inputs: dict[str, str] = {}
         if strategy_id == "team_review":
             team_inputs = {
-                "researcher": self._team_specialist_prompt(prompt,
+                "researcher": self._team_specialist_prompt(model_prompt,
                     "independent research analyst: structure the problem, identify relevant facts and unknowns from the supplied task only, and state evidence limits."),
-                "reviewer": self._team_specialist_prompt(prompt,
+                "reviewer": self._team_specialist_prompt(model_prompt,
                     "independent reviewer: challenge assumptions, identify risks, edge cases, counterarguments and missing information without seeing another specialist's work."),
             }
-        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+        request_descriptor = {"prompt": prompt, "context_packet": normalized_context, "profile_id": profile_id, "model_id": selected_model, "strategy_id": strategy_id}
+        request_hash = hashlib.sha256(json.dumps(request_descriptor, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
         stage = profile_id if strategy_id == "single" else f"{strategy_id}:{profile_id}"
         run_args = {
             "idempotency_key": idempotency_key, "scope_kind": scope_kind, "scope_id": scope_id,
-            "goal_ref": f"prompt-sha256:{prompt_hash}",
+            "goal_ref": f"request-sha256:{request_hash}",
             "metadata": {"origin": "agent_api", "model_id": selected_model, "stage": stage},
         }
         if idempotency_key not in self._known_idempotency:
@@ -192,8 +203,11 @@ class AgentRunWorker:
             return run
         run_id = run["run_id"]
         try:
+            input_record = {"prompt": prompt}
+            if normalized_context is not None:
+                input_record["context_packet"] = normalized_context
             self.payload_vault.put(run_id=run_id, kind="input",
-                plaintext=json.dumps({"prompt": prompt}, ensure_ascii=False, separators=(",", ":")))
+                plaintext=json.dumps(input_record, ensure_ascii=False, separators=(",", ":")))
             if strategy_id == "single":
                 tasks = self.store.list_tasks(run_id=run_id)
                 if not tasks:
@@ -228,7 +242,7 @@ class AgentRunWorker:
                              "worker_profile_id": "coder", "max_output_tokens": self.max_output_tokens},
                     max_attempts=self.max_attempts)
                 coder_prompt = self._team_specialist_prompt(
-                    prompt,
+                    model_prompt,
                     "code drafting specialist: propose a minimal patch or implementation from the code and context supplied in the task. Do not claim repository access, file changes, command execution or tests; clearly state what remains unexecuted.",
                 )
                 self.payload_vault.put(run_id=coder["task_id"], kind="input",
@@ -420,11 +434,22 @@ class AgentRunWorker:
         except AgentPayloadError as exc:
             raise AgentPayloadError("encrypted input payload is unavailable") from exc
         record = self._json_object(raw)
+        if set(record) - {"prompt", "context_packet"}:
+            raise AgentPayloadError("input payload contains unsupported fields")
         prompt = record.get("prompt")
         if not isinstance(prompt, str) or not prompt.strip():
             raise AgentPayloadError("input payload has an invalid shape")
         if len(prompt) > self.max_prompt_chars:
             raise AgentPayloadError("input payload exceeds the configured prompt limit")
+        packet = record.get("context_packet")
+        if packet is not None:
+            try:
+                packet = normalize_context_packet(packet, max_chars=self.max_prompt_chars)
+            except ContextPacketError as exc:
+                raise AgentPayloadError("saved context packet is invalid") from exc
+            prompt += "\n\n" + render_context_packet(packet)
+        if len(prompt) > self.max_prompt_chars:
+            raise AgentPayloadError("input payload and selected context exceed the configured prompt limit")
         return prompt
 
     def _team_specialist_prompt(self, prompt: str, assignment: str) -> str:

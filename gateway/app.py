@@ -1131,7 +1131,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         worker = request.app.state.agent_run_worker
         if worker is None:
             raise HTTPException(503, "AgentRun is disabled")
-        body_limit = min(config.max_body_bytes, config.agent_runs_max_prompt_chars * 4 + 4096)
+        body_limit = min(config.max_body_bytes, config.agent_runs_max_prompt_chars * 8 + 8192)
         body = await read_limited_body(request, body_limit)
         try:
             payload = json.loads(body)
@@ -1139,6 +1139,9 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             raise HTTPException(400, "Request body must be valid JSON") from None
         if not isinstance(payload, dict):
             raise HTTPException(400, "Request body must be a JSON object")
+        allowed_fields = {"prompt", "scope_kind", "scope_id", "profile_id", "model_id", "strategy_id", "context_packet", "idempotency_key"}
+        if set(payload) - allowed_fields:
+            raise HTTPException(400, "Request body contains unsupported fields")
         idempotency_key = request.headers.get("Idempotency-Key") or payload.get("idempotency_key")
         try:
             run = worker.submit(
@@ -1149,6 +1152,7 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                 profile_id=payload.get("profile_id", "general"),
                 model_id=payload.get("model_id"),
                 strategy_id=payload.get("strategy_id", "single"),
+                context_packet=payload.get("context_packet"),
             )
         except AgentRunBusy as exc:
             raise HTTPException(429, str(exc), headers={"Retry-After": "2"}) from None

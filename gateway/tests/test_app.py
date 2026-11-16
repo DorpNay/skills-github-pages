@@ -1041,3 +1041,48 @@ def test_agent_run_api_exposes_and_executes_team_review_strategy(tmp_path):
     raw_db = (tmp_path / "agent-runs.sqlite3").read_bytes()
     assert b"PRIVATE API TEAM TASK" not in raw_db
     assert b"API TEAM ANSWER." not in raw_db
+
+
+def test_agent_run_api_accepts_bounded_context_and_rejects_unknown_fields(tmp_path):
+    calls = []
+    async def handler(request):
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": MODEL}]})
+        calls.append(json.loads(request.content))
+        return httpx.Response(200, json={"message": {"role": "assistant", "content": "Context API answer."}, "done": True, "eval_count": 6})
+    config = settings(agent_runs_enabled=True, agent_runs_path=str(tmp_path / "agent-runs.sqlite3"),
+        agent_runs_encryption_key=Fernet.generate_key().decode("ascii"), agent_runs_retention_seconds=3600,
+        agent_runs_max_payload_bytes=256_000, agent_runs_max_prompt_chars=2000,
+        agent_runs_max_output_tokens=128, agent_runs_max_output_bytes=4096,
+        agent_runs_max_pending_runs=4, agent_runs_poll_interval_seconds=0.05)
+    headers = {"Authorization": f"Bearer {API_KEY}", "Idempotency-Key": "api-context-1"}
+    packet = {"version": 1,
+        "messages": [{"id": "history-1", "role": "user", "content": "Keep this context."}],
+        "sources": [{"id": "attachment-1", "kind": "attachment_text", "scope": "chat",
+            "inclusion_reason": "attached_by_user", "content": "Selected file evidence."}]}
+    with client_for(config, handler) as client:
+        body = {"prompt": "Review context.", "scope_kind": "conversation",
+            "scope_id": "chat-context-api", "context_packet": packet}
+        created = client.post("/v1/agent-runs", headers=headers, json=body)
+        assert created.status_code == 202, created.text
+        run_id = created.json()["run"]["run_id"]
+        for _ in range(200):
+            snapshot = client.get(f"/v1/agent-runs/{run_id}", headers=headers).json()
+            if snapshot["run"]["state"] in {"succeeded", "failed"}: break
+            time.sleep(0.01)
+        assert snapshot["run"]["state"] == "succeeded"
+        assert len(calls) == 1
+        assert "Keep this context." in calls[0]["messages"][1]["content"]
+        assert "Selected file evidence." in calls[0]["messages"][1]["content"]
+        replay = client.post("/v1/agent-runs", headers=headers, json=body)
+        assert replay.status_code == 202
+        assert replay.json()["run"]["run_id"] == run_id
+        changed = {**packet, "sources": [{**packet["sources"][0], "content": "Changed evidence."}]}
+        conflict = client.post("/v1/agent-runs", headers=headers, json={**body, "context_packet": changed})
+        assert conflict.status_code == 409
+        invalid = client.post("/v1/agent-runs", headers={**headers, "Idempotency-Key": "api-context-extra-1"},
+            json={**body, "unexpected": "must not be ignored"})
+        assert invalid.status_code == 400
+    raw_db = (tmp_path / "agent-runs.sqlite3").read_bytes()
+    assert b"Selected file evidence." not in raw_db
+    assert b"Keep this context." not in raw_db
