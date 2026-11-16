@@ -4179,6 +4179,7 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
     } });
     if (url.pathname === '/v1/agent-runs/run-e2e-status' && route.request().method() === 'DELETE') {
       cancelCalls += 1;
+      if (cancelCalls === 1) return route.fulfill({ status: 503, json: { detail: 'temporary cancellation outage' } });
       return route.fulfill({ json: { run: { run_id: 'run-e2e-status', state: 'cancelled' } } });
     }
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
@@ -4194,15 +4195,26 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
   await expect(page.locator('#functionPanelModal')).toBeHidden();
   await expect(status).not.toContainText('MUST_NOT_RENDER');
   await expect(status).not.toContainText('model_execution');
-  await expect(page.locator('#agentRunChatStatusDetails')).toBeHidden();
-  await page.locator('#agentRunChatStatusToggle').click();
+  await expect(page.locator('#userInput')).toBeEnabled();
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(status).toBeVisible();
+  await expect(page.locator('#agentRunChatStatusText')).toContainText('Выполняется');
+  await expect(page.locator('#userInput')).toBeEnabled();
+  await expect(page.locator('#agentRunCancel')).toHaveCount(0);
+  await expect(page.locator('#agentRunChatCancel')).toHaveCSS('min-height', '44px');
+  await page.locator('#agentRunChatStatusToggle').focus();
+  await page.keyboard.press('Enter');
   await expect(page.locator('#agentRunChatStatusToggle')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#agentRunChatTasks')).toContainText('Специалист');
   await expect(page.locator('#agentRunChatEvents')).toContainText('Выполнение начато');
   await page.locator('#agentRunChatCancel').click();
+  await expect(page.locator('#agentRunChatStatusText')).toContainText('Отмена не подтверждена');
+  await expect(page.locator('#agentRunChatCancel')).toBeEnabled();
+  await page.locator('#agentRunChatCancel').click();
   await expect(page.locator('#agentRunChatStatusText')).toContainText('Отменено');
   await expect(page.locator('#agentRunChatDismiss')).toBeVisible();
-  expect(cancelCalls).toBe(1);
+  expect(cancelCalls).toBe(2);
   const saved = await page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');
