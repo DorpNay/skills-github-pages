@@ -1136,3 +1136,24 @@ No external runtime, UI framework, model, agent platform or new package was inst
 1. Plan 1 remains first: strict bounded context packet + encrypted worker handoff + context-aware idempotency, then chat UI and K.6.16 live status.
 2. Plan 2 follows: migrate the legacy four-stage pipeline into the separate `multi_step_evidence_report` Deep Research method with ResearchTrace parity.
 3. Agent Library / multi-model router / Skills catalog / tool adapters / Translator / grammar / offline package proceed as subsequent K.5 phases. Do not install artifacts or turn speculative catalog entries into enabled features without exact provenance and evals.
+
+
+## 2026-11-16 — OR-013 continuation: bounded AgentRun context, prompt-injection boundary and idempotent retries
+
+**Status: SOURCE-VALIDATED.** Exa reviewed 9 targeted searches (64 result slots) and fetched official OWASP, OpenAI Agents SDK, AG-UI, Pydantic/FastAPI, IETF draft and Stripe pages. Search hits were filtered; these are design constraints, not claims of upstream dependency adoption.
+
+- [OWASP LLM Prompt Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html): user messages, retrieved files, web pages, tool outputs and conversation history are all untrusted channels. Delimiters/labels help model interpretation but are not an enforcement boundary. Validate tool arguments and authorize against the caller in execution code outside the model; least privilege and action-specific approval remain mandatory.
+- [OWASP RAG Security](https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html): preserve provenance and approved-document digests in a separately protected manifest; enforce source access at retrieval time, bound context size/chunk count, isolate tenants, fail closed and retain audit lineage. A hash proves integrity against a baseline, not content safety.
+- [OpenAI Agents SDK Sessions](https://openai.github.io/openai-agents-python/sessions/): sessions retrieve stored history before a run and persist new items after it; `session_input_callback` can filter/reorder old history without re-persisting it as new input. Its docs warn SQLiteSession trusts the database and session ID is not authentication/authorization. aLandi borrows bounded selection, not the SDK or session storage.
+- [OpenAI Agents SDK Context](https://openai.github.io/openai-agents-python/context/): local application context is not sent to the model; shared policy inputs can gate tool visibility, but execution code must still authorize operations and validate arguments. Persisted run state should not contain secrets.
+- [AG-UI Events](https://docs.ag-ui.com/concepts/events): run lifecycle has explicit start and terminal success/error; activity state can use snapshot/delta updates and subagent attribution. Use durable aLandi events as recovery truth and UI activity as a projection; don't expose hidden reasoning or fabricate progress.
+- [IETF HTTPAPI Idempotency-Key draft](https://ietf-wg-httpapi.github.io/idempotency/draft-ietf-httpapi-idempotency-key-header.html): a key must not be reused with a different request; optional request fingerprints detect mismatched retries. Same key + same fingerprint is replay; same key + different fingerprint is a conflict; concurrent duplicate behavior is distinct from completed replay.
+- [Stripe idempotent requests](https://docs.stripe.com/api/idempotent_requests): idempotency is intended for retry after connection loss; parameter mismatch under a reused key is rejected. Key lifecycle/retention must be documented.
+- [Pydantic strict models](https://pydantic.dev/docs/validation/latest/api/pydantic/config/) and [FastAPI body fields](https://fastapi.tiangolo.com/tutorial/body-fields/): explicit strict type validation, forbid unknown fields and bound text lengths. Current aLandi gateway uses explicit hand validation for the AgentRun body to avoid changing broader request model contracts.
+
+### OR-013 implementation boundary
+- AgentRun context is a versioned, bounded packet of explicit user/assistant history and typed selected-source excerpts. Preserve opaque IDs, source kind, scope and inclusion reason; never accept system/developer/tool roles or arbitrary nested metadata.
+- Store packet only in existing Fernet payload vault; do not place raw text in SQLite run/task metadata or event rows.
+- Reuse existing SQLite idempotency contract: same key and same request returns the original run; same key with changed prompt/context/model/strategy conflicts.
+- Context text is still untrusted and grants no resource access. Keep AgentRun feature-off and direct chat default.
+- Main chat context construction, source picker authorization, event status overlay and UI integration remain subsequent slices. No automatic transcript, whole-project file, arbitrary URL or memory ingestion.

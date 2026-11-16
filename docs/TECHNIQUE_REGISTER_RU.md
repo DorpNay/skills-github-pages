@@ -230,3 +230,28 @@ No external package, runtime, model weights or UI framework was installed in thi
 4. Therefore the translator feature can be designed around capability matrix and replaceable language adapters; do not promise full offline parity across RU/EN/TH until a golden set and target-hardware tests pass.
 
 **No new runtime, package, model artifact, connector or external account was installed.**
+
+
+## 2026-11-16 — OR-013: Bounded context packets and prompt-injection-resistant AgentRun handoff
+
+**Статус: IMPLEMENTED / exact-head verification pending.**
+
+| Источник | Подтверждённый принцип | Применение в aLandi |
+|---|---|---|
+| [OWASP Prompt Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html) | Диалоги, файлы, retrieved content, страницы и tool output — недоверенные каналы. Маркеры/разделители сами по себе не защищают. Разрешения и валидация аргументов проверяются вне LLM на границе исполнения. | Контекст сериализуется как untrusted JSON reference data; не выдаёт никаких разрешений. Будущие tools обязаны иметь отдельный policy broker и серверную проверку прав. |
+| [OWASP RAG Security](https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html) | Нужны provenance, integrity manifest, размерные лимиты, контроль доступа при retrieval, fail-closed и аудит. SHA-256 подтверждает совпадение с baseline, но не безопасность содержимого. | Для выбранных источников сохранять ID/kind/scope/inclusion reason; позднее добавить signed provenance при проектном Sources ingestion. |
+| [OpenAI Agents SDK Sessions](https://openai.github.io/openai-agents-python/sessions/) | Session history извлекается перед run; callback позволяет ограничить/переупорядочить историю. Session ID не аутентифицирует пользователя и не авторизует доступ. | Контекст передаётся явно в запросе, а не подтягивается по opaque scope ID. Не копировать SDK session storage. |
+| [OpenAI Agents SDK Context](https://openai.github.io/openai-agents-python/context/) | Local app context не посылается LLM; доступность инструмента не равна разрешению на операцию — проверка остаётся в реализации tool. | Разделять metadata/authorization и сериализуемые reference excerpts. |
+| [AG-UI Events](https://docs.ag-ui.com/concepts/events) | Run lifecycle требует старт и терминальный success/error; activity поддерживает snapshot/delta, subagent attribution. | Следующий UI slice использует durable SQLite events как recovery truth, compact activity projection как сворачиваемое окно. |
+| [IETF Idempotency-Key draft](https://ietf-wg-httpapi.github.io/idempotency/draft-ietf-httpapi-idempotency-key-header.html) | Одинаковый key + fingerprint — replay; тот же key с иным payload — conflict; concurrent duplicate — отдельный случай. | Существующий SQLite store сравнивает request fingerprint; goal_ref теперь включает канонический prompt/context/profile/model/strategy digest. |
+| [Pydantic strict config](https://pydantic.dev/docs/validation/latest/api/pydantic/config/) | `strict=True` и `extra='forbid'` предотвращают coercion и молчаливое игнорирование неизвестных полей. | Ручной валидатор контекста и allowlist верхнеуровневых API полей; не добавлять новую runtime dependency. |
+
+### OR-013 packet contract
+- Version 1; message roles только `user` / `assistant`; никакого `system`, `developer`, `tool` или произвольного вложенного metadata.
+- Source item содержит только opaque `id`, allowlisted `kind`, `scope`, `inclusion_reason` и extracted text; ID уникальны между сообщениями и источниками.
+- Лимиты: до 40 messages и 40 sources, до 12,000 chars на item, суммарно не более настроенного `agent_runs_max_prompt_chars`; пустой пакет запрещён.
+- Контекст шифруется существующим Fernet vault. В SQLite metadata/event rows остаются только непрозрачные ID/digest.
+- Digest включает prompt, canonical packet, profile, model и strategy. Повтор с тем же ключом и тем же digest возвращает существующий run; изменённый packet конфликтует.
+- Не включаются автоматические полные транскрипты, все файлы проекта, URL fetching, memory или tool outputs без отдельного typed ingestion и явного включения.
+
+**Граница:** prompt delimiter не является security boundary. Даже после этого среза у AgentRun нет tools/browser/filesystem/shell/network; AgentRun остаётся feature-off.
