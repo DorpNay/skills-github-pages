@@ -70,7 +70,8 @@ def normalize_context_packet(packet: object, *, max_chars: int) -> dict[str, Any
         if not isinstance(item, dict) or set(item) != _SOURCE_FIELDS:
             raise ContextPacketError(f"sources[{index}] has an unsupported shape")
         item_id = _identifier(item.get("id"), field=f"sources[{index}].id")
-        if item_id in seen: raise ContextPacketError(f"context packet contains duplicate id: {item_id}")
+        if item_id in seen:
+            raise ContextPacketError(f"context packet contains duplicate id: {item_id}")
         seen.add(item_id)
         kind, scope, reason = item.get("kind"), item.get("scope"), item.get("inclusion_reason")
         if not isinstance(kind, str) or kind not in _SOURCE_KINDS:
