@@ -36,7 +36,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Docs-refresh parent main `b543e9f4b41d4acc46f59b39c05ed228704269a1`; functional sidebar commit 59899a1. functional Research Trace Save commit dc2e265. functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
+- Docs-refresh parent main `914eeec88a46370efe1a27d58a7d57865e5c7bed`; functional sidebar commit 59899a1. functional Research Trace Save commit dc2e265. functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
 - Quality #43804109317 SUCCESS (7/7 jobs, 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exact.
 - AgentRun native bounded DAG and browser UI IMPLEMENTED / VERIFIED PROTOTYPE: same-run SQLite dependencies, dependency-gated synthesis, task-ID Fernet payloads; safe single/team_review; per-chat choice, General coordinator pin, strategy_id and actual task-state/dependency rendering.
 - One worker/model slot; Team Review calls sequential. Logical roles are not OS processes. Tools/shell/filesystem/network disabled; ALANDI_AGENT_RUNS_ENABLED=false. No Coder sandbox/browser worker.
@@ -74,3 +74,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 - Then map the owner's assistant-side plugins and recent external sources to actual workstreams. Plugin availability is not aLandi product integration. Base44 is not a replacement source of truth; no app migration or deployment is authorized by this request.
 - Preserve the specified compact mobile/sidebar/project/chat/Memory/Sources UX and offline component-selection/local-server-switching acceptance in K.6.14. No feature is implemented merely because it is documented.
 - Continue on main only; direct commits and automatic Pages publication are authorized. No VPS deployment, paid provisioning, credentials/secrets, destructive operations, force-push, rebase/reset or history rewrite.
+
+## Documentation checkpoint refresh — OR-2026-11-16-008
+- Current documentation checkpoint parent: `914eeec88a46370efe1a27d58a7d57865e5c7bed`; owner request OR-2026-11-16-008 is archived in NOW.md and acceptance is in K.6.14.
+- Freshness repair: PROJECT_STATE root_orienter.base_main and current_checkpoint.verified_main must match project-state-snapshot.json checkpoint.main_sha; refresh the five state files together as a direct child of that snapshot SHA.
