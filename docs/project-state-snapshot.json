@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "914eeec88a46370efe1a27d58a7d57865e5c7bed",
-    "main_commit_subject": "docs(owner): archive OR-008 and extend Landing 2 acceptance",
-    "main_commit_date": "2026-11-16T07:37:39Z",
+    "main_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
+    "main_commit_subject": "test(memory): assert status remains visible when collapsed",
+    "main_commit_date": "2026-11-16T07:57:47Z",
     "last_functional_checkpoint_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
     "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
     "main_quality_run": 43810947390,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "914eeec88a46370efe1a27d58a7d57865e5c7bed",
+    "checkpoint_parent_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
     "merged_prs": [
       184,
       185
@@ -446,12 +446,13 @@
   "owner_request_delta": {
     "status": "SPECIFIED",
     "scope": "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance.",
-    "implementation_status": "Documentation only; no product code, dependencies, model downloads, host settings or deployment changed.",
-    "next": "Inspect AgentRun/D-024/K.6.3 implementation and tests; choose one bounded, reversible vertical slice; then verify exact-head CI."
+    "implementation_status": "AgentRun coder_review strategy and compact Memory status visibility are implemented and CI-verified; host feature remains disabled. Offline package, local Coder workspace, full Memory/Sources UX and plugin integrations remain specified/deferred.",
+    "next": "Complete plugin/source strategy; then continue K.5 mobile UX, Memory/Sources and offline package work. AgentRun next gates: failure injection, durable resume/approval and local Coder sandbox.",
+    "parent_main_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038"
   },
   "next": [
-    "Inspect current AgentRun coordinator/subagent DAG, worker/API lifecycle, tests and D-024/K.6.3; identify the smallest remaining gap and its acceptance/rollback.",
-    "Strategically inventory assistant-side plugins and existing external-source register; map actual capabilities, scopes, costs, risks and duplicates without equating plugins with aLandi integrations.",
-    "Continue the existing K.5 15-point programme, including owner-designed mobile UX, Memory/Sources, offline package selection/local-server switching, accessibility and exact-head CI."
+    "Complete the assistant-plugin/source usage map using actual capability contracts; do not add connectors or runtimes without a separate owner decision.",
+    "Continue K.5 mobile/sidebar/project/chat hierarchy, Memory/Sources UX, Deep Research method separation, offline package selection/local-server switching, voice and accessibility.",
+    "AgentRun follow-up: failure-injection, restart/cancellation, human approval/resume before side-effecting tools, then bounded local Coder sandbox research."
   ]
 }

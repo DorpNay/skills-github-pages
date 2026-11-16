@@ -257,12 +257,15 @@
 ## D-024 — Native bounded AgentRun specialist DAG on existing SQLite runtime
 
 - **Date:** 2026-11-16
-- **Status:** IMPLEMENTED / VERIFIED PROTOTYPE on main `377818cceef7099d6698c07561c715358d5d8ddd`; no host activation or production parallel-agent claim.
-- **Evidence:** `gateway/agent_runtime/store.py`, `worker.py`, `payloads.py`, `gateway/app.py`, backend tests, `index.md`, `tests/e2e/app.spec.mjs`. Same-run SQLite dependencies, task-ID Fernet payloads, dependency-ready scheduling and coordinator fan-in; UI safe strategy allowlist, per-chat choice, General pin, explicit `strategy_id`, task-state/dependency rendering.
-- **Upstream:** OpenAI distinguishes manager-owned agents-as-tools from handoffs; Deep Agents defaults to isolated context and distinguishes blocking sync from async server-backed workers; Temporal Activities provide durable lifecycle/retry semantics; Microsoft Agent Framework provides typed edges, fan-in barriers and superstep checkpoints. No upstream runtime installed.
-- **Decision:** retain FastAPI + SQLite + Fernet. Expose `single` and `team_review` (researcher, reviewer, coordinator synthesis). One worker/model slot; inference serial. Browser sends explicit prompt plus opaque chat/project attribution only.
-- **Limits:** SQLite single-writer/single-host; same-model reviewer is not independent evidence; roles are not OS processes; tools/shell/filesystem/network disabled; no Coder workspace/sandbox. Target VPS/Ollama not verified.
-- **Checks:** Gateway #43797179042 passed on backend parent `680ab02289c8517dbe9e36b53abb66317dda5f86` (Python 3.12/13/14). Quality #43804109317 (7/7, 134 Chromium, published contract), Graphify #43804109318 and Pages #43804108675 passed on 377818c; public root exact.
+- **Status:** IMPLEMENTED / VERIFIED PROTOTYPE on main `0d34aa1c70bb68e57a3856ba20d8b5f966c65038`; host feature remains disabled by default.
+- **Evidence:** `gateway/agent_runtime/store.py`, `worker.py`, `payloads.py`, `gateway/app.py`, backend tests, `index.md`, `tests/e2e/app.spec.mjs`. Same-run SQLite dependencies, task-ID Fernet payloads, dependency-ready scheduling, encrypted specialist handoffs and coordinator fan-in.
+- **Decision:** retain FastAPI + SQLite + Fernet. Expose three truthful strategies:
+  - `single`: one selected logical profile.
+  - `team_review`: researcher and reviewer run in separate contexts as independent DAG roots; coordinator synthesizes after both finish.
+  - `coder_review`: Coder drafts from user-supplied code/text → Reviewer receives and checks that draft → Coordinator synthesizes. Text-only; no repository/file access, tools, shell, web or test execution.
+- **Execution model:** one worker and one model slot; all model calls are sequential. Logical roles are not OS processes and `team_review` is not parallel inference. Same-model review is not independent evidence.
+- **Upstream evidence:** OpenAI manager-owned agents-as-tools vs handoffs; LangGraph checkpoint/interrupt concepts; Temporal durable activities and idempotency; Microsoft typed edges/fan-in/checkpoints. OpenSandbox 1.2.0 is a sandbox candidate only. No upstream framework or sandbox runtime installed.
+- **Limits:** SQLite single-writer/single-host; feature flag false; tools/shell/filesystem/network disabled; no local Coder workspace, human approval/resume path, true parallel workers or target-host inference verified.
+- **Checks:** Gateway #43826933347 SUCCESS — 279 tests on backend commit `40d343a114cdefbdf8bc2574754fd55d7e0f700d`; current `0d34aa1c70bb68e57a3856ba20d8b5f966c65038` changes only the E2E assertion after that backend commit. Quality #43827521092 SUCCESS — 7/7 jobs, 135 built-app Chromium tests + 1 live-site test, published contract exact `0d34aa1c70bb68e57a3856ba20d8b5f966c65038`. Graphify #43827521090 SUCCESS — 2,519 nodes / 5,868 edges / 90 source files; includes inline client, AgentRun store and worker. Query excerpts truncated at 700-token budget; use targeted source reads. Pages #43827520134 SUCCESS; published root serves exact main SHA `0d34aa1c70bb68e57a3856ba20d8b5f966c65038`.
 - **Rollback:** keep `ALANDI_AGENT_RUNS_ENABLED=false`; preserve run records and single path.
-- **Owner:** project owner retains final acceptance and host activation.
-
+- **Owner:** project owner retains final acceptance, any tool grants and host activation.

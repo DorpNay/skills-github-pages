@@ -76,11 +76,11 @@ Skill instructions не могут расширить allowlist, отключи�
 ## 6. Current runtime reality — verified 2026-11-16
 
 - AgentRun disabled by default (`ALANDI_AGENT_RUNS_ENABLED=false`); one worker and one model slot.
-- Safe strategies: `single` and `team_review` (researcher, reviewer, coordinator synthesis); synthesis waits for both specialists.
+- Safe strategies: `single`, `team_review` and `coder_review`. Team Review uses independent researcher/reviewer DAG roots followed by coordinator synthesis. Coder Review is a sequential Coder-draft → Reviewer-check → Coordinator chain.
 - SQLite persists task records and same-run dependencies. Task inputs/outputs use Fernet payloads keyed by task ID.
-- Team Review calls are sequential; no parallel inference or independent OS processes. Contexts are logically isolated; same-model output is not independent verification.
+- Team Review and Coder Review model calls are sequential through one worker/model slot; logical roles are not independent OS processes. Contexts are task-scoped; same-model review is not independent evidence.
 - Agents UI uses authenticated capability/profile/run/status/events/cancel APIs; safe allowlist, per-chat persistence, General pin, explicit `strategy_id`, actual task states/dependencies. No implicit chat history/files/credentials.
-- Profiles are logical prompts, not processes. Tools/shell/filesystem/network disabled. Coder is not a workspace or sandbox.
+- Profiles are logical prompts, not processes. Tools/shell/filesystem/network disabled. Current Coder Review drafts only from user-supplied text; it does not read a repository, edit files, run commands or tests. A true local Coder workspace/sandbox is not implemented.
 - Qwen3.5-2B and Bonsai staged, not target-installed; PTQ1_0 requires PrismML llama.cpp, not Ollama.
 - Exa/Firecrawl/TinyFish are assistant-side tools, not aLandi product dependencies.
 
@@ -90,11 +90,12 @@ Skill instructions не могут расширить allowlist, отключи�
 2. Task-scoped payloads — IMPLEMENTED; Fernet references keyed by task ID.
 3. Dependency DAG — IMPLEMENTED; same-run typed edges, cycle/self/cross-run rejection, idempotency and ready-task scheduling.
 4. Worker lifecycle — IMPLEMENTED PROTOTYPE; one worker/model slot, sequential inference.
-5. Coordinator/specialists — IMPLEMENTED PROTOTYPE; coordinator synthesizes isolated researcher/reviewer contexts; reviewer is not independent.
-6. Agents UI — IMPLEMENTED / VERIFIED; safe strategies, per-chat persistence, General pin, strategy_id, task-state/dependency rendering. Quality #43804109317 passed 134 Chromium tests; Graphify #43804109318 and Pages #43804108675 passed.
-7. Reliability/evaluation — OPEN; crash/restart, lease expiry, cancellation races, RU/EN/TH golden tasks and host resource benchmarks.
-8. Coder workspace — DEFERRED; read-only selected files and structured patch first; sandbox required before commands.
+5. Coordinator/specialists — IMPLEMENTED PROTOTYPE; `team_review` has independent researcher/reviewer task contexts and coordinator fan-in; `coder_review` has a durable Coder → Reviewer → Coordinator dependency chain. All inference serial; same model is not independent evidence.
+6. Agents UI — IMPLEMENTED / VERIFIED; safe `single`/`team_review`/`coder_review` allowlist, per-chat persistence, General pin, explicit strategy_id, task-state/dependency rendering and clear no-execution Coder copy. Quality #43827521092 passed 135 built-app Chromium + 1 live-site test; Graphify #43827521090 and Pages #43827520134 passed; public contract exact.
+7. Reliability/evaluation — OPEN; expand failure-injection across sequential DAG restarts, lease expiry, cancellation races, output expiry, RU/EN/TH golden tasks and target-host resource benchmarks. Human approval/resume is deferred until a real side-effecting tool exists.
+8. Coder workspace — DEFERRED; current Coder Review is text-only. Selected-file read, structured patch, user review and a real sandbox are prerequisites before command execution.
 9. Browser/tool workers — DEFERRED; isolated runtime, SSRF/DNS protections, approvals and resource budgets.
+10. Offline/local-server route switching — SPECIFIED only; no local runtime package or cross-route state handoff is implemented.
 
 Acceptance: deterministic, race, scope/security, timeout/cancel/restart tests; RU/EN/TH evals; resource budgets; exact-head CI; feature-off default and rollback.
 

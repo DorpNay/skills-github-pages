@@ -72,9 +72,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 - The complete owner prompt is archived verbatim in root NOW.md; the expanded acceptance delta is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6.14. K.5 remains the only 15-point tracker.
 - After documentation, the first implementation workstream is the existing AgentRun/coordinator/subagent architecture (D-024/K.6.3); inspect live source/tests before choosing a slice. Do not add a competing orchestrator or imply logical roles are parallel workers.
 - Then map the owner's assistant-side plugins and recent external sources to actual workstreams. Plugin availability is not aLandi product integration. Base44 is not a replacement source of truth; no app migration or deployment is authorized by this request.
-- Preserve the specified compact mobile/sidebar/project/chat/Memory/Sources UX and offline component-selection/local-server-switching acceptance in K.6.14. No feature is implemented merely because it is documented.
+- Preserve the specified compact mobile/sidebar/project/chat/Memory/Sources UX and offline component-selection/local-server-switching acceptance in K.6.14. The text-only `coder_review` AgentRun strategy is implemented; it is not a local sandbox or tool-enabled Coder.
 - Continue on main only; direct commits and automatic Pages publication are authorized. No VPS deployment, paid provisioning, credentials/secrets, destructive operations, force-push, rebase/reset or history rewrite.
 
-## Documentation checkpoint refresh — OR-2026-11-16-008
-- Current documentation checkpoint parent: `914eeec88a46370efe1a27d58a7d57865e5c7bed`; owner request OR-2026-11-16-008 is archived in NOW.md and acceptance is in K.6.14.
-- Freshness repair: PROJECT_STATE root_orienter.base_main and current_checkpoint.verified_main must match project-state-snapshot.json checkpoint.main_sha; refresh the five state files together as a direct child of that snapshot SHA.
+- Current documentation checkpoint parent for OR-2026-11-16-008: `0d34aa1c70bb68e57a3856ba20d8b5f966c65038`. Keep PROJECT_STATE.yaml root_orienter.base_main/current_checkpoint.verified_main aligned with project-state-snapshot.json checkpoint.main_sha; refresh the five state files together as a direct child of that snapshot SHA.

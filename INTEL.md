@@ -966,7 +966,7 @@ No external runtime, UI framework, model, agent platform or new package was inst
 
 ## 2026-11-16 — AgentRun implementation and upstream source refresh
 
-**Baseline:** main `377818cceef7099d6698c07561c715358d5d8ddd`. SQLite persists same-run dependencies; task-ID Fernet payloads; dependency-ready scheduling; coordinator synthesis. UI exposes safe `single`/`team_review`, per-chat choice, General coordinator pin, explicit `strategy_id`, and actual task states/dependency labels. Quality #43804109317 passed 7/7 incl. 134 Chromium and published contract; Graphify #43804109318 and Pages #43804108675 passed; public revision exact. Gateway unchanged; #43797179042 on backend parent 680ab022 (Python 3.12/13/14).
+**Baseline:** main `0d34aa1c70bb68e57a3856ba20d8b5f966c65038`. SQLite persists same-run dependencies; task-ID Fernet payloads; dependency-ready scheduling; coordinator synthesis. UI exposes safe `single`/`team_review`/`coder_review`, per-chat choice, General coordinator pin, explicit `strategy_id`, and actual task states/dependency labels. Coder Review is a sequential text-only draft → review → coordinator chain; no filesystem, shell, tools or tests. Quality #43827521092 passed 7/7 incl. 135 built-app Chromium + 1 live-site test and published contract; Graphify #43827521090 and Pages #43827520134 passed; public revision exact. Gateway unchanged; #43797179042 on backend parent 680ab022 (Python 3.12/13/14).
 
 **Exa primary-source review, 2026-11-16:**
 - [OpenAI orchestration](https://developers.openai.com/api/docs/guides/agents/orchestration), [running agents](https://developers.openai.com/api/docs/guides/agents/running-agents): handoffs transfer ownership; agents-as-tools retain manager ownership; narrow specialists and one state-continuation method. Adopt manager-owned synthesis, not SDK runtime.
@@ -974,9 +974,47 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - [Temporal Activities](https://docs.temporal.io/activity-execution), [Workflows](https://docs.temporal.io/workflows): durable lifecycle, replay, timeouts/retries; I/O in Activities. Adopt idempotency/failure-injection patterns; defer separate service.
 - [Microsoft workflows](https://learn.microsoft.com/en-us/agent-framework/concepts/workflows/), [edges](https://learn.microsoft.com/en-us/agent-framework/concepts/workflows/edges), [checkpoints](https://learn.microsoft.com/en-us/agent-framework/workflows/checkpoints): typed edges, fan-in barriers, superstep checkpoints; distributed durability requires Durable Task infrastructure. Adopt dependency/fan-in semantics only.
 
-**Limits/disposition:** one worker/model slot, serial inference, roles not OS processes, feature off, no tools/shell/filesystem/network, no Coder sandbox or target-host inference. Keep FastAPI + SQLite + Fernet; no competing orchestrator. Next: Research Trace Save, then K.5 order.
+**Limits/disposition:** one worker/model slot, serial inference, roles not OS processes, feature off, no tools/shell/filesystem/network, no Coder sandbox or target-host inference. Keep FastAPI + SQLite + Fernet; no competing orchestrator. Next: plugin strategy and source mapping, then continue the existing K.5 15-point order. Local Coder sandbox and human approval/resume remain deferred.
 
 
+
+
+## 2026-11-16 — Plugin strategy and recent sandbox/agent-runtime research
+
+**Status:** PROPOSED usage map; no plugin OAuth, new product integration, dependency, model download or hosting migration was authorized or applied.
+
+### Primary working set
+| Plugin/tool | Best role in aLandi work | Boundary |
+|---|---|---|
+| GitHub | Canonical repository, branch/HEAD, issues, commits, CI and docs | Always authoritative for project state; no raw history rewrite or unapproved protected action |
+| Exa | Broad discovery and primary-source research | Search first; do not duplicate the same query across multiple search plugins |
+| Firecrawl | Deep page extraction, crawling and structured content after discovery | Use when page content/links must be inspected; not a second broad search engine by default |
+| Context7 | Version-specific library/framework/API documentation before a dependency or API change | Not a replacement for repository code/tests or official release notes |
+| TinyFish | Browser navigation and multi-step public-site workflows when Playwright cannot cover the flow | Prefer Playwright for deterministic local/public-site regression; do not expose private authenticated data |
+| Coder value tools | `make_design_tokens` and `check_color_contrast` for future design-token and WCAG review | These are design/accessibility utilities, not an on-device coding runtime or shell |
+| Base44 | Isolated UI/product prototype only when it answers a specific design question | Base44 app inventory returned no existing aLandi app; no app was created and no migration is proposed |
+
+### Conditional/reference-only tools
+- **Cloudflare:** continue the existing Tunnel/edge role. Cloudflare Agents SDK/Workers/Durable Objects is a possible alternative architecture, not an addition to the current FastAPI + SQLite + Ollama runtime; adopting it would duplicate state and deployment surfaces.
+- **Vercel:** Workflow/Agent and Sandbox documentation are useful comparative references. Vercel Sandbox is a hosted Firecracker environment, not offline on-device execution. Do not migrate the static Pages client or create a second orchestrator.
+- **Twilio:** ConversationRelay/Voice are cloud telephony and speech-channel options. They do not provide offline local ASR/TTS and Twilio Conversation Memory is not aLandi Memory. Consider only for an explicitly requested phone channel.
+- **Floot / Hercules / Coder build link / Base44:** overlapping app builders; choose one for a separately scoped prototype, never create parallel versions of the canonical aLandi product.
+- **Railway / Render / Hostinger:** hosting/provisioning alternatives only; current GitHub Pages + Cloudflare Tunnel + FastAPI/Ollama architecture remains the baseline.
+- **OpenAI Platform:** API-key lifecycle only on explicit request; never store or expose keys in repository/docs.
+- **Automations:** scheduled external monitoring/check-ins only when requested; not an AgentRun runtime or product memory.
+- **Plugin Management:** OAuth/connectors and scopes only after an explicit product integration decision.
+- **Context_dev / Keenable:** fallback search/page extraction; avoid running them in parallel with Exa/Firecrawl for the same evidence set.
+
+### Recent primary-source review (2026-05-16 → 2026-11-16)
+- [OpenAI Agents orchestration](https://developers.openai.com/api/docs/guides/agents/orchestration) and [sandbox agents](https://developers.openai.com/api/docs/guides/agents/sandboxes): retain manager-owned delegation and explicit separation of agent harness from compute/sandbox. Do not import the SDK runtime merely to reproduce the concepts.
+- [LangGraph checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers) and [interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts): checkpoint/resume and human interrupts are relevant patterns; current aLandi state remains in SQLite, with approval/resume deferred until an actual side-effecting tool needs it.
+- [Temporal workflows](https://docs.temporal.io/workflows) and [activity execution](https://docs.temporal.io/activity-execution): use durable/idempotent activity and retry semantics as design references; do not add a second workflow service now.
+- [Microsoft Agent Framework workflows](https://learn.microsoft.com/en-us/agent-framework/concepts/workflows/) and [checkpoints](https://learn.microsoft.com/en-us/agent-framework/workflows/checkpoints): typed edges and fan-in are useful references; no framework dependency added.
+- [OpenSandbox 1.2.0 release](https://github.com/opensandbox-group/OpenSandbox/releases/tag/release-1.2.0), published 2026-10-27, Apache-2.0: local Docker and Kubernetes deployment, Firecracker fast sandboxes, auto-pause/wake-on-access and Credential Vault. Candidate for a future isolated Coder adapter, not selected: heavier service footprint and the release notes identify an umbrella-release signing/provenance gap. Do not treat it as a mobile/browser-local runtime.
+- [Vercel Sandbox](https://vercel.com/docs/vercel-sandbox) and [Cloudflare Agents SDK](https://developers.cloudflare.com/agents/): hosted sandbox and Workers/Durable Objects alternatives; useful comparisons, not selected for the current local-first architecture.
+- [Twilio ConversationRelay](https://www.twilio.com/docs/voice/conversationrelay): cloud voice/telephony, not offline speech or personal Memory.
+
+**Disposition:** keep the working set small and complementary: GitHub → Exa → Firecrawl/Context7 as needed → TinyFish or Playwright for browser verification → Coder contrast/tokens for UX. Use other builders/hosting/voice platforms only for a concrete isolated need. No connector was authorized or connected by this research.
 
 ## 2026-11-16 — Deep Research provenance and runtime tracing standards
 
