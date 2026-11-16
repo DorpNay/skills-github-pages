@@ -1,6 +1,6 @@
 # Plan 2 — Deep Research method separation from AgentRun
 
-**Status:** PROPOSED — owner review required before code  
+**Status:** APPROVED BY OWNER — implementation follows Plan 1 on 2026-11-16  
 **Owner request:** OR-2026-11-16-011  
 **Base:** `67ea5ba97e21f527d1eaff28cfddef274d2e98d7`  
 **Spec:** K.6.4/K.6.15; K.5; D-024.
@@ -50,3 +50,7 @@ Rollback: restore old checkbox mapping from the retained legacy field; keep Rese
 ## Review focus
 
 Legacy chat migration, user expectations around the old toggle, ResearchTrace parity, search permission, same-model critic labeling, double-dispatch prevention, unavailable methods and preservation of saved team blueprint data.
+
+## Owner-approved catalog boundary — OR-012 / K.6.17
+
+Only `multi_step_evidence_report` is executable at the start of this plan. The Research panel may describe the target method catalog but must keep comparative research, literature review, fact-check/source audit and Notebook synthesis disabled until their method-specific handlers, source policies and golden-set evaluations exist. Effort level, web scope and AgentRun strategy remain separate controls.
