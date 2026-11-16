@@ -143,7 +143,7 @@
 
 ## 8. Claim and contradiction persistence — 2026-11-16
 
-**Backend maturity:** IMPLEMENTED IN d806d19 / VERIFICATION BLOCKED — Gateway and Ruff exposed a module-scope exception import defect; the next child moves the exception import to module scope. No test was disabled.
+**Backend maturity:** IMPLEMENTED / VERIFIED on parent e4b791076d19e312265eee301c417cc257f3fc48: typed claim/contradiction EvidenceLedger records and authenticated routes pass Gateway CI across Python 3.12/13/14. The import-scope defect in d806d19 was corrected in e4b791; Quality/Chromium and all state/provenance/publication gates passed there.
 
 - Reuses the existing `evidence_records` table; no new table or migration.
 - Adds typed `claim` and `contradiction` records with deterministic idempotent IDs.
@@ -152,5 +152,6 @@
 - Prevents deleting source quotes or claims while derived records reference them.
 - New authenticated Gateway routes remain behind the existing RAG-enabled gate; RAG remains disabled by default.
 
-**Still open:** the import-scope defect must pass exact-head Gateway and Quality after correction. Research Trace has not yet passed source excerpts into the critic, structured claim review is not yet produced or rendered, and the UI does not yet persist claims/contradictions through these endpoints. Exa/Firecrawl runtime adapters, durable resumable research runs and Notebook/report export remain unimplemented. The existing same-model pipeline must not be described as an independent agent team.
+**Research Trace schema v4 (IMPLEMENTED IN CURRENT CHILD / CI PENDING):** the researcher source excerpts are collected before the critic stage and supplied as untrusted data with stable per-trace source IDs. The critic is explicitly identified as the same selected model route, not an independent reviewer. It is asked for bounded JSON claims/contradictions; the client parser validates IDs against captured sources, relation/assessment compatibility, contradiction claim membership and evidence linkage, and renders only validated fields using textContent. Invalid JSON yields no structured records; the original critique text remains in the trace. This is model-generated review, not calibrated or independent verification.
+**Still open:** claims and contradictions are not yet persisted by the browser; existing explicit Save to Gateway still writes source quotes only. The next step must map each successful quote write's source ID to the returned evidence_id, then persist claims and contradictions through the existing authenticated endpoints. Resumable run state, real Exa/Firecrawl adapters and Notebook/report export remain unimplemented. Exa/Firecrawl runtime adapters, durable resumable research runs and Notebook/report export remain unimplemented. The existing same-model pipeline must not be described as an independent agent team.
 

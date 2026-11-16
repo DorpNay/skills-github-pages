@@ -11,19 +11,19 @@
 - **Scope:** finish the existing 15-point programme in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K/K.5. K.6 in that same file is the binding detailed owner acceptance contract; no parallel backlog. The largest/owner-supplied primary model remains excluded.
 - **Authorization:** owner explicitly authorizes direct commits to main, connected tools/plugins/skills needed for this task, and automatic GitHub Pages deployment on every main push. This is task-scoped; it does not authorize VPS/host deployment, paid provisioning, secret handling, destructive data operations, force-push, rebase/reset or history rewriting.
 - **Canonical tracker:** one 15-row K.5 status table plus K.6 detailed acceptance contract in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md.
-- **Live parent checkpoint:** main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111. Gateway #43762082085 FAIL on Python 3.12/3.13/3.14 (269 passed, 1 failed per job: `EvidenceLedgerConflictError` NameError in outer route handler). Quality #43762082040: Jekyll/integrity/security/context PASS, Ruff FAIL on the same undefined name, Chromium still running at checkpoint. Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 SUCCESS; Graphify #43762082015 SUCCESS.
-- **Public publication:** Pages #43762080733 deployment SUCCESS; external public revision/meta verification remains UNVERIFIED (the public URL was not accessible to the current verifier).
+- **Live parent checkpoint:** main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111. Gateway #43762493535 PASS (Python 3.12/13/14); Quality #43762493518 PASS (all 7 jobs incl. Chromium and published release contract); Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS. Public root metadata `alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48` verified by live fetch.
+- **Public publication:** Pages #43762493391 SUCCESS; live root metadata `alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48` verified via uncached fetch.
 - **Handoff:** OLEDUE.md, ORIENTER.md and legacy FILE_ORIENTER files are absent. NOW.md is the sole session/task checkpoint.
-- **K.5 status:** Deep Research is PARTIAL: scoped EvidenceLedger API + explicit trace save implemented; claim-citation verification, contradictions, resumable runs, independent provider adapters and export remain open.
+- **K.5 status:** Deep Research PARTIAL: authenticated scoped quote/claim/contradiction APIs pass Gateway CI; Research Trace schema v4 now has a same-model structured-critic parser and renders only validated source-linked claims/contradictions. Browser-to-Gateway persistence of claims/contradictions, resumable runs, independent Exa/Firecrawl adapters and Notebook/report export remain open.
 - **Priority order:** (1) preserve full owner contract and accurate K.5 status; (2) correct function/mode semantics and design real Agent/Deep Research choices and efficient invocation; (3) implement owner-defined sidebar, project/chat flows and unified visual/interaction system; (4) implement and verify runtime capabilities, Skills, Connectors, coding sandbox, Notebook, files/converters, RAG, voice and offline package; (5) complete autonomy/reliability/evals/observability; (6) prepare final owner runbook.
 - **External source coverage:** INTEL.md remains the curated register, not a claim that all URLs are freshly validated. On 2026-11-16 rechecked official Apple HIG Sidebars/Disclosure, W3C APG Disclosure/Menu Button + WCAG 2.2 Focus Not Obscured, GitHub Primer ActionMenu, Microsoft Fluent 2 Drawer and Singapore Government Design System Sidenav. No UI framework/dependency adopted.
 - **Model/artifact boundary:** exclude the largest/owner primary model. Auxiliary artifacts require version, license, checksum and compatibility checks. Actions artifacts are staged, not installed on the target host. No target-host, native-device or offline inference claim without acceptance tests.
 - **Owner-only actions:** retain PRE_LAUNCH_STACK_RU.md §8 and deliver a concise final instruction set only after repository/UI/runtime preparation. It must contain only truly owner-controlled steps: host/budget/domain/DNS/credentials/SSH, sanitized host facts, microphone/speaker/device tests and personal backup-restore verification.
-- **Immediate NEXT:** fix the import-scope defect by importing `EvidenceLedgerConflictError` at module scope in `gateway/app.py`; rerun Gateway and Quality on the exact child. Do not start Research Trace integration until Gateway, Ruff and Chromium are green. No test is to be disabled.
+- **Immediate NEXT:** finish the schema-v4 Research Trace integration in this child: exact-head Quality/Chromium, Gateway, Freshness, Provenance, Graphify, Pages and public revision. If green, next connect the already-existing authenticated claim/contradiction APIs to the explicit Save to Gateway action, mapping only saved source-quote IDs; then implement provider adapters and resumable run state.
 - **Status:** IN PROGRESS — owner-priority Landing 2.0 delivery.
 - **Routing invariant:** latest explicit owner request wins; otherwise resume CURRENT/NEXT. Never select an old PR as a default; historical PRs are evidence only.
 - **Repository / branch:** DorpNay/skills-github-pages / main; direct-main baseline.
-- **Last oriented checkpoint:** main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111. Gateway #43762082085 failed all 3 Python versions; Quality #43762082040 Ruff failed and Chromium remained in progress; Freshness #43762081970 and Provenance #43762082102 passed; Pages #43762080733 and Graphify #43762082015 succeeded. Public revision unverified.
+- **Last oriented checkpoint:** main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111. Gateway #43762493535, Quality #43762493518, Freshness #43762493531, Provenance #43762493641, Graphify #43762493514 and Pages #43762493391 all PASS/SUCCESS; public revision exact.
 - **No claim:** CI and Pages success do not prove VPS/Ollama installation, credentials, independent multi-agent execution, local sandbox, device voice or offline inference.
 
 ## START PROTOCOL — five-second route
@@ -43,6 +43,7 @@
 Statuses: `FACT`, `PROPOSAL`, `IMPLEMENTED`, `VERIFIED`, `BLOCKED`, `DEFERRED`. A document edit or successful build alone is not VERIFIED.
 
 ## JOURNAL — latest first
+- [2026-11-16] S-043 | STRUCTURED RESEARCH REVIEW UI | Parent main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111. Exact-head Gateway #43762493535 PASS across Python 3.12/13/14; Quality #43762493518 PASS all 7 jobs incl. Chromium and published release contract; Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS; public root meta exactly matches parent. This child stages index.md schema-v4 review parsing/rendering and E2E assertions: same-model critic explicitly not independent, strict JSON contract, source-ID allowlist, relation/status validation, contradiction claim/evidence linkage, invalid JSON yields no claims; existing quote save remains explicit. | Next: exact-head verify this child; then map saved quote IDs into existing authenticated claim/contradiction endpoints within the same explicit save action.
 - [2026-11-16] S-042 | EVIDENCE LEDGER IMPORT-SCOPE FIX | Parent main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111. Exact-head Gateway #43762082085 failed on Python 3.12/3.13/3.14 (269 passed, 1 failed per job): the route-level `except EvidenceLedgerConflictError` referenced a symbol imported only inside the lifespan function. Quality #43762082040 Ruff gate found the same undefined name; Chromium remained in progress at capture. Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 SUCCESS; Graphify #43762082015 SUCCESS. Fix moves the exception import to module scope and removes unused local imports. | Next: verify exact-child Gateway, Ruff, Chromium, Freshness, Provenance, Pages and public revision; only then proceed to Research Trace integration.
 - [2026-11-16] S-041 | DEEP RESEARCH CLAIM LEDGER BACKEND | Parent main `82378d2990bb8fddaf0f5223135519357dd8fa1d`; 0 open PRs; issue #111. Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium and release contract); Pages #43760139103 SUCCESS; Freshness #43760139562 PASS; Provenance #43760139586 PASS; public revision exact. Graphify #43759158498 PASS on code/test parent 2185; Gateway #43738728923 PASS on gateway-bearing parent 5773, no Gateway changes on 82378. Backend slice adds typed claim/contradiction EvidenceLedger records, deterministic IDs, same-scope/run source linkage, same-model-only reviewer mode, and deletion conflict protection; no schema migration or dependency. Official Exa/Firecrawl docs already exist in INTEL (490 unique URLs); no provider keys or paid calls. Implementation is included in this commit; exact-head CI pending. | Next: connect Research Trace to the new API with source excerpts, structured same-model claim review, contradiction rendering and explicit-save persistence; then provider adapters and resumable run state.
 - [2026-11-16] S-040 | STATE YAML CORRECTION / EXACT-CHILD CHECKS PENDING | Parent main `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`; 0 open PRs; issue #111. Quality #43759639759 SUCCESS: 133/133 local Chromium, 1/1 published-site Chromium and published release contract; Pages #43759638725 SUCCESS; Freshness #43759639581 SUCCESS; public root/cache-busted client revision matches parent. Provenance #43759639668 FAILED because three double-quoted scalars in `current_checkpoint` (`main_quality`, `main_graphify`, `main_pages`) lacked closing quotes. This direct state-refresh child closes those scalars and refreshes all five checkpoint files to parent `005ca06d0c44dc674cf9d1e65fa2a351ca1665be`. Graphify #43759158498 PASS on 2185; Gateway #43738728923 PASS on 5773; no relevant source changes. | Next: verify exact-child Provenance/Freshness/Quality/Pages and public revision.
@@ -304,4 +305,27 @@ Chromium
 Мой последний запрос:
 
 Отлично, продолжаем так же большими шагами по много действий, не забывай проверять внешние источники из списка в контексте прорабатываемых вещей, в первую очередь решения по UI, интерфейсу, чтобы в каких-то деталях брать готовые гениальные решения и не тратить на них время, сконцентрировавшись на сборке инструментарного ии монстра @Поиск  и плагины подключай все, что нужно, даю добро на использование сервисов, если нужно - параллель с собой задачи в терминале, чтобы успевать в 2 раза больше. Гооо
+```
+
+
+### OR-2026-11-16-002 — continuation and pace
+
+```text
+Твои последрие действия: Проверил задания GitHub Actions
+Дождался завершения СІ-проверки
+Проверил задания GitHub Actions
+Дождались завершения браузерных тестов
+© Проверил задания GitHub Actions
+• Дождался завершения тестов проекта
+© Реализовал и проверил доказательный
+конвейер, документацию и СІ проекта
+• Проверил статический анализ и СІ
+© Проверены задания и логи GitHub Actions, исправлены импорты и обновлены документы СІ
+• Дождался завершения Chromium
+Обновление документации состояния проекта
+Поиск в интернете...
+Обновление состояния проекта и операционного журнала 
+
+
+И дальше - Кажется, ты закончил на обновлении состояния проекта. Сейчас продолжим работу, вот это темп и объемы!!! Ты большой молодец 🙏🏻🙏🏻🙏🏻
 ```

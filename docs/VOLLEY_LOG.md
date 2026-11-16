@@ -461,3 +461,12 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Fix moves the exception import to module scope and removes it from the lifespan-local import; tests remain enabled.
 - Next: verify exact-child Gateway, Ruff, Chromium, Freshness, Provenance, Pages and public revision before proceeding to Research Trace integration.
 
+
+
+## V-2026-11-16-DEEP-RESEARCH-STRUCTURED-REVIEW-001 — Research Trace schema v4
+
+- Parent main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111. Gateway #43762493535 PASS across Python 3.12/13/14; Quality #43762493518 PASS all 7 jobs including Chromium and published release contract; Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS. Uncached public root fetch confirmed `alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48`.
+- Current child modifies `index.md` and `tests/e2e/app.spec.mjs`: Research Trace schema v4; critic role explicitly same-model, not independent; strict JSON contract; bounded parser validates claim IDs, assessment/relation consistency, source-ID allowlist, contradiction claim membership and evidence linkage; safe rendering uses textContent; malformed output yields no structured claims. Existing explicit Save to Gateway still persists only source quotes.
+- Exact-head CI for this child pending. No dependencies, provider keys, paid API calls or host/runtime changes.
+- Next: after exact-head green, persist claims/contradictions from explicit Save to Gateway using only successful source quote evidence IDs; then provider adapters and resumable run state.
+

@@ -36,11 +36,11 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `d806d19eeb4baf59245e9f8f03746eb3a7627aea`; 0 open PRs; issue #111.
-- Gateway #43762082085 failed on Python 3.12/3.13/3.14 (269 passed, 1 failed per job): `EvidenceLedgerConflictError` was imported inside the lifespan function but referenced by outer route handlers. Quality #43762082040 Ruff gate failed on the same undefined name; Chromium job was still running at capture.
-- Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 deployment SUCCESS; Graphify #43762082015 SUCCESS. Public revision/meta remains unverified.
-- Fix: move the exception import to module scope in `gateway/app.py`, keep the local lifespan import limited to `EvidenceLedger`, and rerun exact-head gates. No tests disabled.
-- Next: after Gateway, Ruff, Chromium, Freshness, Provenance, Pages and public revision are verified, connect Research Trace to the new endpoints.
+- Parent main `e4b791076d19e312265eee301c417cc257f3fc48`; 0 open PRs; issue #111.
+- Gateway #43762493535 PASS across Python 3.12/13/14; Quality #43762493518 PASS all 7 jobs including Chromium and published release contract; Freshness #43762493531 PASS; Provenance #43762493641 PASS; Graphify #43762493514 PASS; Pages #43762493391 SUCCESS.
+- Live canonical root meta `alandi-build-revision=e4b791076d19e312265eee301c417cc257f3fc48` verified.
+- Current child stages Research Trace schema v4: same-model (not independent) structured critic output, bounded JSON parser, source-ID allowlist and relation/contradiction linkage validation, safe rendering and E2E coverage. Exact-head CI pending.
+- Next: verify exact-head Quality/Chromium, Gateway, Freshness, Provenance, Graphify, Pages and public revision. Then connect explicit Save to Gateway to claim/contradiction APIs using only source quote IDs returned by successful writes.
 
 ## Targeted UI source review — 2026-11-16
 
