@@ -7,6 +7,10 @@ async function setDeepResearchMethod(page, method) {
   await page.locator('#deepResearchMethodSelect').selectOption(method);
   await page.locator('#functionPanelModal .function-panel-close[data-action="close-function-panel"]').click();
 }
+async function chooseSearchMode(page, mode) {
+  await page.locator('#searchModeSummary').click();
+  await page.locator(`[data-action="select-search-mode"][data-search-mode="${mode}"]`).click();
+}
 
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
@@ -68,6 +72,7 @@ test('research trace captures a source returned by the webpage tool', async ({ p
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await chooseSearchMode(page, 'normal');
   await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Deep research: проверь публичную страницу, проведи исследование источника, сопоставь утверждения и составь короткий доказательный отчёт.');
   await page.locator('#sendBtn').click();
@@ -176,6 +181,7 @@ test('research trace explicitly persists source quotes, claims and contradiction
   await page.locator('#apiKey').fill('test-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await chooseSearchMode(page, 'normal');
   await page.locator('#modeDeep').click();
   await setDeepResearchMethod(page, 'multi_step_evidence_report');
   await page.locator('#userInput').fill('Deep research: compare the two dated sources, validate the claims and preserve any contradiction in the selected Gateway.');

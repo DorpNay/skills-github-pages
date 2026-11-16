@@ -3048,7 +3048,7 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   const researchPanel = page.locator('#researchFunctionSettings');
   await expect(researchPanel).toBeVisible();
   await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Quick|Быстро/);
-  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: standard|Веб: обычный/);
+  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: off|Веб: выкл./);
   await expect(researchPanel.locator('#researchWorkflowSummary')).toContainText(/Direct|Прямой/);
 
   await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
