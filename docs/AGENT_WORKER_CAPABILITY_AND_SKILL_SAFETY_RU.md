@@ -75,24 +75,29 @@ Skill instructions не могут расширить allowlist, отключи�
 
 ## 6. Current runtime reality — verified 2026-11-16
 
-- AgentRun is disabled by default (ALANDI_AGENT_RUNS_ENABLED=false). When enabled, the current Gateway starts one background worker with concurrency 1.
-- The worker claims and completes one model-completion task per run. The task store has durable run/task records, leases and fencing, but the current worker does not execute a dependency DAG or independent specialist processes.
-- The encrypted payload vault is keyed by run ID and payload kind, not by task ID. It is not yet safe for concurrent task-specific input/output payloads.
-- Profiles (general, researcher, coder, reviewer) are logical prompt/capability profiles, not four processes. All currently have independent_process=false, tools=false, filesystem=false and network=false. Coder is a constrained code-review/patch-planning profile, not a shell or filesystem executor.
-- Model selection is restricted by ALANDI_ALLOWED_MODELS. The Qwen3.5-2B Q4_K_M artifact is already staged and SHA-verified in GitHub Actions (artifact 14032317541, 1,945,791,476 bytes, expires 2026-12-13); it is not installed on the target host. The default allowlist now includes qwen3.5:2b-q4_K_M, but the API exposes it only when Ollama /api/tags confirms it is installed. Main 4B remains first/default.
-- Exa and Firecrawl are assistant-side research tools; they are not product runtime dependencies. No model, sandbox, browser runtime or agent platform was installed in this pass.
+- AgentRun disabled by default (`ALANDI_AGENT_RUNS_ENABLED=false`); one worker and one model slot.
+- Safe strategies: `single` and `team_review` (researcher, reviewer, coordinator synthesis); synthesis waits for both specialists.
+- SQLite persists task records and same-run dependencies. Task inputs/outputs use Fernet payloads keyed by task ID.
+- Team Review calls are sequential; no parallel inference or independent OS processes. Contexts are logically isolated; same-model output is not independent verification.
+- Agents UI uses authenticated capability/profile/run/status/events/cancel APIs; safe allowlist, per-chat persistence, General pin, explicit `strategy_id`, actual task states/dependencies. No implicit chat history/files/credentials.
+- Profiles are logical prompts, not processes. Tools/shell/filesystem/network disabled. Coder is not a workspace or sandbox.
+- Qwen3.5-2B and Bonsai staged, not target-installed; PTQ1_0 requires PrismML llama.cpp, not Ollama.
+- Exa/Firecrawl/TinyFish are assistant-side tools, not aLandi product dependencies.
 
 ## 7. Multi-agent implementation sequence and acceptance
 
-1. **Installed model catalog (bounded slice):** intersect configured allowlist with live Ollama /api/tags for both /v1/models and /v1/agent-runs/profiles. Fail closed if the catalog is unavailable. Test that a staged-but-uninstalled 2B model is not selectable.
-2. **Task-scoped payloads:** add encrypted input/output references keyed by task ID; verify cross-task and cross-run isolation, size limits and retention before allowing multiple tasks per run.
-3. **Dependency DAG:** typed depends_on edges, cycle rejection, atomic ready-task claim, terminal dependency handling, idempotency and bounded retries. Coordinator synthesis becomes runnable only after required specialists complete.
-4. **Worker lifecycle:** distinct worker IDs, leases/fencing, heartbeat, cancellation, crash recovery and durable events. Begin with sequential specialists and one shared inference slot; do not claim parallel inference. Add a bounded worker pool only after memory/latency measurements.
-5. **Coordinator and specialists:** coordinator owns objective and final result; each specialist receives a minimal typed task packet and isolated context. Support specialist-as-tool and explicit handoff as separate strategies. Independent verification must use deterministic checks or a genuinely independent verifier.
-6. **Coder workspace:** no shell or broad filesystem access. First implement read-only selected-file context and structured patch output; preview the exact patch hash, validate paths and apply only after owner approval. Command execution requires a separately installed and tested sandbox with a command allowlist and rollback.
-7. **Browser worker:** optional isolated runtime with strict URL/SSRF policy, DNS/IP revalidation, no ambient credentials and per-run resource limits. Do not expose a browser worker as available until live negative security tests pass.
+1. Model catalog — IMPLEMENTED; allowlist intersects live Ollama catalog, fail closed.
+2. Task-scoped payloads — IMPLEMENTED; Fernet references keyed by task ID.
+3. Dependency DAG — IMPLEMENTED; same-run typed edges, cycle/self/cross-run rejection, idempotency and ready-task scheduling.
+4. Worker lifecycle — IMPLEMENTED PROTOTYPE; one worker/model slot, sequential inference.
+5. Coordinator/specialists — IMPLEMENTED PROTOTYPE; coordinator synthesizes isolated researcher/reviewer contexts; reviewer is not independent.
+6. Agents UI — IMPLEMENTED / VERIFIED; safe strategies, per-chat persistence, General pin, strategy_id, task-state/dependency rendering. Quality #43804109317 passed 134 Chromium tests; Graphify #43804109318 and Pages #43804108675 passed.
+7. Reliability/evaluation — OPEN; crash/restart, lease expiry, cancellation races, RU/EN/TH golden tasks and host resource benchmarks.
+8. Coder workspace — DEFERRED; read-only selected files and structured patch first; sandbox required before commands.
+9. Browser/tool workers — DEFERRED; isolated runtime, SSRF/DNS protections, approvals and resource budgets.
 
-Acceptance gates: deterministic unit/contract tests; concurrency and race tests; cross-scope/secret-exfiltration/path-traversal tests; timeout/cancellation/restart/lease-expiry tests; RU/EN/TH golden tasks; resource budgets; exact-head CI; feature flags off by default; tested rollback. The current safe rollback is to keep AgentRun disabled and omit unverified models from the live catalog.
+Acceptance: deterministic, race, scope/security, timeout/cancel/restart tests; RU/EN/TH evals; resource budgets; exact-head CI; feature-off default and rollback.
+
 
 
 ### Additional small-model candidate — 2026-11-16
