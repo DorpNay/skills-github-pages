@@ -613,3 +613,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - All 21 freshness checker unit tests passed; only live snapshot validation failed. Correct last functional SHA to `1816fa821d7122c069ae4791cc2400a9cb2b1738`; current main parent remains `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`.
 - No application code, tests, dependencies, model artifacts, host settings or permissions changed. No gate was weakened.
 - Next: exact-child Freshness/Provenance/Quality/Pages and published revision checks.
+
+
+## V-2026-11-17-OWNER-REQUEST-OR014 — owner continuation and scope reaffirmation
+
+- Parent main exact: `e178bf1a1ad78326b4886a802e8e0e7bccd33296`; live queue at orientation: 0 open PRs, issue #111. OR-2026-11-17-001 archived verbatim in root `NOW.md`.
+- Owner reconfirmed the existing LANDING-V2-2026-001 acceptance: modular offline core and local Workspace→AI Coder; embedded translator and licensed RU/EN/TH grammar; configurable Agent Library, multiple allowlisted models, user-directed agent dialogue, bounded simulation, explicit tool grants and staged learning; rich Skills/Research menus; live chat status; plugin/upstream research; careful lossless documentation/index cleanup.
+- No new parallel backlog: existing K.5/K.6.14–K.6.18 remain canonical. Plan 1 and Plan 2 remain owner-approved. Immediate next slice is Plan 1 Task 2: explicit AgentRun main-chat routing with bounded selected context and same-chat result return; then K.6.16 shared status overlay. Direct default and feature-off host boundary remain.
+- This checkpoint changes documentation/state only; no application code, tests, dependencies, model artifacts, credentials, host settings, permissions, connectors or deployments changed. Exact-child Freshness/Provenance/Quality/Pages and public revision checks pending.

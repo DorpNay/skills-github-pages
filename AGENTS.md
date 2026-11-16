@@ -116,3 +116,10 @@ OR-013 context transport is implemented on main `f3608cd3253eeb5fb04a9960a620e3c
 
 ## Freshness checkpoint repair (2026-11-16)
 Freshness #43914831126 rejected the documentation-only state refresh because snapshot.main_sha and last_functional_checkpoint_sha were equal. The last functional implementation SHA is `1816fa821d7122c069ae4791cc2400a9cb2b1738`; current parent is `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`. All 21 checker unit tests passed. State metadata is being corrected without changing code or the gate. See NOW.md S-071.
+
+
+## Owner continuation — OR-2026-11-17-001
+- OR-014 reaffirms the existing LANDING-V2-2026-001 scope in K.5/K.6.14–K.6.18; do not create another backlog or claim specified capabilities are implemented.
+- Continue the owner-approved Plan 1 in order: bounded current-chat context → explicit AgentRun composer routing and same-chat result return → one shared durable-event observer and collapsible chat status. Direct remains default; AgentRun host flag stays false; no implicit tools, shell, filesystem or network grants.
+- Keep offline package/local AI Coder, translator/grammar, Agent Library/multi-model/team/simulation, richer Skills/Research catalogs and plugin research tracked in existing K.5/K.6. Research assistant-side plugins and upstream sources as reference evidence only; connection or runtime integration requires separate explicit authorization.
+- Optimize index.md and documentation only after dependency/reference inventory and exact preservation checks; do not delete or relocate files based on apparent non-use alone.

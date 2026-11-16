@@ -10,7 +10,7 @@
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. Work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111.
 - **Documentation refresh parent:** f19f57d1b3fcb190a417226a23a2162b00a3f5e6 (direct parent for this five-file owner-prompt checkpoint).
-- **Owner requests:** OR-2026-11-16-009 through OR-2026-11-16-013 archived verbatim below. OR-012 confirms Plan 1 and Plan 2; new Agent Library/Simulation and Translator/Grammar requirements are binding in K.6.17–K.6.18. Prompt archived immediately after mandatory NOW/live-queue orientation.
+- **Owner requests:** OR-2026-11-16-009 through OR-2026-11-16-013 and OR-2026-11-17-001 archived verbatim below. OR-014 reaffirms the existing K.5/K.6.14–K.6.18 scope and prioritizes verified landing completion; it adds no duplicate backlog. OR-012 confirms Plan 1 and Plan 2; new Agent Library/Simulation and Translator/Grammar requirements are binding in K.6.17–K.6.18. Prompt archived immediately after mandatory NOW/live-queue orientation.
 - **Requirements:** K.6.14–K.6.16 remain binding. K.6.17 adds the configurable Agent Library, multi-model routing, team dialogue, bounded simulation, explicit tool grants, skills/research catalog depth and staged self-improvement. K.6.18 adds an embedded translator and licensed RU/EN/TH grammar packs. K.5 remains the only 15-point tracker.
 - **Code checkpoint:** f3608cd3253eeb5fb04a9960a620e3c0985956ba. Bounded context validation, encrypted handoff and context-aware idempotency implemented; Gateway 3.12/13/14, Graphify and Pages pass. Quality Chromium still running.
 - **AgentRun maturity:** IMPLEMENTED / VERIFIED PROTOTYPE: single, team_review and coder_review; SQLite DAG, task-scoped encrypted payloads, bounded contexts. One worker/model slot, serial inference, feature flag false; no tools, shell, filesystem, repository or local Coder execution.
@@ -662,6 +662,49 @@ Index и другие файлы - если возможно - нужно без
 ```
 
 
+### OR-2026-11-17-001 — Owner continuation: prioritize verified Landing 2.0 completion and preserve full scope
+
+```text
+Now.md, активно финализируем лендинг, выполняем список всех детальных задач, данных мной.  Как только сориентируешься (быстро) - активно реализуем лендинг дальше, изучаем внешние источники попутно и настраиваем целостность На всякий, наши последние сообщения:
+Да, подтверждаю. И продолжаем дальше по-крупному бро. В начале продолжения работы подтверди мне, что все мои последние задания и комментарии учтены и в очереди на реализацию, вроде оффлайн ядра-пакета или работы с локальными файлами, встроенного переводчика и предустановленной грамматики. Двигаемся по-крупному, параллель работу с плагинами, не забывай н различных этапах улучшени ф обращаться ко внешним источникам из моего списка, а так же отмечать свой каждый шаг, чтобы сориентироваться от любой точки, в случая обрывов связи или подобных сбоев🙏🏻 агенты. скаченные мини модели - могут быть не один и не два, а больше для вариативности, с очень правильным распределением функций и вариативностью настраиваемости. В таких меню, как агенты, исследования, навыки - должны быть несколько инструментов/вариантов на выбор, красиво эргономично рассортированы, например агентов - и возможность просто настроить и включить возможность из вызова в чате при обсуждении/исследованиях, возможность собрать полностью своего агента, возможность запускать готовые сценарии, возможность выбрать разное количество, разные виды или даже модели, возможность запускать чат с диалогом 2 агентов и моим «дирижированием» прям в чате, возможность запускать «рой агентов» или моделировать тысячи супер-маленьких агентов для сбора статистики или проверки социальных явлений (не обязательно, как вариант), возможность настроить агенту роль, самообучаемость, профессии, знания, навыки, указать инструкции, добавить источники определенных форматов, дать характер - для поселения в библиотеку агентов, и чат или проект, важно очень продумать им супер-инструментарий, дать « руки »  а браузерах, доступ в интернет, к базам данных, инструментам типа конвертеров, парсеров, большинства, что есть у нас в обойме; можно еще агента, который обучается с нуля в каком-нибудь проекте; функции самообучаемости для них - можно взять из гениальных реализаций источников, что я давал. У агентов должно быть всплывающее окно статуса, показывающее прогресс и прошлые, нынешние в прямом эфире и будущие действия, не перегруженно, продуманно системно красиво. То же самое (про наполненность каждого отдельного меню функций) с меню исследований и навыков. Смотри на разработку целостно, можно системно реализовать вещи, близкие друг к другу, чтобы не метаться туда-сюда по коду, а сделать свою работу эффективнее и полезнее в плане коэффициента действий.  Напомню - в первую очередь, как всегда -  отмечай все в документ, вноси что нужно а детализации списков, оперативно, не тратя на это много шагов, и продолжай реализацию мощными прыжками, не теряя глубины реализации. Index.md и подобные файлы - скорее всего нуждаются в сокращении (но аккуратном, без потер, с проверкой отсылок и взаимосвязей), а так же в целом, можно поудалять рудименты, позасовывать неиспользуемые документы из мейн в другое место, чтобы их не читать постоянно и тем более случайно не считывать, как актуальные. Напомню в первую очередь все документируй, но супер-оперативно и главное - основная цель - поскорее финализиповать работающий лендинг со всеми моими нововведениями. Гооооо 🙏🏻🙏🏻🙏🏻
+
+
+VERIFIED — checkpoint восстановлен
+Исправление завершено. На точном HEAD 8d102f0b52c70d386d00090e4f2cd7469ec92d3b успешно прошли все основные группы:
+* Quality — 7/7, включая Chromium и опубликованный release contract.
+* Freshness / контроль очереди — успешно.
+* Provenance — успешно.
+* GitHub Pages — deployment и точное соответствие опубликованной версии проверены.
+Причина предыдущего сбоя была только в сокращённом SHA в журнале. Исправление не затрагивало продуктовый код.
+
+Продолжаем, бро 🙏🏻
+FACT Продолжение зафиксировано в GitHub.
+* OR-2026-11-16-013 — твой последний короткий запрос сохранён дословно в NOW.md.
+* Текущая ветка — main, открытых PR нет, активная задача — #111.
+* Контрольный коммит: 7067e562b4fab97ba081776106b2f42eed375050.
+* Подтверждена следующая последовательность: AgentRun → контекст чата и источники → единый статус выполнения → Deep Research.
+FACT Важное различие: тесты нового контекстного контракта уже добавлены, но самого модуля пока нет. Это намеренная стадия RED, а не готовая функция.
+Gateway — VERIFIED
+IMPLEMENTED Первый крупный срез уже в main:
+* Создан строгий контракт контекста context.py.
+* История диалога и выбранные фрагменты источников передаются AgentRun явно.
+* Контекст хранится в существующем зашифрованном Fernet-хранилище.
+* Повторный запрос с тем же ключом и изменённым содержимым отклоняется, а не запускает незаметно другую задачу.
+* Неизвестные поля, неподдерживаемые роли, повторяющиеся ID и превышение лимитов блокируются.
+VERIFIED Gateway: все три матрицы Python 3.12, 3.13 и 3.14 прошли успешно на кодовом коммите 1816fa821d7122c069ae4791cc2400a9cb2b1738.
+VERIFIED Безопасность и контракт:
+* OWASP-проверки безопасности — PASS.
+* Контекстные ограничения — PASS.
+* HTML/JavaScript Integrity — PASS.
+* Gateway после исправления Ruff — PASS на трёх версиях Python.
+* Graphify — выполняется.
+* GitHub Pages — сборка и публикация успешны на предыдущем контрольном коммите; новая сборка проверяется.
+Обнаруженные две ошибки Ruff были только нарушениями оформления Python-кода. Обе исправлены; проверки не ослаблялись.
+ @TinyFish @Twilio Developer Kit @Exa @Code @Coder @Context.dev @Hostinger Connector @Floot @Firecrawl @Base44 @Railway @Render goooo
+```
+
+
+
 ## JOURNAL — latest first
 - [2026-11-16] S-068 | OWNER PROMPT ARCHIVED / CONTINUATION ROUTED | Parent main `d8d538df3e2c2310ff68df1876b5a808d25c7c57`; live queue: 0 open PRs, issue #111. Owner message archived verbatim as OR-2026-11-16-013. The parent contains new RED tests at `gateway/tests/test_agent_run_context.py`; implementation module `gateway/agent_runtime/context.py` is intentionally absent. This five-file state refresh records the prompt and exact checkpoint before further work. No product runtime, model, dependency, connector, host or deployment changed. | Documentation checkpoint only; exact-child CI pending. | Run Exa research on bounded context/provenance/injection/idempotency patterns, then implement the strict packet module and worker/API wiring under TDD.
 
@@ -671,6 +714,8 @@ Index и другие файлы - если возможно - нужно без
 
 
 ## JOURNAL — latest first
+- [2026-11-17] S-072 | OWNER REQUEST OR-2026-11-17-001 ARCHIVED / ROUTING CONFIRMED | Parent main `e178bf1a1ad78326b4886a802e8e0e7bccd33296`; live queue at orientation: 0 open PRs, issue #111. Archived the complete owner continuation verbatim. It reaffirms the already binding K.5/K.6.14–K.6.18 requirements (offline/local Workspace, translator/grammar, Agent Library, multi-model/team/simulation, live status, Skills/Research catalogs, plugin/upstream research and lossless docs cleanup); no duplicate backlog or new capability claims. | Documentation checkpoint only; no product code, runtime, dependencies, models, permissions or external services changed. Exact-child checks pending. | Continue approved Plan 1 Task 2 under TDD: main-chat AgentRun routing with explicit bounded context; then shared chat status overlay. Keep Direct default, feature flag off, and Plan 2 Deep Research separation next.
+
 - [2026-11-16] S-070 | IMPLEMENTED / PARTIAL CI VERIFIED | Parent main `f3608cd3253eeb5fb04a9960a620e3c0985956ba`; context transport code introduced in `1816fa821d7122c069ae4791cc2400a9cb2b1738`, Ruff cleanup `edbbac8c352527897f8d17bdc8605a1a82ac602a` and final style correction `f3608cd3253eeb5fb04a9960a620e3c0985956ba`. Gateway #43914028219 PASS across Python 3.12/13/14; Graphify #43914028152 PASS; Pages #43914027020 SUCCESS. Quality #43914028299: Security, Jekyll, Ruff, Integrity and Context PASS; Chromium still IN_PROGRESS. First Quality attempt #43913239978 found E701 layout violations only; corrected without weakening checks. | No local test command: repository checkout is not mounted. Freshness/Provenance not triggered by code-only commits; this state refresh triggers them. | Verify exact-child CI, then continue Plan 1 Task 2/3: main chat routing/context and chat-anchored live status.
 
 
