@@ -4142,15 +4142,15 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
 
 test('AgentRun chat status is visible, collapsible, safe and resumable from the chat surface', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const chatId = await page.evaluate(() => {
+  await page.evaluate(() => {
     localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
     localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
-    return localStorage.getItem('ai_current_chat_v87');
   });
   let cancelCalls = 0;
+  const runCreatedAt = Math.floor(Date.now() / 1000);
   await page.route('https://gateway.example.test/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: {
@@ -4173,7 +4173,7 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
       next_after_event_id: 1, state: 'running'
     } });
     if (url.pathname === '/v1/agent-runs/run-e2e-status' && route.request().method() === 'GET') return route.fulfill({ json: {
-      run: { run_id: 'run-e2e-status', state: 'running' },
+      run: { run_id: 'run-e2e-status', state: 'running', created_at: runCreatedAt },
       output_available: false, output_expired: false,
       tasks: [{ task_id: 'task-e2e-1', task_key: 'model-completion', state: 'leased', depends_on: [] }]
     } });
@@ -4200,8 +4200,10 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(status).toBeVisible();
   await expect(page.locator('#agentRunChatStatusText')).toContainText('Выполняется');
+  await expect(page.locator('#agentRunChatElapsed')).toContainText('Прошло');
+  await expect(status).not.toContainText('MUST_NOT_RENDER');
   await expect(page.locator('#userInput')).toBeEnabled();
-  await expect(page.locator('#agentRunCancel')).toHaveCount(0);
+  await expect(page.locator('#agentRunChatStatusDetails')).toBeHidden();
   await expect(page.locator('#agentRunChatCancel')).toHaveCSS('min-height', '44px');
   await page.locator('#agentRunChatStatusToggle').focus();
   await page.keyboard.press('Enter');

@@ -94,7 +94,7 @@ The current implementation is one durable model worker, not a multi-agent team. 
 
 ## Current OR-012 checkpoint
 - Main SHA at this refresh parent: `400e42ce1d43a2e91410be9041d235167c1907cb`. This child refreshes all five mandatory state files. Previous exact checks on 67ea5ba passed; exact-child checks for the refreshed checkpoint must be rerun.
-- OR-012 is archived in NOW.md. Owner approved both plans. Start with Plan 1 TDD (bounded context packet, explicit source grants, same-chat result return, shared observer and collapsible status), then Plan 2 Deep Research method migration.
+- OR-012 is archived in NOW.md. Owner approved both plans. Plan 1 bounded context, explicit main-chat routing, same-chat result delivery, background observer and collapsible status are now implemented on main; finish exact-head verification and then execute Plan 2 Deep Research method migration.
 - While implementing Phase A, use Exa/Firecrawl/Context.dev and the INTEL.md source register for later Agent Library, mini-model registry, Skills, research, translation/grammar and local Coder slices. Assistant-side plugins are not automatically aLandi runtime capabilities.
 
 
@@ -117,6 +117,9 @@ OR-013 context transport is implemented on main `f3608cd3253eeb5fb04a9960a620e3c
 ## Freshness checkpoint repair (2026-11-16)
 Freshness #43914831126 rejected the documentation-only state refresh because snapshot.main_sha and last_functional_checkpoint_sha were equal. The last functional implementation SHA is `1816fa821d7122c069ae4791cc2400a9cb2b1738`; current parent is `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`. All 21 checker unit tests passed. State metadata is being corrected without changing code or the gate. See NOW.md S-071.
 
+
+## Current implementation checkpoint (2026-11-17)
+Parent main: `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; 0 open PRs; issue #111. Main-chat AgentRun routing, bounded context, same-chat result delivery, background observation and chat-anchored collapsible status are implemented in `index.md`; E2E coverage is in `tests/e2e/app.spec.mjs`. Gateway #43932615910, Graphify #43932615895, Pages #43932615598 (public root exact) and Provenance #43932615991 pass; Quality #43932615960 has static/security/integrity/context/Jekyll pass with Chromium in progress. Freshness #43932615859 identified only the stale previous snapshot SHA; the current direct-child checkpoint refreshes all five required state files. AgentRun remains host-feature-off, one worker/model slot, serial inference, no tools/shell/filesystem/network. The legacy evidence pipeline remains until Plan 2 parity. The intermediate tree-creation mistake was repaired by forward-only child `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; compare against `12a1ed43d6af3618dbccc5685bb447f5a851b68f` confirms only the app and E2E files differ. See NOW.md S-068.
 
 ## Owner continuation — OR-2026-11-17-001
 - OR-014 reaffirms the existing LANDING-V2-2026-001 scope in K.5/K.6.14–K.6.18; do not create another backlog or claim specified capabilities are implemented.

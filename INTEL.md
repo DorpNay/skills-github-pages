@@ -1157,3 +1157,14 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - Reuse existing SQLite idempotency contract: same key and same request returns the original run; same key with changed prompt/context/model/strategy conflicts.
 - Context text is still untrusted and grants no resource access. Keep AgentRun feature-off and direct chat default.
 - Main chat context construction, source picker authorization, event status overlay and UI integration remain subsequent slices. No automatic transcript, whole-project file, arbitrary URL or memory ingestion.
+
+## 2026-11-17 — AgentRun chat status projection and non-blocking observation
+
+**Status: SOURCE-VALIDATED / IMPLEMENTED PARTIAL.** Rechecked the [AG-UI event model](https://docs.ag-ui.com/concepts/events) via Exa/Firecrawl/Context.dev as a reference for typed lifecycle/activity projection. The implementation deliberately retains aLandi's authenticated SQLite event journal and existing snapshot/events endpoints; AG-UI is not installed as a runtime dependency and no transport migration is justified by measured latency/load evidence.
+
+- Keep durable run/task state and monotonic event IDs as recovery truth; the browser status surface is only a projection. Reconcile the current snapshot with replayed events and deduplicate by event ID.
+- Render an allowlist of user-safe event labels only. Do not surface event metadata, raw prompts, encrypted payloads, hidden reasoning or untrusted source text.
+- Keep one observer per run. Main-chat submission returns after server acceptance; the observer continues in the background so chat input is not held for the full run duration. Reload recovery reattaches to the existing run ID.
+- Elapsed time is derived only from the server's run `created_at`; it is not a completion estimate or progress percentage. Cancellation is retryable after an unconfirmed response and only a server-confirmed terminal state is shown as cancelled.
+- UI controls use the existing 44px mobile target contract and a polite status region that changes only when the state text changes. Future actions are not fabricated; they will appear only when the runtime emits typed, permission-aware operational events.
+- No AG-UI SDK, SSE transport, second event store, extra worker, new permissions or model dependency added.

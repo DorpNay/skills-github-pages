@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-17"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Documentation checkpoint parent main e178bf1a1ad78326b4886a802e8e0e7bccd33296; 0 open PRs; issue #111. OR-014 archived and confirms existing K.5/K.6.14–K.6.18 scope; Plan 1 main-chat AgentRun integration is next under TDD; exact-head CI for current documentation parent must be rechecked."
+    status: "Active task LANDING-V2-2026-001. Direct-child checkpoint parent main 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; 0 open PRs; issue #111. OR-014 confirms existing K.5/K.6.14–K.6.18 scope. Plan 1 main-chat AgentRun context/routing/status is implemented partially; exact-child CI is pending."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Documentation checkpoint parent main e178bf1a1ad78326b4886a802e8e0e7bccd33296; last functional code checkpoint 1816fa821d7122c069ae4791cc2400a9cb2b1738; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified; OR-2026-11-17-001 archived. Bounded AgentRun context packet implemented; browser main-chat routing and chat status overlay remain next; exact-head gates pending."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; last functional checkpoint 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; 0 open PRs; issue #111. Plan 1/2 OWNER-APPROVED; K.6.17–K.6.18 specified; OR-2026-11-17-001 archived. Main-chat AgentRun routing, non-blocking observer and chat status surface implemented partially; exact-child gates pending."
     branch: "main"
-    base_main: "e178bf1a1ad78326b4886a802e8e0e7bccd33296"
+    base_main: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG prototype is CI-verified on code checkpoint 0d34aa1; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Legacy multiAgentEnabled/runMultiAgentResearch still coexists and main chat does not submit to AgentRun. Existing 500 ms event observer renders only inside Agents modal; chat-anchored status overlay is specified in K.6.16, not implemented. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
-    next: "Repair exact-parent SHA recording in VOLLEY_LOG; verify exact-child Freshness, Quality/Chromium, Provenance and Pages; then implement approved Plan 1 under TDD followed by Plan 2."
+    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and main-chat path are implemented; bounded context, same-chat result delivery, background observer and collapsible chat status are present. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Legacy multiAgentEnabled/runMultiAgentResearch remains until Plan 2 parity. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
+    next: "Complete exact-child Freshness/Quality/Chromium/Provenance/Pages and public revision verification; then implement approved Plan 2 Deep Research method separation."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -42,7 +42,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-16-OWNER-CONTINUATION-006"
+  last_volley: "V-2026-11-17-AGENTRUN-CHAT-STATUS-001"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -293,20 +293,20 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-11-16"
-  verified_main: "e178bf1a1ad78326b4886a802e8e0e7bccd33296"
-  last_main_action: "Owner continuation OR-2026-11-17-001 archived verbatim in NOW.md; scope revalidated against K.5/K.6.14–K.6.18. Parent main e178bf1a1ad78326b4886a802e8e0e7bccd33296; no product code changed in this checkpoint. Exact-head Freshness/Provenance/Quality/Pages and published revision checks pending."
-  last_functional_checkpoint: "1816fa821d7122c069ae4791cc2400a9cb2b1738"
-  main_quality: "PENDING exact-head verification on documentation checkpoint e178bf1a1ad78326b4886a802e8e0e7bccd33296; previous Quality #43914028299 had static/security/integrity/context/Jekyll/Ruff pass with Chromium in progress at last recorded poll."
-  main_freshness: "PENDING exact-head verification on documentation checkpoint e178bf1a1ad78326b4886a802e8e0e7bccd33296; prior root cause (last functional SHA equality) corrected in e178bf1a1ad78326b4886a802e8e0e7bccd33296."
-  main_graphify: "Graphify #43827521090 SUCCESS on functional code checkpoint 0d34aa1 (2,519 nodes / 5,868 edges / 90 files); docs-only refresh does not change code graph."
-  main_gateway: "Gateway #43826933347 SUCCESS (279 tests) on unchanged backend commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d; no Gateway source changed after."
-  main_provenance: "PENDING exact-head verification on documentation checkpoint e178bf1a1ad78326b4886a802e8e0e7bccd33296."
-  main_pages: "Pages build/deploy workflow #43905601623 succeeded on exact main b81d45e; public root exact revision not yet independently verified for this SHA."
+  date: "2026-11-17"
+  verified_main: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
+  last_main_action: "Main-chat AgentRun now submits bounded context and returns control to the composer while the shared durable observer continues. Chat status panel includes safe event projection, task state, server-created elapsed time, persisted terminal summary, reload recovery, 44px controls and retryable cancellation. Exact parent Quality #43932615960: static/security/integrity/context/Jekyll pass, Chromium in progress; Gateway #43932615910 pass across Python 3.12/13/14; Graphify #43932615895 pass; Provenance #43932615991 pass; Pages #43932615598 success and public root revision exact. Freshness #43932615859 failed because prior snapshot SHA was e178bf1; all 21 checker unit tests passed. Direct-child state refresh realigns the checkpoint."
+  last_functional_checkpoint: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
+  main_quality: "IN_PROGRESS on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; static/security/integrity/context/Jekyll PASS; Chromium pending."
+  main_freshness: "FAILED on parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e only because snapshot main_sha remained e178bf1a1ad78326b4886a802e8e0e7bccd33296; 21/21 freshness unit tests passed. This direct-child refresh sets the exact parent SHA in all required state files."
+  main_graphify: "SUCCESS #43932615895 on exact code parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
+  main_gateway: "SUCCESS #43932615910 across Python 3.12/13/14; no Gateway source changed in this slice."
+  main_provenance: "SUCCESS #43932615991 on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
+  main_pages: "SUCCESS #43932615598 on exact parent 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e; public root meta alandi-build-revision exactly matches 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
-  runtime_boundary: "AgentRun exposes safe single/team_review; bounded three-node same-run DAG, task-ID Fernet payloads, dependency-gated synthesis, per-chat choice, strategy_id and task-state/dependency UI. One worker/model slot, serial inference; tools/shell/filesystem/network disabled; feature off; no independent processes, sandbox, target install or offline runtime."
-  next: "Re-run Freshness after exact-SHA VOLLEY repair; complete Quality/Chromium and Pages/root verification, then implement approved Plan 1 under TDD."
+  runtime_boundary: "AgentRun explicit main-chat route with bounded selected context, same-chat result return and background status observer; collapsible chat status and cancel/recovery. One worker/model slot, serial inference; host feature-off; no tools/shell/filesystem/network; legacy evidence pipeline retained pending Plan 2. Browser Workspace is not an AI Coder sandbox; offline package not installed."
+  next: "Verify exact-child Freshness, Provenance, Quality/Chromium, Pages and public revision; then Plan 2 Deep Research method separation and remaining K.5/K.6.17–K.6.18 work."
 
 
 
@@ -575,7 +575,7 @@ model_stack_artifact_checkpoint_2026_11_13:
 
 current_execution_checkpoint:
   date: "2026-11-16"
-  checkpoint_parent_sha: "e4b791076d19e312265eee301c417cc257f3fc48"
+  checkpoint_parent_sha: "619a288a7a57ce1cf1b997c0c1c9b06d464fd66e"
   open_prs: []
   open_issues: [111]
   completed:
@@ -596,7 +596,7 @@ current_execution_checkpoint:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
-  next: ["Design and approve one AgentRun-backed execution strategy integrated with the main chat using bounded, provenance-preserving context; add durable pause/resume, failure recovery and permissioned Coder workspace gates.","Remove web-tool injection from the default chat path; preserve explicit per-chat search opt-in with safe legacy/import migration and request-body tests.","Continue the existing K.5 15-point programme: compact mobile navigation/chat/project IA, Memory and Sources, four same-origin studio routes, aNoteBooki sync, Deep Research methods and offline package."]
+  next: ["Complete exact-child Freshness/Provenance/Quality/Chromium/Pages and public revision checks.","Implement Plan 2 Deep Research method separation while preserving ResearchTrace and effort orthogonality.","Continue K.5/K.6.17–K.6.18: Agent Library, multi-model routing, Skills/Research catalogs, translator/grammar and offline package."]
 
 
 owner_request_delta:
