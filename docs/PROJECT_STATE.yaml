@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Documentation parent main a7a33ec688134571b4fb95606537e5d73ca5190e; 0 open PRs; issue #111. Latest code checkpoint 0d34aa1 has AgentRun coder_review; Quality #43827521092 and Graphify #43827521090 passed; Pages #43827520134 passed. Exact-main Quality #43829377264, Freshness #43829377165, Provenance #43829377155 and Pages #43829376154 passed on prior 6ccd58f; exact-child checks for the current docs refresh are pending."
+    status: "Active task LANDING-V2-2026-001. Documentation parent main 67ea5ba97e21f527d1eaff28cfddef274d2e98d7; 0 open PRs; issue #111. AgentRun/Deep Research plans proposed; Quality #43869711819, Freshness #43869712009, Provenance #43869711675 and Pages #43869711208 passed on exact main; public root exact."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 72652b74d0253858449737ffd7efee65b8e9915f; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. K.6.16 status surface, plugin/chat audit, live Pages route check and browser-local Workspace baseline are recorded."
+    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 67ea5ba97e21f527d1eaff28cfddef274d2e98d7; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. AgentRun main-chat and Deep Research separation plans are PROPOSED."
     branch: "main"
-    base_main: "72652b74d0253858449737ffd7efee65b8e9915f"
+    base_main: "67ea5ba97e21f527d1eaff28cfddef274d2e98d7"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG prototype is CI-verified on code checkpoint 0d34aa1; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Legacy multiAgentEnabled/runMultiAgentResearch still coexists and main chat does not submit to AgentRun. Existing 500 ms event observer renders only inside Agents modal; chat-anchored status overlay is specified in K.6.16, not implemented. Browser-local Workspace supports explicit user-picked file editing/recovery but no AI model, shell or test runner. No local AI Coder sandbox, host install or offline package."
-    next: "Implement the single AgentRun-backed main-chat path with bounded provenance-preserving context, explicit data grants, evidence/result return and migration parity; then retire the legacy four-stage path. Add the K.6.16 chat-anchored live status surface. Then remove implicit web-tool injection and continue K.5 UX, studios/aNoteBooki and offline package."
+    next: "Owner review of the proposed AgentRun/main-chat and Deep Research separation plans; after approval, implement the AgentRun context path and live status overlay under TDD, then migrate the legacy research toggle into a separate Deep Research method."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -294,19 +294,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "72652b74d0253858449737ffd7efee65b8e9915f"
-  last_main_action: "Docs commit 72652b7 (owner request OR-011): Quality #43842541004 PASS (7/7), Pages #43842540462 SUCCESS; Freshness #43842540858 failed because snapshot still recorded a7a33ec. This direct-child checkpoint refreshes all five required state files. Latest Provenance #43841950694 passed on prior parent a7a33ec; exact-parent Provenance not observed."
+  verified_main: "67ea5ba97e21f527d1eaff28cfddef274d2e98d7"
+  last_main_action: "Docs state refresh parent 67ea5ba: Quality #43869711819 SUCCESS (7/7 incl. Chromium + release contract), Pages #43869711208 SUCCESS, Freshness #43869712009 PASS, Provenance #43869711675 PASS; uncached public root exact. Current child adds two PROPOSED plans and refreshes all five required state files."
   last_functional_checkpoint: "0d34aa1c70bb68e57a3856ba20d8b5f966c65038"
-  main_quality: "Quality #43842541004 SUCCESS (7/7: Integrity, Security, Context, Ruff, Jekyll, Chromium and published release contract) on exact main 72652b7."
-  main_freshness: "Freshness #43842540858 FAILED: snapshot checkpoint.main_sha remained a7a33ec while live main was 72652b7. This direct-child refresh updates all five required files and aligns checkpoint to parent 72652b7; exact-child Freshness pending."
+  main_quality: "Quality #43869711819 SUCCESS (7/7: Integrity, Security, Context, Ruff, Jekyll, Chromium and published release contract) on exact main 67ea5ba."
+  main_freshness: "Freshness #43869712009 PASS on exact main 67ea5ba; this direct-child plan/checkpoint refresh updates all five required files."
   main_graphify: "Graphify #43827521090 SUCCESS on functional code checkpoint 0d34aa1 (2,519 nodes / 5,868 edges / 90 files); docs-only refresh does not change code graph."
   main_gateway: "Gateway #43826933347 SUCCESS (279 tests) on unchanged backend commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d; no Gateway source changed after."
-  main_provenance: "Latest Provenance #43841950694 SUCCESS on prior exact main a7a33ec; no exact-parent Provenance run observed for 72652b7. Recheck on refreshed child."
-  main_pages: "Pages #43842540462 SUCCESS on exact main 72652b7. Public root revision was not independently fetched in this checkpoint."
+  main_provenance: "Provenance #43869711675 PASS on exact main 67ea5ba."
+  main_pages: "Pages #43869711208 SUCCESS; uncached published root metadata exact 67ea5ba."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
   runtime_boundary: "AgentRun exposes safe single/team_review; bounded three-node same-run DAG, task-ID Fernet payloads, dependency-gated synthesis, per-chat choice, strategy_id and task-state/dependency UI. One worker/model slot, serial inference; tools/shell/filesystem/network disabled; feature off; no independent processes, sandbox, target install or offline runtime."
-  next: "Research Trace source/claim/contradiction Save is implemented in this child; verify exact-head UI, scope, source links, partial failures and retry. Then continue durable/resumable research, provider adapters and Notebook/export."
+  next: "Owner review of the proposed AgentRun main-chat/context/status plan and Deep Research separation plan; then implement Plan 1 under TDD."
 
 
 

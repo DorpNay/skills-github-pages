@@ -547,3 +547,14 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Exact parent checks: Quality #43842541004 SUCCESS (7/7), Pages #43842540462 SUCCESS; Freshness #43842540858 FAILED because snapshot main SHA lagged at a7a33ec. Latest Provenance #43841950694 was on the earlier parent; exact 72652 Provenance was not observed. Exact-child checks pending.
 - No product code, dependencies, model downloads, credentials, host changes or runtime activation.
 - Next: verify this exact child; then TDD the unified AgentRun/main-chat context path before implementing the K.6.16 overlay.
+
+
+## V-2026-11-16-AGENTRUN-PLANS-008 — exact-head verification and proposed implementation plans
+
+- Parent main: `67ea5ba97e21f527d1eaff28cfddef274d2e98d7`; live queue: 0 open PRs, issue #111.
+- Exact-parent checks: Quality #43869711819 SUCCESS (7/7, including Chromium and published release contract); Pages deployment #43869711208 SUCCESS; Freshness #43869712009 PASS; Provenance #43869711675 PASS. The uncached published root release contract returned exact `alandi-build-revision=67ea5ba97e21f527d1eaff28cfddef274d2e98d7`.
+- Current code facts: main chat still routes the old `multiAgentEnabled` toggle to `runMultiAgentResearch` (planner → researcher with web search → same-model critic → synthesizer + ResearchTrace). AgentRun is separate, with `single/team_review/coder_review`, its own explicit prompt, one worker/model slot, and no tools/filesystem/network. AgentRun currently does not receive the main chat's history/project/memory context.
+- Proposed Plan 1: add a bounded, provenance-preserving context packet to AgentRun, expose opt-in AgentRun execution from the main chat while direct chat remains default, return output into the same chat, and add K.6.16's collapsible chat-anchored live status using the existing durable event cursor/snapshot. No new queue/runtime; no hidden reasoning; no silent fallback for unsupported images/providers.
+- Proposed Plan 2: separate Deep Research methods from AgentRun. Preserve the existing four-stage same-model evidence pipeline as a Deep Research method, not a general agent strategy; keep processing effort (fast/thorough) orthogonal; migrate old `multiAgentEnabled` state without data loss; don't expose blueprint-only team controls as executable.
+- Research disposition: retain the current native SQLite/Fernet AgentRun. OpenAI Agents SDK/AG-UI typed event patterns and Temporal replay semantics inform event UX; no SDK/runtime dependency adopted.
+- Both plans are PROPOSED and await owner review before implementation. No product code, dependencies, model downloads, host settings or credentials changed.
