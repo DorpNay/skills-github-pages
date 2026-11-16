@@ -633,3 +633,13 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - External primary-source review initiated: W3C WCAG 2.2 and WAI-ARIA APG keyboard/dialog/disclosure patterns; Apple HIG/WWDC navigation and menu guidance; Material 3 adaptive navigation; web.dev Core Web Vitals and responsive layout/LCP. Convert findings into focused design and accessibility acceptance criteria and retain citations in the existing source register.
 - **STATUS:** owner request captured; no application code changed in this checkpoint. Exact-child Freshness/Provenance pending.
 - Next: repair AgentRun transport/error handling, profile-import migration and E2E selectors/copy; pass Quality/Chromium on exact main before moving to another product slice.
+
+## V-2026-11-17-OR003-ARCH-PLAN2 — architecture review and Plan 2 regression closure
+
+- Exact parent main: `6117ceb6d3360bc0b47ef3179d73536f854cebf4`; 0 open PRs; issues #111 and #186 (#186 is an unrelated GitHub Skills Pages exercise). OR-003 is archived verbatim in root `NOW.md`.
+- Fixed only the stale Functions-panel E2E sequence in `tests/e2e/app.spec.mjs`: Search settings closes Research, so the test now reopens Research before exercising its close control. Visibility, hidden-state and summary-focus assertions remain; no test or security gate was weakened.
+- Exact Quality #43970945532 PASS 7/7: 139 built-app Chromium tests + 1 published-site Chromium smoke; Security, Jekyll, Integrity, Context and Ruff all passed. Pages #43970944970 SUCCESS. Graphify #43970945690 PASS.
+- Fresh uncached public root HTTP 200 returned `alandi-build-revision=6117ceb6d3360bc0b47ef3179d73536f854cebf4`. Gateway was not rerun because no Gateway/backend file changed; latest Gateway #43932615910 remains the previous backend gate.
+- External-source review of Cloudflare Pages, FTS5 trigram, Qwen3.5-4B, Bonsai 2, whisper.cpp v1.9.5 and Piper v1.8.0 is recorded in `INTEL.md`. This is source validation only; no hosting/runtime/model/dependency migration, host action, new permission or capability promotion.
+- **STATUS:** Plan 2 method separation IMPLEMENTED / VERIFIED on exact main; AgentRun remains PARTIAL and host-feature-off. Freshness and Provenance are pending this direct-child state refresh.
+- Next: inspect the current Direct/search default and legacy preference path, then implement model-only Direct for new chats with explicit search opt-in.

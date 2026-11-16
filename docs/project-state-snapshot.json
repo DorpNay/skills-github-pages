@@ -3,17 +3,17 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-17",
   "checkpoint": {
-    "main_sha": "b1e0565908295fd11945107f701081065b1acc98",
-    "main_commit_subject": "test: close Research panel and verify method routing",
-    "main_commit_date": "2026-11-16T19:22:53Z",
-    "last_functional_checkpoint_sha": "b1e0565908295fd11945107f701081065b1acc98",
-    "last_functional_milestone": "Plan 2 Deep Research method separation is present in code: per-chat deepResearchMethod none|multi_step_evidence_report, migration from multiAgentEnabled, Research-panel selector, ResearchTrace method provenance and separate AgentRun route. Exact Quality/Chromium is failing on the code parent and requires repair. Existing AgentRun remains partial; one worker/model slot, host feature-off, no tools/filesystem/network.",
-    "main_quality_run": 43938748351,
-    "main_pages_deployment_run": 43938748771,
+    "main_sha": "6117ceb6d3360bc0b47ef3179d73536f854cebf4",
+    "main_commit_subject": "test: reopen research panel before close interaction",
+    "main_commit_date": "2026-11-16T22:31:55Z",
+    "last_functional_checkpoint_sha": "ca1a034ba036f4a884974ad4922222bd40d2822d",
+    "last_functional_milestone": "Plan 2 Deep Research method separation is IMPLEMENTED / VERIFIED: per-chat deepResearchMethod, deterministic legacy migration, Research selector, ResearchTrace method provenance and separate AgentRun dispatch. Exact Quality #43970945532 passed 7/7 jobs (139 built-app Chromium plus 1 published-site smoke); Pages #43970944970 and Graphify #43970945690 passed. Latest main test-only repair SHA 6117ceb6d3360bc0b47ef3179d73536f854cebf4; AgentRun remains partial, one worker/model slot and host-feature-off.",
+    "main_quality_run": 43970945532,
+    "main_pages_deployment_run": 43970944970,
     "functional_parent_gateway_run": 43932615910,
-    "functional_parent_quality_run": 43938748351,
-    "functional_parent_graphify_run": 43938748449,
-    "functional_parent_pages_run": 43938748771,
+    "functional_parent_quality_run": 43970945532,
+    "functional_parent_graphify_run": 43970945690,
+    "functional_parent_pages_run": 43970944970,
     "open_pull_requests": [],
     "open_issues": [
       111,
@@ -271,18 +271,18 @@
     "queue_policy": "Direct main only, zero open PRs; #111 is the aLandi release-gate issue. #186 is a GitHub Skills Pages exercise created by github-actions[bot], not aLandi product scope. Owner authorizes direct main commits and automatic Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
     "note": "Parent f2b6 adds a pinned, push-triggered model acquisition workflow and provenance manifest, not application runtime code. Exact-head Quality (133 Chromium tests), Freshness, Provenance, Pages and artifact acquisition all passed; live root revision exact. Bonsai PTQ1_0 is staged as Actions artifact 14192531688; Qwen3.5-2B artifact 14032317541 also remains staged. Neither is installed on target; no live inference is claimed.",
-    "last_volley": "V-2026-11-17-OWNER-REQUEST-OR002",
+    "last_volley": "V-2026-11-17-OR003-ARCH-PLAN2",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
-    "main_quality_status": "FAILED #43938748351 on exact code parent b1e0565908295fd11945107f701081065b1acc98: 123/139 Chromium passed, 16 failed; static/Ruff, security, integrity, context and Jekyll passed. Published release-contract was skipped.",
-    "main_pages_status": "SUCCESS #43938748771 on exact code parent b1e0565908295fd11945107f701081065b1acc98; exact-child deployment/public-root verification pending.",
-    "main_graphify_status": "SUCCESS #43938748449 on exact code parent b1e0565908295fd11945107f701081065b1acc98.",
-    "main_freshness_run": 43932615859,
-    "main_freshness_status": "PENDING direct-child intake checkpoint; snapshot parent SHA and PROJECT_STATE root/current SHAs aligned.",
-    "main_provenance_run": 43932615991,
-    "main_provenance_status": "PENDING direct-child intake checkpoint.",
-    "owner_priority_summary": "LANDING-V2-2026-001 / existing K.5 15-point programme. Plan 1 main-chat AgentRun bounded context, explicit dispatch, same-chat result and non-blocking status are IMPLEMENTED / PARTIAL. Plan 2 Deep Research separation is implemented in code but exact Quality/Chromium failed; repair runtime helpers, settings-profile migration and stale E2E test contracts before declaring verified. Remaining K.6.17–K.6.18 scope: Agent Library, multi-model, user-directed team dialogue, bounded simulation, explicit tool grants, Skills/Research catalogs, local AI Coder, offline package, translator and licensed RU/EN/TH grammar.",
+    "main_quality_status": "SUCCESS #43970945532: 7/7 jobs; 139 built-app Chromium tests and 1 published-site smoke passed.",
+    "main_pages_status": "SUCCESS #43970944970; public root alandi-build-revision exactly 6117ceb6d3360bc0b47ef3179d73536f854cebf4.",
+    "main_graphify_status": "SUCCESS #43970945690 on exact parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4.",
+    "main_freshness_run": null,
+    "main_freshness_status": "PENDING direct-child state refresh.",
+    "main_provenance_run": null,
+    "main_provenance_status": "PENDING direct-child state refresh.",
+    "owner_priority_summary": "LANDING-V2-2026-001 / existing K.5 15-point programme. Plan 1 main-chat AgentRun context/routing/status is IMPLEMENTED / PARTIAL. Plan 2 Deep Research method separation is IMPLEMENTED / VERIFIED on exact main; Quality 7/7 and Chromium 139+1, Pages and Graphify passed. Remaining K.6.17–K.6.18 scope: Agent Library, multi-model, user-directed dialogue, bounded simulation, Skills/Research catalogs, local AI Coder, offline package, translator and licensed RU/EN/TH grammar.",
     "pr185_status": "PR #185 merged into main at f1fc73783a46bf38014acd0a8019914d5a3f14d4; model/runtime acquisition artifacts are staged in Actions, not installed.",
     "main_gateway_status": "SUCCESS across Python 3.12/13/14; no backend source changed in this slice.",
     "historical_pr_fields": "All PR-specific fields are history only; no PR is open and none is a default continuation.",
@@ -291,8 +291,8 @@
       186
     ],
     "main_graphify_run": 43932615895,
-    "main_quality_run": 43932615960,
-    "owner_request": "OR-2026-11-17-001",
+    "main_quality_run": 43970945532,
+    "owner_request": "OR-2026-11-17-003",
     "main_gateway_run": 43932615910,
     "bonsai_artifact": {
       "run_id": 43791622097,
@@ -310,7 +310,7 @@
       "revision_verification": "Cache-busted public root returned alandi-build-revision exact 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
     }
   },
-  "last_volley": "V-2026-11-17-OWNER-REQUEST-OR014",
+  "last_volley": "V-2026-11-17-OR003-ARCH-PLAN2",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -347,8 +347,8 @@
     "target_install_state": "NOT_INSTALLED; target host and service access not available in this session."
   },
   "current_execution_checkpoint": {
-    "date": "2026-11-16",
-    "checkpoint_parent_sha": "b81d45ee6653dcc0f3d92f4275354ade7c7ba202",
+    "date": "2026-11-17",
+    "checkpoint_parent_sha": "6117ceb6d3360bc0b47ef3179d73536f854cebf4",
     "merged_prs": [
       184,
       185
@@ -365,7 +365,8 @@
     ],
     "open_prs": [],
     "open_issues": [
-      111
+      111,
+      186
     ],
     "completed": [
       "Main 8e4edd83d50e6872852e7de8090934fbf6ae5f24: Quality #43554105709 PASS (121/121 Chromium, live root 1/1, landing 8/8); Gateway #43554105717 PASS (Python 3.12/13/14); Graphify #43554105763 PASS; Pages #43554105358 SUCCESS.",
@@ -389,17 +390,17 @@
       "Exact parent 82378d2990bb8fddaf0f5223135519357dd8fa1d: Quality #43760139648 PASS (133/133 local Chromium, 1/1 published-site Chromium); Pages #43760139103, Freshness #43760139562 and Provenance #43760139586 PASS; public revision exact.",
       "Exact parent d806d19eeb4baf59245e9f8f03746eb3a7627aea: Freshness #43762081970 PASS; Provenance #43762082102 PASS; Pages #43762080733 deployment SUCCESS; Graphify #43762082015 SUCCESS. Gateway #43762082085 and Quality Ruff #43762082040 blocked by EvidenceLedgerConflictError import scope; fix staged in next child.",
       "Exact parent e4b791076d19e312265eee301c417cc257f3fc48: Gateway #43762493535, Quality #43762493518 (all 7 jobs), Freshness #43762493531, Provenance #43762493641, Graphify #43762493514 and Pages #43762493391 all passed; public revision exact.",
-      "Exact main 67ea5ba: Quality #43869711819 PASS 7/7, Freshness #43869712009 PASS, Provenance #43869711675 PASS, Pages #43869711208 SUCCESS; uncached published root SHA exact."
+      "Exact main 67ea5ba: Quality #43869711819 PASS 7/7, Freshness #43869712009 PASS, Provenance #43869711675 PASS, Pages #43869711208 SUCCESS; uncached published root SHA exact.",
+      "Exact main parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4: Quality #43970945532 PASS 7/7 (139 built-app Chromium + 1 published-site smoke); Pages #43970944970 SUCCESS; Graphify #43970945690 PASS; uncached public root reports exact revision 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
     ],
     "freshness": {
-      "run": 43762493531,
-      "status": "PASS"
+      "run": null,
+      "status": "PENDING direct-child state refresh."
     },
     "next": [
-      "Verify exact-child Freshness/Quality/Chromium/Provenance/Pages and published root after full-SHA VOLLEY repair.",
-      "Implement approved Plan 1 under TDD: bounded context packet, explicit data grants, opt-in AgentRun chat dispatch, same-chat result return, shared observer and chat-anchored live status.",
-      "Implement approved Plan 2 to separate multi_step_evidence_report from AgentRun, with safe migration and ResearchTrace parity.",
-      "Parallel subsystem research: plugin role mapping and primary sources for Agent Library/model routing, local AI Coder/offline package, Skills/Research catalog and translator/grammar."
+      "Run exact-child Freshness, Provenance, Quality and Pages after the atomic state refresh; recheck public root revision.",
+      "Inspect the Direct/search default path and E2E fixtures; make new Direct chats model-only with explicit search opt-in while preserving saved legacy preferences.",
+      "Continue existing K.5/K.6.17–K.6.18 slices: Agent Library, model routing, Skills/Research catalogs and translator/grammar."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -415,45 +416,45 @@
       "status": "PASS across Python 3.12/13/14"
     },
     "quality": {
-      "run": 43762493518,
-      "status": "PASS all 7 jobs incl. Chromium and published release contract"
+      "run": 43970945532,
+      "status": "PASS 7/7; 139 built-app Chromium + 1 published-site smoke."
     },
     "pages": {
-      "run": 43762493391,
-      "status": "SUCCESS; public meta exact"
+      "run": 43970944970,
+      "status": "SUCCESS; public root revision exact 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
     },
     "graphify": {
-      "run": 43762493514,
-      "status": "PASS"
+      "run": 43970945690,
+      "status": "PASS."
     },
-    "owner_request": "OR-2026-11-16-010",
-    "last_volley": "V-2026-11-16-OWNER-APPROVAL-009"
+    "owner_request": "OR-2026-11-17-003",
+    "last_volley": "V-2026-11-17-OR003-ARCH-PLAN2"
   },
   "active_ui_pr": null,
   "open_prs": "No open pull requests. One open issue: #111.",
-  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-17-002",
+  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-17-003",
   "main_gateway_run": 43932615910,
-  "main_quality_run": 43938748351,
-  "main_pages_deployment_run": 43938748771,
+  "main_quality_run": 43970945532,
+  "main_pages_deployment_run": 43970944970,
   "main_freshness_run": null,
   "main_provenance_run": null,
-  "main_graphify_run": 43938748449,
+  "main_graphify_run": 43970945690,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "FAILED on exact code parent: 123/139 Chromium; 16 failures. Static/Ruff, Security, Integrity, Context, Jekyll passed; release contract skipped.",
-  "main_pages_status": "SUCCESS #43938748771 on exact code parent; direct-child Pages/public-root verification pending.",
-  "main_freshness_status": "PENDING direct-child intake checkpoint.",
-  "main_provenance_status": "PENDING direct-child intake checkpoint.",
-  "main_graphify_status": "SUCCESS #43938748449 on exact code parent.",
-  "main_gateway_status": "Not rerun: no Gateway/backend files changed; previous #43932615910 passed on previous code baseline.",
-  "owner_request": "OR-2026-11-16-012",
+  "main_quality_status": "SUCCESS #43970945532 on exact parent: 7/7 jobs, 139 built-app Chromium and 1 published-site smoke passed.",
+  "main_pages_status": "SUCCESS #43970944970; public root revision exact 6117ceb6d3360bc0b47ef3179d73536f854cebf4.",
+  "main_freshness_status": "PENDING direct-child state refresh.",
+  "main_provenance_status": "PENDING direct-child state refresh.",
+  "main_graphify_status": "SUCCESS #43970945690.",
+  "main_gateway_status": "Not rerun: no Gateway/backend file changed; latest Gateway #43932615910 passed on the preceding backend baseline.",
+  "owner_request": "OR-2026-11-17-003",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "b1e0565908295fd11945107f701081065b1acc98",
-    "pages_run": 43938748771,
-    "revision_verification": "Pages succeeded on exact code parent b1e0565908295fd11945107f701081065b1acc98; exact-child public-root verification pending."
+    "root_revision": "6117ceb6d3360bc0b47ef3179d73536f854cebf4",
+    "pages_run": 43970944970,
+    "revision_verification": "Fresh uncached fetch returned HTTP 200 and alandi-build-revision exactly 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
   },
   "owner_request_delta": {
     "status": "IMPLEMENTED / EXACT-HEAD VERIFICATION FAILED — REPAIR REQUIRED",
@@ -464,8 +465,8 @@
     "id": "OR-2026-11-17-002"
   },
   "next": [
-    "Repair the confirmed Plan 2 runtime and regression failures; rerun exact-head Quality/Chromium and verify ResearchTrace, AgentRun and profile-import parity.",
-    "Run direct-child Freshness, Provenance, Pages and public-root verification after the five-file state refresh.",
-    "Continue K.5/K.6.17–K.6.18: Agent Library, multi-model routing, bounded team dialogue/simulation, Skills/Research catalogs, translator/grammar and modular offline package."
+    "Run exact-child Freshness, Provenance, Quality and Pages after the atomic state refresh; recheck public root revision.",
+    "Inspect the Direct/search default path and E2E fixtures; make new Direct chats model-only with explicit search opt-in while preserving saved legacy preferences.",
+    "Continue existing K.5/K.6.17–K.6.18 slices: Agent Library, model routing, Skills/Research catalogs and translator/grammar."
   ]
 }

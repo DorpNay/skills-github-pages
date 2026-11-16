@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-17"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Direct-child checkpoint parent main b1e0565908295fd11945107f701081065b1acc98; 0 open PRs; issues #111 and #186 (#186 is a bot-created GitHub Skills Pages exercise, out of product scope). Existing K.5/K.6.14–K.6.18 scope remains binding. Plan 2 code is implemented but exact-head Chromium verification failed; repair is active."
+    status: "Active task LANDING-V2-2026-001. Exact code/test parent main 6117ceb6d3360bc0b47ef3179d73536f854cebf4; 0 open PRs; issues #111 and #186 (#186 is unrelated). Existing K.5/K.6.14–K.6.18 scope remains binding. Plan 2 method separation passes exact-head Quality/Chromium; next is the Direct/search default slice."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main b1e0565908295fd11945107f701081065b1acc98; last functional checkpoint b1e0565908295fd11945107f701081065b1acc98; 0 open PRs; issues #111 and #186 (#186 is a bot-created GitHub Skills exercise, out of scope). Plan 1/2 owner-approved; Plan 2 implementation needs regression repair; K.6.17–K.6.18 remain specified; OR-2026-11-17-002 archived."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 6117ceb6d3360bc0b47ef3179d73536f854cebf4; 0 open PRs; issues #111 and #186 (#186 is unrelated). Plan 1 remains partial; Plan 2 is verified on exact main; K.6.17–K.6.18 remain staged; OR-2026-11-17-003 archived."
     branch: "main"
-    base_main: "b1e0565908295fd11945107f701081065b1acc98"
+    base_main: "6117ceb6d3360bc0b47ef3179d73536f854cebf4"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 2
-    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and main-chat path remain partial; bounded context, same-chat result delivery, background observer and collapsible status are present. Plan 2 separates per-chat Deep Research method from AgentRun; exact Quality/Chromium failed on missing browser-client helpers, profile-import migration and stale E2E selectors/copy. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; no offline package is installed."
-    next: "Repair the confirmed Plan 2 regressions and verify exact-head Quality/Chromium, Freshness, Provenance, Pages and public revision; then continue K.5/K.6.17–K.6.18."
+    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and chat route/status remain partial; bounded selected context, same-chat result and collapsible status are present. Plan 2 Deep Research method separation is verified by exact Quality/Chromium. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; offline package is not installed."
+    next: "Inspect Direct chat defaults and hidden search compatibility path; implement model-only default for new Direct chats with explicit search opt-in and preservation of legacy per-chat settings. Then continue K.5/K.6.17–K.6.18.";
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -294,19 +294,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "b1e0565908295fd11945107f701081065b1acc98"
-  last_main_action: "Plan 2 separation code is on exact parent b1e0565908295fd11945107f701081065b1acc98. Quality #43938748351 failed (123/139 Chromium, 16 failures) while static/Ruff, security, integrity, context and Jekyll passed; Pages #43938748771 and Graphify #43938748449 succeeded. Playwright diagnostics confirmed missing agentRuntimeFetch/agentRuntimeErrorText definitions, incomplete settings-profile deepResearchMethod migration, stale AgentRun/Research E2E selectors and menu copy. Direct-child intake checkpoint records OR-2026-11-17-002 and the exact queue."
-  last_functional_checkpoint: "b1e0565908295fd11945107f701081065b1acc98"
-  main_quality: "FAILED #43938748351 on exact parent b1e0565908295fd11945107f701081065b1acc98: 123/139 Chromium passed; 16 failed. Static/Ruff, security, integrity, context and Jekyll passed; published release-contract step skipped. Fix regressions and rerun exact head."
-  main_freshness: "PENDING direct-child intake checkpoint; snapshot main_sha and PROJECT_STATE root/current SHAs are aligned to exact parent b1e0565908295fd11945107f701081065b1acc98."
-  main_graphify: "SUCCESS #43938748449 on exact code parent b1e0565908295fd11945107f701081065b1acc98."
-  main_gateway: "Not rerun on exact code parent b1e0565908295fd11945107f701081065b1acc98 because no Gateway/backend source changed; prior Gateway #43932615910 passed on the previous code baseline."
-  main_provenance: "PENDING direct-child intake checkpoint."
-  main_pages: "SUCCESS #43938748771 on exact code parent b1e0565908295fd11945107f701081065b1acc98; direct-child deployment and public-root release-contract verification pending."
+  verified_main: "6117ceb6d3360bc0b47ef3179d73536f854cebf4"
+  last_main_action: "Plan 2 browser regression repaired in tests/e2e/app.spec.mjs: reopen Research after Search settings closes it, then verify close and focus return. Exact Quality #43970945532 passed 7/7 jobs including 139 built-app Chromium tests and 1 published-site smoke; Pages #43970944970 succeeded; Graphify #43970945690 passed. Fresh uncached public root HTTP 200 returned alandi-build-revision 6117ceb6d3360bc0b47ef3179d73536f854cebf4. OR-003 was archived; official upstream review is recorded in INTEL.md. Current test-only follow-up did not change product runtime."
+  last_functional_checkpoint: "ca1a034ba036f4a884974ad4922222bd40d2822d"
+  main_quality: "SUCCESS #43970945532 on exact parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4: 7/7 jobs, 139 built-app Chromium tests and 1 published-site smoke passed; Security, Jekyll, Integrity, Context and Ruff passed."
+  main_freshness: "PENDING direct-child state refresh; exact current main parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
+  main_graphify: "SUCCESS #43970945690 on exact code/test parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
+  main_gateway: "Not rerun: no Gateway/backend file changed; latest Gateway #43932615910 passed on the preceding backend baseline."
+  main_provenance: "PENDING direct-child state refresh."
+  main_pages: "SUCCESS #43970944970; uncached public root HTTP 200 reports exact alandi-build-revision 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
   open_prs_at_checkpoint: 0
-  open_issues_at_checkpoint: [111]
-  runtime_boundary: "AgentRun explicit main-chat route with bounded selected context, same-chat result return and background status observer; collapsible chat status and cancel/recovery. One worker/model slot, serial inference; host feature-off; no tools/shell/filesystem/network; legacy evidence pipeline retained pending Plan 2. Browser Workspace is not an AI Coder sandbox; offline package not installed."
-  next: "Verify exact-child Freshness, Provenance, Quality/Chromium, Pages and public revision; then Plan 2 Deep Research method separation and remaining K.5/K.6.17–K.6.18 work."
+  open_issues_at_checkpoint: [111, 186]
+  runtime_boundary: "Plan 2 is implemented and exact-head verified. AgentRun remains partial: one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder execution. Browser Workspace is not a sandbox; offline and real target-device voice remain unverified."
+  next: "Inspect and implement the Direct/search-by-default contract with new chats model-only, explicit search opt-in and safe legacy preference migration; then continue K.5/K.6.17–K.6.18.";
 
 
 

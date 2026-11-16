@@ -1,6 +1,8 @@
 # Plan 2 — Deep Research method separation from AgentRun
 
 **Status:** APPROVED BY OWNER — implementation follows Plan 1 on 2026-11-16  
+**Implementation:** IMPLEMENTED / VERIFIED on exact main `6117ceb6d3360bc0b47ef3179d73536f854cebf4` (2026-11-17). Quality #43970945532 passed 7/7 jobs: 139 built-app Chromium tests + 1 published-site Chromium smoke; Pages #43970944970 succeeded; Graphify #43970945690 passed; fresh public root revision matched.
+
 **Owner request:** OR-2026-11-16-011  
 **Base:** `67ea5ba97e21f527d1eaff28cfddef274d2e98d7`  
 **Spec:** K.6.4/K.6.15; K.5; D-024.
