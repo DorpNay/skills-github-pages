@@ -2671,7 +2671,7 @@ test('AgentRun reuses the idempotency key after an ambiguous network failure', a
   await page.locator('#functionsMenu [data-function="agents"]').click();
   await page.locator('#agentRuntimePrompt').fill('Retry this exact task safely.');
   await page.locator('#agentRuntimeStart').click();
-  await expect(page.locator('#agentRuntimeStatus')).toContainText('Запрос к Gateway не выполнен');
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Не удалось связаться с Gateway');
   await expect(page.locator('#agentRuntimePrompt')).toHaveValue('Retry this exact task safely.');
   await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
   await page.locator('#agentRuntimeStart').click();
@@ -2990,10 +2990,11 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await page.locator('#searchModeSummary').click();
   await expect(searchMenu).not.toHaveAttribute('open', '');
 
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
   await page.locator('#functionsMenuSummary').click();
-  await page.locator('[data-function="research"]').click();
+  await menu.locator('[data-function="agents"]').click();
   await expect(modal).toBeVisible();
-  await modal.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('#researchFunctionSettings')).toBeHidden();
   await modal.locator('[data-action="close-function-panel"]').first().click();
@@ -3027,7 +3028,7 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(page.locator('#connectorFunctionStatus')).toBeVisible();
   await page.locator('[data-action="close-function-panel"]').first().click();
   await summary.click();
-  await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Structured analysis/);
+  await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Agents/);
   await menu.locator('[data-function="agents"]').click();
   await expect(closePanel).toHaveAccessibleName('Close');
   await closePanel.click();
