@@ -36,8 +36,8 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Documentation parent main: 67ea5ba97e21f527d1eaff28cfddef274d2e98d7; this five-file plan/checkpoint refresh must be its direct child. Live queue: 0 open PRs, issue #111.
-- Exact-parent checks on 67ea5ba: Quality #43869711819 SUCCESS (7/7 incl. Chromium + published contract); Pages #43869711208 SUCCESS; Freshness #43869712009 PASS; Provenance #43869711675 PASS. Uncached published root metadata exactly matches 67ea5ba. This direct-child refresh updates all five required state files.
+- Documentation parent main: 400e42ce1d43a2e91410be9041d235167c1907cb; this five-file OR-012 state refresh is its direct child. Live queue: 0 open PRs, issue #111.
+- Last exact verified checks are on parent 67ea5ba: Quality #43869711819 SUCCESS (7/7), Pages #43869711208 SUCCESS, Freshness #43869712009 PASS, Provenance #43869711675 PASS, public root exact. Docs-only descendants b2fd9f2→400e42c have no exact-child checks yet; five-file refresh now aligns state for the next gate.
 - Last functional code checkpoint: 0d34aa1c70bb68e57a3856ba20d8b5f966c65038. Graphify #43827521090 SUCCESS (2,519 nodes / 5,868 edges / 90 files); Gateway #43826933347 SUCCESS (279 tests) on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.
 - AgentRun: IMPLEMENTED / VERIFIED PROTOTYPE. Strategies single, team_review and coder_review; same-run SQLite DAG, task-ID Fernet payloads and bounded context. One worker/model slot; team inference sequential; feature flag false; no tools, web, shell, filesystem, repository or local Coder sandbox.
 - Main chat still contains the legacy multiAgentEnabled / runMultiAgentResearch four-stage path beside AgentRun agentRuntimeStrategy. AgentRun does not yet receive full main-chat history, project memory or attachments; scope IDs do not grant access. Unification and explicit context grants are next.
@@ -45,7 +45,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 - Browser-local Workspace is already implemented: user-picked File System Access API handles, explicit read/write permission, exact diff, approval, IndexedDB recovery snapshot, rollback and restore. No AI AgentRun integration, shell, test runner, arbitrary paths, background watch or network transfer.
 - Fresh Pages route audit: public root revision exact 67ea5ba (uncached release-contract check); /landing/ is 404; /workspace/ exists; /notebook/ and /research/ are 404. Four studio names remain unresolved in saved owner prompts.
 - Mobile zoom: text-sm (14px) form controls likely trigger iPhone Safari focus zoom; mobile 16px controls proposed, physical iPhone validation pending.
-- Owner requests OR-009, OR-010 and OR-011 are archived verbatim in NOW.md. K.6.14/15/16 binding; K.5 remains the sole 15-point tracker. AgentRun live status overlay is specified in K.6.16 but not yet implemented. Offline model package, local AI Coder sandbox, full Memory/Sources UX and mobile redesign remain incomplete.
+- Owner requests OR-009 through OR-012 are archived verbatim in NOW.md. K.6.14–K.6.18 binding; K.5 remains the sole 15-point tracker. Plan 1 and Plan 2 are OWNER-APPROVED. AgentRun chat context/status, Agent Library, multi-model registry, translator/grammar packs and advanced menus remain staged; offline package, AI Coder sandbox, full Memory/Sources UX and mobile redesign are not yet implemented.
 - Assistant-side plugin inventory is in INTEL.md. Exa, Firecrawl, Context.dev, Superpowers and TinyFish were used. Coder value tools unavailable; BrowserAct CLI not installed. No app builder, OAuth, product connector or hosting/runtime migration was performed.
 - No new product code, dependencies, model downloads, secrets, host changes or external service provisioning in this documentation slice. Two implementation plans are PROPOSED, not approved or implemented.
 
@@ -90,3 +90,9 @@ The current implementation is one durable model worker, not a multi-agent team. 
 - `docs/superpowers/plans/2026-11-16-agent-run-main-chat-integration.md` — opt-in AgentRun from the main chat, bounded context packet, safe result return and K.6.16 live status overlay. Direct chat remains default; existing SQLite/Fernet runtime remains the only AgentRun runtime.
 - `docs/superpowers/plans/2026-11-16-deep-research-method-separation.md` — move the legacy four-stage same-model evidence pipeline into a distinct Deep Research method; preserve ResearchTrace and web evidence; keep effort level separate from research method.
 - Both plans require owner review before code. Main-only workflow and exact-head gates remain binding; no new framework, queue or runtime is proposed.
+
+
+## Current OR-012 checkpoint
+- Main SHA at this refresh parent: `400e42ce1d43a2e91410be9041d235167c1907cb`. This child refreshes all five mandatory state files. Previous exact checks on 67ea5ba passed; exact-child checks for the refreshed checkpoint must be rerun.
+- OR-012 is archived in NOW.md. Owner approved both plans. Start with Plan 1 TDD (bounded context packet, explicit source grants, same-chat result return, shared observer and collapsible status), then Plan 2 Deep Research method migration.
+- While implementing Phase A, use Exa/Firecrawl/Context.dev and the INTEL.md source register for later Agent Library, mini-model registry, Skills, research, translation/grammar and local Coder slices. Assistant-side plugins are not automatically aLandi runtime capabilities.

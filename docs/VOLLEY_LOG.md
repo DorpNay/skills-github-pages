@@ -558,3 +558,14 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Proposed Plan 2: separate Deep Research methods from AgentRun. Preserve the existing four-stage same-model evidence pipeline as a Deep Research method, not a general agent strategy; keep processing effort (fast/thorough) orthogonal; migrate old `multiAgentEnabled` state without data loss; don't expose blueprint-only team controls as executable.
 - Research disposition: retain the current native SQLite/Fernet AgentRun. OpenAI Agents SDK/AG-UI typed event patterns and Temporal replay semantics inform event UX; no SDK/runtime dependency adopted.
 - Both plans are PROPOSED and await owner review before implementation. No product code, dependencies, model downloads, host settings or credentials changed.
+
+
+## V-2026-11-16-OWNER-APPROVAL-009 — OR-012 archive and expanded agent/language acceptance
+
+- Parent main at the owner request: `b2fd9f23a0b8035fc7fc9d1432211c158824d285`; queue 0 open PRs, issue #111. Owner explicitly approved both AgentRun/main-chat Plan 1 and Deep Research method Plan 2.
+- Archived complete OR-012 verbatim in root `NOW.md`; added K.6.17 Agent Library/multi-model/teams/tools/simulation/learning/menu acceptance and K.6.18 embedded translator + licensed RU/EN/TH grammar packs. Updated existing K.5 rows and Agent Functions IA; no second backlog.
+- OR-012 confirms offline modular core, local-file AI Coder, local/server switching, mini-model pool, user-directed two-agent dialogue, bounded synthetic simulations, project-scoped sources and safe agent permissions. Advanced items are SPECIFIED/DEFERRED; do not present them as executable.
+- Marked both plans OWNER-APPROVED. No product code, dependencies, model downloads, credentials, host changes or runtime activation.
+- Docs commits followed: NOW archive `e4dae73`; K.5/K.6 update `a79509e`; menu IA `61b4480`; AgentRun plan `1de8b05`; Deep Research plan `400e42c`.
+- Parent checks on 67ea5ba were green: Quality #43869711819, Freshness #43869712009, Provenance #43869711675, Pages #43869711208. Exact-child checks for current state remain pending.
+- This direct-child checkpoint refreshes the five canonical state files together. Next: exact-child gates, then TDD Plan 1; continue plugin/upstream research in parallel.

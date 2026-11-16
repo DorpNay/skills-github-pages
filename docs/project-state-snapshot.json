@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "67ea5ba97e21f527d1eaff28cfddef274d2e98d7",
-    "main_commit_subject": "docs: refresh OR-011 agent status checkpoint",
-    "main_commit_date": "2026-11-16T12:46:57Z",
+    "main_sha": "400e42ce1d43a2e91410be9041d235167c1907cb",
+    "main_commit_subject": "docs: mark Deep Research separation plan owner-approved",
+    "main_commit_date": "2026-11-16T16:09:37Z",
     "last_functional_checkpoint_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
     "last_functional_milestone": "AgentRun single/team_review/coder_review UI and coder_review strategy; feature flag false, one worker/model slot, no tools/filesystem/shell; legacy main-chat pipeline still separate.",
     "main_quality_run": 43869711819,
@@ -270,17 +270,17 @@
     "queue_policy": "Direct main only, zero open PRs; issue #111 remains owner/environment gated. Owner authorizes direct main commits/merges and Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
     "note": "Parent f2b6 adds a pinned, push-triggered model acquisition workflow and provenance manifest, not application runtime code. Exact-head Quality (133 Chromium tests), Freshness, Provenance, Pages and artifact acquisition all passed; live root revision exact. Bonsai PTQ1_0 is staged as Actions artifact 14192531688; Qwen3.5-2B artifact 14032317541 also remains staged. Neither is installed on target; no live inference is claimed.",
-    "last_volley": "V-2026-11-16-AGENTRUN-PLANS-008",
+    "last_volley": "V-2026-11-16-OWNER-APPROVAL-009",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
-    "main_quality_status": "SUCCESS: Quality #43869711819, all 7 jobs including Chromium and published release contract, on exact main 67ea5ba.",
-    "main_pages_status": "SUCCESS: Pages deployment #43869711208; uncached published root metadata exactly matches 67ea5ba.",
+    "main_quality_status": "PENDING exact-child Quality/Chromium on 400e42c; last verified parent 67ea5ba passed 7/7.",
+    "main_pages_status": "PENDING exact-child Pages/root revision on 400e42c; parent 67ea5ba passed.",
     "main_graphify_status": "Graphify #43827521090 SUCCESS on functional code checkpoint 0d34aa1 (2,519 nodes / 5,868 edges / 90 files); no code changes in docs slice.",
     "main_freshness_run": 43842540858,
-    "main_freshness_status": "PASS: Freshness #43869712009 on exact main 67ea5ba.",
+    "main_freshness_status": "PENDING exact-child Freshness; parent 67ea5ba passed.",
     "main_provenance_run": 43841950694,
-    "main_provenance_status": "PASS: Provenance #43869711675 on exact main 67ea5ba.",
+    "main_provenance_status": "PENDING exact-child Provenance; parent 67ea5ba passed.",
     "owner_priority_summary": "First: implement one AgentRun-backed main-chat execution path with bounded, provenance-preserving context and explicit source inclusion; add a chat-anchored collapsible live status overlay. Keep direct chat as default and preserve SQLite/Fernet, concurrency=1, tools/filesystem/network disabled. Separately reclassify the legacy four-stage same-model evidence pipeline as a Deep Research method, preserve ResearchTrace/web evidence and keep effort level orthogonal. No new orchestrator.",
     "pr185_status": "PR #185 merged into main at f1fc73783a46bf38014acd0a8019914d5a3f14d4; model/runtime acquisition artifacts are staged in Actions, not installed.",
     "main_gateway_status": "Gateway #43826933347 SUCCESS: 279 tests on unchanged backend commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.",
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-AGENTRUN-PLANS-008",
+  "last_volley": "V-2026-11-16-OWNER-APPROVAL-009",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "67ea5ba97e21f527d1eaff28cfddef274d2e98d7",
+    "checkpoint_parent_sha": "400e42ce1d43a2e91410be9041d235167c1907cb",
     "merged_prs": [
       184,
       185
@@ -387,9 +387,10 @@
       "status": "PASS"
     },
     "next": [
-      "Owner review of Plan 1: AgentRun main-chat integration with bounded provenance-preserving context, explicit source inclusion, result/evidence return, cancellation and K.6.16 chat-anchored live status overlay.",
-      "Owner review of Plan 2: separate Deep Research method selector from AgentRun; migrate legacy multiAgentEnabled to multi_step_evidence_report while preserving ResearchTrace and web evidence.",
-      "After plan approval, implement Plan 1 first under TDD; keep direct chat default, AgentRun feature-off until host owner enables, one worker/model slot and no new orchestration runtime."
+      "Run exact-child Freshness, Provenance, Quality/Chromium and Pages/public-root gates on the OR-012 documentation state.",
+      "Implement approved Plan 1 under TDD: bounded provenance-preserving context packet and explicit source grants, AgentRun opt-in chat dispatch, same-chat result/evidence return, shared durable observer and K.6.16 live status.",
+      "Implement approved Plan 2: migrate legacy multiAgentEnabled to deepResearchMethod=multi_step_evidence_report, keeping effort and AgentRun strategy orthogonal.",
+      "Use plugins and INTEL.md sources in parallel for Agent Library/model registry, local Coder/offline package, Skills/Research catalog and translator/grammar; continue K.5."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -417,11 +418,11 @@
       "status": "PASS"
     },
     "owner_request": "OR-2026-11-16-010",
-    "last_volley": "V-2026-11-16-AGENTRUN-PLANS-008"
+    "last_volley": "V-2026-11-16-OWNER-APPROVAL-009"
   },
   "active_ui_pr": null,
   "open_prs": "No open pull requests. One open issue: #111.",
-  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-16-011",
+  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-16-012",
   "main_gateway_run": 43826933347,
   "main_quality_run": 43869711819,
   "main_pages_deployment_run": 43869711208,
@@ -432,29 +433,30 @@
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "SUCCESS: Quality #43869711819, all 7 jobs including Chromium and published release contract, on exact main 67ea5ba.",
-  "main_pages_status": "SUCCESS: Pages deployment #43869711208; uncached published root metadata exactly matches 67ea5ba.",
-  "main_freshness_status": "PASS: Freshness #43869712009 on exact main 67ea5ba.",
-  "main_provenance_status": "PASS: Provenance #43869711675 on exact main 67ea5ba.",
+  "main_quality_status": "PENDING on exact main 400e42c; last verified parent 67ea5ba Quality #43869711819 PASS 7/7.",
+  "main_pages_status": "PENDING on exact main 400e42c; last verified parent 67ea5ba Pages #43869711208 SUCCESS and public root exact.",
+  "main_freshness_status": "PENDING on exact main 400e42c; last verified parent 67ea5ba Freshness #43869712009 PASS.",
+  "main_provenance_status": "PENDING on exact main 400e42c; last verified parent 67ea5ba Provenance #43869711675 PASS.",
   "main_graphify_status": "SUCCESS: Graphify #43827521090 on code checkpoint 0d34aa1.",
   "main_gateway_status": "SUCCESS: Gateway #43826933347, 279 tests on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.",
-  "owner_request": "OR-2026-11-16-011",
+  "owner_request": "OR-2026-11-16-012",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "67ea5ba97e21f527d1eaff28cfddef274d2e98d7",
-    "pages_run": 43869711208,
-    "revision_verification": "Published GitHub Pages release contract #43869711819 fetched uncached canonical root and verified alandi-build-revision exactly 67ea5ba97e21f527d1eaff28cfddef274d2e98d7."
+    "root_revision": "400e42ce1d43a2e91410be9041d235167c1907cb",
+    "pages_run": null,
+    "revision_verification": "Parent 67ea5ba was published and independently verified; 400e42c and current child publication/root verification pending."
   },
   "owner_request_delta": {
-    "status": "PROPOSED",
+    "status": "SPECIFIED / PLANS APPROVED",
     "scope": "OR-011: one AgentRun-backed chat execution path with bounded, provenance-preserving context and explicit source inclusion; chat-anchored collapsible live status; separate Deep Research method selector preserving the existing evidence pipeline; keep effort level orthogonal and do not add duplicate runtime.",
-    "implementation_status": "Documentation/specification only. K.6.16 is SPECIFIED. AgentRun remains feature-off with one worker/model slot. Main chat still uses the legacy research pipeline; AgentRun does not receive chat context. Two plans are proposed and await owner review. No product code, dependencies, host configuration or external services changed.",
+    "implementation_status": "Documentation complete for OR-012. Plan 1 and Plan 2 owner-approved but not implemented. AgentRun remains feature-off and one worker/model slot. Browser-local Workspace still has no AI model/shell/test runner. Agent Library, multi-model runtime, swarm simulation, self-learning workflow, translator and grammar packs are SPECIFIED, not shipped.",
     "next": "Owner review of Plan 1 and Plan 2; after approval, implement AgentRun/main-chat integration and status overlay first under TDD, then Deep Research method separation.",
     "parent_main_sha": "67ea5ba97e21f527d1eaff28cfddef274d2e98d7"
   },
   "next": [
-    "Owner review of Plan 1: AgentRun main-chat integration with bounded provenance-preserving context, explicit source inclusion, result/evidence return, cancellation and K.6.16 chat-anchored live status overlay.",
-    "Owner review of Plan 2: separate Deep Research method selector from AgentRun; migrate legacy multiAgentEnabled to multi_step_evidence_report while preserving ResearchTrace and web evidence.",
-    "After plan approval, implement Plan 1 first under TDD; keep direct chat default, AgentRun feature-off until host owner enables, one worker/model slot and no new orchestration runtime."
+    "Run exact-child Freshness, Provenance, Quality/Chromium and Pages/public-root gates on the OR-012 documentation state.",
+    "Implement approved Plan 1 under TDD: bounded provenance-preserving context packet and explicit source grants, AgentRun opt-in chat dispatch, same-chat result/evidence return, shared durable observer and K.6.16 live status.",
+    "Implement approved Plan 2: migrate legacy multiAgentEnabled to deepResearchMethod=multi_step_evidence_report, keeping effort and AgentRun strategy orthogonal.",
+    "Use plugins and INTEL.md sources in parallel for Agent Library/model registry, local Coder/offline package, Skills/Research catalog and translator/grammar; continue K.5."
   ]
 }
