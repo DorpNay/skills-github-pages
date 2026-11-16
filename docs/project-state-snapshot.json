@@ -3,13 +3,13 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "d6e1bf912cb082537c986044b8f35b5b0a865eab",
-    "main_commit_subject": "docs(state): refresh all exact checkpoint handoff files",
+    "main_sha": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
+    "main_commit_subject": "docs(research): record verified claim and contradiction save",
     "main_commit_date": "2026-11-16T05:26:40Z",
     "last_functional_checkpoint_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
-    "last_functional_milestone": "Research Trace explicit Save now persists source quotes, then claims linked to successfully stored quotes, then contradictions linked to saved claims and source quotes. Stable source/claim/contradiction record IDs are stored in local trace; partial failures are counted. Exact-main Quality #43810404022 passed 134 Chromium tests and published contract.",
-    "main_quality_run": 43810404022,
-    "main_pages_deployment_run": 43810403266,
+    "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
+    "main_quality_run": 43810947390,
+    "main_pages_deployment_run": 43810946493,
     "functional_parent_gateway_run": 43696995842,
     "functional_parent_quality_run": 43696995891,
     "functional_parent_graphify_run": 43696995875,
@@ -182,8 +182,8 @@
         "checks": "Exact-head Quality #43402260210, Gateway #43402260215, Graphify #43402260236, Freshness #43402260242, Provenance #43402260337 and Dead Code #43402260315 passed; model/runtime manifests and acquisition workflows merged."
       }
     ],
-    "main_provenance_run": 43762493641,
-    "main_freshness_run": 43762493531,
+    "main_provenance_run": 43810947412,
+    "main_freshness_run": 43810947587,
     "main_graphify_run": 43810272399,
     "owner_task": "OR-2026-11-15-012",
     "pr131_head": "55d2ea792d11587a508d77aa9274f24105dafa79",
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-RESEARCH-TRACE-SAVE-VERIFIED-001",
+  "last_volley": "V-2026-11-16-RESEARCH-PROVENANCE-STANDARDS-001",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "d6e1bf912cb082537c986044b8f35b5b0a865eab",
+    "checkpoint_parent_sha": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Implement durable/resumable Deep Research runs with explicit lifecycle, checkpoints, retries and cancellation/restart tests.",
-      "Implement real Exa/Firecrawl provider adapters with provenance, budgets, cost accounting and fail-closed fallback.",
-      "Implement Notebook/report export; then continue K.5 in order."
+      "Complete K.1.1 owner-designed sidebar, project and chat UX from the archived owner acceptance contract.",
+      "Complete K.1.2 Functions menu with explicit capability dimensions and safe mode compatibility; do not conflate blueprint settings with executable capabilities.",
+      "Return to remaining K.1.3 Deep Research: durable/resumable runs, real Exa/Firecrawl adapters, budgets and Notebook/report export."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -419,7 +419,7 @@
   },
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
-  "owner_task": "LANDING-V2-2026-001 / K.5; AgentRun UI verified; Research Trace source/claim/contradiction Save verified; next durable research, provider adapters, budgets and Notebook/export.",
+  "owner_task": "LANDING-V2-2026-001 / K.5; AgentRun and Research Trace Save verified; next K.1.1, then K.1.2, then remaining Deep Research.",
   "main_gateway_run": 43797179042,
   "main_quality_run": 43810404022,
   "main_pages_deployment_run": 43810403266,
@@ -430,17 +430,17 @@
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "SUCCESS: Quality #43810404022, all 7 jobs; 134 Chromium tests and published-site release contract passed.",
-  "main_pages_status": "SUCCESS: Pages #43810403266 build/status/deploy; public root revision exact.",
-  "main_freshness_status": "SUCCESS: Freshness #43810404041 on exact checkpoint.",
-  "main_provenance_status": "SUCCESS: Provenance #43810403933 on exact checkpoint.",
+  "main_quality_status": "SUCCESS: Quality #43810947390, all 7 jobs; 134 Chromium tests and published-site release contract passed.",
+  "main_pages_status": "SUCCESS: Pages #43810946493 build/status/deploy; uncached public root revision exact.",
+  "main_freshness_status": "SUCCESS: Freshness #43810947587 on exact checkpoint.",
+  "main_provenance_status": "SUCCESS: Provenance #43810947412 on exact checkpoint.",
   "main_graphify_status": "SUCCESS: Graphify #43810272399 on functional code commit dc2e265.",
   "main_gateway_status": "No Gateway code change in UI Save slice; latest Gateway #43797179042 passed on backend parent 680ab022, Python 3.12/13/14.",
   "owner_request": "OR-2026-11-16-007",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "d6e1bf912cb082537c986044b8f35b5b0a865eab",
-    "pages_run": 43810403266,
-    "revision_verification": "Firecrawl uncached public root returned alandi-build-revision exactly d6e1bf912cb082537c986044b8f35b5b0a865eab."
+    "root_revision": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
+    "pages_run": 43810946493,
+    "revision_verification": "Firecrawl uncached public root returned alandi-build-revision exactly c2cbc4941ce86bc52e2034610c42ca10a308c47b."
   }
 }

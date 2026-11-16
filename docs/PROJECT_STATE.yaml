@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Parent main d6e1bf912cb082537c986044b8f35b5b0a865eab; 0 open PRs; issue #111. AgentRun UI Quality #43804109317 SUCCESS (7 jobs; 134 Chromium tests + published-site contract), Graphify #43804109318 SUCCESS, Pages #43804108675 SUCCESS; public root revision exact. Latest focused Gateway #43797179042 is on unchanged backend parent 680ab022."
+    status: "Active task LANDING-V2-2026-001. Parent main c2cbc4941ce86bc52e2034610c42ca10a308c47b; 0 open PRs; issue #111. AgentRun UI Quality #43804109317 SUCCESS (7 jobs; 134 Chromium tests + published-site contract), Graphify #43804109318 SUCCESS, Pages #43804108675 SUCCESS; public root revision exact. Latest focused Gateway #43797179042 is on unchanged backend parent 680ab022."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -18,7 +18,7 @@ project_state:
   root_orienter:
     status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 9aec46084686077e6975cf7deb504305953725e1; functional AgentRun UI checkpoint 377818cceef7099d6698c07561c715358d5d8ddd; 0 open PRs; issue #111. Quality, Graphify and Pages passed for the functional UI checkpoint."
     branch: "main"
-    base_main: "d6e1bf912cb082537c986044b8f35b5b0a865eab"
+    base_main: "c2cbc4941ce86bc52e2034610c42ca10a308c47b"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun backend bounded single/team_review DAG prototype is CI-verified on code-bearing parent 680ab022; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Current main is test-only and has a red AgentRun strategy-selector E2E (missing UI control). No Coder sandbox, host install or offline package."
@@ -294,7 +294,7 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "d6e1bf912cb082537c986044b8f35b5b0a865eab"
+  verified_main: "c2cbc4941ce86bc52e2034610c42ca10a308c47b"
   last_main_action: "Safe AgentRun UI on exact main 377818c. Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Public root revision exact."
   last_functional_checkpoint: "377818cceef7099d6698c07561c715358d5d8ddd"
   main_quality: "Quality #43804109317 SUCCESS: all 7 jobs; 134 Chromium tests and published-site contract passed."

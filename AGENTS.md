@@ -36,7 +36,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Docs-refresh parent main `d6e1bf912cb082537c986044b8f35b5b0a865eab`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
+- Docs-refresh parent main `c2cbc4941ce86bc52e2034610c42ca10a308c47b`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
 - Quality #43804109317 SUCCESS (7/7 jobs, 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exact.
 - AgentRun native bounded DAG and browser UI IMPLEMENTED / VERIFIED PROTOTYPE: same-run SQLite dependencies, dependency-gated synthesis, task-ID Fernet payloads; safe single/team_review; per-chat choice, General coordinator pin, strategy_id and actual task-state/dependency rendering.
 - One worker/model slot; Team Review calls sequential. Logical roles are not OS processes. Tools/shell/filesystem/network disabled; ALANDI_AGENT_RUNS_ENABLED=false. No Coder sandbox/browser worker.

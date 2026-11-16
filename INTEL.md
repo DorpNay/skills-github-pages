@@ -976,3 +976,13 @@ No external runtime, UI framework, model, agent platform or new package was inst
 
 **Limits/disposition:** one worker/model slot, serial inference, roles not OS processes, feature off, no tools/shell/filesystem/network, no Coder sandbox or target-host inference. Keep FastAPI + SQLite + Fernet; no competing orchestrator. Next: Research Trace Save, then K.5 order.
 
+
+
+## 2026-11-16 — Deep Research provenance and runtime tracing standards
+
+**Primary sources checked via Exa/Firecrawl:**
+- [W3C PROV-O](https://www.w3.org/TR/prov-o/) and [PROV-DM](https://www.w3.org/TR/prov-dm/): provenance is expressed through Entities, Activities and Agents, with relations such as `used`, `wasGeneratedBy`, `wasDerivedFrom` and `wasAssociatedWith`. Candidate mapping for aLandi: a research run is an Activity; model/provider/tool is an Agent; source page, captured quote, claim, contradiction and final report are Entities. Claims and contradictions derive from explicitly linked evidence records. This is a conceptual mapping, not a recommendation to migrate SQLite records into RDF.
+- [OpenTelemetry trace concepts](https://opentelemetry.io/docs/concepts/signals/traces/) and [Trace API](https://opentelemetry.io/docs/specs/otel/trace/api/): spans model bounded operations; parent/child spans describe synchronous stages; events record retries/checkpoints; span links model fan-in from separate retrieval/tool work. Use a root research span with stage and tool-call spans when observability is implemented.
+- [W3C Trace Context](https://www.w3.org/TR/trace-context/): `traceparent`/`tracestate` support cross-service correlation. If future provider adapters propagate context, validate external headers and never treat trace context as authentication or durable identity.
+
+**Disposition for aLandi:** keep durable `run_id`, checkpoints, dependencies, attempts and cancellation state in SQLite. Use telemetry `trace_id`/`span_id` only for observability correlation; telemetry is not a recovery database. Add spans/events when the K.1.13 observability work and real provider adapters are implemented. No RDF, OpenTelemetry SDK/exporter, or new runtime dependency was installed.
