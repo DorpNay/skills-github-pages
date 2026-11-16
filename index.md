@@ -704,6 +704,7 @@ permalink: /
         <span id="agentRunChatStatusText" class="min-w-0 truncate text-gray-300" role="status" aria-live="polite">Проверка состояния…</span>
         <span id="agentRunChatStatusChevron" aria-hidden="true" class="text-gray-500">⌄</span>
       </button>
+      <button id="agentRunChatRefresh" type="button" class="hidden rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-gray-300" aria-label="Проверить статус AgentRun" title="Проверить статус">↻</button>
       <button id="agentRunChatCancel" type="button" class="hidden rounded-lg border border-amber-700/60 px-2.5 py-1.5 text-[11px] text-amber-200" aria-label="Отменить AgentRun">Отменить</button>
       <button id="agentRunChatDismiss" type="button" class="hidden rounded-lg border border-gray-700 px-2 py-1.5 text-[11px] text-gray-400" aria-label="Скрыть статус AgentRun">×</button>
     </div>
@@ -3939,6 +3940,7 @@ let agentRuntimeRefreshPromise = null;
       if($('agentRunChatStatusText').textContent!==statusText)$('agentRunChatStatusText').textContent=statusText;
       const cancellable=Boolean(active)&&!new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']).has(state);
       $('agentRunChatCancel').classList.toggle('hidden',!cancellable);
+      $('agentRunChatRefresh').classList.toggle('hidden',!active&&!chat.activeAgentRunId);
       $('agentRunChatCancel').disabled=active?.cancelPending===true;
       $('agentRunChatDismiss').classList.toggle('hidden',!summary||Boolean(active));
       if(snapshot?.tasks)renderAgentRunChatTasks(snapshot.tasks);
@@ -4356,6 +4358,7 @@ let agentRuntimeRefreshPromise = null;
             if(Number.isInteger(events.next_after_event_id))run.afterEventId=Math.max(run.afterEventId,events.next_after_event_id);
           }
           const snapshot=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{signal});
+          run.observationError=false;
           latestSnapshot=snapshot;
           run.latestSnapshot=snapshot;
           renderAgentRunChatStatus(run,snapshot);
@@ -4378,6 +4381,8 @@ let agentRuntimeRefreshPromise = null;
           });
         }
         if(!signal.aborted&&agentRuntimeActiveRun?.id===run.id) {
+          run.observationError=true;
+          renderAgentRunChatStatus(run);
           $('agentRuntimeStatus').textContent=getUiLanguage()==='en'
             ? 'Observation window expired. The run may continue on the Gateway; use Check to resume observation.'
             : 'Окно наблюдения завершено. Задание может продолжаться на Gateway; нажмите «Проверить», чтобы продолжить наблюдение.';
@@ -4457,6 +4462,11 @@ let agentRuntimeRefreshPromise = null;
       const expanded=button.getAttribute('aria-expanded')!=='true';
       button.setAttribute('aria-expanded',String(expanded));details.classList.toggle('hidden',!expanded);
       $('agentRunChatStatusChevron').textContent=expanded?'⌃':'⌄';
+    });
+    $('agentRunChatRefresh').addEventListener('click',()=>{
+      const chat=getCurrentChat();
+      if(chat?.activeAgentRunId&&!agentRuntimeActiveRun)resumeAgentRunForChat(chat);
+      else if(agentRuntimeActiveRun?.chatId===chat?.id)void refreshAgentRunRuntime();
     });
     $('agentRunChatCancel').addEventListener('click',()=>{
       if(!agentRuntimeActiveRun||agentRuntimeActiveRun.chatId!==currentChatId)return;
