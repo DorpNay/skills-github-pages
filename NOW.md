@@ -10,7 +10,7 @@
 - **Routing:** latest explicit owner request controls task routing; never select an old PR as a default. Work only on authorized main.
 - **Live queue:** Open PRs: none. Open issues: #111, #186. #186 is a GitHub Skills Pages exercise created by github-actions[bot], not aLandi product scope.
 - **Documentation refresh parent:** `b1e0565908295fd11945107f701081065b1acc98` (direct parent for this five-file owner-request checkpoint).
-- **Owner requests:** OR-2026-11-16-009 through OR-2026-11-16-013 and OR-2026-11-17-001 through OR-2026-11-17-002 archived verbatim below. OR-014 reaffirms the existing K.5/K.6.14–K.6.18 scope and prioritizes verified landing completion; it adds no duplicate backlog. OR-012 confirms Plan 1 and Plan 2; new Agent Library/Simulation and Translator/Grammar requirements are binding in K.6.17–K.6.18. Prompt archived immediately after mandatory NOW/live-queue orientation.
+- **Owner requests:** OR-2026-11-16-009 through OR-2026-11-16-013 and OR-2026-11-17-001 through OR-2026-11-17-003 archived verbatim below. OR-014 reaffirms the existing K.5/K.6.14–K.6.18 scope and prioritizes verified landing completion; it adds no duplicate backlog. OR-012 confirms Plan 1 and Plan 2; new Agent Library/Simulation and Translator/Grammar requirements are binding in K.6.17–K.6.18. Prompt archived immediately after mandatory NOW/live-queue orientation.
 - **Requirements:** K.6.14–K.6.16 remain binding. K.6.17 adds the configurable Agent Library, multi-model routing, team dialogue, bounded simulation, explicit tool grants, skills/research catalog depth and staged self-improvement. K.6.18 adds an embedded translator and licensed RU/EN/TH grammar packs. K.5 remains the only 15-point tracker.
 - **Code checkpoint:** `b1e0565908295fd11945107f701081065b1acc98`. Plan 2 Deep Research separation is present in code: per-chat `deepResearchMethod`, deterministic migration, Research-panel selector, ResearchTrace method provenance and separate AgentRun dispatch. Exact Quality #43938748351 FAILED: 123/139 Chromium passed; 16 failed. Static/Ruff, security, integrity, context and Jekyll passed; public release-contract step skipped. Pages #43938748771 and Graphify #43938748449 passed on this exact SHA.
 - **AgentRun maturity:** IMPLEMENTED / EXACT-HEAD VERIFICATION PENDING (PARTIAL): single, team_review and coder_review; SQLite DAG, task-scoped encrypted payloads, bounded context packet, explicit chat routing and background observer. One worker/model slot, serial inference, feature flag false; no tools, shell, filesystem, repository or local Coder execution.
@@ -713,6 +713,298 @@ VERIFIED Безопасность и контракт:
 ```
 
 
+### OR-2026-11-17-003 — Architecture 2.0 review and free-first launch proposals
+
+````text
+# Ревизия архитектуры 2.0: комментарии и улучшения для бесплатного старта
+
+Версии и модели вроде Qwen3.5, Bonsai 2, whisper.cpp 1.9.5 и Piper 1.8.0 я не проверял, потому что они новее моих данных. Перед внедрением сверьте их по репозиториям. Ссылки ведут на официальные репозитории и документацию.
+
+## Главное
+
+1. **GitHub Pages конфликтует с «Same-Origin Studio».** Pages не умеет проксировать \`/api\` и задавать заголовки COOP/COEP. Из-за этого вы получите CORS и не сможете включить SharedArrayBuffer для WASM-потоков.
+2. **План слишком широкий для бесплатных ресурсов.** Из 18 разделов реализованы единицы. Сначала нужен вертикальный срез: чат → RAG → голос.
+3. **Часть компонентов дублируется или лишняя:**
+   - Qwen3-ASR и Whisper;
+   - Provider Registry и Model Registry;
+   - Cache API и Service Worker;
+   - Worker Leases и Fencing при одном узле.
+4. **FTS5 по умолчанию не работает с тайским и плохо работает с русским.** Это критично для RU/EN/TH.
+5. **Самый дешёвый «сервер» для вас — браузер пользователя.** Он может выполнять WebLLM, ASR, Pyodide и перевод.
+
+## Ресурсный ориентир
+
+Лучший бесплатный VPS для CPU-инференса — Oracle Cloud Always Free ARM (до 4 OCPU и 24 ГБ). Есть риски: бывает нехватка свободной ёмкости, а простаивающие инстансы могут быть изъяты. Если VPS не получится, архитектура должна работать на Cloudflare Pages и Workers плюс бесплатные API. Поэтому роутер нужно строить вокруг OpenAI-совместимого протокола (см. п. 2).
+
+## 1. Infrastructure
+
+**GitHub Pages + Jekyll → Cloudflare Pages + Vite.**
+- Cloudflare Pages бесплатный, поддерживает \`_headers\` и \`_redirects\`, делает preview на каждый PR.
+- \`/api/*\` можно направить на тот же домен через Tunnel, и CORS исчезнет.
+- Jekyll плохо подходит для модульного JS и дизайн-токенов. Vite даёт code splitting «из коробки».
+
+\`\`\`
+# public/_headers
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+\`\`\`
+
+\`\`\`yaml
+# /etc/cloudflared/config.yml
+ingress:
+  - hostname: app.example.com
+    path: ^/api/.*
+    service: http://127.0.0.1:8000
+  - service: http_status:404
+\`\`\`
+
+GitHub остаётся Source of Truth, а Actions остаются для CI. Docs: [Pages](https://developers.cloudflare.com/pages/), [Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/).
+
+**uv + systemd.** Хорошо. Добавьте \`uv sync --frozen\`, unix-сокет вместо TCP и секреты через systemd credentials, а не отдельный сервис:
+
+\`\`\`ini
+[Service]
+ExecStart=/opt/app/.venv/bin/uvicorn app.main:app --uds /run/app/api.sock --workers 1
+LoadCredential=groq_key:/etc/app/creds/groq_key
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/app
+MemoryMax=1G
+\`\`\`
+
+В коде секрет читается из \`$CREDENTIALS_DIRECTORY/groq_key\`. Раздел «Secrets Management» тогда закрывается этим файлом.
+
+## 2. Backend / API
+
+**aServi → тонкий роутер поверх OpenAI-совместимого протокола.** llama.cpp, Ollama, Groq, OpenRouter и Gemini выставляют \`/v1/chat/completions\`. Свой протокол не нужен. LiteLLM слишком тяжёл по памяти для бесплатного узла, поэтому пишите свой слой на 50 строк, с fallback по уровням (tier): браузер → локальный → бесплатный облачный.
+
+\`\`\`python
+import asyncio, os
+from openai import AsyncOpenAI
+from fastapi import HTTPException
+
+TIERS = [
+  ("local", AsyncOpenAI(base_url="http://127.0.0.1:8081/v1", api_key="x"), "qwen"),
+  ("groq",  AsyncOpenAI(base_url="https://api.groq.com/openai/v1",
+                        api_key=os.environ["GROQ_KEY"]), "llama-3.3-70b-versatile"),
+]
+
+async def chat_stream(messages, **kw):
+    for name, client, model in TIERS:
+        try:
+            return await asyncio.wait_for(
+                client.chat.completions.create(model=model, messages=messages,
+                                               stream=True, **kw), 20)
+        except Exception as e:
+            log.warning("tier_failed", tier=name, err=str(e))
+    raise HTTPException(503, "all tiers failed")
+\`\`\`
+
+Названия моделей и лимиты бесплатных тарифов меняются, проверяйте актуальные.
+
+**Auth.** Вместо своего Bearer/CORS поставьте перед туннелем Cloudflare Access (бесплатно до 50 пользователей). В FastAPI проверяйте заголовок \`Cf-Access-Jwt-Assertion\`.
+
+**Rate limiting.** Используйте бесплатное правило на уровне Cloudflare WAF, а внутри — [slowapi](https://github.com/laurentS/slowapi). SSE: [sse-starlette](https://github.com/sysid/sse-starlette).
+
+## 3. Frontend
+
+Модульность и design tokens делайте через Vite и CSS-переменные. Дополнительный «Lazy Loading / Code Splitting» отдельным пунктом не нужен, это динамический \`import()\`.
+
+\`\`\`js
+const studio = await import(\`./studios/\${name}.js\`); // отдельный чанк
+\`\`\`
+
+**Cache API → vite-plugin-pwa (Workbox).** Он решает и кеш, и оффлайн (раздел 16).
+
+## 4. Model Runtime
+
+**Ollama → llama.cpp \`llama-server\`.** Для продакшена на 4 ядрах это лучше, потому что один рантайм закрывает чат, embeddings и reranking. Есть prompt cache и слоты, память контролируется жёстко.
+
+\`\`\`ini
+ExecStart=/opt/llama/llama-server -m /models/chat-q4_k_m.gguf \\
+  --host 127.0.0.1 --port 8081 -c 8192 -t 4 -np 2 --cache-reuse 256 --jinja
+MemoryMax=6G
+\`\`\`
+
+Для embeddings запустите второй экземпляр с \`--embeddings --pooling last\` на порту 8082. Ollama оставьте для локальной разработки. Репозиторий: [llama.cpp](https://github.com/ggml-org/llama.cpp).
+
+**Reranker 0.6B на CPU** добавляет задержку, а выигрыш на старте мал. Начните с RRF-слияния (п. 11) и подключайте reranker только если метрики покажут провал.
+
+**Model Registry.** Достаточно \`models.toml\` в репозитории, а не отдельного сервиса.
+
+## 5. Chat & Context Engine
+
+Provider Registry (✓) и Model Registry (○) лучше слить в один реестр. Context Manager для малых моделей строится по бюджету токенов:
+
+\`\`\`python
+def build_context(system, pinned, history, retrieved, budget=6000):
+    used = count(system) + count(pinned)
+    out = []
+    for blk in [*retrieved, *reversed(history)]:   # свежее и релевантное вперёд
+        if used + (n := count(blk)) > budget: break
+        out.append(blk); used += n
+    return [system, *pinned, *reversed(out)]
+\`\`\`
+
+Считайте токены через \`/tokenize\` у llama-server, а не оценкой по символам.
+
+## 6. Memory & Storage
+
+**Delta Sync.** Не нужны CRDT и cr-sqlite. Хватит last-write-wins с гибридными часами:
+
+\`\`\`sql
+-- у каждой синхронизируемой таблицы: id TEXT PK (uuid7), updated_at INTEGER, deleted INTEGER
+SELECT * FROM messages WHERE updated_at > :cursor ORDER BY updated_at LIMIT 500;
+
+INSERT INTO messages(id, body, updated_at, deleted) VALUES (?,?,?,?)
+ON CONFLICT(id) DO UPDATE SET body=excluded.body, updated_at=excluded.updated_at,
+  deleted=excluded.deleted
+WHERE excluded.updated_at > messages.updated_at;
+\`\`\`
+
+**Серверный SQLite.** Включите \`PRAGMA journal_mode=WAL; synchronous=NORMAL; busy_timeout=5000;\` и держите одну точку записи.
+
+**Клиент.** Официальный [sqlite-wasm](https://sqlite.org/wasm) на OPFS даёт ту же схему, что и на сервере. IndexedDB остаётся для мелочей. Это упрощает «Global / Personal / Project Memory» до одной модели данных.
+
+## 7. Agent Runtime
+
+Worker Leases, Fencing и Idempotency нужны для кластера. При одном узле и SQLite хватит атомарного захвата задачи и уникального ключа идемпотентности:
+
+\`\`\`sql
+UPDATE jobs SET status='running', lease_until=unixepoch()+60, attempt=attempt+1
+WHERE id=(SELECT id FROM jobs WHERE status='queued' ORDER BY priority, id LIMIT 1)
+RETURNING *;
+-- jobs.idem_key TEXT UNIQUE; reaper: status='queued' WHERE status='running' AND lease_until<unixepoch()
+\`\`\`
+
+Для DAG посмотрите [pydantic-graph / Pydantic AI](https://ai.pydantic.dev/) или LangGraph с SQLite-чекпойнтером, чтобы не писать оркестратор с нуля.
+
+**Team / Agent Dialogue.** Цепочки агентов на 2–4B моделях часто ухудшают качество, потому что ошибки накапливаются. Отложите их, пока Direct и Specialist не пройдут evals.
+
+## 8. Tools & Sandbox
+
+**Capability Registry / Tool Contracts → MCP.** Формат уже стандартизован: JSON Schema на вход и выход, плюс готовые серверы. Python SDK: [modelcontextprotocol/python-sdk](https://github.com/modelcontextprotocol/python-sdk), описание: [modelcontextprotocol.io](https://modelcontextprotocol.io).
+
+**Sandbox.** Лучше всего для бесплатного старта — выполнять код в браузере через [Pyodide](https://pyodide.org) в Web Worker. Нагрузка уходит на клиента, а сервер не подвергается риску. Для серверного исполнения используйте [bubblewrap](https://github.com/containers/bubblewrap) и лимиты systemd, а не OpenShell/seccomp/Landlock «с нуля»:
+
+\`\`\`bash
+systemd-run --user --scope -p MemoryMax=512M -p CPUQuota=100% -p TasksMax=64 -- \\
+bwrap --unshare-all --die-with-parent --ro-bind /usr /usr --symlink usr/bin /bin \\
+  --symlink usr/lib /lib --proc /proc --dev /dev --tmpfs /tmp \\
+  --bind "$WORK" /work --chdir /work -- timeout 10 python3 main.py
+\`\`\`
+
+Учтите, что Ubuntu 24.04 по умолчанию ограничивает unprivileged user namespaces через AppArmor. Для bwrap нужен отдельный профиль.
+
+## 9. Skills
+
+Формат \`SKILL.md\` — правильный выбор: [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview). Для малого контекста критична прогрессивная загрузка. В промпт кладутся только \`name\` и \`description\`, а тело навыка подгружается при выборе. Skill Factory, Tests и Evals пока не нужны. Начните с реестра из папки и git-версий. Diff и Rollback тогда обеспечит сам git.
+
+## 10. Deep Research
+
+- **Поиск.** Самоподнимаемый SearXNG тяжёл. Берите бесплатные тарифы поисковых API (Brave, Tavily, Exa), условия смотрите актуальные.
+- **Извлечение.** [trafilatura](https://github.com/adbar/trafilatura) для чистого текста.
+- **Claim Verification** через 4B-модель ненадёжна. Citation Validation делайте детерминированно: сохраняйте цитату и проверяйте, что она реально есть в источнике.
+
+\`\`\`python
+norm = lambda s: " ".join(s.split()).casefold()
+def quote_ok(quote: str, source_text: str) -> bool:
+    return norm(quote) in norm(source_text)
+\`\`\`
+
+Модель пусть только предлагает цитаты, а подтверждает их код.
+
+## 11. RAG
+
+**FTS5 для RU/EN/TH.** Токенайзер \`unicode61\` не режет тайский на слова. Для русского \`porter\` не подходит, он только английский. Самый простой рабочий вариант — \`trigram\`:
+
+\`\`\`sql
+CREATE VIRTUAL TABLE chunks_fts USING fts5(text, content='chunks', content_rowid='id',
+                                           tokenize='trigram');
+\`\`\`
+
+Минус: запрос должен быть не короче 3 символов. Альтернатива — предварительная сегментация [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) и стемминг PyStemmer для русского.
+
+**Векторы без отдельной БД — [sqlite-vec](https://github.com/asg017/sqlite-vec).** Qwen3-Embedding умеет усечение размерности (MRL), поэтому храните 256 измерений вместо 1024: это в 4 раза дешевле по месту и поиску. Гибридный поиск через RRF одним запросом:
+
+\`\`\`sql
+CREATE VIRTUAL TABLE chunks_vec USING vec0(id INTEGER PRIMARY KEY, emb float[256]);
+
+WITH f AS (SELECT rowid AS id, row_number() OVER (ORDER BY rank) AS r
+           FROM chunks_fts WHERE chunks_fts MATCH :q LIMIT 30),
+     v AS (SELECT id, row_number() OVER (ORDER BY distance) AS r
+           FROM chunks_vec WHERE emb MATCH :qvec AND k = 30)
+SELECT id, SUM(1.0/(60+r)) AS s FROM (SELECT * FROM f UNION ALL SELECT * FROM v)
+GROUP BY id ORDER BY s DESC LIMIT 8;
+\`\`\`
+
+Если 0.6B-эмбеддер окажется медленным на CPU, возьмите \`multilingual-e5-small\` (мультиязычный, намного легче). Для RAG Evaluation достаточно своего скрипта Recall@5 и MRR на 50 размеченных вопросах, фреймворки не нужны.
+
+## 12. Connectors
+
+Для OAuth/PKCE используйте [Authlib](https://docs.authlib.org). Токены шифруйте через \`cryptography.Fernet\`, ключ берите из systemd credential. GitHub Connector лучше делать как GitHub App или fine-grained PAT с минимальными правами. Отдельный «Audit / Revoke» сводится к таблице \`audit_log\` и кнопке удаления токена.
+
+## 13. Document Processing
+
+**Набор парсеров → [markitdown](https://github.com/microsoft/markitdown).** Одна библиотека переводит PDF, DOCX, XLSX, PPTX, HTML, CSV, JSON и EPUB в Markdown. Docling и всё, что тянет PyTorch, на бесплатном узле будет слишком тяжёлым. \`pymupdf4llm\` быстрый, но у PyMuPDF лицензия AGPL, проверьте совместимость.
+
+**OCR.** Начните с Tesseract (\`rus+eng+tha\`), а VLM-OCR включайте только по запросу. GLM-OCR я не проверял, оцените его по RAM и скорости отдельно.
+
+## 14. Voice & Translation
+
+**ASR.** Дублирование Whisper и Qwen3-ASR уберите, выберите одно. Whisper large-v3-turbo на 4 ARM-ядрах, скорее всего, будет медленнее реального времени. Варианты:
+- **В браузере:** [transformers.js](https://github.com/huggingface/transformers.js) с Whisper на WebGPU или WASM. Бесплатно и приватно.
+- **На сервере:** [faster-whisper](https://github.com/SYSTRAN/faster-whisper) с \`vad_filter=True\`. Silero VAD уже встроен, отдельный ONNX-пайплайн не нужен.
+
+**TTS.** Piper ([OHF-Voice/piper1-gpl](https://github.com/OHF-Voice/piper1-gpl), лицензия GPL) силён для RU и EN. Хороший тайский голос уточните отдельно, я не уверен, что он есть. Как fallback используйте браузерный \`speechSynthesis\`: он бесплатен и обычно поддерживает \`th-TH\`.
+
+**Переводчик.** Не нагружайте 4B LLM обычным переводом. Для этого есть специализированные модели: Opus-MT через [CTranslate2](https://github.com/OpenNMT/CTranslate2), NLLB-200 distilled (поддерживает тайский) или встроенный Translator API в Chrome, если он доступен. LLM оставьте для объяснения грамматики.
+
+**Определение языка не требует модели.** Хватает проверки по алфавиту:
+
+\`\`\`python
+def script_lang(s: str) -> str:
+    c = {"th": 0, "ru": 0, "en": 0}
+    for ch in s:
+        o = ord(ch)
+        if 0x0E00 <= o <= 0x0E7F: c["th"] += 1
+        elif 0x0400 <= o <= 0x04FF: c["ru"] += 1
+        elif ch.isascii() and ch.isalpha(): c["en"] += 1
+    return max(c, key=c.get)
+\`\`\`
+
+## 15. Local AI Coder
+
+Для редактирования файлов используйте формат unified diff или search/replace-блоков и применяйте патч через \`git apply --check\`, а потом \`git apply\`. Rollback тогда равен \`git restore\`. Для Repository Mapping хватит \`tree-sitter\` и списка символов в духе repo-map у Aider. Отдельный «Code Reviewer» на 4B модели малополезен, замените его запуском линтера и тестов.
+
+## 16. Offline / Mini Distribution
+
+Самый дешёвый путь к оффлайну — PWA плюс клиентский инференс: [WebLLM](https://github.com/mlc-ai/web-llm) (WebGPU) или wllama (WASM). Это же становится нулевым уровнем в роутере из п. 2. Нативный Standalone Package откладывайте на потом, а SHA-256-манифест делайте простым JSON-файлом с хешами моделей.
+
+## 17. Performance & Observability
+
+- **L2 SQLite Response Cache** для чата почти не даст попаданий, потому что ответы недетерминированы. Кешируйте только embeddings и детерминированные результаты инструментов.
+- **L1 KV Cache** уже даёт llama-server (\`--cache-reuse\`, \`cache_prompt: true\`). Отдельная реализация не нужна.
+- **Observability.** OpenTelemetry тяжёл. Хватит \`structlog\`, [asgi-correlation-id](https://github.com/snok/asgi-correlation-id) для Request ID и таблицы \`metrics\` в SQLite с задержкой, числом токенов и ошибкой.
+
+## 18. N₂O Control Plane
+
+Концептуально хорошо. На старте реализуйте минимум: таблицу \`permissions\` (кто, какой инструмент, лимит) и \`budget\` (токены на день). Остальное, включая Decision Registry, можно вести в репозитории как \`docs/decisions/*.md\` (ADR).
+
+## Предлагаемый порядок
+
+1. Cloudflare Pages + Vite, туннель и единый origin (п. 1).
+2. Роутер с fallback и llama-server (пп. 2, 4).
+3. SQLite WAL, FTS5 trigram и sqlite-vec, гибридный поиск (пп. 6, 11).
+4. Голос и перевод в браузере (п. 14).
+5. Sandbox и агенты (пп. 7, 8) только после evals на Direct-режиме.
+
+Могу собрать это в один документ с чек-листом или расписать любой пункт в виде готового модуля с тестами.
+````
+
+
+
 ## JOURNAL — latest first
 - [2026-11-16] S-068 | OWNER PROMPT ARCHIVED / CONTINUATION ROUTED | Parent main `d8d538df3e2c2310ff68df1876b5a808d25c7c57`; live queue: 0 open PRs, issue #111. Owner message archived verbatim as OR-2026-11-16-013. The parent contains new RED tests at `gateway/tests/test_agent_run_context.py`; implementation module `gateway/agent_runtime/context.py` is intentionally absent. This five-file state refresh records the prompt and exact checkpoint before further work. No product runtime, model, dependency, connector, host or deployment changed. | Documentation checkpoint only; exact-child CI pending. | Run Exa research on bounded context/provenance/injection/idempotency patterns, then implement the strict packet module and worker/API wiring under TDD.
 
@@ -731,3 +1023,5 @@ VERIFIED Безопасность и контракт:
 - [2026-11-16] S-071 | FRESHNESS CHECKPOINT REPAIR | Parent main `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`; Freshness #43914831126 failed because snapshot main SHA and last_functional_checkpoint_sha were both `f3608cd3253eeb5fb04a9960a620e3c0985956ba`, while this is a documentation-only checkpoint. All 21 freshness checker unit tests passed; the live check requires documentation-only main to differ from the last functional code SHA. Correct last functional SHA to `1816fa821d7122c069ae4791cc2400a9cb2b1738` and keep current parent as `f19f57d1b3fcb190a417226a23a2162b00a3f5e6`. No product code changed. | Root cause is checkpoint metadata, not application behavior. | Re-run exact-child Freshness/Provenance/Quality/Pages; do not alter functional code or weaken the gate.
 
 - [2026-11-17] S-073 | OWNER REQUEST OR-2026-11-17-002 ARCHIVED / WORKSTREAM ROUTED | Parent main `b1e0565908295fd11945107f701081065b1acc98`; 0 open PRs; open issues #111 and #186 (#186 is a bot-created GitHub Skills Pages exercise, outside aLandi scope). Archived the latest owner message verbatim. Reaffirmed long-running multi-step work, external-source review and the single priority of completing the existing LANDING-V2-2026-001 programme; no parallel backlog created. Plan 2 source and E2E diagnostics were inspected: Quality #43938748351 FAILED (123/139 Chromium passed; 16 failed); static/Ruff, security, integrity, context and Jekyll passed; Pages #43938748771 and Graphify #43938748449 succeeded on exact parent. W3C WCAG 2.2/WAI-ARIA APG, Apple HIG/WWDC navigation, Material 3 adaptive navigation and web.dev Core Web Vitals/responsive design were consulted. | Documentation intake only; no product code changed. Exact parent tests are not green. | Repair missing AgentRun fetch/error helpers, profile-import method migration and stale Research E2E selectors/copy; preserve all security and workflow assertions.
+
+- [2026-11-17] S-074 | OWNER REQUEST OR-2026-11-17-003 ARCHIVED | Parent main `b7b72dfa3f6b6dfd950e70e986e96d0a46fd4e4a`; live queue: 0 open PRs, issue #111 plus unrelated bot exercise #186. Archived the complete architecture 2.0 review verbatim before implementation. The review is treated as candidate guidance; no architecture claim, model/version, dependency, host, provider or migration accepted from the supplied text without source/compatibility/evaluation checks. Current exact-HEAD Quality #43968006783: 138/139 Chromium passed; one failing Functions-panel E2E attempts to click a close control after the panel was already closed by opening Search settings. Static/Ruff, Security, Integrity, Context, Jekyll and Pages passed; Graphify passed; published release-contract job skipped. | Documentation intake only; no product code changed. | Fix the deterministic stale E2E sequence without weakening assertions; rerun exact-head Quality and record the result.
