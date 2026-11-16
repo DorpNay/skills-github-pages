@@ -714,6 +714,8 @@ test('settings profile import restores preferences while preserving existing pro
     buffer: Buffer.from(JSON.stringify(profile))
   });
   await expect(page.locator('#toast')).toContainText('Профиль импортирован');
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await openAdditionalSettings(page);
   await expect(page.locator('#providerPreset')).toHaveValue('custom');
   await expect(page.locator('#baseUrl')).toHaveValue('https://api.example.test/v1');
   await expect(page.locator('#modelName')).toHaveValue('imported-model-id');
