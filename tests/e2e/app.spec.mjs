@@ -2426,7 +2426,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   await expect(page.locator('#agentRuntimeStart')).toBeEnabled();
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
-  await expect(page.locator('#agentRuntimeEvents')).toContainText('run_started');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('Выполнение начато');
   await expect(page.locator('#agentRuntimeOutput')).toContainText('Safe text answer');
   await expect(page.locator('#agentRuntimeOutput img')).toHaveCount(0);
   expect(submitted).toEqual({
@@ -4139,3 +4139,76 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
   expect(persisted.messages.at(-2)).toMatchObject({ role: 'user', content: 'Continue the agreed work.' });
   expect(persisted.messages.at(-1)).toMatchObject({ role: 'assistant', content: 'AgentRun answer returned to the active chat.' });
 });
+
+test('AgentRun chat status is visible, collapsible, safe and resumable from the chat surface', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const chatId = await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+    return localStorage.getItem('ai_current_chat_v87');
+  });
+  let cancelCalls = 0;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: {
+      agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false }
+    } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } });
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') return route.fulfill({ status: 202, json: {
+      run: { run_id: 'run-e2e-status', state: 'queued' },
+      status_url: '/v1/agent-runs/run-e2e-status',
+      events_url: '/v1/agent-runs/run-e2e-status/events'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-status/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-status',
+      events: [{ event_id: 1, event_type: 'run_started', metadata: { stage: 'model_execution', private_prompt: 'MUST_NOT_RENDER' } }],
+      next_after_event_id: 1, state: 'running'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-status' && route.request().method() === 'GET') return route.fulfill({ json: {
+      run: { run_id: 'run-e2e-status', state: 'running' },
+      output_available: false, output_expired: false,
+      tasks: [{ task_id: 'task-e2e-1', task_key: 'model-completion', state: 'leased', depends_on: [] }]
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-status' && route.request().method() === 'DELETE') {
+      cancelCalls += 1;
+      return route.fulfill({ json: { run: { run_id: 'run-e2e-status', state: 'cancelled' } } });
+    }
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#executionModeToggle').click();
+  await expect(page.locator('#executionModeToggle')).toHaveText('A');
+  await page.locator('#userInput').fill('Show the live status surface.');
+  await page.locator('#sendBtn').click();
+  const status = page.locator('#agentRunChatStatus');
+  await expect(status).toBeVisible();
+  await expect(page.locator('#agentRunChatStatusText')).toContainText('Выполняется');
+  await expect(page.locator('#functionPanelModal')).toBeHidden();
+  await expect(status).not.toContainText('MUST_NOT_RENDER');
+  await expect(status).not.toContainText('model_execution');
+  await expect(page.locator('#agentRunChatStatusDetails')).toBeHidden();
+  await page.locator('#agentRunChatStatusToggle').click();
+  await expect(page.locator('#agentRunChatStatusToggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#agentRunChatTasks')).toContainText('Специалист');
+  await expect(page.locator('#agentRunChatEvents')).toContainText('Выполнение начато');
+  await page.locator('#agentRunChatCancel').click();
+  await expect(page.locator('#agentRunChatStatusText')).toContainText('Отменено');
+  await expect(page.locator('#agentRunChatDismiss')).toBeVisible();
+  expect(cancelCalls).toBe(1);
+  const saved = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id);
+  });
+  expect(saved.activeAgentRunId).toBeUndefined();
+  expect(saved.agentRunStatusSummary).toMatchObject({ runId: 'run-e2e-status', state: 'cancelled' });
+});
+
