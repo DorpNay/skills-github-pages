@@ -3,7 +3,7 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "b543e9f4b41d4acc46f59b39c05ed228704269a1",
+    "main_sha": "159f371675c9d82e65c8cd8d0e4a622e842e4d6f",
     "main_commit_subject": "test(ui): reopen settings for profile round-trip assertion",
     "main_commit_date": "2026-11-16T05:37:43Z",
     "last_functional_checkpoint_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
@@ -436,11 +436,22 @@
   "main_provenance_status": "SUCCESS: Provenance #43810947412 on exact checkpoint.",
   "main_graphify_status": "SUCCESS: Graphify #43810272399 on functional code commit dc2e265.",
   "main_gateway_status": "No Gateway code change in UI Save slice; latest Gateway #43797179042 passed on backend parent 680ab022, Python 3.12/13/14.",
-  "owner_request": "OR-2026-11-16-007",
+  "owner_request": "OR-2026-11-16-008",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
     "root_revision": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
     "pages_run": 43810946493,
     "revision_verification": "Firecrawl uncached public root returned alandi-build-revision exactly c2cbc4941ce86bc52e2034610c42ca10a308c47b."
-  }
+  },
+  "owner_request_delta": {
+    "status": "SPECIFIED",
+    "scope": "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance.",
+    "implementation_status": "Documentation only; no product code, dependencies, model downloads, host settings or deployment changed.",
+    "next": "Inspect AgentRun/D-024/K.6.3 implementation and tests; choose one bounded, reversible vertical slice; then verify exact-head CI."
+  },
+  "next": [
+    "Inspect current AgentRun coordinator/subagent DAG, worker/API lifecycle, tests and D-024/K.6.3; identify the smallest remaining gap and its acceptance/rollback.",
+    "Strategically inventory assistant-side plugins and existing external-source register; map actual capabilities, scopes, costs, risks and duplicates without equating plugins with aLandi integrations.",
+    "Continue the existing K.5 15-point programme, including owner-designed mobile UX, Memory/Sources, offline package selection/local-server switching, accessibility and exact-head CI."
+  ]
 }

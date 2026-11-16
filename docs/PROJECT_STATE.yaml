@@ -598,3 +598,11 @@ current_execution_checkpoint:
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
   next: ["Verify exact-head CI for Research Trace schema v4 structured same-model review: Quality/Chromium, Gateway, Freshness, Provenance, Graphify, Pages and public revision.","If green, connect explicit Save to Gateway to claim/contradiction APIs using only evidence IDs returned by successful source-quote writes.","Then implement independent Exa/Firecrawl provider adapters and durable resumable research run state; do not describe same-model review as independent."]
 
+
+owner_request_delta:
+  id: "OR-2026-11-16-008"
+  status: "SPECIFIED"
+  parent_main_sha: "159f371675c9d82e65c8cd8d0e4a622e842e4d6f"
+  scope: "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance."
+  implementation_status: "Documentation only; no product code, dependencies, model downloads, host settings or deployment changed."
+  next: "Inspect AgentRun/D-024/K.6.3 implementation and tests; choose one bounded, reversible vertical slice; then verify exact-head CI."

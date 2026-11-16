@@ -66,3 +66,11 @@ Exa Search/Contents, Firecrawl Search/Scrape, LangChain Deep Agents Subagents, L
 ## AgentRun orchestration source refresh — 2026-11-16
 
 The current implementation is one durable model worker, not a multi-agent team. Use the existing SQLite journal and encrypted payload vault as the base; add per-task payload references and same-run dependency edges before exposing specialist teams. Reuse the concepts in OpenAI Agents SDK, Deep Agents, Temporal and Microsoft Agent Framework, but do not add a second orchestration runtime or imply parallel model inference while the configured model slot is 1. Details and primary URLs are in INTEL.md and D-024 in DECISIONS.md.
+
+
+## Owner continuation — OR-2026-11-16-008
+- The complete owner prompt is archived verbatim in root NOW.md; the expanded acceptance delta is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.6.14. K.5 remains the only 15-point tracker.
+- After documentation, the first implementation workstream is the existing AgentRun/coordinator/subagent architecture (D-024/K.6.3); inspect live source/tests before choosing a slice. Do not add a competing orchestrator or imply logical roles are parallel workers.
+- Then map the owner's assistant-side plugins and recent external sources to actual workstreams. Plugin availability is not aLandi product integration. Base44 is not a replacement source of truth; no app migration or deployment is authorized by this request.
+- Preserve the specified compact mobile/sidebar/project/chat/Memory/Sources UX and offline component-selection/local-server-switching acceptance in K.6.14. No feature is implemented merely because it is documented.
+- Continue on main only; direct commits and automatic Pages publication are authorized. No VPS deployment, paid provisioning, credentials/secrets, destructive operations, force-push, rebase/reset or history rewrite.
