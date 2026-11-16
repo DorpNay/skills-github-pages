@@ -643,3 +643,11 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - External-source review of Cloudflare Pages, FTS5 trigram, Qwen3.5-4B, Bonsai 2, whisper.cpp v1.9.5 and Piper v1.8.0 is recorded in `INTEL.md`. This is source validation only; no hosting/runtime/model/dependency migration, host action, new permission or capability promotion.
 - **STATUS:** Plan 2 method separation IMPLEMENTED / VERIFIED on exact main; AgentRun remains PARTIAL and host-feature-off. Freshness and Provenance are pending this direct-child state refresh.
 - Next: inspect the current Direct/search default and legacy preference path, then implement model-only Direct for new chats with explicit search opt-in.
+
+## V-2026-11-17-OR003-STATE-YAML-REPAIR
+
+- Parent main exact: `fa8f0a92cf8b51a68145a9c6dae80735afac9747`; 0 open PRs; issues #111 and #186 (#186 unrelated).
+- Provenance #43973857634 identified a parser error in `docs/PROJECT_STATE.yaml`: two values had a semicolon after the closing YAML quote. Removed exactly those two punctuation characters; no checker or gate changed.
+- Parent Freshness #43973857682 passed. Product/test SHA `6117ceb6d3360bc0b47ef3179d73536f854cebf4` remains verified: Quality #43970945532 7/7 (139 built-app Chromium + 1 published-site smoke), Pages #43970944970, Graphify #43970945690, public root exact.
+- This direct-child state refresh updates NOW/AGENTS/PROJECT_STATE/snapshot/VOLLEY_LOG together. Exact-child Freshness/Provenance/Quality/Pages are pending.
+- Next: pass metadata and exact child gates, then continue Direct/search default slice.

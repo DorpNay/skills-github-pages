@@ -16,14 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 6117ceb6d3360bc0b47ef3179d73536f854cebf4; 0 open PRs; issues #111 and #186 (#186 is unrelated). Plan 1 remains partial; Plan 2 is verified on exact main; K.6.17–K.6.18 remain staged; OR-2026-11-17-003 archived."
+    status: "NOW.md is the sole first-read checkpoint. Parent main fa8f0a92cf8b51a68145a9c6dae80735afac9747; 0 open PRs; issues #111 and #186 (#186 is unrelated). Plan 1 remains partial; Plan 2 is verified on exact main; K.6.17–K.6.18 remain staged; OR-2026-11-17-003 archived."
     branch: "main"
-    base_main: "6117ceb6d3360bc0b47ef3179d73536f854cebf4"
+    base_main: "fa8f0a92cf8b51a68145a9c6dae80735afac9747"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 2
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and chat route/status remain partial; bounded selected context, same-chat result and collapsible status are present. Plan 2 Deep Research method separation is verified by exact Quality/Chromium. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; offline package is not installed."
-    next: "Inspect Direct chat defaults and hidden search compatibility path; implement model-only default for new Direct chats with explicit search opt-in and preservation of legacy per-chat settings. Then continue K.5/K.6.17–K.6.18.";
-
+    next: "Inspect Direct chat defaults and hidden search compatibility path; implement model-only default for new Direct chats with explicit search opt-in and preservation of legacy per-chat settings. Then continue K.5/K.6.17–K.6.18."
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -191,7 +190,7 @@ latest_checkpoint:
   main_pages_status: "success; public root revision 4514f69d19ffce47dfa1c0bdd517931ebe1c0dc3; /landing/ HTTP 404"
   open_prs_at_checkpoint: []
   open_issues_at_checkpoint: [111]
-  next: "Verify exact-head Quality, Freshness, Provenance, Graphify, Pages and public revision for the two AgentRun regressions."
+  next: "Run exact-child Freshness/Provenance/Quality/Pages; then implement model-only Direct default with explicit search opt-in while preserving legacy preferences and V1 behavior."
 
 
 architecture_map_checkpoint:
@@ -294,22 +293,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "6117ceb6d3360bc0b47ef3179d73536f854cebf4"
-  last_main_action: "Plan 2 browser regression repaired in tests/e2e/app.spec.mjs: reopen Research after Search settings closes it, then verify close and focus return. Exact Quality #43970945532 passed 7/7 jobs including 139 built-app Chromium tests and 1 published-site smoke; Pages #43970944970 succeeded; Graphify #43970945690 passed. Fresh uncached public root HTTP 200 returned alandi-build-revision 6117ceb6d3360bc0b47ef3179d73536f854cebf4. OR-003 was archived; official upstream review is recorded in INTEL.md. Current test-only follow-up did not change product runtime."
+  verified_main: "fa8f0a92cf8b51a68145a9c6dae80735afac9747"
+  last_main_action: "Plan 2 product/test baseline verified on 6117ceb6d3360bc0b47ef3179d73536f854cebf4: Quality #43970945532 passed 7/7 (139 built-app Chromium + 1 published-site smoke); Pages #43970944970 succeeded; Graphify #43970945690 passed; public root HTTP 200 returned exact 6117ceb6d3360bc0b47ef3179d73536f854cebf4. State parent fa8f0a92cf8b51a68145a9c6dae80735afac9747 Freshness #43973857682 passed; Provenance #43973857634 found two trailing semicolons after YAML quoted values, corrected in this child without weakening the checker. Documentation-only state correction."
   last_functional_checkpoint: "ca1a034ba036f4a884974ad4922222bd40d2822d"
   main_quality: "SUCCESS #43970945532 on exact parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4: 7/7 jobs, 139 built-app Chromium tests and 1 published-site smoke passed; Security, Jekyll, Integrity, Context and Ruff passed."
-  main_freshness: "PENDING direct-child state refresh; exact current main parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
+  main_freshness: "PASS #43973857682 on parent fa8f0a92cf8b51a68145a9c6dae80735afac9747; rerun on this direct child."
   main_graphify: "SUCCESS #43970945690 on exact code/test parent 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
   main_gateway: "Not rerun: no Gateway/backend file changed; latest Gateway #43932615910 passed on the preceding backend baseline."
-  main_provenance: "PENDING direct-child state refresh."
+  main_provenance: "Previous #43973857634 failed only on two trailing semicolons in PROJECT_STATE.yaml; corrected by this direct child, rerun required."
   main_pages: "SUCCESS #43970944970; uncached public root HTTP 200 reports exact alandi-build-revision 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111, 186]
   runtime_boundary: "Plan 2 is implemented and exact-head verified. AgentRun remains partial: one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder execution. Browser Workspace is not a sandbox; offline and real target-device voice remain unverified."
-  next: "Inspect and implement the Direct/search-by-default contract with new chats model-only, explicit search opt-in and safe legacy preference migration; then continue K.5/K.6.17–K.6.18.";
-
-
-
+  next: "Inspect and implement the Direct/search-by-default contract with new chats model-only, explicit search opt-in and safe legacy preference migration; then continue K.5/K.6.17–K.6.18."
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"

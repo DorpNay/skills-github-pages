@@ -36,14 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-17)
 
-- Parent main exact: `6117ceb6d3360bc0b47ef3179d73536f854cebf4`; 0 open PRs; issues #111 and #186. #186 is a GitHub Skills Pages exercise created by github-actions[bot], not aLandi product scope.
-- Plan 2 Deep Research separation is IMPLEMENTED / VERIFIED on this exact main. Per-chat `deepResearchMethod`, deterministic migration from `multiAgentEnabled`, dedicated Research selector, ResearchTrace method provenance and separate AgentRun dispatch are covered by Quality #43970945532: 7/7 jobs, 139 built-app Chromium tests and 1 published-site Chromium smoke passed.
-- Pages deployment #43970944970 succeeded; a fresh public root fetch returned HTTP 200 and exact `alandi-build-revision=6117ceb6d3360bc0b47ef3179d73536f854cebf4`. Graphify #43970945690 passed. Freshness and Provenance are pending this direct-child documentation refresh.
-- The remaining Plan 2 browser regression was a stale test sequence: opening Search settings closes Research; the test now reopens Research before testing its close control and focus return. No assertion was removed or weakened.
-- AgentRun remains IMPLEMENTED / PARTIAL: single, team_review and coder_review; SQLite DAG, encrypted task payloads, bounded context, same-chat result and background status observer. One worker/model slot, serialized inference, host flag false; no tools, web, shell, filesystem, repository execution or local Coder sandbox.
-- OR-2026-11-17-003 is archived in NOW.md. Source-validated architectural findings and deferred technology candidates are recorded in INTEL.md; no hosting migration, runtime, dependency, model, provider fallback, sandbox or permission change was accepted.
-- K.6.14–K.6.18 remain binding; K.5 is the only 15-point tracker. Agent Library, multi-model registry, user-directed team dialogue, bounded simulation, Skills/Research catalog depth, local AI Coder, modular offline package and RU/EN/TH translator/grammar remain staged, not shipped.
-- Next bounded slice: inspect Direct chat defaults and the hidden search compatibility path; make new Direct chats model-only with explicit search opt-in while preserving saved legacy chat preferences and V1 behavior.
+- Parent main for this direct state correction: `fa8f0a92cf8b51a68145a9c6dae80735afac9747`; 0 open PRs; issues #111 and #186. #186 is an unrelated GitHub Skills Pages exercise.
+- Product/test SHA `6117ceb6d3360bc0b47ef3179d73536f854cebf4` has Plan 2 Deep Research separation IMPLEMENTED / VERIFIED. Quality #43970945532 passed 7/7 jobs (139 built-app Chromium + 1 published-site smoke); Pages #43970944970 and Graphify #43970945690 passed; public root revision matched.
+- Previous state parent Freshness #43973857682 passed; Provenance #43973857634 caught two trailing semicolons in quoted YAML values. This child corrects punctuation only; no validation weakened. Rerun exact-child gates.
+- AgentRun remains IMPLEMENTED / PARTIAL: SQLite DAG, encrypted payloads, bounded context, same-chat result and collapsible status; one worker/model slot, serial inference, host flag false, no tools/web/shell/filesystem/repository execution/local Coder sandbox.
+- OR-2026-11-17-003 is archived in NOW.md; primary-source review/disposition is in INTEL.md. No hosting migration, runtime/dependency/model change, provider fallback, sandbox or permission change accepted.
+- K.6.14–K.6.18 remain binding; K.5 is the only 15-point tracker. Agent Library, model routing, dialogue/simulation, Skills/Research depth, local Coder/offline package and RU/EN/TH translator/grammar remain staged.
+- Next: inspect Direct defaults and legacy search preference handling; make new Direct chats model-only with explicit search opt-in while preserving existing chat preferences and V1 behavior.
 
 ## Targeted UI source review — 2026-11-16
 
