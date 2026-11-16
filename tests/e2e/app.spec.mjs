@@ -2332,6 +2332,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: ['general','coder','reviewer','researcher'].map(id => ({ id, label: id, status: 'configured', tools: [], filesystem: false, network: false, independent_process: false })),
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -2400,6 +2401,7 @@ test('AgentRun Check replaces the observer without detaching the active run', as
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -2457,6 +2459,7 @@ test('AgentRun treats budget_exhausted as a terminal state', async ({ page }) =>
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -2502,6 +2505,7 @@ test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', 
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -2551,6 +2555,7 @@ test('AgentRun reuses the idempotency key after an ambiguous network failure', a
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -2604,6 +2609,7 @@ test('AgentRun submission errors are bounded and do not erase the task prompt', 
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
       profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [{ id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false }],
       models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
       tools_enabled: false, filesystem_enabled: false, network_enabled: false
     } });
@@ -3862,5 +3868,77 @@ test('obsolete Tavily Tools and Web Search settings are removed while web scope 
   await expect(page.locator('#searchToolsSettings')).toHaveCount(0);
   await expect(page.locator('#tavilyKey')).toHaveCount(0);
   await expect(page.locator('#searchModeSummary')).toBeVisible();
+});
+
+test('AgentRun persists the selected safe strategy and submits it without escalating capabilities', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_model_name', 'qwen3.5:4b');
+  });
+  let submitted = null;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const url = new URL(route.request().url());
+    if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
+    if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
+      profiles: [{ id: 'general', label: 'General', status: 'configured', tools: [], filesystem: false, network: false, independent_process: false }],
+      strategies: [
+        { id: 'single', label: 'One specialist', status: 'available', task_count: 1, execution_mode: 'single', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
+        { id: 'team_review', label: 'Analyst + reviewer + coordinator', status: 'available', task_count: 3, roles: ['researcher', 'reviewer', 'general'], execution_mode: 'fan_out_fan_in', context_isolation: 'per_task', model_concurrency: 1, parallel_inference: false, tools: [], filesystem: false, network: false },
+        { id: 'unsafe_shell', label: 'Unsafe shell team', status: 'available', task_count: 2, execution_mode: 'parallel', model_concurrency: 2, parallel_inference: true, tools: ['shell'], filesystem: true, network: true }
+      ],
+      models: ['qwen3.5:4b'], worker_concurrency: 1, max_pending_runs: 4,
+      tools_enabled: false, filesystem_enabled: false, network_enabled: false
+    } }); 
+    if (url.pathname === '/v1/agent-runs' && route.request().method() === 'POST') {
+      submitted = route.request().postDataJSON();
+      return route.fulfill({ status: 202, json: {
+        run: { run_id: 'run-e2e-team-strategy', state: 'queued' },
+        status_url: '/v1/agent-runs/run-e2e-team-strategy',
+        events_url: '/v1/agent-runs/run-e2e-team-strategy/events'
+      } });
+    }
+    if (url.pathname === '/v1/agent-runs/run-e2e-team-strategy/events') return route.fulfill({ json: {
+      run_id: 'run-e2e-team-strategy', events: [], next_after_event_id: 0, state: 'succeeded'
+    } });
+    if (url.pathname === '/v1/agent-runs/run-e2e-team-strategy' && route.request().method() === 'GET') return route.fulfill({ json: {
+      run: { run_id: 'run-e2e-team-strategy', state: 'succeeded' },
+      output: 'Three-task team review completed serially.', output_available: true, events: []
+    } });
+    return route.fulfill({ status: 404, json: { detail: 'not found' } });
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeStrategy')).toBeEnabled();
+  await expect(page.locator('#agentRuntimeStrategy option')).toHaveCount(2);
+  await expect(page.locator('#agentRuntimeStrategy option[value="unsafe_shell"]')).toHaveCount(0);
+  await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('single');
+  await page.locator('#agentRuntimeStrategy').selectOption('team_review');
+  await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('последовательно');
+  const saved = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    return chats.find(chat => chat.id === id)?.agentRuntimeStrategy;
+  });
+  expect(saved).toBe('team_review');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeStrategy')).toHaveValue('team_review');
+  await page.locator('#agentRuntimePrompt').fill('Run the bounded team review on this explicit task.');
+  await page.locator('#agentRuntimeStart').click();
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
+  expect(submitted).toEqual({
+    prompt: 'Run the bounded team review on this explicit task.',
+    scope_kind: 'conversation',
+    scope_id: expect.any(String),
+    profile_id: 'general',
+    model_id: 'qwen3.5:4b',
+    strategy_id: 'team_review'
+  });
 });
 
