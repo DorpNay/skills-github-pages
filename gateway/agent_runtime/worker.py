@@ -232,7 +232,6 @@ class AgentRunWorker:
         return self.store.get_run(run_id)
 
     def _remember_key(self, key: str, run_id: str) -> None:
-    def _remember_key(self, key: str, run_id: str) -> None:
         self._known_idempotency[key] = run_id
         self._known_idempotency.move_to_end(key)
         while len(self._known_idempotency) > 512:

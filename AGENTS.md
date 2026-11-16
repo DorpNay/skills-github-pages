@@ -36,14 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `fe7bad6e366136a9b9fc5ad323e0eac32fba508d`; Open PRs: none; Open issue: #111.
-- Exact-parent Quality #43794659797 SUCCESS (all seven jobs, including Chromium and published-site contract); Freshness #43794659822 SUCCESS; Provenance #43794659808 SUCCESS; Pages #43794659816 SUCCESS. Live root meta exactly matches parent; `/landing/` returns HTTP 404.
-- Gateway #43790945491 and Graphify #43790945459 passed on the prior code-bearing parent `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; neither was triggered by the docs-only parent.
-- AgentRun native DAG backend prototype is implemented in the current child commit: additive SQLite dependency table, same-run edges, dependency-ready claims, per-task encrypted payloads, `single` and `team_review` API strategies, two isolated specialists plus coordinator synthesis, and run-level output compatibility. Exact-child CI is pending.
-- Model inference remains serial at concurrency 1; no independent OS processes or parallel model calls. Tools, filesystem, network and Coder execution remain disabled; feature flag remains off by default.
+- Parent main `25c1dec66f0599ce54bf6fda743bef1c71e7dcc7`; Open PRs: none; Open issue: #111.
+- Gateway #43796730159 failed Python 3.12 `compileall` due duplicate `_remember_key` declaration. Quality #43796730165 was in progress at inspection; Ruff had reported the same syntax defect. Freshness #43796730096, Provenance #43796730135, Pages #43796729855 and Graphify #43796730277 succeeded on the exact parent.
+- Current child removes the duplicate declaration only; exact-child verification pending.
+- AgentRun prototype: additive SQLite dependency table, same-run edges, dependency-ready claims, task-ID-keyed Fernet payloads, `single` and `team_review` API strategies, two isolated specialists plus coordinator synthesis, run-level output compatibility.
+- Model inference serial at concurrency 1; no independent OS processes or parallel inference. Tools, filesystem, network and Coder execution disabled; feature flag off by default.
 - Bonsai PTQ1_0 artifact #14192531688 and Qwen3.5-2B artifact #14032317541 are staged and SHA-verified, not installed on target. No runtime/host verification.
-- Focused sources: OpenAI Agents SDK, LangChain Deep Agents, Temporal and Microsoft Agent Framework workflow/edges/checkpoints/durable-extension docs. Patterns only; no framework dependency adopted.
-- Next: verify backend exact-head checks; then wire strategy selection and task graph into Agents UI with explicit serial-inference and no-tools disclosure.
+- Next: verify exact-child checks; only then wire strategy selection and task graph into Agents UI.
 
 
 ## Targeted UI source review — 2026-11-16
