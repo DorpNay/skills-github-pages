@@ -462,8 +462,9 @@ class AgentRunWorker:
             if available < 256:
                 raise AgentPayloadError("review context budget is too small")
             report = output["text"]
+            truncation_marker = "\n[Coder draft truncated to the configured review context budget]"
             if len(report) > available:
-                report = report[:available] + "\n[Coder draft truncated to the configured review context budget]"
+                report = report[:max(0, available - len(truncation_marker))] + truncation_marker
             prompt = prefix + report + suffix
             if len(prompt) > self.max_prompt_chars:
                 raise AgentPayloadError("review prompt exceeds the configured context limit")
@@ -505,9 +506,10 @@ class AgentRunWorker:
         per_report = available // len(reports)
         sections = []
         for task_key, report in reports:
-            clipped = report[:per_report]
+            truncation_marker = "\n[report truncated to the configured synthesis context budget]"
+            clipped = report
             if len(report) > per_report:
-                clipped += "\n[report truncated to the configured synthesis context budget]"
+                clipped = report[:max(0, per_report - len(truncation_marker))] + truncation_marker
             sections.append(f"\n[{task_key}]\n{clipped}")
         prompt = prefix + "".join(sections) + suffix
         if len(prompt) > self.max_prompt_chars:
