@@ -498,3 +498,15 @@ PR #169 exact-head run set on df3a: Freshness #42402738727 PASS; Provenance #424
 - Exact-head CI for this child pending. No dependencies, provider keys, paid API calls or host/runtime changes.
 - Next: after exact-head green, persist claims/contradictions from explicit Save to Gateway using only successful source quote evidence IDs; then provider adapters and resumable run state.
 
+
+
+## V-2026-11-16-OWNER-CONTINUATION-002 — studios, aNoteBooki, chat core and complete plugin map
+
+- Parent main 4f19cd4d82994194d384762b7f4c9a1fcf6013e3; 0 open PRs; issue #111. Owner prompts OR-2026-11-16-009 and OR-2026-11-16-010 were archived immediately after mandatory orientation.
+- Documentation commit 4f19cd4 adds K.6.15 to the existing registry, expands INTEL.md to the full owner-listed plugin/tool set, and records current AgentRun/legacy-pipeline and chat-search-default facts in the two existing architecture documents.
+- Source audit: index.md is 537,930 characters / 6,673 lines; createChat defaults searchMode to normal, hidden toggleSearch defaults checked, and web tool schemas are attached with tool_choice auto when enabled. Legacy multiAgentEnabled / runMultiAgentResearch remains separate from AgentRun agentRuntimeStrategy.
+- Route audit: OR-2026-11-15-007 and K.6.9 specify same-origin Pages routes; they do not name four studios. /landing remains retired. aNoteBooki and shared chat/project/Memory sync are now specified, not implemented.
+- Exa, Firecrawl, Context.dev and Superpowers were used for source/process research. Coder value tools unavailable; BrowserAct CLI missing. No new runtime, dependency, app, OAuth, paid resource, model download or host action.
+- Research candidates: ACM Agent 4 (2026-05-26), Aegis OS preprint (2026-10-22), Microsoft Agent Framework Durable Extension, Material Design 3 and W3C WCAG 2.2; see INTEL.md for limits and disposition.
+- Next: design one AgentRun-backed main-chat execution contract and bounded permissioned context, then obtain owner approval before implementation plan/TDD. Exact-child state refresh and CI are pending.
+

@@ -3,17 +3,17 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f",
-    "main_commit_subject": "docs(state): repair OR-008 journal boundary",
-    "main_commit_date": "2026-11-16T08:11:08Z",
-    "last_functional_checkpoint_sha": "59899a12a2b703e10411a91feb16eb7ad90bc585",
-    "last_functional_milestone": "Verified explicit Research Trace Save: short source excerpts first; source→evidence IDs; claims only after all cited excerpts save; contradictions only after all linked claims and excerpts save; stable source/claim/contradiction record ID maps and partial failure counters.",
-    "main_quality_run": 43810947390,
-    "main_pages_deployment_run": 43810946493,
-    "functional_parent_gateway_run": 43696995842,
-    "functional_parent_quality_run": 43696995891,
-    "functional_parent_graphify_run": 43696995875,
-    "functional_parent_pages_run": 43696995516,
+    "main_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3",
+    "main_commit_subject": "docs: reconcile studios notebook chat and plugin strategy",
+    "main_commit_date": "2026-11-16T09:22:10Z",
+    "last_functional_checkpoint_sha": "0d34aa1c70bb68e57a3856ba20d8b5f966c65038",
+    "last_functional_milestone": "Verified AgentRun coder_review strategy, task-ID encrypted DAG payloads, bounded context and compact Memory status visibility; feature flag remains false, one worker/model slot and no tool/filesystem/shell execution.",
+    "main_quality_run": null,
+    "main_pages_deployment_run": null,
+    "functional_parent_gateway_run": 43826933347,
+    "functional_parent_quality_run": 43827521092,
+    "functional_parent_graphify_run": 43827521090,
+    "functional_parent_pages_run": 43827520134,
     "open_pull_requests": [],
     "open_issues": [
       111
@@ -265,28 +265,28 @@
     "main_gateway_status": "SUCCESS across Python 3.12/13/14."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Direct main only, zero open PRs; issue #111 remains owner/environment gated. Owner authorizes direct main commits/merges and Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
     "note": "Parent f2b6 adds a pinned, push-triggered model acquisition workflow and provenance manifest, not application runtime code. Exact-head Quality (133 Chromium tests), Freshness, Provenance, Pages and artifact acquisition all passed; live root revision exact. Bonsai PTQ1_0 is staged as Actions artifact 14192531688; Qwen3.5-2B artifact 14032317541 also remains staged. Neither is installed on target; no live inference is claimed.",
-    "last_volley": "V-2026-11-16-BONSAI-ARTIFACT-VERIFIED-001",
+    "last_volley": "V-2026-11-16-OWNER-CONTINUATION-002",
     "active_ui_pr": null,
     "open_prs": "0 live open PRs.",
     "open_prs_at_checkpoint": 0,
-    "main_quality_status": "Quality #43791622156 SUCCESS; 133 Chromium tests and published release contract passed.",
-    "main_pages_status": "Pages #43791621597 SUCCESS; live root meta alandi-build-revision=f2b6de1cdb5f95ca14d421ab028dc3591ab4187a verified.",
-    "main_graphify_status": "Not triggered on workflow/docs-only parent; last Graphify #43790945459 SUCCESS on prior code-bearing parent.",
-    "main_freshness_run": 43791622162,
-    "main_freshness_status": "Freshness #43791622162 SUCCESS.",
-    "main_provenance_run": 43791622145,
-    "main_provenance_status": "Provenance #43791622145 SUCCESS.",
-    "owner_priority_summary": "LANDING-V2-2026-001: 15 priorities governed by K.5/K.6. Highest priority: orthogonal function/mode semantics, genuine selectable Agents and Deep Research workflows, owner-defined sidebar/project/chat UX, unified settings/buttons/status, progressive Skills/tool/search loading, local-first files/Notebook/converters, offline helper-model kit excluding largest model, and tested owner runbook.",
+    "main_quality_status": "Pending exact-child check for documentation state refresh; prior code checkpoint 0d34aa1 passed Quality #43827521092.",
+    "main_pages_status": "Pending exact-child Pages run; last verified published revision 6ccd58f143c07d02a37878b98c395247090d10a9 (Pages #43829376154).",
+    "main_graphify_status": "Graphify #43827521090 passed on functional code checkpoint 0d34aa1; no code changes in documentation slice.",
+    "main_freshness_run": null,
+    "main_freshness_status": "Pending exact state-refresh child; prior 6ccd58f Freshness #43829377165 passed.",
+    "main_provenance_run": null,
+    "main_provenance_status": "Pending exact state-refresh child; prior 6ccd58f Provenance #43829377155 passed.",
+    "owner_priority_summary": "K.5/K.6 remains canonical. First priority: unify AgentRun with main chat context and permissions, remove duplicate legacy orchestration after parity, and default chat to no web tools. Then compact mobile UX, same-origin studios/aNoteBooki, Memory/Sources, Deep Research and offline package.",
     "pr185_status": "PR #185 merged into main at f1fc73783a46bf38014acd0a8019914d5a3f14d4; model/runtime acquisition artifacts are staged in Actions, not installed.",
-    "main_gateway_status": "Gateway not triggered on workflow/docs-only parent; last Gateway #43790945491 SUCCESS on prior code-bearing parent.",
+    "main_gateway_status": "Gateway #43826933347 passed 279 tests on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.",
     "historical_pr_fields": "All PR-specific fields are history only; no PR is open and none is a default continuation.",
     "open_issues": "Issue #111 only; owner-controlled host/release gates.",
-    "main_graphify_run": 43733527388,
+    "main_graphify_run": null,
     "main_quality_run": 43733527394,
     "owner_request": "OR-2026-11-16-003",
     "main_gateway_run": 43790945491,
@@ -301,7 +301,7 @@
       "installed": false
     }
   },
-  "last_volley": "V-2026-11-16-RESEARCH-PROVENANCE-STANDARDS-001",
+  "last_volley": "V-2026-11-16-OWNER-CONTINUATION-002",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f",
+    "checkpoint_parent_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3",
     "merged_prs": [
       184,
       185
@@ -386,9 +386,9 @@
       "status": "PASS"
     },
     "next": [
-      "Verify equal-height, differently shaded Projects/Chats panels at desktop and mobile; persistent create rows while collapsed; subtle collapsed Memory section; correct sidebar title; project filtering remains view-only.",
-      "Verify blank global prompt, legacy-default/placeholder migration and explicit settings-profile import/export round-trip.",
-      "Then proceed to K.1.2 Functions menu and capability/mode compatibility."
+      "Design and approve one AgentRun-backed execution strategy integrated with the main chat using bounded, provenance-preserving context, durable pause/resume and permissioned Coder workspace gates.",
+      "Remove implicit web-tool injection from default chat with safe migration and request-body tests.",
+      "Continue K.5 mobile UX, Memory/Sources, four same-origin studio routes, aNoteBooki and offline package."
     ],
     "dependency_audit": {
       "current_locked": "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0.",
@@ -415,44 +415,44 @@
       "run": 43762493514,
       "status": "PASS"
     },
-    "owner_request": "OR-2026-11-16-005"
+    "owner_request": "OR-2026-11-16-010"
   },
   "active_ui_pr": null,
   "open_prs": "0 live open PRs.",
-  "owner_task": "LANDING-V2-2026-001 / K.5; AgentRun and Research Trace Save verified; next K.1.1, then K.1.2, then remaining Deep Research.",
-  "main_gateway_run": 43797179042,
-  "main_quality_run": 43810404022,
-  "main_pages_deployment_run": 43810403266,
-  "main_freshness_run": 43810404041,
-  "main_provenance_run": 43810403933,
-  "main_graphify_run": 43810272399,
+  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-16-010; AgentRun/chat unification is first, then default chat tools, mobile UX, studios/aNoteBooki and offline package.",
+  "main_gateway_run": 43826933347,
+  "main_quality_run": null,
+  "main_pages_deployment_run": null,
+  "main_freshness_run": null,
+  "main_provenance_run": null,
+  "main_graphify_run": null,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "SUCCESS: Quality #43810947390, all 7 jobs; 134 Chromium tests and published-site release contract passed.",
-  "main_pages_status": "SUCCESS: Pages #43810946493 build/status/deploy; uncached public root revision exact.",
-  "main_freshness_status": "SUCCESS: Freshness #43810947587 on exact checkpoint.",
-  "main_provenance_status": "SUCCESS: Provenance #43810947412 on exact checkpoint.",
-  "main_graphify_status": "SUCCESS: Graphify #43810272399 on functional code commit dc2e265.",
-  "main_gateway_status": "No Gateway code change in UI Save slice; latest Gateway #43797179042 passed on backend parent 680ab022, Python 3.12/13/14.",
-  "owner_request": "OR-2026-11-16-008",
+  "main_quality_status": "Pending exact-child check; prior code checkpoint 0d34aa1 passed Quality #43827521092.",
+  "main_pages_status": "Pending exact-child deployment; last verified public revision 6ccd58f143c07d02a37878b98c395247090d10a9.",
+  "main_freshness_status": "Pending exact state-refresh child; prior 6ccd58f Freshness #43829377165 passed.",
+  "main_provenance_status": "Pending exact state-refresh child; prior 6ccd58f Provenance #43829377155 passed.",
+  "main_graphify_status": "Graphify #43827521090 passed on code checkpoint 0d34aa1; no code changes in docs slice.",
+  "main_gateway_status": "Gateway #43826933347 passed 279 tests on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.",
+  "owner_request": "OR-2026-11-16-010",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "c2cbc4941ce86bc52e2034610c42ca10a308c47b",
-    "pages_run": 43810946493,
-    "revision_verification": "Firecrawl uncached public root returned alandi-build-revision exactly c2cbc4941ce86bc52e2034610c42ca10a308c47b."
+    "root_revision": "6ccd58f143c07d02a37878b98c395247090d10a9",
+    "pages_run": 43829376154,
+    "revision_verification": "Last uncached public root verification matched main 6ccd58f143c07d02a37878b98c395247090d10a9; newer docs commits await Pages deployment."
   },
   "owner_request_delta": {
     "status": "SPECIFIED",
-    "scope": "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance.",
-    "implementation_status": "AgentRun coder_review strategy and compact Memory status visibility are implemented and CI-verified; host feature remains disabled. Offline package, local Coder workspace, full Memory/Sources UX and plugin integrations remain specified/deferred.",
-    "next": "Complete plugin/source strategy; then continue K.5 mobile UX, Memory/Sources and offline package work. AgentRun next gates: failure injection, durable resume/approval and local Coder sandbox.",
-    "parent_main_sha": "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
+    "scope": "AgentRun/main-chat unification; explicit no-tools-by-default chat; complete plugin strategy; four same-origin studio pages; aNoteBooki project/chat/Memory synchronization; lossless code/docs optimization; Landing 2.0 UX; offline model/API/storage/voice/Coder package and local/server continuity.",
+    "implementation_status": "Documentation and source audit only. AgentRun coder_review remains a feature-off prototype with one worker/model slot. Plugin map and K.6.15 are recorded. Default web tools and legacy multiAgentEnabled pipeline remain in code. Four studio names, aNoteBooki runtime, offline package, local Coder sandbox, Memory/Sources UX and mobile redesign are not implemented.",
+    "next": "First approve a single AgentRun-backed chat execution contract and bounded context/permission model; then plan and TDD the unified runtime. Next remove implicit web tool injection safely, then continue K.5 mobile UX, studios/aNoteBooki and offline package.",
+    "parent_main_sha": "4f19cd4d82994194d384762b7f4c9a1fcf6013e3"
   },
   "next": [
-    "Complete the assistant-plugin/source usage map using actual capability contracts; do not add connectors or runtimes without a separate owner decision.",
-    "Continue K.5 mobile/sidebar/project/chat hierarchy, Memory/Sources UX, Deep Research method separation, offline package selection/local-server switching, voice and accessibility.",
-    "AgentRun follow-up: failure-injection, restart/cancellation, human approval/resume before side-effecting tools, then bounded local Coder sandbox research."
+    "Approve one AgentRun-backed execution strategy integrated with the main chat using bounded, provenance-preserving context, durable pause/resume and permissioned Coder workspace gates.",
+    "Remove implicit web-tool injection from default chat with safe migration and request-body tests.",
+    "Continue the K.5 programme: compact mobile UX, Memory/Sources, four same-origin studio routes, aNoteBooki and offline package."
   ]
 }

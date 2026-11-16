@@ -36,16 +36,16 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Docs-refresh parent main `914eeec88a46370efe1a27d58a7d57865e5c7bed`; functional sidebar commit 59899a1. functional Research Trace Save commit dc2e265. functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; functional Research Trace Save commit `dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e`; 0 open PRs; issue #111. Functional AgentRun code/UI checkpoint: `377818cceef7099d6698c07561c715358d5d8ddd`.
-- Quality #43804109317 SUCCESS (7/7 jobs, 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Uncached public root revision exact.
-- AgentRun native bounded DAG and browser UI IMPLEMENTED / VERIFIED PROTOTYPE: same-run SQLite dependencies, dependency-gated synthesis, task-ID Fernet payloads; safe single/team_review; per-chat choice, General coordinator pin, strategy_id and actual task-state/dependency rendering.
-- One worker/model slot; Team Review calls sequential. Logical roles are not OS processes. Tools/shell/filesystem/network disabled; ALANDI_AGENT_RUNS_ENABLED=false. No Coder sandbox/browser worker.
-- Gateway unchanged by UI slice; latest Gateway #43797179042 on parent 680ab022 across Python 3.12/13/14.
-- Bonsai/Qwen artifacts staged, not target-installed. No host/Ollama/device/offline verification.
-- OR-005/006 archived; K.6.13 binding for Mini aLandi/offline voice/reconnect, reviewed project learning, Coder packs and explicit local files. K.5 remains sole status table.
-- Assistant-side tools: GitHub, Exa, Firecrawl, TinyFish, Vercel, Context7, OpenAI Developers, Superpowers, Code/Coder. Twilio skills-only without provider auth; no standalone Codex connector. None is aLandi integration.
-- Research Trace source→claim→contradiction Save is IMPLEMENTED / VERIFIED on `+codeDocsFinal+`; Quality #43810404022 passed 134 Chromium tests. Next: durable/resumable Deep Research, real Exa/Firecrawl adapters, provider budgets and Notebook/export. No shell before tested sandbox and owner approval.
-
+- Documentation parent main: 4f19cd4d82994194d384762b7f4c9a1fcf6013e3; this five-file state refresh must be its direct child. Live queue: 0 open PRs, issue #111.
+- Last functional code checkpoint: 0d34aa1c70bb68e57a3856ba20d8b5f966c65038. Quality #43827521092 SUCCESS (7/7 jobs; 135 built-app Chromium + 1 live-site); Graphify #43827521090 SUCCESS (2,519 nodes / 5,868 edges / 90 files); Pages #43827520134 SUCCESS. Gateway #43826933347 SUCCESS (279 tests) on unchanged backend code commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d.
+- Exact-main documentation/code audit before this refresh: Quality #43829377264, Freshness #43829377165, Provenance #43829377155 and Pages #43829376154 passed on 6ccd58f143c07d02a37878b98c395247090d10a9. Current 4f19 docs-only commit is awaiting exact-child checks.
+- AgentRun: IMPLEMENTED / VERIFIED PROTOTYPE. Strategies single, team_review and coder_review; same-run SQLite DAG, task-ID Fernet payloads and bounded context. One worker/model slot; team inference sequential; feature flag false; no tools, web, shell, filesystem, repository or local Coder sandbox.
+- Main chat still contains the legacy multiAgentEnabled / runMultiAgentResearch four-stage path beside AgentRun agentRuntimeStrategy. These are distinct and overlapping. AgentRun does not yet receive full main-chat history, project memory or attachments; scope IDs do not grant access. Unification and explicit context grants are the next architecture task.
+- Chat audit: new chats and the hidden toggleSearch default web search on; the request can include web_search, public_knowledge_search and read_webpage. The target direct-chat default has no web tools and requires explicit search opt-in; this is specified, not implemented.
+- Owner requests OR-009 and OR-010 are archived verbatim in NOW.md and K.6.15 records the additional requirements. K.6.14/15 are binding; K.5 remains the sole 15-point tracker.
+- Assistant-side plugin inventory is in INTEL.md. Exa, Firecrawl, Context.dev and Superpowers were used; Coder value tools are unavailable; BrowserAct CLI is not installed. No app builder, OAuth, product connector or hosting/runtime migration was performed.
+- Preserve root Pages deployment; /landing is retired. Same-origin studio routes are specified, but the four studio names are not in the recovered archive. aNoteBooki is specified as a shared Notebook/project/development-chat workspace. Offline package, local inference, local Coder sandbox, physical voice and target-host validation remain deferred.
+- No new product code, dependencies, model downloads, secrets, host changes or external service provisioning in this documentation slice.
 
 ## Targeted UI source review — 2026-11-16
 

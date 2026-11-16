@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-16"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Parent main 3aa42bcb0a989f23f17909e3752f2dcc278ae892; 0 open PRs; issue #111. AgentRun UI Quality #43804109317 SUCCESS (7 jobs; 134 Chromium tests + published-site contract), Graphify #43804109318 SUCCESS, Pages #43804108675 SUCCESS; public root revision exact. Latest focused Gateway #43797179042 is on unchanged backend parent 680ab022."
+    status: "Active task LANDING-V2-2026-001. Documentation parent main 4f19cd4d82994194d384762b7f4c9a1fcf6013e3; 0 open PRs; issue #111. Latest code checkpoint 0d34aa1 has AgentRun coder_review; Quality #43827521092 and Graphify #43827521090 passed; Pages #43827520134 passed. Exact-main Quality #43829377264, Freshness #43829377165, Provenance #43829377155 and Pages #43829376154 passed on prior 6ccd58f; exact-child checks for the current docs refresh are pending."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 9aec46084686077e6975cf7deb504305953725e1; functional AgentRun UI checkpoint 377818cceef7099d6698c07561c715358d5d8ddd; 0 open PRs; issue #111. Quality, Graphify and Pages passed for the functional UI checkpoint."
+    status: "NOW.md is the sole first-read checkpoint. Documentation refresh parent main 4f19cd4d82994194d384762b7f4c9a1fcf6013e3; last functional code checkpoint 0d34aa1c70bb68e57a3856ba20d8b5f966c65038; 0 open PRs; issue #111. K.6.15 and plugin/chat audits are recorded; exact-child checks are pending."
     branch: "main"
-    base_main: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
+    base_main: "4f19cd4d82994194d384762b7f4c9a1fcf6013e3"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
-    runtime_boundary: "AgentRun backend bounded single/team_review DAG prototype is CI-verified on code-bearing parent 680ab022; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Current main is test-only and has a red AgentRun strategy-selector E2E (missing UI control). No Coder sandbox, host install or offline package."
-    next: "Implement safe single/team_review selector, per-chat persistence, strategy_id submission and per-task DAG status rendering; then Research Trace Save and K.5 follow-ups."
+    runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG prototype is CI-verified on code checkpoint 0d34aa1; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Legacy multiAgentEnabled four-stage pipeline still coexists and must be unified. No local Coder sandbox, host install or offline package."
+    next: "Design one AgentRun-backed strategy contract integrated with main-chat context, approvals, result return and migration; then retire the legacy four-stage path after parity tests. Fix web-search default injection and continue K.5 UX, studios/aNoteBooki and offline package."
 
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
@@ -42,7 +42,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-16-OWNER-MINIALANDI-SCOPE-001"
+  last_volley: "V-2026-11-16-OWNER-CONTINUATION-002"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -294,15 +294,15 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-16"
-  verified_main: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
-  last_main_action: "Safe AgentRun UI on exact main 377818c. Quality #43804109317 SUCCESS (7/7 jobs; 134 Chromium tests and published-site contract); Graphify #43804109318 SUCCESS; Pages #43804108675 SUCCESS. Public root revision exact."
-  last_functional_checkpoint: "377818cceef7099d6698c07561c715358d5d8ddd"
-  main_quality: "Quality #43804109317 SUCCESS: all 7 jobs; 134 Chromium tests and published-site contract passed."
-  main_freshness: "Not triggered on code-only main 377818c; next on docs refresh."
-  main_graphify: "Graphify #43804109318 SUCCESS on exact main."
-  main_gateway: "Gateway unchanged by UI slice; latest pass #43797179042 on backend parent 680ab022, Python 3.12/13/14."
-  main_provenance: "Not triggered on code-only main 377818c; next on docs refresh."
-  main_pages: "Pages #43804108675 SUCCESS; public root revision exact."
+  verified_main: "4f19cd4d82994194d384762b7f4c9a1fcf6013e3"
+  last_main_action: "Docs-only owner continuation commit 4f19cd4d82994194d384762b7f4c9a1fcf6013e3 adds K.6.15, full plugin strategy, AgentRun/legacy-path audit and chat web-tool default audit. Exact-child checks pending."
+  last_functional_checkpoint: "0d34aa1c70bb68e57a3856ba20d8b5f966c65038"
+  main_quality: "Quality #43829377264 SUCCESS on prior code/docs main 6ccd58f (7/7; 135 Chromium tests and live-site contract). Current docs refresh exact-child Quality pending."
+  main_freshness: "Freshness #43829377165 SUCCESS on prior main 6ccd58f; current direct state-refresh child pending."
+  main_graphify: "Graphify #43827521090 SUCCESS on functional code checkpoint 0d34aa1 (2,519 nodes / 5,868 edges / 90 files); docs-only refresh does not change code graph."
+  main_gateway: "Gateway #43826933347 SUCCESS (279 tests) on unchanged backend commit 40d343a114cdefbdf8bc2574754fd55d7e0f700d; no Gateway source changed after."
+  main_provenance: "Provenance #43829377155 SUCCESS on prior main 6ccd58f; current direct state-refresh child pending."
+  main_pages: "Pages #43829376154 SUCCESS on prior main 6ccd58f; current docs refresh deployment pending."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111]
   runtime_boundary: "AgentRun exposes safe single/team_review; bounded three-node same-run DAG, task-ID Fernet payloads, dependency-gated synthesis, per-chat choice, strategy_id and task-state/dependency UI. One worker/model slot, serial inference; tools/shell/filesystem/network disabled; feature off; no independent processes, sandbox, target install or offline runtime."
@@ -596,13 +596,14 @@ current_execution_checkpoint:
     current_locked: "FastAPI 0.162.0; Pydantic 2.14.1; pypdf 7.1.0."
     current_upstream: "FastAPI 0.163.0 (official release 2026-11-14); Pydantic 2.14.3 (official release 2026-11-05); pypdf 7.1.0 (official release 2026-11-13); whisper.cpp v1.9.5; Piper v1.8.0; Tesseract 5.5.4; Ollama v0.40.16; OpenShell v0.1.8."
     decision: "Keep FastAPI 0.163.0 behind the seven-day cooldown until 2026-11-21. Pydantic 2.14.3 is eligible for a focused uv.lock refresh and Gateway/document matrix; pypdf 7.1.0 is already pinned. No dependency versions changed in this checkpoint."
-  next: ["Verify exact-head CI for Research Trace schema v4 structured same-model review: Quality/Chromium, Gateway, Freshness, Provenance, Graphify, Pages and public revision.","If green, connect explicit Save to Gateway to claim/contradiction APIs using only evidence IDs returned by successful source-quote writes.","Then implement independent Exa/Firecrawl provider adapters and durable resumable research run state; do not describe same-model review as independent."]
+  next: ["Design and approve one AgentRun-backed execution strategy integrated with the main chat using bounded, provenance-preserving context; add durable pause/resume, failure recovery and permissioned Coder workspace gates.","Remove web-tool injection from the default chat path; preserve explicit per-chat search opt-in with safe legacy/import migration and request-body tests.","Continue the existing K.5 15-point programme: compact mobile navigation/chat/project IA, Memory and Sources, four same-origin studio routes, aNoteBooki sync, Deep Research methods and offline package."]
 
 
 owner_request_delta:
-  id: "OR-2026-11-16-008"
+  id: "OR-2026-11-16-010"
+  related_owner_request: "OR-2026-11-16-009"
   status: "SPECIFIED"
-  parent_main_sha: "a0d3856ebf63c4f48d76f60bce425bafb27aab8f"
-  scope: "AgentRun-first architecture completion; assistant-plugin/source strategy; compact mobile/sidebar/project/chat/settings/Memory/Sources UX; optional offline package component manifest and local/server runtime switching; accessibility and GitHub Pages acceptance."
-  implementation_status: "AgentRun coder_review strategy and compact Memory status visibility are implemented and CI-verified; host feature remains disabled. Offline package, local Coder workspace, full Memory/Sources UX and plugin integrations remain specified/deferred."
-  next: "Complete plugin/source strategy and record capability boundaries; then continue K.5 mobile UX, Memory/Sources and offline package work. AgentRun next gates: failure injection, durable resume/approval and local Coder sandbox."
+  parent_main_sha: "4f19cd4d82994194d384762b7f4c9a1fcf6013e3"
+  scope: "AgentRun and main-chat orchestration unification; explicit no-tools-by-default chat; complete plugin strategy; four same-origin studio pages; aNoteBooki project/chat/Memory synchronization; lossless code and docs optimization; full Landing 2.0 UX; offline model/API/storage/voice/Coder package and server/local continuity."
+  implementation_status: "Documentation and source audit only. AgentRun coder_review remains a feature-off prototype with one worker/model slot. Plugin map and K.6.15 are recorded. Default web tools and legacy multiAgentEnabled pipeline remain in code. Four studio names, aNoteBooki runtime, offline package, local Coder sandbox, Memory/Sources UX and mobile redesign are not implemented."
+  next: "First approve a single AgentRun-backed chat execution contract and bounded context/permission model; then plan and TDD the unified runtime. Next remove implicit web tool injection safely, then proceed through K.5 mobile UX, studios/aNoteBooki and offline package."
