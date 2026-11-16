@@ -3,10 +3,10 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-16",
   "checkpoint": {
-    "main_sha": "5f59fa3fe4ddbd9215e4927289cb18c169681ebe",
-    "main_commit_subject": "feat(research): persist linked claims and contradictions on explicit save",
-    "main_commit_date": "2026-11-16T05:23:53Z",
-    "last_functional_checkpoint_sha": "377818cceef7099d6698c07561c715358d5d8ddd",
+    "main_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
+    "main_commit_subject": "fix(research): persist trace record mappings and assert saved state",
+    "main_commit_date": "2026-11-16T05:26:40Z",
+    "last_functional_checkpoint_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
     "last_functional_milestone": "AgentRun UI verified on 377818c; Research Trace explicit Save of source quotes, linked claims and contradictions implemented in this child, pending exact-head CI.",
     "main_quality_run": 43804109317,
     "main_pages_deployment_run": 43804108675,
@@ -339,7 +339,7 @@
   },
   "current_execution_checkpoint": {
     "date": "2026-11-16",
-    "checkpoint_parent_sha": "5f59fa3fe4ddbd9215e4927289cb18c169681ebe",
+    "checkpoint_parent_sha": "dc2e26500197d8ca68e21c1e0b3e03a3f61a9e8e",
     "merged_prs": [
       184,
       185
