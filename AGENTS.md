@@ -36,13 +36,13 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-16)
 
-- Parent main `fb9c9d3a1cf06fe0e07606ad816767e00686a83f`; Open PRs: none; Open issues: #111.
-- Exact-head Gateway #43790945491 SUCCESS (Python 3.12/13/14); Quality #43790945388 SUCCESS (133 Chromium tests + published release contract); Freshness #43790945342 SUCCESS; Provenance #43790945416 SUCCESS; Graphify #43790945459 SUCCESS; Pages #43790945021 SUCCESS. Live root meta `alandi-build-revision=fb9c9d3a1cf06fe0e07606ad816767e00686a83f` verified.
+- Parent main `f2b6de1cdb5f95ca14d421ab028dc3591ab4187a`; Open PRs: none; Open issues: #111.
+- Exact-head Quality #43791622156 SUCCESS (133 Chromium tests + published release contract); Freshness #43791622162 SUCCESS; Provenance #43791622145 SUCCESS; Pages #43791621597 SUCCESS; Bonsai acquisition #43791622097 SUCCESS. Live root meta `alandi-build-revision=f2b6de1cdb5f95ca14d421ab028dc3591ab4187a` verified. Gateway/Graphify not triggered on this workflow/docs-only commit; last Gateway #43790945491 and Graphify #43790945459 passed on prior code-bearing checkpoint.
 - The owner-directed source sweep is recorded in INTEL.md and docs/TECHNIQUE_REGISTER_RU.md: 507 normalized unique URLs after adding 29 primary-source refs. Exa and Firecrawl are assistant-side research tools, not aLandi runtime dependencies.
 - Qwen3.5-2B Q4_K_M is staged in Actions artifact #14032317541 and SHA-verified, but not installed on target. AgentRun exposes only installed, allowlisted models; main 4B remains default.
-- The pinned 430 MB Bonsai PTQ1_0 candidate is the smallest packing of the same 1.88B model, not a smaller parameter model. The new acquisition workflow is pending its first run; no runtime or target-host install.
+- Bonsai PTQ1_0 is staged in Actions artifact #14192531688 (429,196,247 bytes; archive SHA-256 41ced309f0ff10e4bd9b0c464bf3fe42013e60e4d27cd308666744618c18655a; expires 2026-12-16). Embedded 429,183,456-byte model SHA-256 36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa. It is a packing of the same 1.88B model, not a smaller parameter model; no runtime or target-host install.
 - AgentRun remains one worker/task per run, concurrency 1, no tools/filesystem/network. Multi-agent DAG, task-scoped payloads and isolated Coder workspace are specified but not implemented. Needle 2 is deferred; Cloudroom permission docs conflict; VoxCPM2 is deferred by owner instruction.
-- Next: verify the Bonsai artifact, then implement task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
+- Next: implement generic local OpenAI-compatible runtime adapter and exclusive model slot; then task-scoped encrypted payloads and dependency DAG before exposing real specialist workers.
 
 ## Targeted UI source review — 2026-11-16
 
