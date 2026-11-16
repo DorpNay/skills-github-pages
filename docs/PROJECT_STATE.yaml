@@ -16,9 +16,9 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Parent main 9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7; 0 open PRs; issue #111. Current exact main adds AgentRun UI TDD acceptance; Quality #43798806788 fails only because #agentRuntimeStrategy is absent (133 Chromium tests passed). Graphify #43798806804 and Pages #43798806597 succeeded. Backend DAG verified on code-bearing parent 680ab022."
+    status: "NOW.md is the sole first-read checkpoint. Parent main 377818cceef7099d6698c07561c715358d5d8ddd; 0 open PRs; issue #111. Safe AgentRun strategy UI is implemented and exact-main Quality, Graphify and Pages passed; see NOW.md and current checkpoint."
     branch: "main"
-    base_main: "9835e43d39f4b3ae7c5f4968f7bf0d348b1735f7"
+    base_main: "377818cceef7099d6698c07561c715358d5d8ddd"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 1
     runtime_boundary: "AgentRun backend bounded single/team_review DAG prototype is CI-verified on code-bearing parent 680ab022; one worker/model slot, serial inference, tools/filesystem/network disabled, feature-off. Current main is test-only and has a red AgentRun strategy-selector E2E (missing UI control). No Coder sandbox, host install or offline package."
