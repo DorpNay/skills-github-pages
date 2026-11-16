@@ -703,6 +703,7 @@ permalink: /
     <div id="draftAttachments" class="hidden flex flex-wrap gap-1.5 pb-2" aria-label="Вложения черновика"></div>
     <div class="flex gap-2 items-end" id="inputArea">
       <button id="contextPickerButton" type="button" data-action="toggle-request-context" aria-label="Выбрать контекст для следующего запроса" aria-expanded="false" title="Контекст этого запроса: выбрать проекты" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5 relative">◎<span id="requestContextCount" class="hidden absolute -top-1 -right-1 min-w-4 h-4 rounded-full bg-cyan-400 text-slate-950 text-[9px] font-bold items-center justify-center px-1">0</span></button>
+      <select id="executionModeControl" aria-label="Режим выполнения" title="Режим выполнения: Direct или AgentRun" class="composer-tool rounded-xl border border-gray-700 bg-gray-900 text-[10px] w-[76px] min-w-[76px] px-1.5 py-2.5"><option value="direct">Direct</option><option value="agent">AgentRun</option></select>
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
@@ -1118,7 +1119,7 @@ permalink: /
       }
     }
     function createChat(title = 'Новый чат', messages = [], projectId = null) {
-      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false,  privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
+      return { id: (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`), title, messages, projectId: typeof projectId === 'string' ? projectId : null, projectMemoryEnabled: false, executionMode: 'direct', privateMemoryUsed: false, processingMode: 'fast', searchMode: 'normal', multiAgentEnabled: false, agentRuntimeStrategy: 'single', skillPreset: 'auto', customSkillName:'', customSkillInstructions:'', customSkillOutput:'', skillGoal:'planning', skillOutputMode:'summary', agentTeamSize:4, agentTeamScenario:'general', agentTeamCustomScenario:'', agentRolePreset:'balanced', agentCustomRoles:'' };
     }
     function preserveUnreadableChats(rawText) {
       if (rawText === null) return;
@@ -1159,6 +1160,8 @@ permalink: /
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',
+            executionMode: ['direct','agent'].includes(item.executionMode) ? item.executionMode : 'direct',
+            ...(typeof item.activeAgentRunId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(item.activeAgentRunId) ? { activeAgentRunId: item.activeAgentRunId } : {}),
             privateMemoryUsed: item.privateMemoryUsed === true,
             customSkillName: typeof item.customSkillName==='string'?item.customSkillName.slice(0,80):'',
             customSkillInstructions: typeof item.customSkillInstructions==='string'?item.customSkillInstructions.slice(0,3000):'',
@@ -1229,7 +1232,7 @@ permalink: /
       if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
       const allowedUpdateKeys = new Set([
         'searchMode', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
-        'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy'
+        'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy', 'executionMode'
       ]);
       const updateEntries = Object.entries(updates);
       // Mutations originate from bounded UI handlers; reject unknown keys (including prototype keys).
@@ -2883,6 +2886,8 @@ permalink: /
       if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
       if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
       if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = safeGet(STORAGE.multiAgent) === 'true'; changed = true; }
+      if (!['direct','agent'].includes(chat.executionMode)) { chat.executionMode = 'direct'; changed = true; }
+      if (Object.prototype.hasOwnProperty.call(chat,'activeAgentRunId') && (typeof chat.activeAgentRunId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(chat.activeAgentRunId))) { delete chat.activeAgentRunId; changed = true; }
       if (!VALID_AGENT_RUNTIME_STRATEGIES.has(chat.agentRuntimeStrategy)) { chat.agentRuntimeStrategy = 'single'; changed = true; }
       if (!VALID_SKILL_PRESETS.has(chat.skillPreset)) { chat.skillPreset = 'auto'; changed = true; }
       if(typeof chat.customSkillName!=='string') {chat.customSkillName='';changed=true;}
@@ -2910,6 +2915,7 @@ permalink: /
       processingMode = chat.processingMode;
       $('toggleSearch').checked = chat.searchMode !== 'offline';
       $('toggleMultiAgent').checked = chat.multiAgentEnabled;
+      if ($('executionModeControl')) $('executionModeControl').value = chat.executionMode;
       safeSet(STORAGE.mode, chat.processingMode);
       safeSet(STORAGE.searchMode, chat.searchMode);
       safeSet(STORAGE.search, String(chat.searchMode !== 'offline'));
@@ -2919,6 +2925,39 @@ permalink: /
       updateOfflineUI();
       updateModeUI();
     }
+    async function setChatExecutionMode(mode) {
+      const chat=getCurrentChat();
+      if(!chat||!['direct','agent'].includes(mode)) {
+        if($('executionModeControl'))$('executionModeControl').value=chat?.executionMode||'direct';
+        return false;
+      }
+      ensureChatFunctionSettings(chat);
+      if(mode==='agent') {
+        if(currentProvider()!=='alandi') {
+          $('executionModeControl').value=chat.executionMode;
+          showToast(getUiLanguage()==='en'?'AgentRun requires the explicitly selected aLandi Gateway.':'AgentRun требует явно выбранный aLandi Gateway.','error');
+          return false;
+        }
+        if(agentRuntimeActiveRun) {
+          $('executionModeControl').value=chat.executionMode;
+          showToast(getUiLanguage()==='en'?'An AgentRun is already active on the single worker.':'На единственном worker уже выполняется AgentRun.','error');
+          return false;
+        }
+        if(!agentRuntimeReady)await refreshAgentRunRuntime();
+        if(!agentRuntimeReady) {
+          $('executionModeControl').value=chat.executionMode;
+          showToast(getUiLanguage()==='en'?'AgentRun is unavailable. Direct mode remains unchanged.':'AgentRun недоступен. Прямой режим не изменён.','error');
+          return false;
+        }
+      }
+      if(!persistChatMutation(chat,{executionMode:mode})) {
+        $('executionModeControl').value=chat.executionMode;
+        return false;
+      }
+      $('executionModeControl').value=mode;
+      return true;
+    }
+
     function setSearchMode(mode) {
       if (!VALID_SEARCH_MODES.has(mode)) return;
       const chat = getCurrentChat();
@@ -4010,6 +4049,7 @@ let agentRuntimeRefreshPromise = null;
         await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
         return;
       }
+      agentRuntimeReady=false;
       setAgentRuntimeCopy();
       setAgentRuntimeUnavailable(getUiLanguage()==='en'
         ? 'Checking Gateway AgentRun capability…'
@@ -4110,38 +4150,39 @@ let agentRuntimeRefreshPromise = null;
       return agentRuntimeRefreshPromise;
     }
 
-    async function startAgentRuntimeRun() {
-      if(!agentRuntimeReady||agentRuntimeActiveRun)return;
-      const prompt=$('agentRuntimePrompt').value.trim();
-      if(!prompt) {
-        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'Enter a task first.':'Сначала введите задание.';
-        updateAgentRuntimeStartAvailability();return;
+    async function startAgentRuntimeRun(options={}) {
+      const propagateErrors=options.propagateErrors===true;
+      const fail=(message)=>{
+        $('agentRuntimeStatus').textContent=message;
+        updateAgentRuntimeStartAvailability();
+        if(propagateErrors)throw new Error(message);
+        return null;
+      };
+      if(!agentRuntimeReady||agentRuntimeActiveRun) {
+        return fail(getUiLanguage()==='en'?'AgentRun is unavailable or another run is active.':'AgentRun недоступен или уже выполняется другое задание.');
       }
-      if(prompt.length>12000) {
-        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The task is too long (12,000 characters maximum).':'Задание слишком длинное (максимум 12 000 символов).';
-        return;
-      }
-      const chat=getCurrentChat();
-      if(!chat||typeof chat.id!=='string'||!chat.id||chat.id.length>160) {
-        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The current conversation scope is unavailable.':'Не удалось определить область текущего чата.';
-        return;
-      }
+      const prompt=typeof options.prompt==='string'?options.prompt.trim():$('agentRuntimePrompt').value.trim();
+      if(!prompt)return fail(getUiLanguage()==='en'?'Enter a task first.':'Сначала введите задание.');
+      if(prompt.length>12000)return fail(getUiLanguage()==='en'?'The task is too long (12,000 characters maximum).':'Задание слишком длинное (максимум 12 000 символов).');
+      const chat=options.chat||getCurrentChat();
+      if(!chat||typeof chat.id!=='string'||!chat.id||chat.id.length>160)return fail(getUiLanguage()==='en'?'The current conversation scope is unavailable.':'Не удалось определить область текущего чата.');
       let config;
       try {config=getAlandiGatewayConfig();}
-      catch(error) {$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);return;}
-      const strategyId=$('agentRuntimeStrategy').value;
-      if(!agentRuntimeSafeStrategies.includes(strategyId)) {
-        $('agentRuntimeStatus').textContent=getUiLanguage()==='en'?'The selected execution strategy is unavailable.':'Выбранная стратегия выполнения недоступна.';
-        updateAgentRuntimeStartAvailability();
-        return;
+      catch(error) {
+        $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);
+        if(propagateErrors)throw error;
+        return null;
       }
+      const strategyId=options.strategyId||$('agentRuntimeStrategy').value;
+      if(!agentRuntimeSafeStrategies.includes(strategyId))return fail(getUiLanguage()==='en'?'The selected execution strategy is unavailable.':'Выбранная стратегия выполнения недоступна.');
+      const modelId=options.modelId||$('agentRuntimeModel').value;
+      const profileId=options.profileId||(['team_review','coder_review'].includes(strategyId)?'general':$('agentRuntimeProfile').value);
+      if(!modelId||![...$('agentRuntimeModel').options].some(option=>option.value===modelId))return fail(getUiLanguage()==='en'?'The selected model is not allowlisted.':'Выбранная модель отсутствует в разрешённом списке.');
+      if(!profileId||![...$('agentRuntimeProfile').options].some(option=>option.value===profileId))return fail(getUiLanguage()==='en'?'The selected role profile is unavailable.':'Выбранный профиль роли недоступен.');
       const submission={
-        prompt,
-        scope_kind:'conversation',
-        scope_id:chat.id,
-        profile_id:['team_review','coder_review'].includes(strategyId)?'general':$('agentRuntimeProfile').value,
-        model_id:$('agentRuntimeModel').value,
-        strategy_id:strategyId
+        prompt,scope_kind:'conversation',scope_id:chat.id,
+        profile_id:profileId,model_id:modelId,strategy_id:strategyId,
+        ...(options.contextPacket?{context_packet:options.contextPacket}:{})
       };
       const signature=config.baseUrl+'\n'+JSON.stringify(submission);
       if(!agentRuntimePendingSubmission||agentRuntimePendingSubmission.signature!==signature) {
@@ -4174,11 +4215,18 @@ let agentRuntimeRefreshPromise = null;
         const runId=created.run?.run_id;
         if(typeof runId!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(runId))throw new Error('agent-runtime-invalid-run-id');
         agentRuntimePendingSubmission=null;
-        agentRuntimeActiveRun={id:runId,afterEventId:0,startedAt:Date.now()};
+        agentRuntimeActiveRun={id:runId,afterEventId:0,startedAt:Date.now(),origin:options.origin==='chat'?'chat':'panel',chatId:chat.id};
         agentRuntimePollController=new AbortController();
         $('agentRuntimeCancel').disabled=false;
         $('agentRuntimeStatus').textContent=agentRuntimeStatusText(created.run.state||'queued');
-        await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
+        if(typeof options.onAccepted==='function')await options.onAccepted(runId);
+        const snapshot=await observeAgentRuntimeRun(config,agentRuntimeActiveRun,agentRuntimePollController.signal);
+        const state=snapshot?.run?.state||null;
+        const terminal=new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']).has(state);
+        const result={runId,state,output:snapshot?.output,outputAvailable:snapshot?.output_available===true,terminal};
+        if(propagateErrors&&terminal&&state!=='succeeded')throw new Error(agentRuntimeStatusText(state));
+        if(propagateErrors&&state==='succeeded'&&!result.outputAvailable)throw new Error(getUiLanguage()==='en'?'AgentRun completed, but its output is unavailable.':'AgentRun завершился, но результат недоступен.');
+        return result;
       } catch(error) {
         if(error?.name!=='AbortError')$('agentRuntimeStatus').textContent=agentRuntimeErrorText(error);
         if(!agentRuntimeActiveRun) {
@@ -4188,6 +4236,8 @@ let agentRuntimeRefreshPromise = null;
           agentRuntimeReady=true;
           updateAgentRuntimeStartAvailability();
         }
+        if(propagateErrors)throw error;
+        return null;
       } finally {
         window.clearTimeout(requestTimeout);
       }
@@ -4197,6 +4247,7 @@ let agentRuntimeRefreshPromise = null;
       const terminal=new Set(['succeeded','failed','cancelled','budget_exhausted','timed_out']);
       const deadline=Date.now()+120000;
       let terminalReached=false;
+      let latestSnapshot=null;
       try {
         while(Date.now()<deadline&&!signal.aborted&&agentRuntimeActiveRun?.id===run.id) {
           const events=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id)+'/events?after_event_id='+run.afterEventId+'&limit=100',{signal});
@@ -4205,8 +4256,11 @@ let agentRuntimeRefreshPromise = null;
             if(Number.isInteger(events.next_after_event_id))run.afterEventId=Math.max(run.afterEventId,events.next_after_event_id);
           }
           const snapshot=await agentRuntimeFetch(config,'/agent-runs/'+encodeURIComponent(run.id),{signal});
+          latestSnapshot=snapshot;
+          run.latestSnapshot=snapshot;
           const state=snapshot.run?.state;
           $('agentRuntimeStatus').textContent=agentRuntimeStatusText(state);
+          if(run.origin==='chat'&&$('statusText'))$('statusText').textContent='AgentRun · '+agentRuntimeStatusText(state);
           renderAgentRuntimeTasks(snapshot.tasks);
           if(snapshot.output_available===true&&typeof snapshot.output==='string') {
             $('agentRuntimeOutput').textContent=snapshot.output.slice(0,65536);
@@ -4215,7 +4269,7 @@ let agentRuntimeRefreshPromise = null;
             $('agentRuntimeOutput').textContent=getUiLanguage()==='en'?'The output has expired from secure storage.':'Срок хранения результата истёк.';
             $('agentRuntimeOutput').classList.remove('hidden');
           }
-          if(terminal.has(state)){terminalReached=true;return;}
+          if(terminal.has(state)){terminalReached=true;return snapshot;}
           await new Promise((resolve,reject)=>{
             const onAbort=()=>{window.clearTimeout(timer);reject(new DOMException('Aborted','AbortError'));};
             const timer=window.setTimeout(()=>{signal.removeEventListener('abort',onAbort);resolve();},500);
@@ -4232,8 +4286,6 @@ let agentRuntimeRefreshPromise = null;
           $('agentRuntimeStatus').textContent=agentRuntimeErrorText(error)+' '+(getUiLanguage()==='en'?'Use Check to resume observation.':'Нажмите «Проверить», чтобы возобновить наблюдение.');
         }
       } finally {
-        // A replaced observer no longer owns the active run. An observer aborted by
-        // "Check" must not clear the run after a replacement controller takes ownership.
         const ownsCurrentObserver=agentRuntimePollController?.signal===signal;
         if(ownsCurrentObserver&&(terminalReached||signal.aborted)&&agentRuntimeActiveRun?.id===run.id) {
           agentRuntimeActiveRun=null;
@@ -4247,6 +4299,7 @@ let agentRuntimeRefreshPromise = null;
           $('agentRuntimeCancel').disabled=false;
         }
       }
+      return latestSnapshot;
     }
 
     async function cancelAgentRuntimeRun() {
@@ -4260,6 +4313,7 @@ let agentRuntimeRefreshPromise = null;
         if(result.run?.state!=='cancelled'&&!['succeeded','failed','budget_exhausted','timed_out'].includes(result.run?.state)) {
           throw new Error('agent-runtime-cancel-unconfirmed');
         }
+        run.cancelResultState=result.run.state;
         if(agentRuntimePollController)agentRuntimePollController.abort();
         $('agentRuntimeStatus').textContent=agentRuntimeStatusText(result.run.state);
       } catch(error) {
@@ -4269,6 +4323,16 @@ let agentRuntimeRefreshPromise = null;
       }
       agentRuntimeActiveRun=null;
       agentRuntimePollController=null;
+      if(run.origin==='chat'&&run.chatId) {
+        const chat=chats.find(item=>item.id===run.chatId);
+        if(chat?.activeAgentRunId===run.id) {
+          delete chat.activeAgentRunId;
+          const output=run.cancelResultState==='succeeded'&&run.latestSnapshot?.output_available===true&&typeof run.latestSnapshot.output==='string'
+            ? run.latestSnapshot.output.slice(0,65536) : agentRuntimeStatusText(run.cancelResultState);
+          chat.messages.push({role:'assistant',content:output,providerInfo:{provider:'alandi',providerLabel:'aLandi AgentRun',model:$('agentRuntimeModel').value,stage:'agent-run',at:new Date().toISOString()}});
+          updateState([...chats]);
+        }
+      }
       $('agentRuntimeProfile').disabled=false;
       $('agentRuntimeModel').disabled=false;
       $('agentRuntimePrompt').disabled=false;
@@ -5136,6 +5200,134 @@ let agentRuntimeRefreshPromise = null;
       throw new Error('Модель не завершила ответ в пределах лимита инструментов.');
     }
 
+function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, excludeLatestUser=false) {
+      if(!chat||!Array.isArray(chat.messages))return null;
+      let remaining=Math.max(0,Math.min(12000,Math.floor(maxChars)));
+      const sources=[];
+      const cleanText=value=>String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,' ').trim();
+      const addSource=(id,kind,content)=>{
+        const clean=cleanText(content);
+        if(!clean||remaining<1||sources.length>=40)return;
+        const bounded=clean.slice(0,remaining);
+        if(!bounded.trim())return;
+        sources.push({id,kind,scope:'project',inclusion_reason:'explicit_project_context',content:bounded});
+        remaining-=bounded.length;
+      };
+      const byId=new Map();
+      const activeProject=getProjectForChat(chat);
+      if(activeProject)byId.set(activeProject.id,{project:activeProject,includeMemory:chat.projectMemoryEnabled===true});
+      for(const id of Array.isArray(requestProjectIds)?requestProjectIds.slice(0,5):[]) {
+        const project=projects.find(item=>item.id===id);
+        if(!project)continue;
+        const existing=byId.get(project.id);
+        if(existing)existing.includeMemory=true;
+        else byId.set(project.id,{project,includeMemory:true});
+      }
+      let projectIndex=0;
+      for(const {project,includeMemory} of byId.values()) {
+        projectIndex+=1;
+        const instructions=cleanText(project.instructions).slice(0,1800);
+        if(instructions)addSource('project-instruction-'+projectIndex,'project_instruction','Project '+String(project.name||'').slice(0,100)+' instructions:\n'+instructions);
+        if(includeMemory&&Array.isArray(project.memory)) {
+          for(const [index,item] of project.memory.slice(0,8).entries()) {
+            const fact=cleanText(typeof item==='string'?item:item?.text).slice(0,350);
+            if(fact)addSource('project-memory-'+projectIndex+'-'+(index+1),'memory_fact','Project '+String(project.name||'').slice(0,100)+' memory fact:\n'+fact);
+          }
+        }
+      }
+      let eligible=chat.messages.filter(message=>message&&['user','assistant'].includes(message.role)).slice(-40);
+      if(excludeLatestUser&&eligible.at(-1)?.role==='user')eligible=eligible.slice(0,-1);
+      const messages=[];
+      for(let index=eligible.length-1;index>=0&&remaining>0;index--) {
+        const message=eligible[index];
+        const content=cleanText(typeof message.content==='string'?message.content:Array.isArray(message.content)?message.content.filter(part=>part?.type==='text').map(part=>part.text||'').join('\n'):'');
+        if(!content)continue;
+        const bounded=content.length>remaining?content.slice(-remaining):content;
+        if(!bounded.trim())continue;
+        messages.unshift({id:'chat-message-'+(index+1),role:message.role,content:bounded});
+        remaining-=bounded.length;
+      }
+      return messages.length||sources.length?{version:1,messages,sources}:null;
+    }
+
+    async function sendAgentRunChatMessage({chat,prompt,requestProjectIds,requestImages,isRetry}) {
+      const input=$('userInput'),english=getUiLanguage()==='en';
+      const reject=message=>{showToast(message,'error');return false;};
+      if(!chat||typeof prompt!=='string'||!prompt.trim())return reject(english?'Enter a message first.':'Сначала введи сообщение.');
+      if(currentProvider()!=='alandi')return reject(english?'AgentRun requires the explicitly selected aLandi Gateway. No provider fallback was attempted.':'AgentRun требует явно выбранный aLandi Gateway. Переключения на другой провайдер не было.');
+      if(Array.isArray(requestImages)&&requestImages.length)return reject(english?'AgentRun currently accepts text and extracted document/audio text only. Remove images or video frames, or switch explicitly to Direct.':'AgentRun пока принимает только текст и извлечённый текст документов/аудио. Убери изображения/кадры видео или явно переключись на Direct.');
+      if(prompt.length>12000)return reject(english?'The task is too long (12,000 characters maximum).':'Задание слишком длинное (максимум 12 000 символов).');
+      if(agentRuntimeActiveRun)return reject(english?'The single AgentRun worker is already busy. Check or cancel the active run first.':'Единственный worker AgentRun уже занят. Сначала проверь или отмени активное задание.');
+      const controller=new AbortController();
+      isGenerating=true;activeChatId=chat.id;activeController=controller;setBusy(true);
+      activeRunStartedAt=Date.now();
+      showStatus(english?'AgentRun · preparing the bounded chat context…':'AgentRun · подготовка ограниченного контекста чата…','info');
+      let accepted=false;
+      try {
+        if(!agentRuntimeReady)await refreshAgentRunRuntime();
+        if(!agentRuntimeReady)throw new Error(english?'AgentRun is unavailable or disabled on the Gateway.':'AgentRun недоступен или выключен на Gateway.');
+        const strategyId=chat.agentRuntimeStrategy;
+        if(!agentRuntimeSafeStrategies.includes(strategyId))throw new Error(english?'The selected AgentRun strategy is not allowlisted.':'Выбранная стратегия AgentRun отсутствует в разрешённом списке.');
+        const modelId=$('agentRuntimeModel').value;
+        if(!modelId||![...$('agentRuntimeModel').options].some(option=>option.value===modelId))throw new Error(english?'Select an allowlisted AgentRun model in Agents settings.':'Выбери разрешённую модель AgentRun в настройках агентов.');
+        const profileId=['team_review','coder_review'].includes(strategyId)?'general':$('agentRuntimeProfile').value;
+        if(!profileId||![...$('agentRuntimeProfile').options].some(option=>option.value===profileId))throw new Error(english?'Select an available AgentRun role profile.':'Выбери доступный профиль роли AgentRun.');
+        const contextPacket=buildAgentRunContextPacket(chat,requestProjectIds,Math.max(0,11000-prompt.length),isRetry===true);
+        const result=await startAgentRuntimeRun({
+          prompt,chat,contextPacket,origin:'chat',strategyId,modelId,profileId,propagateErrors:true,
+          onAccepted:(runId)=>{
+            accepted=true;
+            if(!isRetry) {
+              if(!chat.messages.some(message=>message.role==='user')) {
+                const titleText=prompt.slice(0,38);
+                chat.title=titleText+(prompt.length>38?'…':'');
+              }
+              chat.messages.push({role:'user',content:prompt});
+            }
+            chat.activeAgentRunId=runId;
+            updateState([...chats]);
+            input.value='';autoResizeTextarea(input);
+            selectedRequestProjectIds.clear();requestProjectContextByChat.delete(chat.id);
+            pendingComposerAttachments=[];composerAttachmentsByChat.delete(chat.id);
+            renderDraftAttachments();renderRequestProjectChoices();closeComposerPopovers();
+          }
+        });
+        if(result?.state==='succeeded'&&result.outputAvailable&&typeof result.output==='string') {
+          chat.messages.push({role:'assistant',content:result.output.slice(0,65536),providerInfo:{provider:'alandi',providerLabel:'aLandi AgentRun',model:$('agentRuntimeModel').value,stage:'agent-run',at:new Date().toISOString()}});
+          delete chat.activeAgentRunId;
+          updateState([...chats]);
+          hideStatus();
+        } else if(result?.terminal) {
+          chat.messages.push({role:'assistant',content:english?'AgentRun ended without a successful result: '+agentRuntimeStatusText(result.state):'AgentRun завершился без успешного результата: '+agentRuntimeStatusText(result.state),error:true});
+          delete chat.activeAgentRunId;
+          updateState([...chats]);
+          hideStatus();
+        } else if(!agentRuntimeActiveRun&&!chat.activeAgentRunId) {
+          hideStatus();
+        } else {
+          showStatus(english?'AgentRun accepted; the Gateway may still be working. Open Agents to resume observation.':'AgentRun принят; Gateway может продолжать выполнение. Открой «Агенты», чтобы возобновить наблюдение.','info');
+        }
+      } catch(error) {
+        if(!accepted) {
+          showToast(error?.message||agentRuntimeErrorText(error),'error');
+        } else if(!agentRuntimeActiveRun) {
+          delete chat.activeAgentRunId;
+          chat.messages.push({role:'assistant',content:'❌ '+(error?.message||agentRuntimeErrorText(error)),error:true});
+          updateState([...chats]);
+          hideStatus();
+        } else {
+          showStatus(english?'AgentRun was accepted, but observation could not be completed. Open Agents to check the durable run.':'AgentRun принят, но наблюдение не завершено. Открой «Агенты», чтобы проверить сохранённое задание.','warning');
+        }
+      } finally {
+        if(activeController===controller)activeController=null;
+        activeChatId=null;isGenerating=false;setBusy(false);
+        activeRunStartedAt=0;activeRunTelemetry=null;
+        if(statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}
+        if(!chat.activeAgentRunId)hideStatus();
+      }
+      return accepted;
+    }
+
     async function sendMessage(isRetry = false) {
       if (isGenerating || isPreparingDocumentAttachments) return;
       const input = $('userInput');
@@ -5246,6 +5438,11 @@ let agentRuntimeRefreshPromise = null;
           : '').filter(Boolean).join('\n\n');
       const userContent=[text,attachmentText].filter(Boolean).join('\n\n');
       const chat = getCurrentChat();
+      if(chat.executionMode==='agent') {
+        const retryPrompt=isRetry?[...chat.messages].reverse().find(message=>message.role==='user')?.content||'':userContent;
+        await sendAgentRunChatMessage({chat,prompt:retryPrompt,requestProjectIds,requestImages,chosenAttachments,isRetry});
+        return;
+      }
       if (!isRetry) {
         if (!chat.messages.some((message) => message.role === 'user')) {
           const titleText=text||chosenAttachments[0]?.name||'Мультимодальный запрос';
@@ -5315,6 +5512,7 @@ let agentRuntimeRefreshPromise = null;
       showToast('Настройки синхронизированы с фактическим маршрутом: '+(route.providerLabel||provider)+' · '+model);
     }
     function stopGeneration() {
+      if(agentRuntimeActiveRun?.origin==='chat') { void cancelAgentRuntimeRun(); return; }
       if (activeController) activeController.abort();
       hideStatus();
     }
