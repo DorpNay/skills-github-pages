@@ -4544,6 +4544,9 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   await openProjectSettingsForId(page, projectId);
   await page.locator('#projectSourcesDetails > summary').click();
   await expect(page.locator('#projectSourcesStatus')).toContainText('В этом проекте пока нет источников');
+  await expect(page.locator('#projectSourcesDetails > summary')).toHaveCSS('min-height', '44px');
+  await expect(page.locator('[data-action="select-project-source-file"]')).toHaveCSS('min-height', '44px');
+  await expect(page.locator('[data-action="refresh-project-sources"]')).toHaveCSS('min-height', '44px');
 
   await page.locator('[data-action="select-project-source-file"]').click();
   await page.locator('#projectSourceFileInput').setInputFiles({
@@ -4553,6 +4556,8 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   await expect(page.locator('#projectSourcesStatus')).toContainText('Источник добавлен');
   await expect(page.locator('#projectSourcesList')).toContainText('project-notes.md');
   await expect(page.locator('#projectSourcesList')).toContainText('SHA-256');
+  await expect(page.locator('[data-action="delete-project-source"]')).toHaveCSS('min-height', '44px');
+  await expect(page.locator('#projectSourcesList details summary')).toHaveCSS('min-height', '44px');
   expect(ingestCount).toBe(1);
   const preview = page.locator('#projectSourcesList details').first();
   await preview.locator('summary').click();
