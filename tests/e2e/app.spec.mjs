@@ -4535,7 +4535,13 @@ test('custom skill fields expose localized accessible names', async ({ page }) =
     await expect(field).toHaveAttribute('aria-label', await field.getAttribute('placeholder'));
   }
 
+  await page.locator('[data-action="close-function-panel"]').click();
   await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await page.locator('#skillPresetSelect').selectOption('custom');
+  await expect(page.locator('#skillCustomFields')).toBeVisible();
+
   for (const [id, expected] of [
     ['customSkillName', 'Custom skill name'],
     ['customSkillInstructions', 'Instructions for this task'],
