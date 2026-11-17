@@ -250,7 +250,7 @@ permalink: /
     .settings-actions [data-action="download-recovery-backup"] { grid-column:1 / -1; }
     @media (max-width:360px) { .app-header { gap:.3rem!important;padding-inline:.45rem!important; } .clock-face { width:42px;height:42px; } .brand-wordmark { font-size:1rem!important; } .header-chat-title { max-width:none; } }
     .chat-row-menu[open] summary,.chat-row-menu summary:hover { background:var(--ui-tiffany-soft);border-color:var(--ui-border);color:var(--ui-tiffany); }
-    .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));max-height:min(70dvh,420px);overflow-y:auto;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
+    .chat-row-menu-panel { position:fixed;left:0;top:0;right:auto;bottom:auto;z-index:90;width:min(190px,calc(100vw - 16px));max-height:min(70dvh,420px);overflow-y:auto;overscroll-behavior:contain;padding:5px;border:1px solid var(--ui-border);border-radius:14px;background:color-mix(in srgb,var(--ui-surface) 94%,transparent);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 50px rgb(0 0 0 / 38%); }
     .chat-row-menu-panel button { display:block;width:100%;padding:10px;border-radius:9px;text-align:left;font-size:12px; }
     .chat-row-menu-panel button:hover { background:var(--ui-tiffany-soft); }
     .chat-row-menu-panel button.danger { color:#fb7185; }
@@ -2584,18 +2584,26 @@ permalink: /
         const anchor=trigger.getBoundingClientRect(),viewport=window.visualViewport;
         const viewportLeft=viewport?.offsetLeft||0,viewportTop=viewport?.offsetTop||0;
         const viewportWidth=viewport?.width||window.innerWidth,viewportHeight=viewport?.height||window.innerHeight;
-        const width=panel.offsetWidth||190,height=panel.offsetHeight,margin=8,gap=5;
+        const margin=8,gap=5;
+        const availableBelow=Math.max(0,viewportTop+viewportHeight-margin-(anchor.bottom+gap));
+        const availableAbove=Math.max(0,anchor.top-gap-(viewportTop+margin));
+        const placeBelow=availableBelow>=availableAbove;
+        const availableSpace=Math.min(Math.max(availableBelow,availableAbove),Math.max(0,viewportHeight-margin*2));
+        panel.style.maxHeight=availableSpace+'px';
+        panel.style.maxWidth=Math.max(0,viewportWidth-margin*2)+'px';
+        const width=panel.offsetWidth||190,height=panel.offsetHeight;
         const left=Math.max(viewportLeft+margin,Math.min(anchor.right-width,viewportLeft+viewportWidth-width-margin));
-        const fitsBelow=anchor.bottom+gap+height<=viewportTop+viewportHeight-margin;
-        const top=fitsBelow?anchor.bottom+gap:Math.max(viewportTop+margin,anchor.top-height-gap);
-        panel.style.left=left+'px';panel.style.top=top+'px';menu.dataset.placement=fitsBelow?'below':'above';
+        const top=placeBelow
+          ?Math.min(anchor.bottom+gap,viewportTop+viewportHeight-margin-height)
+          :Math.max(viewportTop+margin,anchor.top-height-gap);
+        panel.style.left=left+'px';panel.style.top=top+'px';menu.dataset.placement=placeBelow?'below':'above';
       };
       const stopTrackingMenu=()=>{
         window.removeEventListener('resize',positionMenu);
         window.removeEventListener('scroll',positionMenu,true);
         window.visualViewport?.removeEventListener('resize',positionMenu);
         window.visualViewport?.removeEventListener('scroll',positionMenu);
-        panel.style.left='';panel.style.top='';delete menu.dataset.placement;
+        panel.style.left='';panel.style.top='';panel.style.maxHeight='';panel.style.maxWidth='';delete menu.dataset.placement;
       };
       menu.addEventListener('toggle',()=>{
         if(menu.open){

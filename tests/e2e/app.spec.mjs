@@ -494,6 +494,51 @@ test('composer popover dims the page and the first outside tap only dismisses it
   await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
 });
 
+test('chat action menu stays inside a shortened visual viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const menu = page.locator('#sidebar .chat-row-menu').first();
+  const trigger = menu.locator('summary');
+  await expect(trigger).toBeVisible();
+  const triggerTop = await trigger.evaluate(element => element.getBoundingClientRect().top);
+  await page.evaluate(top => {
+    Object.defineProperty(window, 'visualViewport', {
+      configurable: true,
+      value: {
+        offsetLeft: 0,
+        offsetTop: Math.max(0, top - 70),
+        width: 390,
+        height: 220,
+        addEventListener() {},
+        removeEventListener() {}
+      }
+    });
+  }, triggerTop);
+  await trigger.click();
+  const panel = menu.locator('.chat-row-menu-panel');
+  await expect(panel).toBeVisible();
+  const metrics = await page.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    const viewport = window.visualViewport;
+    return {
+      top: rect.top,
+      bottom: rect.bottom,
+      viewportTop: viewport.offsetTop,
+      viewportBottom: viewport.offsetTop + viewport.height,
+      maxHeight: parseFloat(getComputedStyle(element).maxHeight),
+      overflowY: getComputedStyle(element).overflowY,
+      scrollHeight: element.scrollHeight,
+      clientHeight: element.clientHeight
+    };
+  }, await panel.elementHandle());
+  expect(metrics.top).toBeGreaterThanOrEqual(metrics.viewportTop + 7);
+  expect(metrics.bottom).toBeLessThanOrEqual(metrics.viewportBottom - 7);
+  expect(metrics.maxHeight).toBeLessThanOrEqual(204);
+  expect(metrics.overflowY).toBe('auto');
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+});
+
 test('first outside tap dismisses an open chat row menu without activating the control underneath', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

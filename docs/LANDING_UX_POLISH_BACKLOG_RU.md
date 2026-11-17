@@ -26,7 +26,7 @@
 
 ### Popovers, menus, dialogs
 - [x] PR #117: chat-row menu placement viewport-safe; PR #115: scrim и inert first outside tap.
-- [~] Проверить все composer popovers у четырёх краёв viewport, короткую высоту, экранную клавиатуру и nested scroll.
+- [~] Chat/project action menus now choose the roomier side of the trigger and cap their scroll area to the live visual viewport (including keyboard-reduced height); added a focused E2E geometry/scroll regression. Composer popovers at all four viewport edges, nested scroll and real iPhone keyboard still need verification.
 - [~] Settings, project-create и project-settings dialogs: Escape, focus return и Tab/Shift+Tab containment реализованы; Settings и project-create имеют E2E regression, выполнение тестов pending. Остальные dialog/menu patterns, scroll lock и background inert проверить отдельно.
 - [x] Settings Save/Close остаются sticky; добавлены начальный focus на Close, Tab/Shift+Tab trap, Escape close и возврат фокуса к открывшему control (runtime E2E добавлен, запуск ещё pending).
 - [ ] Проверить короткий viewport, открытую iPhone keyboard и safe-area на реальном Safari.
