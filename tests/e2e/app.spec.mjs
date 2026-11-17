@@ -4488,29 +4488,52 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   });
   const documents = [];
   let ingestCount = 0;
+  let extractionEnabled = true;
+  const corsHeaders = {
+    'access-control-allow-origin': '*',
+    'access-control-allow-headers': 'authorization,content-type',
+    'access-control-allow-methods': 'GET,POST,DELETE,OPTIONS'
+  };
   await page.route('https://gateway.example.test/v1/**', async route => {
     const request = route.request(), url = new URL(request.url());
+    if (request.method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers: corsHeaders });
+      return;
+    }
     if (url.pathname === '/v1/capabilities') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ documents: { extraction: true }, rag: { enabled: true, evidence_ledger: true } }) }); return;
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({
+        documents: { extraction: extractionEnabled }, rag: { enabled: true, evidence_ledger: true }
+      }) });
+      return;
     }
     if (url.pathname === '/v1/rag/documents' && request.method() === 'GET') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ documents, count: documents.length }) }); return;
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ documents, count: documents.length }) });
+      return;
     }
     if (url.pathname === '/v1/documents/extract' && request.method() === 'POST') {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ filename: 'project-notes.md', text: 'Project source preview\n\nA scoped document for this project.', parser: 'markdown-text', characters: 55 }) }); return;
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({
+        filename: 'project-notes.md', text: 'Project source preview\n\nA scoped document for this project.', parser: 'markdown-text', characters: 55
+      }) });
+      return;
     }
     if (url.pathname === '/v1/rag/ingest' && request.method() === 'POST') {
-      const payload = request.postDataJSON(); ingestCount += 1;
-      documents.unshift({ document_id: payload.document_id, source_uri: payload.source_uri, created_at: 1, chunk_count: payload.chunks.length, metadata: payload.metadata });
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'indexed', chunks: payload.chunks.length }) }); return;
+      const payload = request.postDataJSON();
+      ingestCount += 1;
+      documents.unshift({ document_id: payload.document_id, source_uri: payload.source_uri, created_at: 1,
+        chunk_count: payload.chunks.length, metadata: payload.metadata });
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ status: 'indexed', chunks: payload.chunks.length }) });
+      return;
     }
     if (url.pathname.startsWith('/v1/rag/documents/') && request.method() === 'DELETE') {
-      const id = decodeURIComponent(url.pathname.split('/').pop()), index = documents.findIndex(item => item.document_id === id);
+      const id = decodeURIComponent(url.pathname.split('/').pop());
+      const index = documents.findIndex(item => item.document_id === id);
       if (index >= 0) documents.splice(index, 1);
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: index >= 0 ? 'deleted' : 'not_found' }) }); return;
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ status: index >= 0 ? 'deleted' : 'not_found' }) });
+      return;
     }
-    await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Unexpected test route' }) });
+    await route.fulfill({ status: 404, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ detail: 'Unexpected test route' }) });
   });
+
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectCreateNameInput').fill('Source manager project');
@@ -4521,8 +4544,12 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   await openProjectSettingsForId(page, projectId);
   await page.locator('#projectSourcesDetails > summary').click();
   await expect(page.locator('#projectSourcesStatus')).toContainText('В этом проекте пока нет источников');
+
   await page.locator('[data-action="select-project-source-file"]').click();
-  await page.locator('#projectSourceFileInput').setInputFiles({ name: 'project-notes.md', mimeType: 'text/markdown', buffer: Buffer.from('Project source preview\n\nA scoped document for this project.') });
+  await page.locator('#projectSourceFileInput').setInputFiles({
+    name: 'project-notes.md', mimeType: 'text/markdown',
+    buffer: Buffer.from('Project source preview\n\nA scoped document for this project.')
+  });
   await expect(page.locator('#projectSourcesStatus')).toContainText('Источник добавлен');
   await expect(page.locator('#projectSourcesList')).toContainText('project-notes.md');
   await expect(page.locator('#projectSourcesList')).toContainText('SHA-256');
@@ -4530,13 +4557,23 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   const preview = page.locator('#projectSourcesList details').first();
   await preview.locator('summary').click();
   await expect(preview).toContainText('Project source preview');
+
   await page.locator('[data-action="select-project-source-file"]').click();
-  await page.locator('#projectSourceFileInput').setInputFiles({ name: 'project-notes.md', mimeType: 'text/markdown', buffer: Buffer.from('Project source preview\n\nA scoped document for this project.') });
+  await page.locator('#projectSourceFileInput').setInputFiles({
+    name: 'project-notes.md', mimeType: 'text/markdown',
+    buffer: Buffer.from('Project source preview\n\nA scoped document for this project.')
+  });
   await expect(page.locator('#projectSourcesStatus')).toContainText('SHA-256 совпадает');
   expect(ingestCount).toBe(1);
   expect(documents).toHaveLength(1);
+
   page.once('dialog', dialog => dialog.accept());
   await page.locator('[data-action="delete-project-source"]').click();
   await expect(page.locator('#projectSourcesList')).toContainText('В этом проекте пока нет источников');
   expect(documents).toHaveLength(0);
+
+  extractionEnabled = false;
+  await page.locator('[data-action="refresh-project-sources"]').click();
+  await expect(page.locator('#projectSourcesStatus')).toContainText('должны быть включены извлечение документов и RAG');
+  expect(ingestCount).toBe(1);
 });

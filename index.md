@@ -579,7 +579,7 @@ permalink: /
                     <button type="button" data-action="select-project-source-file" class="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-[11px]" data-i18n="projectSourcesAdd">Добавить файл</button>
                     <button type="button" data-action="refresh-project-sources" class="rounded-lg border border-gray-700 px-3 py-2 text-[11px]" data-i18n="projectSourcesRefresh">Обновить список</button>
                   </div>
-                  <input id="projectSourceFileInput" type="file" class="hidden" accept=".pdf,.docx,.xlsx,.txt,.md,.markdown,.csv,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,text/markdown,text/csv,application/json">
+                  <input id="projectSourceFileInput" type="file" class="hidden" accept=".pdf,.docx,.xlsx,.txt,.md,.csv,.json,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,text/markdown,text/csv,application/json">
                   <p id="projectSourcesStatus" class="text-[10px] leading-relaxed text-gray-400" role="status" aria-live="polite">Сначала выбери проект.</p>
                   <div id="projectSourcesList" class="max-h-64 space-y-2 overflow-y-auto text-[11px] text-gray-300" aria-live="polite"></div>
                 </div>
@@ -2267,7 +2267,7 @@ permalink: /
       const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),60000);
       try{const response=await fetch(config.baseUrl+path,{...options,headers:{Accept:'application/json',Authorization:'Bearer '+config.key,...(options.headers||{})},credentials:'omit',cache:'no-store',redirect:'error',signal:controller.signal});const payload=await response.json().catch(()=>null);if(!response.ok)throw new Error(String(payload?.detail||payload?.error?.message||('HTTP '+response.status)).slice(0,240));if(!payload||typeof payload!=='object'||Array.isArray(payload))throw new Error('Gateway returned an invalid source response.');return payload;}finally{clearTimeout(timeout);}
     }
-    function projectSourcesCatalogPath(projectId){return '/rag/documents?'+new URLSearchParams({scope:'project',scope_id:projectId,limit:'200'}).toString();}
+    function projectSourcesCatalogPath(projectId){return '/rag/documents?'+new URLSearchParams({scope:'project',scope_id:projectId,limit:'500'}).toString();}
     async function loadProjectSources({force=false}={}){
       const projectId=selectedProjectSourceId();if(!projectId){renderProjectSources([]);setProjectSourcesStatus(projectSourcesText('projectSourcesNoProject'));syncProjectSourcesControls();return;}if(projectSourcesBusy&&!force)return;
       setProjectSourcesStatus(projectSourcesText('projectSourcesLoading'));
@@ -2282,7 +2282,7 @@ permalink: /
     async function sha256FileHex(file){if(!globalThis.crypto?.subtle)throw new Error('Secure SHA-256 is unavailable in this browser.');const digest=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');}
     async function uploadProjectSource(file){
       const projectId=selectedProjectSourceId();if(!projectId){setProjectSourcesStatus(projectSourcesText('projectSourcesNoProject'));return;}if(!file){setProjectSourcesStatus(projectSourcesText('projectSourcesSelectFile'));return;}
-      const extension=String(file.name.split('.').pop()||'').toLowerCase();if(!['pdf','docx','xlsx','txt','md','markdown','csv','json'].includes(extension)){setProjectSourcesStatus(projectSourcesText('projectSourcesUnsupported'));return;}if(file.size>PROJECT_SOURCE_MAX_BYTES){setProjectSourcesStatus(projectSourcesText('projectSourcesTooLarge'));return;}if(projectSourcesBusy)return;
+      const extension=String(file.name.split('.').pop()||'').toLowerCase();if(!['pdf','docx','xlsx','txt','md','csv','json'].includes(extension)){setProjectSourcesStatus(projectSourcesText('projectSourcesUnsupported'));return;}if(file.size>PROJECT_SOURCE_MAX_BYTES){setProjectSourcesStatus(projectSourcesText('projectSourcesTooLarge'));return;}if(file.name.length>255||/[\u0000-\u001f]/.test(file.name)){setProjectSourcesStatus(projectSourcesText('projectSourcesUnsupported'));return;}if(projectSourcesBusy)return;
       projectSourcesBusy=true;syncProjectSourcesControls();
       try{
         const config=getAlandiGatewayConfig(),capabilities=await projectSourcesRequest(config,'/capabilities');if(capabilities?.documents?.extraction!==true||capabilities?.rag?.enabled!==true)throw new Error(projectSourcesText('projectSourcesDisabled'));
