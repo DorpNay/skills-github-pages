@@ -3899,6 +3899,25 @@ test('selecting a project filters the Chats section and the back arrow restores 
   expect(visibleIds.sort()).toEqual([...alphaChatIds].sort());
   await expect(page.locator('#projectNavigationList .chat-row')).toHaveCount(0);
 
+  // The persistent New Chat action follows the selected project scope.
+  await page.locator('#chatSection [data-action="new-chat"]').click();
+  const scopedNewChat = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    const active = chats.find(chat => chat.id === id);
+    return { id, projectId: active?.projectId, title: active?.title };
+  });
+  expect(scopedNewChat.id).toBeTruthy();
+  expect(scopedNewChat.projectId).toBe(alphaId);
+  expect(scopedNewChat.title).toContain('Alpha Filter');
+
+  await ensureSidebarOpen(page);
+  if (await projectList.evaluate(el => el.classList.contains('hidden'))) await page.locator('#projectNavToggle').click();
+  await projectList.locator('.project-nav-select[data-action="select-project-filter"][data-project-id="' + alphaId + '"]').click();
+  visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
+  expect(visibleIds).toContain(scopedNewChat.id);
+  expect(visibleIds).toHaveLength(alphaChatIds.length + 1);
+
   await projectList.locator('.project-nav-select[data-action="select-project-filter"][data-project-id="' + betaId + '"]').click();
   visibleIds = await page.locator('#chatList .chat-row').evaluateAll(rows => rows.map(row => row.dataset.chatId));
   expect(visibleIds.sort()).toEqual([...betaChatIds].sort());
