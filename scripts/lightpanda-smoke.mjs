@@ -27,6 +27,20 @@ try {
     assert.equal(await page.locator(selector).count(), 1, `Missing app control: ${selector}`);
   }
 
+  const sidebar = page.locator('#sidebar');
+  const sidebarToggle = page.locator('#appSidebarToggle');
+  assert.equal(await sidebar.getAttribute('role'), 'navigation');
+  assert.equal(await sidebar.getAttribute('aria-label'), 'Проекты и чаты');
+  assert.equal(await sidebarToggle.getAttribute('aria-controls'), 'sidebar');
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'false');
+  await sidebarToggle.click();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'true');
+  await page.locator('[data-action="close-sidebar"]').click();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'false');
+  await page.locator('#uiLanguage').selectOption('en');
+  assert.equal(await sidebar.getAttribute('aria-label'), 'Projects and chats');
+  await page.locator('#uiLanguage').selectOption('ru');
+
   await page.locator('#functionsMenu > summary').click();
   await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
   await page.waitForFunction(() => {
