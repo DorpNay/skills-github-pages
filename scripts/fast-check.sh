@@ -12,6 +12,8 @@ node scripts/quality-agents.mjs security
 node scripts/quality-agents.mjs context
 node --check scripts/provider-smoke.mjs
 node --check scripts/provider-smoke-all.mjs
+node --check scripts/lightpanda-smoke.mjs
+node --check tests/e2e/app.spec.mjs
 bash -n scripts/diagnose_model_runtime.sh
 git diff --check
 
