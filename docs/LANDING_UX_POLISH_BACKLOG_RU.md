@@ -43,6 +43,7 @@
 - [x] Functions menu: owner-approved three-entry subset (Agents/structured analysis, Deep Research, Skills/task profile) was restored and implemented in PR #169; public Chromium confirmed it. This supersedes the 2026-11-07 blanket removal/defer instruction. Integrations/connectors remain absent until real registry/status/permission contracts exist.
 - [ ] Release-contract sentinel correction: PR #174 changes the published marker list to require the approved menu and forbid only retired Research Studio, legacy provider selection and removed sidebar controls.
 - [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
+- [x] Connectors empty state now explicitly says that no registry is configured and no connection status, permissions or actions are queried; removed decorative ticker that could imply integration progress. RU/EN regression added; execution pending.
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
 ### Мобильность и доступность
@@ -86,6 +87,7 @@
 
 ## 5. Change log
 | Date | Change | Evidence |
+| 2026-11-17 | Connectors panel now explicitly reports an unconfigured registry and does not imply live connection checks; decorative progress ticker removed. RU/EN E2E added; runtime execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
 | 2026-11-17 | Chat action dialog now focuses its active field, traps Tab/Shift+Tab, closes on Escape and restores the originating chat-menu focus (or a safe fallback after list rerender); the no-project path also restores focus after its notice. The move-project select has a localized accessible name/description. | `index.md` `50ff6ec6`, `72327b4e`; `tests/e2e/app.spec.mjs` `097876f6`, `6e5e0ce3`; runtime verification pending |
 | 2026-11-17 | Closed sidebar now uses `inert`/`aria-hidden` and restores focus; the move-chat project selector is labelled by its visible dynamic field/help text. Static HTML audit: 0 visible unnamed form controls and 0 unnamed buttons (heuristic only). | `index.md` `ea06d0a2`, `50ff6ec6`; `tests/e2e/app.spec.mjs` `36332c00`, `097876f6`; browser execution pending |
 | 2026-11-17 | Sidebar is now a named navigation landmark; the trigger exposes `aria-controls`/synchronized `aria-expanded` and localized Open/Close accessible names; closed navigation is `inert`/`aria-hidden`, opening focuses Close and closing restores trigger focus. Added RU/EN and focus assertions to E2E and the fast DOM smoke. | `index.md` `351004a4`; `tests/e2e/app.spec.mjs` `f862c61e`; `scripts/lightpanda-smoke.mjs` `b33b5097`; execution pending |

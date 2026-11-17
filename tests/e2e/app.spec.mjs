@@ -4855,6 +4855,27 @@ test('custom skill fields expose localized accessible names', async ({ page }) =
   }
 });
 
+test('Connectors panel truthfully reports an unconfigured registry in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
+  const panel = page.locator('#connectorFunctionStatus');
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute('role', 'status');
+  await expect(panel).toContainText('Реестр интеграций не настроен');
+  await expect(panel).toContainText('статусы соединений, разрешения и доступные действия не запрашиваются');
+  await expect(panel.locator('.roadmap-ticker')).toHaveCount(0);
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="connectors"]').click();
+  await expect(panel).toContainText('Integration registry is not configured');
+  await expect(panel).toContainText('status, permissions and available actions are therefore not queried or displayed');
+  await expect(panel).toContainText('No external source is treated as connected');
+});
+
+
 test('custom agent team fields expose localized accessible names', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenu > summary').click();
