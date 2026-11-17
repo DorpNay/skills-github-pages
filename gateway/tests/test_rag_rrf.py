@@ -40,6 +40,75 @@ def test_rrf_rejects_unbounded_or_invalid_rankings() -> None:
         reciprocal_rank_fusion([[""]])
 
 
+def test_document_catalog_is_scope_bound_and_returns_metadata_and_chunk_count(tmp_path) -> None:
+    rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
+    rag.initialize()
+    metadata = {
+        "original_name": "project-notes.md",
+        "mime_type": "text/markdown",
+        "size_bytes": 1024,
+        "sha256": "a" * 64,
+        "parser": "markdown-text",
+        "character_count": 52,
+        "source_type": "file",
+    }
+    rag.ingest_document(
+        "doc-a", "https://sources.example.test/project-notes.md",
+        [{"chunk_id": "a-1", "content": "Project source metadata and retrieval scope."},
+         {"chunk_id": "a-2", "content": "A second indexed chunk for the same source."}],
+        scope="project", scope_id="project-a", metadata=metadata,
+    )
+    rag.ingest_document(
+        "doc-b", "https://sources.example.test/private.md",
+        [{"chunk_id": "b-1", "content": "A source belonging to another project."}],
+        scope="project", scope_id="project-b",
+    )
+
+    documents = rag.list_documents(scope="project", scope_id="project-a")
+    assert len(documents) == 1
+    assert documents[0]["document_id"] == "doc-a"
+    assert documents[0]["chunk_count"] == 2
+    assert documents[0]["metadata"] == metadata
+    assert rag.list_documents(scope="project", scope_id="project-b")[0]["document_id"] == "doc-b"
+    assert rag.list_documents(scope="project", scope_id="missing") == []
+    assert rag.delete_document("doc-a", scope="project", scope_id="project-a")
+    assert rag.list_documents(scope="project", scope_id="project-a") == []
+
+
+def test_document_metadata_rejects_unknown_fields_and_invalid_hash(tmp_path) -> None:
+    rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
+    rag.initialize()
+    chunks = [{"chunk_id": "c1", "content": "A bounded source chunk."}]
+    with pytest.raises(ValueError, match="unsupported fields"):
+        rag.ingest_document("doc-a", "https://sources.example.test/a", chunks,
+                            scope="project", scope_id="project-a", metadata={"raw_text": "not allowed"})
+    with pytest.raises(ValueError, match="sha256"):
+        rag.ingest_document("doc-b", "https://sources.example.test/b", chunks,
+                            scope="project", scope_id="project-a", metadata={"sha256": "not-a-hash"})
+
+
+def test_v2_rag_database_adds_source_metadata_column_without_losing_documents(tmp_path) -> None:
+    import sqlite3
+
+    path = tmp_path / "rag-v2.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE rag_documents (
+            document_key TEXT PRIMARY KEY, document_id TEXT NOT NULL, scope TEXT NOT NULL,
+            scope_id TEXT NOT NULL, source_uri TEXT NOT NULL, created_at INTEGER NOT NULL,
+            UNIQUE(scope, scope_id, document_id)
+        )""")
+        db.execute("""INSERT INTO rag_documents VALUES
+            ('key-a', 'doc-a', 'project', 'project-a', 'https://sources.example.test/a', 123)""")
+    rag = LazyGraphRAG(path)
+    rag.initialize()
+    with sqlite3.connect(path) as db:
+        columns = {row[1] for row in db.execute("PRAGMA table_info(rag_documents)")}
+        version = db.execute("PRAGMA user_version").fetchone()[0]
+    assert "metadata_json" in columns
+    assert version == 3
+    assert rag.list_documents(scope="project", scope_id="project-a")[0]["metadata"] == {}
+
+
 def test_retrieval_uses_rrf_without_losing_scope_or_source_metadata(tmp_path) -> None:
     rag = LazyGraphRAG(tmp_path / "rag.sqlite3")
     rag.initialize()
