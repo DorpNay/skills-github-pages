@@ -494,6 +494,52 @@ test('composer popover dims the page and the first outside tap only dismisses it
   await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
 });
 
+test('request context popover scrolls within a short viewport and traps keyboard focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 280 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const projects = Array.from({ length: 16 }, (_, index) => ({
+      id: 'context-project-' + index,
+      name: 'Context project ' + index,
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z'
+    }));
+    localStorage.setItem('ai_projects_v1', JSON.stringify(projects));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const trigger = page.locator('#contextPickerButton');
+  const menu = page.locator('#requestContextMenu');
+  await trigger.click();
+  await expect(menu).toBeVisible();
+  const focusable = menu.locator('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const first = focusable.first();
+  const last = focusable.last();
+  await expect(first).toBeFocused();
+  const metrics = await menu.evaluate(element => ({
+    maxHeight: parseFloat(getComputedStyle(element).maxHeight),
+    overflowY: getComputedStyle(element).overflowY,
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight,
+    viewportHeight: window.visualViewport?.height || window.innerHeight
+  }));
+  expect(metrics.maxHeight).toBeLessThanOrEqual(metrics.viewportHeight - 16);
+  expect(metrics.overflowY).toBe('auto');
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+  await last.focus();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+});
+
 test('chat action menu stays inside a shortened visual viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
