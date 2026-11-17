@@ -51,6 +51,7 @@ def test_document_catalog_is_scope_bound_and_returns_metadata_and_chunk_count(tm
         "parser": "markdown-text",
         "character_count": 52,
         "source_type": "file",
+        "preview": "Project source metadata and retrieval scope.",
     }
     rag.ingest_document(
         "doc-a", "https://sources.example.test/project-notes.md",
@@ -69,6 +70,7 @@ def test_document_catalog_is_scope_bound_and_returns_metadata_and_chunk_count(tm
     assert documents[0]["document_id"] == "doc-a"
     assert documents[0]["chunk_count"] == 2
     assert documents[0]["metadata"] == metadata
+    assert documents[0]["metadata"]["preview"].startswith("Project source")
     assert rag.list_documents(scope="project", scope_id="project-b")[0]["document_id"] == "doc-b"
     assert rag.list_documents(scope="project", scope_id="missing") == []
     assert rag.delete_document("doc-a", scope="project", scope_id="project-a")
@@ -85,6 +87,9 @@ def test_document_metadata_rejects_unknown_fields_and_invalid_hash(tmp_path) -> 
     with pytest.raises(ValueError, match="sha256"):
         rag.ingest_document("doc-b", "https://sources.example.test/b", chunks,
                             scope="project", scope_id="project-a", metadata={"sha256": "not-a-hash"})
+    with pytest.raises(ValueError, match="preview"):
+        rag.ingest_document("doc-c", "https://sources.example.test/a", chunks,
+                            scope="project", scope_id="project-a", metadata={"preview": "x" * 1201})
 
 
 def test_v2_rag_database_adds_source_metadata_column_without_losing_documents(tmp_path) -> None:

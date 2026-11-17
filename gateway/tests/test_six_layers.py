@@ -376,7 +376,7 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
             "scope": "project", "scope_id": "alandi",
             "metadata": {"original_name": "notes.md", "mime_type": "text/markdown",
                          "size_bytes": 512, "sha256": "b" * 64, "parser": "markdown-text",
-                         "character_count": 38, "source_type": "file"},
+                         "character_count": 38, "source_type": "file", "preview": "aLandi gateway uses bounded concurrency"},
             "chunks": [{"chunk_id": "c1", "content": "aLandi gateway uses bounded concurrency", "page_number": 1}]
         })
         assert indexed.status_code == 200 and indexed.json()["chunks"] == 1
@@ -391,6 +391,7 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         assert catalog.json()["count"] == 1
         assert catalog.json()["documents"][0]["metadata"]["original_name"] == "notes.md"
         assert catalog.json()["documents"][0]["chunk_count"] == 1
+        assert catalog.json()["documents"][0]["metadata"]["preview"] == "aLandi gateway uses bounded concurrency"
         assert client.get("/v1/rag/documents", params={"scope": "project", "scope_id": "another-project"}, headers=auth).json()["count"] == 1
         retrieval = client.post("/v1/rag/retrieve", headers=auth, json={
             "query": "gateway concurrency", "scope": "project", "scope_id": "alandi", "top_k": 3

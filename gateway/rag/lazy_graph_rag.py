@@ -265,7 +265,7 @@ class LazyGraphRAG:
         if not isinstance(metadata, dict):
             raise ValueError("metadata must be an object")
         allowed_metadata = {"original_name", "mime_type", "size_bytes", "sha256",
-                            "parser", "character_count", "source_type", "imported_at"}
+                            "parser", "character_count", "source_type", "imported_at", "preview"}
         if set(metadata) - allowed_metadata:
             raise ValueError("metadata contains unsupported fields")
         for key in ("original_name", "mime_type", "parser", "source_type", "imported_at"):
@@ -273,6 +273,10 @@ class LazyGraphRAG:
             if value is not None and (not isinstance(value, str) or len(value) > 255 or
                                       any(ord(char) < 32 for char in value)):
                 raise ValueError(f"metadata.{key} must be a bounded printable string")
+        preview = metadata.get("preview")
+        if preview is not None and (not isinstance(preview, str) or len(preview) > 1200 or
+                                    any(ord(char) < 32 and char not in "\\n\\t" for char in preview)):
+            raise ValueError("metadata.preview must be a bounded text excerpt of at most 1200 characters")
         for key in ("size_bytes", "character_count"):
             value = metadata.get(key)
             if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):

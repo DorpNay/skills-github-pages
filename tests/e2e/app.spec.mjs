@@ -4478,3 +4478,65 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
   expect(saved.agentRunStatusSummary).toMatchObject({ runId: 'run-e2e-status', state: 'cancelled' });
 });
 
+
+
+test('project sources upload, deduplicate by SHA-256, preview and delete within project scope', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-key');
+  });
+  const documents = [];
+  let ingestCount = 0;
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const request = route.request(), url = new URL(request.url());
+    if (url.pathname === '/v1/capabilities') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ documents: { extraction: true }, rag: { enabled: true, evidence_ledger: true } }) }); return;
+    }
+    if (url.pathname === '/v1/rag/documents' && request.method() === 'GET') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ documents, count: documents.length }) }); return;
+    }
+    if (url.pathname === '/v1/documents/extract' && request.method() === 'POST') {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ filename: 'project-notes.md', text: 'Project source preview\n\nA scoped document for this project.', parser: 'markdown-text', characters: 55 }) }); return;
+    }
+    if (url.pathname === '/v1/rag/ingest' && request.method() === 'POST') {
+      const payload = request.postDataJSON(); ingestCount += 1;
+      documents.unshift({ document_id: payload.document_id, source_uri: payload.source_uri, created_at: 1, chunk_count: payload.chunks.length, metadata: payload.metadata });
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'indexed', chunks: payload.chunks.length }) }); return;
+    }
+    if (url.pathname.startsWith('/v1/rag/documents/') && request.method() === 'DELETE') {
+      const id = decodeURIComponent(url.pathname.split('/').pop()), index = documents.findIndex(item => item.document_id === id);
+      if (index >= 0) documents.splice(index, 1);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: index >= 0 ? 'deleted' : 'not_found' }) }); return;
+    }
+    await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ detail: 'Unexpected test route' }) });
+  });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Source manager project');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  const projectId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(item => item.name === 'Source manager project')?.id || '');
+  expect(projectId).not.toBe('');
+  await openProjectSettingsForId(page, projectId);
+  await page.locator('#projectSourcesDetails > summary').click();
+  await expect(page.locator('#projectSourcesStatus')).toContainText('В этом проекте пока нет источников');
+  await page.locator('[data-action="select-project-source-file"]').click();
+  await page.locator('#projectSourceFileInput').setInputFiles({ name: 'project-notes.md', mimeType: 'text/markdown', buffer: Buffer.from('Project source preview\n\nA scoped document for this project.') });
+  await expect(page.locator('#projectSourcesStatus')).toContainText('Источник добавлен');
+  await expect(page.locator('#projectSourcesList')).toContainText('project-notes.md');
+  await expect(page.locator('#projectSourcesList')).toContainText('SHA-256');
+  expect(ingestCount).toBe(1);
+  const preview = page.locator('#projectSourcesList details').first();
+  await preview.locator('summary').click();
+  await expect(preview).toContainText('Project source preview');
+  await page.locator('[data-action="select-project-source-file"]').click();
+  await page.locator('#projectSourceFileInput').setInputFiles({ name: 'project-notes.md', mimeType: 'text/markdown', buffer: Buffer.from('Project source preview\n\nA scoped document for this project.') });
+  await expect(page.locator('#projectSourcesStatus')).toContainText('SHA-256 совпадает');
+  expect(ingestCount).toBe(1);
+  expect(documents).toHaveLength(1);
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('[data-action="delete-project-source"]').click();
+  await expect(page.locator('#projectSourcesList')).toContainText('В этом проекте пока нет источников');
+  expect(documents).toHaveLength(0);
+});
