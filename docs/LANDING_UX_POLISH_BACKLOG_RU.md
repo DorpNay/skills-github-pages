@@ -46,6 +46,7 @@
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
 ### Мобильность и доступность
+- [~] Composer placeholder switches to compact RU/EN copy at <=360px and <=420px and restores the full text on wider screens; E2E covers 320/360/390/420/768 px (execution pending).
 - [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
 - [ ] Native iPhone Safari: visual viewport, клавиатура, safe-area, edge swipe, touchcancel, rotation, scroll restoration.
 - [ ] VoiceOver: headings, dialogs, menus, status text, message actions, focus visibility.
@@ -54,13 +55,13 @@
 ## 2. Порядок реализации большими шагами
 
 1. **UX inventory + baseline (этот документ):** требования собраны; не переписывать уже закрытые PR #115–120.
-2. **Landing finish:** screenshot review, ticker pause/reduced-motion/keyboard, metadata/CTA/link validation, published Pages smoke.
+2. **Root app finish:** screenshot review at 320/360/390/768/1024/1440, compact composer/header, dialogs, navigation, metadata and published Pages smoke. The separate `/landing/` route is retired by contract.
 3. **App visual consistency:** screenshot pass, typography/spacing/contrast, RU/EN, light/dark, empty/error/secondary states.
 4. **Interaction correctness:** popover edge placement, dialog sticky actions, Escape/focus/scroll lock, project/chat menus.
 5. **Mobile/accessibility:** Chromium matrix, then native iPhone Safari + VoiceOver owner gate.
-6. **Release verification:** PR #121 merged after exact-head CI; post-merge Pages root + /landing smoke remains pending because no independent deployment run was returned. Update this file, V1 checklist, PROJECT_STATE, ORIENTER and VOLLEY_LOG after the actual public URL is verified.
+6. **Release verification:** root Pages publication and `/landing/` HTTP 404 have been verified on the previous exact head; rerun after every UI commit. Keep Quality manual-only and do not alter the Pages workflow.
 
-## 3. Реализованный первый polish patch
+## 3. Исторический первый polish patch
 - [x] Добавлен checkbox Pause control на каждый из трёх landing roadmap ticker.
 - [x] Pause toggles animation state using CSS only; no new JavaScript or runtime dependency.
 - [x] Added Playwright test for pause/resume and retained reduced-motion test.

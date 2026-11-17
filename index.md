@@ -1688,6 +1688,11 @@ permalink: /
       const size=$('agentTeamSizeValue');if(size){const value=Number($('agentTeamSize')?.value||4);size.textContent=value+' '+(en?(value===1?'agent':'agents'):(value===1?'агент':'агентов'));}
       const mainSkill=$('skillPresetSelect')?.querySelector('option[value="custom"]');if(mainSkill)mainSkill.textContent=en?'Custom option':'Свой вариант';
     }
+    function syncComposerPlaceholder(){
+      const input=$('userInput');if(!input)return;
+      const english=getUiLanguage()==='en',width=window.innerWidth||document.documentElement.clientWidth;
+      input.placeholder=width<=360?(english?'Type…':'Текст…'):width<=420?(english?'Message…':'Сообщение…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
+    }
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
@@ -1695,6 +1700,7 @@ permalink: /
       if(externalGroup)externalGroup.label=lang==='en'?'Third-party providers':'Сторонние провайдеры';
       document.querySelectorAll('[data-i18n]').forEach(node=>{const value=text[node.dataset.i18n];if(typeof value==='string')node.textContent=value;});
       document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const value=text[node.dataset.i18nPlaceholder];if(typeof value==='string')node.placeholder=value;});
+      syncComposerPlaceholder();
       document.querySelectorAll('[data-i18n-aria-label]').forEach(node=>{const value=text[node.dataset.i18nAriaLabel];if(typeof value==='string')node.setAttribute('aria-label',value);});
       applyFunctionPanelLanguage(lang);
       const languageSummary=$('languageSummary');if(languageSummary)languageSummary.textContent=lang==='en'?'EN ▾':'RU ▾';
@@ -1711,6 +1717,7 @@ permalink: /
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Open voice modes':'Нажми, чтобы открыть режимы голоса';voice.setAttribute('aria-label',lang==='en'?'Open voice modes':'Открыть режимы голоса');}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
     }
+    window.addEventListener('resize',syncComposerPlaceholder,{passive:true});
     function updateHomeThemeButton(){
       const light=document.documentElement.dataset.theme==='light';
       const english=getUiLanguage()==='en';

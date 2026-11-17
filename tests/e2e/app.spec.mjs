@@ -3191,6 +3191,24 @@ test('compact mobile header controls remain reachable without overlap', async ({
   }
 });
 
+test('composer placeholder stays compact and localized on narrow mobile widths', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const input = page.locator('#userInput');
+  for (const language of ['ru', 'en']) {
+    await page.locator('#uiLanguage').selectOption(language);
+    for (const width of [320, 360, 390, 420, 768]) {
+      await page.setViewportSize({ width, height: 844 });
+      const expected = language === 'en'
+        ? (width <= 360 ? 'Type…' : width <= 420 ? 'Message…' : 'Write a message...')
+        : (width <= 360 ? 'Текст…' : width <= 420 ? 'Сообщение…' : 'Напиши сообщение...');
+      await expect(input).toHaveAttribute('placeholder', expected);
+      const metrics = await input.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
+      expect(metrics.scrollHeight, `composer placeholder overflow at ${width}px / ${language}`).toBeLessThanOrEqual(metrics.clientHeight + 1);
+    }
+  }
+});
+
+
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
