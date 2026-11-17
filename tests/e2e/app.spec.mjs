@@ -4521,6 +4521,30 @@ test('AgentRun chat status is visible, collapsible, safe and resumable from the 
 
 
 
+test('custom skill fields expose localized accessible names', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await page.locator('#skillPresetSelect').selectOption('custom');
+  await expect(page.locator('#skillCustomFields')).toBeVisible();
+
+  for (const id of ['customSkillName', 'customSkillInstructions', 'customSkillOutput']) {
+    const field = page.locator('#' + id);
+    await expect(field).toHaveAttribute('aria-label', /.+/);
+    await expect(field).toHaveAttribute('aria-label', await field.getAttribute('placeholder'));
+  }
+
+  await page.locator('#uiLanguage').selectOption('en');
+  for (const [id, expected] of [
+    ['customSkillName', 'Custom skill name'],
+    ['customSkillInstructions', 'Instructions for this task'],
+    ['customSkillOutput', 'Custom output format (optional)']
+  ]) {
+    await expect(page.locator('#' + id)).toHaveAttribute('aria-label', expected);
+  }
+});
+
 test('project sources upload, deduplicate by SHA-256, preview and delete within project scope', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
