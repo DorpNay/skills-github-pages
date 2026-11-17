@@ -817,7 +817,7 @@ permalink: /
       <form id="chatActionForm" class="space-y-3">
         <label id="chatActionFieldLabel" for="chatActionName" class="block text-sm">Название</label>
         <input id="chatActionName" class="w-full rounded-xl border px-3 py-3 bg-transparent" maxlength="120" autocomplete="off">
-        <select id="chatActionProject" class="hidden w-full rounded-xl border px-3 py-3 bg-transparent"></select>
+        <select id="chatActionProject" aria-labelledby="chatActionFieldLabel" aria-describedby="chatActionHelp" class="hidden w-full rounded-xl border px-3 py-3 bg-transparent"></select>
         <p id="chatActionHelp" class="text-xs text-gray-500">Изменение применяется только к выбранному чату.</p>
         <footer class="flex justify-end gap-2 pt-1"><button type="button" data-action="chat-action-cancel" class="rounded-xl border px-3 py-2.5 text-sm">Отмена</button><button type="submit" data-action="chat-action-save" class="rounded-xl bg-blue-600 text-white px-4 py-2.5 text-sm font-medium">Сохранить</button></footer>
       </form>
