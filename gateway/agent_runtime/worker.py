@@ -9,6 +9,11 @@ import time
 from collections import OrderedDict
 from typing import Any
 
+try:
+    from .skills import load_coder_skill_bundle
+except ImportError:  # supports direct import from the gateway directory
+    from agent_runtime.skills import load_coder_skill_bundle
+
 import httpx
 
 try:
@@ -559,7 +564,10 @@ class AgentRunWorker:
         request_body = {
             "model": model_id,
             "messages": [
-                {"role": "system", "content": PROFILE_PROMPTS[profile_id]},
+                {"role": "system", "content": (
+                    PROFILE_PROMPTS[profile_id]
+                    + ("\n\n" + load_coder_skill_bundle() if profile_id == "coder" else "")
+                )},
                 {"role": "user", "content": prompt},
             ],
             "stream": False,

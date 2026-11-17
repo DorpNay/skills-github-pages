@@ -102,6 +102,10 @@ def test_worker_invokes_only_allowlisted_local_model_and_encrypts_payloads(tmp_p
         assert "no web access" in system_prompt
         assert "no filesystem access" in system_prompt
         assert "no shell access" in system_prompt
+        assert "CODER SKILL BUNDLE" in system_prompt
+        assert "test-first-delivery" in system_prompt
+        assert "repository-navigation" in system_prompt
+        assert "skills do not grant runtime permissions" in system_prompt
         assert json.loads(vault.get(run_id=run["run_id"], kind="input"))["prompt"] == "PRIVATE OWNER PROMPT"
         assert json.loads(vault.get(run_id=run["run_id"], kind="output"))["text"] == "Durable agent answer."
         raw_db = db_path.read_bytes()
