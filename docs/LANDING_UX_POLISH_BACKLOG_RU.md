@@ -42,6 +42,7 @@
 - [x] Owner override 2026-11-08 (D-022): Research Studio remains retired; PR #169 removed the modal, wiring and entrypoints. Post-merge public root/landing Chromium verified the absence on exact main SHA.
 - [x] Functions menu: D-022 owner override supersedes the original three-entry subset. Four entries are present (Agents, Deep Research, Skills, Connectors); the Connectors panel truthfully reports that no registry is configured and does not claim to query live status, scopes or actions. A real registry/permission contract remains a separate implementation gate.
 - [ ] Release-contract sentinel correction: PR #174 changes the published marker list to require the approved menu and forbid only retired Research Studio, legacy provider selection and removed sidebar controls.
+- [~] Web search is opt-in by default: fresh chats and legacy/imported records without an explicit saved preference stay model-only; saved per-chat `normal`/`more` choices are preserved. RU regression added; E2E execution and the broader mode-combination matrix remain open.
 - [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI.
 - [x] Connectors empty state now explicitly says that no registry is configured and no connection status, permissions or actions are queried; removed decorative ticker that could imply integration progress. RU/EN regression added; execution pending.
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.

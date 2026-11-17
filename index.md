@@ -3165,7 +3165,7 @@ permalink: /
       $('systemPromptInput').value = normalizedPrompt;
       if (savedPrompt !== null && normalizedPrompt !== savedPrompt) safeSet(STORAGE.systemPrompt, normalizedPrompt);
       processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast';
-      $('toggleSearch').checked = safeGet(STORAGE.search) !== 'false';
+      $('toggleSearch').checked = safeGet(STORAGE.search) === 'true';
       $('toggleMultiAgent').checked = safeGet(STORAGE.multiAgent) === 'true';
       $('allowCrossProviderFallback').checked = safeGet(STORAGE.crossProviderFallback) === 'true';
       applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
@@ -3182,7 +3182,7 @@ permalink: /
       if (!chat || typeof chat !== 'object') return false;
       let changed = false;
       if (!['fast','deep'].includes(chat.processingMode)) { chat.processingMode = safeGet(STORAGE.mode) === 'deep' ? 'deep' : 'fast'; changed = true; }
-      if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) === 'false' ? 'offline' : 'normal'; changed = true; }
+      if (!VALID_SEARCH_MODES.has(chat.searchMode)) { chat.searchMode = safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) !== 'true' ? 'offline' : 'normal'; changed = true; }
       if (!VALID_DEEP_RESEARCH_METHODS.has(chat.deepResearchMethod)) { chat.deepResearchMethod = chat.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'; changed = true; }
       if (typeof chat.multiAgentEnabled !== 'boolean') { chat.multiAgentEnabled = chat.deepResearchMethod !== 'none'; changed = true; }
       if (!['direct','agent'].includes(chat.executionMode)) { chat.executionMode = 'direct'; changed = true; }
@@ -4004,7 +4004,7 @@ permalink: /
     }
     function updateOfflineUI() {
       const chat = getCurrentChat();
-      const mode = chat && VALID_SEARCH_MODES.has(chat.searchMode) ? chat.searchMode : (safeGet(STORAGE.offline) === 'true' ? 'offline' : 'normal');
+      const mode = chat && VALID_SEARCH_MODES.has(chat.searchMode) ? chat.searchMode : (safeGet(STORAGE.offline) === 'true' || safeGet(STORAGE.search) !== 'true' ? 'offline' : 'normal');
       const text = UI_TEXT[getUiLanguage()];
       const modeKey = mode === 'offline' ? 'searchModeOffline' : mode === 'more' ? 'searchModeMore' : 'searchModeNormal';
       const helpKey = mode === 'offline' ? 'searchModeOfflineHelp' : mode === 'more' ? 'searchModeMoreHelp' : 'searchModeNormalHelp';
@@ -6241,7 +6241,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           projectMemoryEnabled: chat.projectMemoryEnabled===true,
           
           processingMode: ['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
-          searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'normal',
+          searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'offline',
           deepResearchMethod: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod:(chat.multiAgentEnabled===true?'multi_step_evidence_report':'none'),
           multiAgentEnabled: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod) ? chat.deepResearchMethod === 'multi_step_evidence_report' : chat.multiAgentEnabled===true,
           skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',

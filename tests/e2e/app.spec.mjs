@@ -5005,3 +5005,37 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   await expect(page.locator('#projectSourcesStatus')).toContainText('должны быть включены извлечение документов и RAG');
   expect(ingestCount).toBe(1);
 });
+
+test('legacy chats and imports without an explicit web-search opt-in stay model-only', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      { id: 'legacy-no-search-opt-in', title: 'Legacy without search preference', messages: [] }
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'legacy-no-search-opt-in');
+    localStorage.removeItem('ai_web_search');
+    localStorage.removeItem('ai_offline_mode');
+    localStorage.removeItem('ai_web_search_preset_v1');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+  await expect(page.locator('#searchModeSummary')).toContainText(/выкл./i);
+  const migratedMode = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === 'legacy-no-search-opt-in')?.searchMode;
+  });
+  expect(migratedMode).toBe('offline');
+
+  await page.locator('#importFile').setInputFiles({
+    name: 'legacy-chat.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify([
+      { id: 'imported-legacy-no-search', title: 'Imported legacy chat', messages: [] }
+    ]))
+  });
+  await expect.poll(async () => page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === 'imported-legacy-no-search')?.searchMode;
+  })).toBe('offline');
+  await expect(page.locator('#toggleSearch')).not.toBeChecked();
+});
