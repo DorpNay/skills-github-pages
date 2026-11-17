@@ -175,3 +175,16 @@ Read `DECISIONS.md` → **D-017 — Адаптивный минимализм и
 - Permit autonomous work only within explicit task scope and capabilities. Return a reviewable PR with rationale, changed areas, test results, unresolved risks and rollback steps.
 - The owner retains the final merge decision. Never merge into `main` merely because automated checks pass.
 - These are accepted design constraints, not evidence of existing runtime functionality. Update project state only when implementation and verification evidence exist.
+
+
+## 10. Coder Skills pack — IMPLEMENTED / NOT A TOOL GRANT
+
+The AgentRun `coder` profile now loads a fixed, repository-owned `SKILL.md` pack from `skills/coder/` before local inference:
+
+- `repository-navigation` — smallest-surface inspection, symbol/data-flow tracing and evidence discipline;
+- `test-first-delivery` — bounded acceptance, regression-first changes, exact-HEAD verification and rollback;
+- `security-boundaries` — trust boundaries, fail-closed validation, approval binding and sandbox criteria;
+- `performance-engineering` — representative profiling, incremental indexing and resource-cost discipline.
+
+The loader accepts only four fixed IDs, checks frontmatter/name agreement, rejects symlinks and path escape, bounds each file and the total prompt, and fails closed if the trusted bundle is unavailable. No external package is added. `allowed-tools` is intentionally absent: these documents are prompt guidance, not permissions. AgentRun still has no filesystem, shell, web, database or repository tools; the GitHub App connector remains separately read-only and allowlisted. Production code execution still requires a separately evaluated sandbox and owner-authorized host configuration.
+
