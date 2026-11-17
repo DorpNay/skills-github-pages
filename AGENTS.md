@@ -37,7 +37,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-17)
 
-- Functional code/test checkpoint: `c7ac7ab976ae5333010b72370b6f1fec28c9c655`; documentation checkpoint parent: `c0c74fb5be14f63edb1666f55600559512ad1c42`; this marker repair is its direct child. Open PRs: 0; open issues: #111 and #186 (#186 is unrelated).
+- Functional code/test checkpoint: `c7ac7ab976ae5333010b72370b6f1fec28c9c655`; documentation checkpoint parent: `760fc736be44c361beedcf43e394dc493c823e15`; this repair is its direct child. Open PRs: 0; open issues: #111 and #186 (#186 is unrelated).
 - Exact Quality #44006105936 SUCCESS (7/7: 143 built-app Chromium tests + 1 published-site Chromium smoke); deployed `alandi-build-revision` matched the functional SHA. Graphify #44006105833 SUCCESS; Pages #44006104480 SUCCESS.
 - Gateway #44004983557 PASS on backend SHA `f69a999b23d30eedb0b9157eabccf97e2dfd04c7` (Python 3.12/13/14); no Gateway files changed after that backend SHA.
 - The first Quality attempt on `31965169483634e64dd5cd98e7dae03d39019620` exposed a real renderer defect: the source loop variable shadowed DOM `document`. The follow-up uses `source`, preserves catalog refresh failures, and asserts 44px touch targets; exact Quality now passes. No safeguards or tests were weakened.
@@ -45,7 +45,7 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 - Memory IA/scope/provenance/promotion, one-tap voice menu + Escape/focus return, 16px mobile text-entry controls and the personal/project header context capsule are implemented and covered by E2E. Global prompt blank-default/save-clear and settings-profile round-trip have E2E coverage.
 - AgentRun remains IMPLEMENTED / PARTIAL: SQLite DAG, encrypted payloads, bounded context, same-chat result and collapsible status; one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder sandbox.
 - K.5 is the only 15-point tracker. Remaining UI acceptance: compact mobile hierarchy, navigation/accessibility/forms at target viewports, physical iPhone Safari/VoiceOver and owner visual acceptance. Chromium does not prove native-device behavior.
-- Freshness #44007011572 failed because NOW.md omitted the explicit no-default-PR rule and exact open-queue markers; Provenance #44007011860 passed on the prior documentation parent. Both must pass on this direct child; no earlier-head result is reused.
+- Freshness #44007278149 found `root_orienter.base_main` stale against snapshot `main_sha`; this direct child synchronizes it. Provenance #44007278170 passed on the prior documentation parent. Both must pass on this direct child; no earlier-head result is reused.
 
 
 ## Targeted UI source review — 2026-11-16

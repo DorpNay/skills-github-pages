@@ -3,9 +3,9 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-17",
   "checkpoint": {
-    "main_sha": "c0c74fb5be14f63edb1666f55600559512ad1c42",
-    "main_commit_subject": "docs: refresh K.5 project sources implementation checkpoint",
-    "main_commit_date": "2026-11-17T03:00:03Z",
+    "main_sha": "760fc736be44c361beedcf43e394dc493c823e15",
+    "main_commit_subject": "docs: restore exact NOW freshness markers",
+    "main_commit_date": "2026-11-17T03:02:09Z",
     "last_functional_checkpoint_sha": "c7ac7ab976ae5333010b72370b6f1fec28c9c655",
     "last_functional_milestone": "Project Sources manager implements scoped upload/extraction/index/catalog/preview/delete with SHA-256 deduplication; original bytes are not retained. Quality 44006105936 passed 143 built-app Chromium tests + 1 published-site smoke; Graphify 44006105833 and Pages 44006104480 passed. Gateway 44004983557 passed on backend f69a999; no backend changes after.",
     "main_quality_run": 44006105936,

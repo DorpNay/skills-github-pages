@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Live code/test parent 560de1256b7e1934588064b9d78e8a3f1a52b7a0; 0 open PRs; issues #111 and #186 (#186 unrelated). OR-004/OR-005 archived; all 18 architecture suggestions routed into existing K.5 rows. UX-040 core/header scope verified; mobile text inputs 16px <=640px with 320/390px E2E; K.5 #1 remains open for Memory/Sources/no-project/native mobile/voice."
+    status: "NOW.md is the sole first-read checkpoint. Functional code/test parent c7ac7ab976ae5333010b72370b6f1fec28c9c655; 0 open PRs; issues #111 and #186 (#186 unrelated). OR-004/OR-005/OR-006 archived; K.5 #1 includes verified Memory IA, voice controls, 16px mobile inputs, header context capsule and project Sources manager. Native iPhone Safari/VoiceOver and compact mobile hierarchy/accessibility remain open."
     branch: "main"
-    base_main: "560de1256b7e1934588064b9d78e8a3f1a52b7a0"
+    base_main: "760fc736be44c361beedcf43e394dc493c823e15"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 2
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and chat route/status remain partial; bounded selected context, same-chat result and collapsible status are present. Plan 2 Deep Research method separation is verified by exact Quality/Chromium. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; offline package is not installed."
-    next: "Reconcile K.5 #1 remaining Memory IA/order, project Sources and no-project status stripe against K.6.6–K.6.8; then implement the next bounded mobile/input/accessibility slice. Keep architecture proposals off the landing critical path."
+    next: "Verify exact-child Freshness/Provenance; then complete native iPhone Safari/VoiceOver and compact mobile hierarchy/navigation/accessibility/forms acceptance. Keep architecture proposals off the landing critical path."
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -293,14 +293,14 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "c0c74fb5be14f63edb1666f55600559512ad1c42"
+  verified_main: "760fc736be44c361beedcf43e394dc493c823e15"
   last_main_action: "Project Sources manager implemented: project-scoped upload via Gateway extraction, SHA-256 deduplication, chunk indexing, catalog, bounded first-chunk preview and scoped delete; original file bytes are not retained. Quality #44006105936 SUCCESS (7/7: 143 built-app Chromium + 1 published-site smoke; deployed revision exact), Graphify #44006105833 SUCCESS, Pages #44006104480 SUCCESS. Gateway #44004983557 PASS on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7; no Gateway files changed after it."
   last_functional_checkpoint: "c7ac7ab976ae5333010b72370b6f1fec28c9c655"
   main_quality: "SUCCESS #44006105936 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655; 7/7 jobs, 143 built-app Chromium tests and 1 published-site Chromium smoke; deployed revision matched."
-  main_freshness: "FAILED #44007011572: NOW.md omitted the required no-default-PR and exact open-queue markers; repaired in the direct child of c0c74fb5be14f63edb1666f55600559512ad1c42; rerun exact child."
+  main_freshness: "FAILED #44007278149: root_orienter.base_main was stale against snapshot main_sha; repaired in direct child of 760fc736be44c361beedcf43e394dc493c823e15; rerun exact child."
   main_graphify: "SUCCESS #44006105833 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655."
   main_gateway: "SUCCESS #44004983557 on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7 across Python 3.12/13/14; no Gateway files changed in the functional descendant."
-  main_provenance: "SUCCESS #44007011860 on documentation parent c0c74fb5be14f63edb1666f55600559512ad1c42; rerun exact child."
+  main_provenance: "SUCCESS #44007278170 on documentation parent 760fc736be44c361beedcf43e394dc493c823e15; rerun exact child."
   main_pages: "SUCCESS #44006104480 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655; deployed client revision verified by Quality live-site smoke."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111, 186]
