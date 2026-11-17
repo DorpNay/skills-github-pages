@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Dependency-free, local-first gate. Run from any directory inside the repository.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+node scripts/check-action-pinning.mjs
+node --test tests/check-action-pinning.test.mjs
+node scripts/quality-agents.mjs integrity
+node scripts/quality-agents.mjs security
+node scripts/quality-agents.mjs context
+node --check scripts/provider-smoke.mjs
+node --check scripts/provider-smoke-all.mjs
+bash -n scripts/diagnose_model_runtime.sh
+git diff --check
+
+printf '\nFAST CHECKS PASSED (no browser download, no network install, no API keys).\n'
