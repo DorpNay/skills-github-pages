@@ -6080,6 +6080,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     function openChatActionDialog(mode,id,returnFocus=null) {
       const chat=chats.find(item=>item.id===id);if(!chat)return;
       const english=getUiLanguage()==='en',modal=$('chatActionModal'),name=$('chatActionName'),select=$('chatActionProject');
+      if(mode!=='rename'&&!projects.length){showToast(english?'Create a project first.':'Сначала создай проект.','error');returnFocus?.focus({preventScroll:true});return;}
       chatActionReturnFocus=returnFocus||document.activeElement;
       modal.dataset.chatId=id;modal.dataset.mode=mode;
       if(mode==='rename') {
@@ -6088,7 +6089,6 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         $('chatActionHelp').textContent=english?'Choose a short name for this chat.':'Укажи короткое название этого чата.';
         name.value=chat.title||(english?'New chat':'Новый чат');name.classList.remove('hidden');select.classList.add('hidden');
       } else {
-        if(!projects.length){showToast(english?'Create a project first.':'Сначала создай проект.','error');return;}
         $('chatActionTitle').textContent=english?'Move chat to project':'Переместить чат в проект';
         $('chatActionFieldLabel').textContent=english?'Project':'Проект';
         $('chatActionHelp').textContent=english?'Choose a project or personal chat. Project memory toggles will be reset.':'Выбери проект или личный чат. Переключатели памяти проекта будут сброшены.';
