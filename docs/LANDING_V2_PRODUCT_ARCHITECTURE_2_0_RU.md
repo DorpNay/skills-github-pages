@@ -14,7 +14,7 @@
 
 ## 1. Existing foundations — reuse, do not duplicate
 
-FACT at inspected main: aNoteBooki IndexedDB route/store (not source chat); Gateway FTS5/RAG ingest+retrieve, scoped Evidence Ledger and bounded document extraction (RAG/extraction flags default false); aServi OpenAI-compatible chat; Project Sources; browser-local Coder Workspace with selected-folder access, diff/approval/hash/recovery (not code execution); AgentRun SQLite DAG with one serial worker and tools/filesystem/network disabled. Do not add a second IndexedDB, FTS index, Evidence Ledger, AgentRun queue, Project Sources registry or Coder workspace.
+FACT at inspected main: aNoteBooki IndexedDB now has local evidence search and separate model-backed Q&A. The model path sends only explicitly selected lexical excerpts to aServi after consent and persists source hashes, exact quotes and code-point offsets; source deletion invalidates dependent answers. Gateway FTS5/RAG ingest+retrieve and Evidence Ledger exist but remain feature-flagged OFF.
 
 ## 2. Shared data contracts
 

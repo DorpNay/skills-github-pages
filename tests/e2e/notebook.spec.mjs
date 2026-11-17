@@ -84,6 +84,7 @@ test('Notebook answers source questions with local, selectable, traceable eviden
   await page.locator('#sourceFiles').setInputFiles({ name: 'climate-research.md', mimeType: 'text/markdown', buffer: Buffer.from('# Carbon capture\n\nDirect air capture removes carbon dioxide from ambient air. It requires energy and geological storage for durable removal.\n\nOcean alkalinity enhancement increases seawater capacity to absorb carbon dioxide.') });
   await page.locator('#importFilesButton').click();
   await expect(page.locator('#sourcePicker')).toContainText('climate-research.md');
+  await page.locator('#sourcePicker input').check();
   await page.locator('#sourceQuestion').fill('What does direct air capture remove?');
   let requests = 0;
   page.on('request', request => { if (/rag|chat\/completions|responses/i.test(request.url())) requests++; });
@@ -95,4 +96,53 @@ test('Notebook answers source questions with local, selectable, traceable eviden
   await page.locator('#sourcePicker input').uncheck();
   await page.locator('#askSourcesButton').click();
   await expect(page.locator('#sourceChatStatus')).toContainText('Select at least one uploaded source.');
+});
+
+test('Notebook asks aServi only with explicitly selected excerpts and persists source evidence', async ({ page }) => {
+  const outbound=[];
+  await page.addInitScript(()=>{
+    localStorage.setItem('ai_ui_language_v1','en');
+    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_model','notebook-e2e-model');
+    localStorage.setItem('ai_api_key_alandi','notebook-e2e-key');
+  });
+  await page.route('https://gateway.example.test/**',async route=>{
+    const request=route.request(),origin=request.headers().origin||'https://dorpnay.github.io';
+    const cors={'access-control-allow-origin':origin,'access-control-allow-methods':'GET, POST, OPTIONS','access-control-allow-headers':'authorization,content-type','access-control-max-age':'600'};
+    if(request.method()==='OPTIONS')return route.fulfill({status:204,headers:cors,body:''});
+    if(request.url().endsWith('/v1/chat/completions')){outbound.push({authorization:request.headers().authorization,payload:request.postDataJSON()});return route.fulfill({status:200,headers:cors,contentType:'application/json',body:JSON.stringify({choices:[{message:{role:'assistant',content:'The selected pilot report recorded 42 participants [E1].'}}]})});}
+    return route.fulfill({status:404,headers:cors,contentType:'application/json',body:'{}'});
+  });
+  page.on('dialog',dialog=>dialog.accept());
+  await page.goto(NOTEBOOK_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('#newNotebookName').fill('aServi source chat');
+  await page.locator('#createNotebookButton').click();
+  await page.locator('#noteTitle').fill('Selected pilot report');
+  await page.locator('#noteBody').fill('The selected pilot report recorded 42 participants and used a twelve-week evaluation.');
+  await page.locator('#saveNoteButton').click();
+  await page.locator('#noteTitle').fill('Unselected budget note');
+  await page.locator('#noteBody').fill('Unrelated budget allocation was 9000 units.');
+  await page.locator('#saveNoteButton').click();
+  const sourceId=await page.evaluate(async()=>{const n=(await window.AlandiNotebookStore.listNotebooks())[0];return(await window.AlandiNotebookStore.listItems(n.id)).find(x=>x.title==='Selected pilot report').id;});
+  await page.locator('#sourcePicker label').filter({hasText:'Selected pilot report'}).locator('input').check();
+  await page.locator('#sourceQuestion').fill('How many participants joined the pilot?');
+  await page.locator('#askSourcesAiButton').click();
+  await expect(page.locator('#sourceChatLog')).toContainText('42 participants');
+  expect(outbound).toHaveLength(1);
+  expect(outbound[0].authorization).toBe('Bearer notebook-e2e-key');
+  expect(outbound[0].payload.model).toBe('notebook-e2e-model');
+  expect(outbound[0].payload.tools).toBeUndefined();
+  const sent=JSON.stringify(outbound[0].payload.messages);
+  expect(sent).toContain('42 participants');
+  expect(sent).not.toContain('9000 units');
+  const turn=await page.evaluate(async()=>{const n=(await window.AlandiNotebookStore.listNotebooks())[0];return(await window.AlandiNotebookStore.listItems(n.id)).find(x=>x.type==='source_chat_turn');});
+  expect(turn.selectedSourceIds).toEqual([sourceId]);
+  expect(turn.evidence).toHaveLength(1);
+  expect(turn.evidence[0].quote).toContain('42 participants');
+  expect(turn.citationStatus).toBe('ids_resolved');
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('#sourceChatLog')).toContainText('The selected pilot report recorded 42 participants');
+  await page.evaluate(id=>window.AlandiNotebookStore.deleteItem(id),sourceId);
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('#sourceChatLog')).toContainText('Evidence is stale');
 });
