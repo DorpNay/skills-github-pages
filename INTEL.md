@@ -2,6 +2,13 @@
 
 **Review date:** 2026-11-16. Recheck upstream releases and model cards before shipping an artifact.
 
+## Browser automation: fast DOM coverage vs visual fidelity
+
+- [Lightpanda official documentation](https://lightpanda.io/docs/quickstart/): Lightpanda is a JavaScript-capable headless browser with CDP/Playwright/Puppeteer compatibility. Its API/Web-platform coverage is still partial; it deliberately does not perform graphical rendering.
+- [Lightpanda 1.0 WebDriver benchmark (2026-10-06)](https://lightpanda.io/blog/posts/speed-up-your-selenium-tests): the upstream benchmark reports 43/66 Selenium documentation tests passing; on the 43 tests passing in both engines, Lightpanda was 2.6x faster sequentially and 4.4x faster with eight parallel workers, with lower memory use. These are upstream measurements, not aLandi measurements.
+- **aLandi disposition:** use Lightpanda as the fast JavaScript/DOM interaction smoke candidate; do not use it to claim CSS layout, viewport geometry, screenshot, touch-target, overflow or real-device coverage. Keep the existing Chromium suite as an opt-in visual/layout regression tool, not a per-commit gate. No browser package is part of the shipped app runtime.
+- **Acceptance before promotion:** run the same bounded aLandi interaction cases in Lightpanda and Chromium, compare pass/fail coverage and wall-clock time on the same runner, document unsupported APIs, and retain Chromium for assertions that require actual layout. A faster engine is not an equivalent replacement when it omits rendering.
+
 ## Voice and model licensing
 
 - Moonshine upstream license terms: https://github.com/moonshine-ai/moonshine/blob/main/LICENSE
