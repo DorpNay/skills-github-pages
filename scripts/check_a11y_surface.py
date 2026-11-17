@@ -78,7 +78,7 @@ def is_hidden(node: Node) -> bool:
     current: Node | None = node
     while current:
         classes = set((current.attrs.get("class") or "").split())
-        if "hidden" in classes or current.attrs.get("aria-hidden") == "true":
+        if "hidden" in classes:
             return True
         current = current.parent
     return False
