@@ -737,7 +737,7 @@ permalink: /
     <span id="offlineToggle" class="sr-only" aria-live="polite"></span>
   </div>
 
-  <main id="chatBox" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
+  <main id="chatBox" tabindex="-1" class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 text-sm" aria-live="polite" aria-label="Сообщения чата"></main>
   <section id="agentRunChatStatus" class="hidden shrink-0 border-t border-cyan-900/50 bg-gray-900/95 px-3 py-2" role="region" aria-labelledby="agentRunChatStatusToggle">
     <div class="flex items-center gap-2">
       <button id="agentRunChatStatusToggle" type="button" class="min-w-0 min-h-11 flex-1 flex items-center gap-2 text-left text-xs" aria-expanded="false" aria-controls="agentRunChatStatusDetails">
@@ -1982,8 +1982,10 @@ permalink: /
       ).filter(Boolean).join('\n');
       return '';
     }
+    let messageViewerOpener=null;
     function showMessageViewer(role, text) {
       if (!['user', 'assistant'].includes(role) || typeof text !== 'string') return;
+      messageViewerOpener=document.activeElement instanceof HTMLElement?document.activeElement:null;
       const en = getUiLanguage() === 'en';
       $('messageViewerTitle').textContent = en ? (role === 'user' ? 'Your message' : 'Assistant message') : (role === 'user' ? 'Твоё сообщение' : 'Ответ aLandi');
       $('messageViewerRole').textContent = en ? (role === 'user' ? 'User' : 'Assistant') : (role === 'user' ? 'Пользователь' : 'Ассистент');
@@ -2004,8 +2006,21 @@ permalink: /
       copyAction.title = copyAction.getAttribute('aria-label');
       speakAction.setAttribute('aria-label', en ? 'Read message aloud' : 'Озвучить сообщение');
       speakAction.title = speakAction.getAttribute('aria-label');
+      const closeAction=$('messageViewerModal').querySelector('[data-action="close-message-viewer"]');
+      closeAction.setAttribute('aria-label',en?'Return to chat':'Вернуться в чат');
+      closeAction.title=closeAction.getAttribute('aria-label');
       $('messageViewerModal').classList.remove('hidden');
       requestAnimationFrame(() => target.focus({ preventScroll: true }));
+    }
+    function closeMessageViewer(){
+      const modal=$('messageViewerModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      modal.classList.add('hidden');
+      const opener=messageViewerOpener;messageViewerOpener=null;
+      requestAnimationFrame(()=>{
+        const target=opener&&opener.isConnected&&!opener.closest('[inert]')&&opener.getClientRects().length?opener:$('chatBox');
+        target?.focus({preventScroll:true});
+      });
     }
     function updateJumpToLatest() {
       const box = $('chatBox'), button = $('jumpToLatest');
@@ -7124,7 +7139,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'view-message': showMessageViewer(control.dataset.messageRole, control.dataset.messageText || ''); break;
           case 'copy-viewer-message': await copyText(control.dataset.messageText || ''); showToast(getUiLanguage()==='en'?'Message copied.':'Сообщение скопировано.'); break;
           case 'speak-viewer-message': await playAssistantMessage(control.dataset.messageText || ''); break;
-          case 'close-message-viewer': $('messageViewerModal').classList.add('hidden'); break;
+          case 'close-message-viewer': closeMessageViewer(); break;
           case 'jump-to-latest': $('chatBox').scrollTo({top:$('chatBox').scrollHeight,behavior:document.documentElement.dataset.motion==='off'?'auto':'smooth'}); requestAnimationFrame(updateJumpToLatest); break;
           case 'speak-message': await playAssistantMessage(control.dataset.messageText || ''); break;
           case 'stop-speech': if(voiceConversationActive)stopVoiceConversation();else stopAssistantSpeech(); break;
@@ -7383,7 +7398,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       syncCurrentChatFunctionSettings();
       $('chatBox').addEventListener('scroll', updateJumpToLatest, { passive: true });
       $('messageViewerModal').addEventListener('click', event => {
-        if (event.target === $('messageViewerModal')) $('messageViewerModal').classList.add('hidden');
+        if (event.target === $('messageViewerModal')) closeMessageViewer();
+      });
+      $('messageViewerModal').addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();event.stopPropagation();closeMessageViewer();return;}
+        if(event.key==='Tab')trapProjectModalTab($('messageViewerModal'),event);
       });
       updateClockFace();if(clockTimer)clearInterval(clockTimer);clockTimer=setInterval(updateClockFace,1000);
       if(pollinationsAuthMessage) showToast(pollinationsAuthMessage,pollinationsAuthMessage.startsWith('Pollinations подключён')?'success':'error');

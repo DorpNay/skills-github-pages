@@ -3029,9 +3029,23 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   expect(iconTargets.height).toBeGreaterThanOrEqual(44);
   expect(iconTargets.text).toBe('⧉');
 
-  await page.locator('#chatBox [data-action="view-message"]').last().click();
+  const viewerTrigger = page.locator('#chatBox [data-action="view-message"]').last();
+  await viewerTrigger.click();
   await expect(page.locator('#messageViewerModal')).toBeVisible();
   await expect(page.locator('#messageViewerContent')).toContainText('MESSAGE_VIEWER_LINE_69');
+  await expect(page.locator('#messageViewerContent')).toBeFocused();
+  const viewerClose = page.locator('#messageViewerModal [data-action="close-message-viewer"]');
+  await expect(viewerClose).toHaveAccessibleName('Вернуться в чат');
+  await page.keyboard.press('Tab');
+  await expect(viewerClose).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.locator('#messageViewerContent')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#messageViewerModal')).toBeHidden();
+  await expect(viewerTrigger).toBeFocused();
+  await viewerTrigger.click();
+  await expect(page.locator('#messageViewerModal')).toBeVisible();
+  await expect(page.locator('#messageViewerContent')).toBeFocused();
   await expect(page.locator('#messageViewerContent [data-action="clear-chat"]')).toHaveCount(0);
   await expect(page.locator('#messageViewerActions [data-action="copy-viewer-message"]')).toHaveAccessibleName('Скопировать сообщение');
   await expect(page.locator('#messageViewerActions [data-action="speak-viewer-message"]')).toHaveAccessibleName('Озвучить сообщение');
