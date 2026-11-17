@@ -140,6 +140,20 @@ test('Notebook asks aServi only with explicitly selected excerpts and persists s
   expect(turn.evidence).toHaveLength(1);
   expect(turn.evidence[0].quote).toContain('42 participants');
   expect(turn.citationStatus).toBe('ids_resolved');
+  expect(turn.citationValidationLevel).toBe('exact_evidence_id_membership_only');
+  expect(turn.claimVerification).toBe('not_performed');
+  const unresolvedTurn=await page.evaluate(async({sourceId,turn})=>{
+    const notebook=(await window.AlandiNotebookStore.listNotebooks())[0];
+    return window.AlandiNotebookStore.addSourceChatTurn(notebook.id,{
+      question:'Does the selected report prove a different fact?',
+      answer:'This unrelated claim is attributed to the source [E99].',
+      model:'notebook-e2e-model',selectedSourceIds:[sourceId],
+      selectedSourceHashes:turn.selectedSourceHashes,evidence:turn.evidence
+    });
+  },{sourceId,turn});
+  expect(unresolvedTurn.citationStatus).toBe('unresolved');
+  expect(unresolvedTurn.invalidCitationIds).toEqual(['E99']);
+  expect(unresolvedTurn.claimVerification).toBe('not_performed');
   const reportDownloadPromise=page.waitForEvent('download');
   await page.locator('#exportEvidenceButton').click();
   const reportDownload=await reportDownloadPromise;
@@ -149,9 +163,11 @@ test('Notebook asks aServi only with explicitly selected excerpts and persists s
   const evidenceReport=JSON.parse(reportText);
   expect(evidenceReport.schema).toBe('alandi.notebook.evidence-report');
   expect(evidenceReport.schemaVersion).toBe(1);
-  expect(evidenceReport.summary).toMatchObject({turnCount:1,currentEvidenceTurns:1,staleEvidenceTurns:0,unresolvedCitationTurns:0});
+  expect(evidenceReport.summary).toMatchObject({turnCount:2,currentEvidenceTurns:2,staleEvidenceTurns:0,unresolvedCitationTurns:1});
   expect(evidenceReport.turns[0].selectedSources[0].sha256).toMatch(/^[a-f0-9]{64}$/);
   expect(evidenceReport.turns[0].evidence[0].quote).toContain('42 participants');
+  expect(evidenceReport.turns.some(x=>x.citationStatus==='ids_resolved'&&x.claimVerification==='not_performed')).toBe(true);
+  expect(evidenceReport.turns.some(x=>x.citationStatus==='unresolved'&&x.invalidCitationIds.includes('E99'))).toBe(true);
   expect(reportText).not.toContain('9000 units');
   await page.reload({waitUntil:'domcontentloaded'});
   await expect(page.locator('#sourceChatLog')).toContainText('The selected pilot report recorded 42 participants');
@@ -163,6 +179,6 @@ test('Notebook asks aServi only with explicitly selected excerpts and persists s
   const staleReportDownload=await staleReportDownloadPromise,staleStream=await staleReportDownload.createReadStream();
   let staleText=''; for await (const chunk of staleStream) staleText+=chunk.toString('utf8');
   const staleReport=JSON.parse(staleText);
-  expect(staleReport.summary.staleEvidenceTurns).toBe(1);
-  expect(staleReport.turns[0].evidenceCurrent).toBe(false);
+  expect(staleReport.summary.staleEvidenceTurns).toBe(2);
+  expect(staleReport.turns.every(x=>x.evidenceCurrent===false)).toBe(true);
 });
