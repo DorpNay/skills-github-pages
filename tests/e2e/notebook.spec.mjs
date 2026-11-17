@@ -74,3 +74,25 @@ test('aNoteBooki persists notes and URL references locally with project/chat pro
   expect(audit.items.some(x => x.type === 'source_reference' && x.provenance.fetched === false)).toBe(true);
   expect(audit.events.some(x => x.type === 'notebook_scope_updated')).toBe(true);
 });
+
+
+test('Notebook answers source questions with local, selectable, traceable evidence only', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('ai_ui_language_v1', 'en'));
+  await page.goto(NOTEBOOK_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#newNotebookName').fill('Evidence notebook');
+  await page.locator('#createNotebookButton').click();
+  await page.locator('#sourceFiles').setInputFiles({ name: 'climate-research.md', mimeType: 'text/markdown', buffer: Buffer.from('# Carbon capture\n\nDirect air capture removes carbon dioxide from ambient air. It requires energy and geological storage for durable removal.\n\nOcean alkalinity enhancement increases seawater capacity to absorb carbon dioxide.') });
+  await page.locator('#importFilesButton').click();
+  await expect(page.locator('#sourcePicker')).toContainText('climate-research.md');
+  await page.locator('#sourceQuestion').fill('What does direct air capture remove?');
+  let requests = 0;
+  page.on('request', request => { if (/rag|chat\/completions|responses/i.test(request.url())) requests++; });
+  await page.locator('#askSourcesButton').click();
+  await expect(page.locator('#sourceChatLog')).toContainText('Direct air capture removes carbon dioxide from ambient air.');
+  await expect(page.locator('#sourceChatLog')).toContainText('[1] climate-research.md');
+  await expect(page.locator('#sourceChatStatus')).toContainText('Matching passages');
+  expect(requests).toBe(0);
+  await page.locator('#sourcePicker input').uncheck();
+  await page.locator('#askSourcesButton').click();
+  await expect(page.locator('#sourceChatStatus')).toContainText('Select at least one uploaded source.');
+});
