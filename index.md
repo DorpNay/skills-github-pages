@@ -211,7 +211,7 @@ permalink: /
       #inputArea #userInput { min-height:44px; }
       body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
       body textarea,
-      body select { font-size:16px; }
+      body select:not(.header-language-select) { font-size:16px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
