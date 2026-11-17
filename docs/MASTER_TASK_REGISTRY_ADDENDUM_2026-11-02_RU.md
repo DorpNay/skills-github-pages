@@ -3,6 +3,12 @@
 **Родительский реестр:** `docs/MASTER_TASK_REGISTRY_RU.md` (PR #127).  
 **Назначение:** append-only delta новых требований владельца от 2026-11-02. Не заменяет исходный lossless inventory и не переносит задачи между workstreams.
 
+## OWNER PRIORITY — LANDING 2.0 PRODUCT ARCHITECTURE 2.0
+
+**OR-2026-11-17-014 · REQUIRED FOR FINALIZATION · SPECIFIED / PARTIAL IMPLEMENTATION**
+
+Source-first Notebook (chat with selected sources + inspectable evidence) → Notebook Studio (source-grounded podcast, editable deck, chart-slide and reports) → Coder + isolated sandbox → downloadable Offline Core → AI Studio (RAG vs LoRA/QLoRA vs pretraining) → Source-to-Skill/Agent Factory → honest capability catalog. Full acceptance contracts, reuse boundaries, phased sequence and external research: [`docs/LANDING_V2_PRODUCT_ARCHITECTURE_2_0_RU.md`](LANDING_V2_PRODUCT_ARCHITECTURE_2_0_RU.md). **This is a prominent product priority, not a claim these runtimes are already implemented. K.5 remains the sole 15-point delivery tracker.**
+
 ## Правила статусов
 
 - `[ ]` — задача поставлена, не реализована/не проверена.
