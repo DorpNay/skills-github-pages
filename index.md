@@ -470,7 +470,7 @@ permalink: /
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
-  <aside id="sidebar" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
+  <aside id="sidebar" role="navigation" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
     <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Проекты и чаты</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
@@ -690,7 +690,7 @@ permalink: /
   </div>
 
   <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2">
-    <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
+    <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
     <div class="header-chat-title min-w-0 flex-1">
       <span id="activeProjectTitle" class="active-project-title" aria-live="polite"></span>
       <h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1>
@@ -2776,6 +2776,7 @@ permalink: /
       if (!open) $('memoryToolsDetails').open = false;
       sidebar.classList.toggle('-translate-x-full', !open);
       overlay.classList.toggle('hidden', !open);
+      $('appSidebarToggle')?.setAttribute('aria-expanded', String(open));
     }
     function toggleSettings(force) {
       const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
