@@ -4551,6 +4551,33 @@ test('custom skill fields expose localized accessible names', async ({ page }) =
   }
 });
 
+test('custom agent team fields expose localized accessible names', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await page.locator('#agentTeamScenario').selectOption('custom');
+  await expect(page.locator('#agentCustomFields')).toBeVisible();
+
+  for (const id of ['agentTeamCustomScenario', 'agentCustomRoles']) {
+    const field = page.locator('#' + id);
+    await expect(field).toHaveAttribute('aria-label', await field.getAttribute('placeholder'));
+  }
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await page.locator('#agentTeamScenario').selectOption('custom');
+
+  for (const [id, expected] of [
+    ['agentTeamCustomScenario', 'Describe the team scenario'],
+    ['agentCustomRoles', 'Roles and responsibilities, one per line']
+  ]) {
+    await expect(page.locator('#' + id)).toHaveAttribute('aria-label', expected);
+  }
+});
+
 test('project sources upload, deduplicate by SHA-256, preview and delete within project scope', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
