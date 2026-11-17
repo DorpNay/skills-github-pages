@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: false
+      run_lightpanda:
+        description: "Run the experimental fast JavaScript/DOM smoke"
+        required: false
+        type: boolean
+        default: false
       verify_live_pages:
         description: "Verify the published Pages revision and release contract"
         required: false
@@ -91,6 +96,7 @@ jobs:
         run: node scripts/quality-agents.mjs build
 
   lightpanda-smoke:
+    if: ${{ inputs.run_lightpanda }}
     name: Fast JavaScript and DOM smoke (Lightpanda)
     runs-on: ubuntu-latest
     timeout-minutes: 6
