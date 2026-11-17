@@ -3041,6 +3041,41 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
   await expect(page.locator('#modeHint')).toContainText('Quick · Web: off · Direct · Auto');
 });
 
+test('compact mobile header controls remain reachable without overlap', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  for (const language of ['ru', 'en']) {
+    await page.locator('#uiLanguage').selectOption(language);
+    for (const width of [320, 360, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      const metrics = await page.locator('.app-header').evaluate(header => {
+        const ids = ['appSidebarToggle', 'homeThemeToggle', 'uiLanguage', 'toggle-settings'];
+        const controls = ids.map(id => {
+          const element = document.getElementById(id);
+          const rect = element.getBoundingClientRect();
+          return { id, x: rect.x, right: rect.right, y: rect.y, bottom: rect.bottom, width: rect.width, height: rect.height };
+        });
+        const overlaps = [];
+        for (let i = 0; i < controls.length; i++) {
+          for (let j = i + 1; j < controls.length; j++) {
+            const a = controls[i], b = controls[j];
+            if (a.x < b.right && a.right > b.x && a.y < b.bottom && a.bottom > b.y) overlaps.push([a.id, b.id]);
+          }
+        }
+        return { clientWidth: header.clientWidth, scrollWidth: header.scrollWidth, controls, overlaps };
+      });
+      expect(metrics.scrollWidth, `header overflow at ${width}px / ${language}`).toBeLessThanOrEqual(metrics.clientWidth + 1);
+      expect(metrics.overlaps, `overlapping header controls at ${width}px / ${language}`).toEqual([]);
+      for (const control of metrics.controls) {
+        expect(control.width, `${control.id} width at ${width}px`).toBeGreaterThanOrEqual(44);
+        expect(control.height, `${control.id} height at ${width}px`).toBeGreaterThanOrEqual(44);
+        expect(control.x, `${control.id} left edge at ${width}px`).toBeGreaterThanOrEqual(0);
+        expect(control.right, `${control.id} right edge at ${width}px`).toBeLessThanOrEqual(width + 1);
+      }
+    }
+  }
+});
+
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
