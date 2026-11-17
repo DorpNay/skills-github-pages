@@ -343,6 +343,16 @@ test('project creation closes on Escape and restores focus to a visible control'
   await expect(page.locator('#projectSettingsModal')).toBeHidden();
   await expect(page.locator('#projectCreateNameInput')).toBeFocused();
 
+  const focusable = page.locator('#projectCreateModal').locator('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const first = focusable.first();
+  const last = focusable.last();
+  await first.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await last.focus();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+
   await page.keyboard.press('Escape');
   await expect(page.locator('#projectCreateModal')).toBeHidden();
   await expect(page.locator('#appSidebarToggle')).toBeFocused();

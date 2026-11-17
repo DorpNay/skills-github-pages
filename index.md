@@ -2192,6 +2192,15 @@ permalink: /
     let selectedProjectFilterId=null;
     let creatingProject=false;
     let projectSettingsOpener=null;
+    function trapProjectModalTab(modal,event){
+      if(event.key!=='Tab')return;
+      const focusable=Array.from(modal.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"])'))
+        .filter(element=>element.getClientRects().length>0&&getComputedStyle(element).visibility!=='hidden'&&!element.closest('[inert]'));
+      if(!focusable.length){event.preventDefault();return;}
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus();}
+    }
     function restoreProjectModalFocus(){
       const opener=projectSettingsOpener;projectSettingsOpener=null;
       const sidebarOpen=!$('sidebar').classList.contains('-translate-x-full');
@@ -7306,6 +7315,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const first=focusable[0],last=focusable[focusable.length-1];
       if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus();}
       else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus();}
+    });
+    ['projectCreateModal','projectSettingsModal'].forEach(id=>{
+      const modal=$(id);
+      modal.addEventListener('keydown',event=>trapProjectModalTab(modal,event));
     });
     $('functionPanelModal').addEventListener('click', event => { if (event.target === $('functionPanelModal')) closeFunctionPanel(); });
     document.addEventListener('keydown', (event) => {
