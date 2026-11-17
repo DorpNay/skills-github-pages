@@ -9,20 +9,17 @@ import time
 from collections import OrderedDict
 from typing import Any
 
-try:
-    from .skills import load_coder_skill_bundle
-except ImportError:  # supports direct import from the gateway directory
-    from agent_runtime.skills import load_coder_skill_bundle
-
 import httpx
 
 try:
     from .context import ContextPacketError, normalize_context_packet, render_context_packet
     from .payloads import AgentPayloadError, AgentPayloadVault
+    from .skills import load_coder_skill_bundle
     from .store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
 except ImportError:  # supports "uvicorn app:app" from the gateway directory
     from agent_runtime.context import ContextPacketError, normalize_context_packet, render_context_packet
     from agent_runtime.payloads import AgentPayloadError, AgentPayloadVault
+    from agent_runtime.skills import load_coder_skill_bundle
     from agent_runtime.store import AgentRunError, AgentRunStore, TERMINAL_RUN_STATES
 
 

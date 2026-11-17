@@ -53,7 +53,9 @@ Existing parser stays baseline. Docling is first broad parser candidate; model l
 
 ## 6. Coder
 
-Extend current Workspace, don't replace it: add repository snapshot/commit scope, code-aware chunking/symbol navigation, curated code/API packs, Skill binding, read-only DB schema/query, typed file/search/test/lint/build/patch tools. Separate read, write, test, network and DB mutation permissions. Code execution requires isolated ephemeral sandbox (non-root, resource/time/network/filesystem policy, no host secrets/sockets/unrestricted mounts); a shared-kernel container alone is not assumed sufficient for hostile code. Human approval for writes, installs, migrations and network operations. Show exact diff, tests and rollback. No arbitrary browser/Gateway shell.
+Extend current Workspace, don't replace it: add repository snapshot/commit scope, code-aware chunking/symbol navigation, curated code/API packs, Skill binding, read-only DB schema/query, typed file/search/test/lint/build/patch tools.
+
+Current partial implementation (FACT, 2026-11-17): AgentRun's non-executing Coder profile now consumes four fixed repository-owned Skills for repository navigation, test-first delivery, security boundaries and performance engineering. This is prompt guidance only; it grants no tools or access. Project-scoped repository context, code intelligence, DB/tool adapters and isolated execution are still deferred. Separate read, write, test, network and DB mutation permissions. Code execution requires isolated ephemeral sandbox (non-root, resource/time/network/filesystem policy, no host secrets/sockets/unrestricted mounts); a shared-kernel container alone is not assumed sufficient for hostile code. Human approval for writes, installs, migrations and network operations. Show exact diff, tests and rollback. No arbitrary browser/Gateway shell.
 
 ## 7. Offline Core downloadable from Settings
 
