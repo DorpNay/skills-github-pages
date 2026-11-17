@@ -275,7 +275,7 @@ class LazyGraphRAG:
                 raise ValueError(f"metadata.{key} must be a bounded printable string")
         preview = metadata.get("preview")
         if preview is not None and (not isinstance(preview, str) or len(preview) > 1200 or
-                                    any(ord(char) < 32 and char not in "\\n\\t" for char in preview)):
+                                    any(ord(char) < 32 and char not in "\n\t" for char in preview)):
             raise ValueError("metadata.preview must be a bounded text excerpt of at most 1200 characters")
         for key in ("size_bytes", "character_count"):
             value = metadata.get(key)

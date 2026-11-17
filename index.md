@@ -571,7 +571,7 @@ permalink: /
                 </div>
               </details>
               <details id="projectSourcesDetails" class="rounded-lg border border-gray-700">
-                <summary class="cursor-pointer select-none px-2.5 py-2 text-xs font-semibold flex items-center justify-between gap-2" data-i18n="projectSourcesTitle"><span>Источники проекта</span><span id="projectSourcesCount" class="text-[10px] text-gray-500">0</span></summary>
+                <summary class="cursor-pointer select-none px-2.5 py-2 text-xs font-semibold flex items-center justify-between gap-2"><span data-i18n="projectSourcesTitle">Источники проекта</span><span id="projectSourcesCount" class="text-[10px] text-gray-500">0</span></summary>
                 <div class="p-2 space-y-2">
                   <p class="text-[10px] leading-relaxed text-gray-400" data-i18n="projectSourcesDescription">Добавляй документы в индекс выбранного проекта. Текст извлекается собственным aLandi Gateway.</p>
                   <p class="rounded-lg border border-amber-700/40 bg-amber-950/20 p-2 text-[10px] leading-relaxed text-amber-200" data-i18n="projectSourcesStorageNotice">В Gateway сохраняются извлечённый текст и метаданные. Исходные байты файла не сохраняются.</p>
