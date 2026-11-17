@@ -279,6 +279,7 @@ permalink: /
       #composerFooter { padding-left:8px;padding-right:8px; }
       #userInput { max-height:min(30vh,240px);max-height:min(30dvh,240px); }
     }
+    @media (max-width:360px) { #userInput { padding-left:4px;padding-right:4px; } }
     #sidebar { overflow-y:auto; overscroll-behavior:contain; }
     #sidebar > :not(#chatList) { flex-shrink:0; }
     .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;height:clamp(220px,30vh,280px);min-height:220px;max-height:280px;margin:8px 12px;padding:10px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface); }
@@ -1691,7 +1692,7 @@ permalink: /
     function syncComposerPlaceholder(){
       const input=$('userInput');if(!input)return;
       const english=getUiLanguage()==='en',width=window.innerWidth||document.documentElement.clientWidth;
-      input.placeholder=width<=360?(english?'Type…':'Текст…'):width<=420?(english?'Message…':'Сообщение…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
+      input.placeholder=width<=360?(english?'Type':'Текст'):width<=420?(english?'Type…':'Текст…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
     }
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;

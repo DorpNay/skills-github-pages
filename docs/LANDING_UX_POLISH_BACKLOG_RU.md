@@ -46,7 +46,7 @@
 - [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime.
 
 ### Мобильность и доступность
-- [~] Composer placeholder switches to compact RU/EN copy at <=360px and <=420px and restores the full text on wider screens; E2E covers 320/360/390/420/768 px (execution pending).
+- [~] Composer placeholder uses `Текст`/`Type` at <=360px and `Текст…`/`Type…` at <=420px, restores the full text on wider screens, and trims horizontal padding only at <=360px; E2E covers 320/360/390/420/768 px (execution pending).
 - [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
 - [ ] Native iPhone Safari: visual viewport, клавиатура, safe-area, edge swipe, touchcancel, rotation, scroll restoration.
 - [ ] VoiceOver: headings, dialogs, menus, status text, message actions, focus visibility.

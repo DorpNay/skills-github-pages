@@ -3217,11 +3217,20 @@ test('composer placeholder stays compact and localized on narrow mobile widths',
     for (const width of [320, 360, 390, 420, 768]) {
       await page.setViewportSize({ width, height: 844 });
       const expected = language === 'en'
-        ? (width <= 360 ? 'Type…' : width <= 420 ? 'Message…' : 'Write a message...')
-        : (width <= 360 ? 'Текст…' : width <= 420 ? 'Сообщение…' : 'Напиши сообщение...');
+        ? (width <= 360 ? 'Type' : width <= 420 ? 'Type…' : 'Write a message...')
+        : (width <= 360 ? 'Текст' : width <= 420 ? 'Текст…' : 'Напиши сообщение...');
       await expect(input).toHaveAttribute('placeholder', expected);
-      const metrics = await input.evaluate(element => ({ scrollHeight: element.scrollHeight, clientHeight: element.clientHeight }));
-      expect(metrics.scrollHeight, `composer placeholder overflow at ${width}px / ${language}`).toBeLessThanOrEqual(metrics.clientHeight + 1);
+      const metrics = await input.evaluate(element => ({
+        scrollHeight: element.scrollHeight,
+        clientHeight: element.clientHeight,
+        paddingLeft: getComputedStyle(element).paddingLeft,
+        paddingRight: getComputedStyle(element).paddingRight
+      }));
+      expect(metrics.scrollHeight, `composer placeholder height overflow at ${width}px / ${language}`).toBeLessThanOrEqual(metrics.clientHeight + 1);
+      if (width <= 360) {
+        expect(metrics.paddingLeft).toBe('4px');
+        expect(metrics.paddingRight).toBe('4px');
+      }
     }
   }
 });
