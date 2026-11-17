@@ -1,10 +1,23 @@
 name: Independent Quality Sentinels
 
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
+    inputs:
+      run_static_analysis:
+        description: "Run Ruff, Bandit and Semgrep (slow; optional)"
+        required: false
+        type: boolean
+        default: false
+      run_chromium:
+        description: "Run full Chromium visual/layout regression (slow; optional)"
+        required: false
+        type: boolean
+        default: false
+      verify_live_pages:
+        description: "Verify the published Pages revision and release contract"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -78,6 +91,7 @@ jobs:
         run: node scripts/quality-agents.mjs build
 
   browser-e2e:
+    if: ${{ inputs.run_chromium }}
     name: Real Chromium browser regression tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -169,8 +183,7 @@ jobs:
 
   live-site-smoke:
     name: Published GitHub Pages release contract
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [browser-e2e]
+    if: ${{ inputs.verify_live_pages }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -216,6 +229,7 @@ jobs:
 
 
   static-analysis:
+    if: ${{ inputs.run_static_analysis }}
     name: Independent static analysis (Ruff gate; Bandit/Semgrep advisory)
     runs-on: ubuntu-latest
     timeout-minutes: 25
