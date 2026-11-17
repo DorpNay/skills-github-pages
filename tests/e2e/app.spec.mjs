@@ -271,11 +271,11 @@ test('memory facts expand with scope and provenance; promotion keeps the persona
   const sharedRow = page.locator('#sharedMemoryBox .memory-item').first();
   await expect(sharedRow).toHaveCount(1);
   await expect(sharedRow).not.toHaveAttribute('open', '');
+  await page.locator('#globalMemoryDetails > summary').click();
   await sharedRow.locator('summary').click();
   await expect(sharedRow).toContainText('Общая · перенесено из личной · shared');
   await expect(page.locator('#memoryBox .memory-item')).toHaveCount(1);
 
-  await page.locator('#globalMemoryDetails > summary').click();
   const globalToggle = page.locator('#globalMemoryToggle');
   await expect(globalToggle).not.toBeChecked();
   await globalToggle.check();
@@ -2030,9 +2030,10 @@ test('voice mode menu opens with one tap and keeps gateway setup explicit', asyn
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
-  await trigger.click();
+  await page.keyboard.press('Escape');
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toBeFocused();
   await trigger.click();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await page.locator('[data-action="voice-chat-preview"]').click();

@@ -7111,6 +7111,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
     const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
     const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncComposerPopoverScrim();};
+    document.addEventListener('keydown',event=>{
+      if(event.key!=='Escape'||$('voiceMenu').classList.contains('hidden'))return;
+      event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+      hideVoiceMenu();$('voiceUnavailableButton').focus({preventScroll:true});
+    });
     $('composerPopoverScrim').addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
       closeComposerPopovers();hideVoiceMenu();

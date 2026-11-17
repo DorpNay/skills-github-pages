@@ -195,10 +195,13 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
     document.getElementById('sidebar')?.classList.remove('-translate-x-full');
     const projectDetails = document.getElementById('projectManagerDetails');
     const memoryDetails = document.getElementById('memoryToolsDetails');
+    const personalDetails = document.getElementById('personalMemoryDetails');
     if (projectDetails) projectDetails.open = true;
     if (memoryDetails) memoryDetails.open = true;
+    if (personalDetails) personalDetails.open = true;
   });
   await expect(page.locator('#memoryBox')).toContainText('cancelled promotion stays private');
+  await page.locator('#memoryBox .memory-item[data-memory-id="cancel-promotion"] > summary').click();
 
   page.once('dialog', dialog => dialog.dismiss());
   await page.locator('[data-action="promote-memory"][data-memory-id="cancel-promotion"]').click();
