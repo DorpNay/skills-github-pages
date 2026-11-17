@@ -367,6 +367,8 @@ permalink: /
     html[data-motion="reduced"] .status-thinking-dots.is-active > span,
     html[data-motion="off"] .status-thinking-dots.is-active > span { animation:none!important; transform:none!important; }
     html[data-motion="reduced"] .motion-active.motion-accent::after { opacity:.7; }
+    html[data-motion="reduced"] .prompt-pencil[aria-pressed="true"],
+    html[data-motion="reduced"] .voice-menu { animation:none!important; }
     html[data-motion="off"] .motion-active.motion-accent::after { opacity:0; }
     html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation:none!important; transition:none!important; }
     @media (prefers-reduced-motion:reduce) {

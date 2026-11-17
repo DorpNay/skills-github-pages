@@ -154,6 +154,23 @@ test('legacy built-in assistant instructions are migrated out of the global prom
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_system_prompt'))).toBe('');
 });
 
+test('reduced motion disables persistent prompt pulse and voice-menu animation', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await openAdditionalSettings(page);
+  await page.locator('#uiMotion').selectOption('reduced');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await page.locator('#editSystemPrompt').click();
+  await expect(page.locator('#editSystemPrompt')).toHaveAttribute('aria-pressed', 'true');
+  const promptAnimation = await page.locator('#editSystemPrompt').evaluate(element => getComputedStyle(element).animationName);
+  expect(promptAnimation).toBe('none');
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  await page.locator('#voiceUnavailableButton').click();
+  await expect(page.locator('#voiceMenu')).toBeVisible();
+  const voiceAnimation = await page.locator('#voiceMenu').evaluate(element => getComputedStyle(element).animationName);
+  expect(voiceAnimation).toBe('none');
+});
+
 test('global prompt saves explicit owner text and persists an intentional clear', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();

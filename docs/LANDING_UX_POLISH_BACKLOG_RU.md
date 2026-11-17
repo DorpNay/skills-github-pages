@@ -50,7 +50,7 @@
 - [~] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests.
 - [ ] Native iPhone Safari: visual viewport, клавиатура, safe-area, edge swipe, touchcancel, rotation, scroll restoration.
 - [ ] VoiceOver: headings, dialogs, menus, status text, message actions, focus visibility.
-- [ ] Reduced motion: landing ticker, app ticker, transitions and scroll behavior; проверить пользовательскую настройку вместе с OS preference.
+- [~] User `reduced` now disables the infinite prompt-edit pulse and voice-menu entrance animation; OS reduced-motion rules already cover ticker/dots and global timing. Full transitions/scroll and native OS-preference interaction still need manual review.
 
 ## 2. Порядок реализации большими шагами
 
