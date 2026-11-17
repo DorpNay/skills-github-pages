@@ -1,31 +1,6 @@
 name: Project State Freshness
 
 on:
-  pull_request:
-    paths:
-      - "NOW.md"
-      - "AGENTS.md"
-      - "PROJECT_ORCHESTRATOR_RU.md"
-      - "docs/PROJECT_STATE.yaml"
-      - "docs/VOLLEY_LOG.md"
-      - "docs/project-state-snapshot.json"
-      - "scripts/check_project_state_freshness.py"
-      - "tests/test_project_state_freshness.py"
-      - ".github/workflows/project-state-freshness.yml"
-  push:
-    branches: [main]
-    paths:
-      - "NOW.md"
-      - "AGENTS.md"
-      - "PROJECT_ORCHESTRATOR_RU.md"
-      - "docs/PROJECT_STATE.yaml"
-      - "docs/VOLLEY_LOG.md"
-      - "docs/project-state-snapshot.json"
-      - "scripts/check_project_state_freshness.py"
-      - "tests/test_project_state_freshness.py"
-      - ".github/workflows/project-state-freshness.yml"
-  schedule:
-    - cron: "23 6 * * *"
   workflow_dispatch:
 
 permissions:
