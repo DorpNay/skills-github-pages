@@ -102,7 +102,7 @@ def test_worker_invokes_only_allowlisted_local_model_and_encrypts_payloads(tmp_p
         assert "no web access" in system_prompt
         assert "no filesystem access" in system_prompt
         assert "no shell access" in system_prompt
-        assert "CODER SKILL BUNDLE" in system_prompt
+        assert "coder skill bundle" in system_prompt
         assert "test-first-delivery" in system_prompt
         assert "repository-navigation" in system_prompt
         assert "skills do not grant runtime permissions" in system_prompt
