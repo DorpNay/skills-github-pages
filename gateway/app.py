@@ -1418,11 +1418,14 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
             payload = json.loads(body)
         except (json.JSONDecodeError, UnicodeDecodeError):
             raise HTTPException(400, "Request body must be valid UTF-8 JSON") from None
-        if not isinstance(payload, dict) or set(payload) != {"document_id", "source_uri", "chunks", "scope", "scope_id"}:
-            raise HTTPException(400, "Expected document_id, source_uri, chunks, scope, and scope_id")
+        required = {"document_id", "source_uri", "chunks", "scope", "scope_id"}
+        optional = {"metadata"}
+        if not isinstance(payload, dict) or not required.issubset(payload) or set(payload) - required - optional:
+            raise HTTPException(400, "Expected document_id, source_uri, chunks, scope, scope_id, and optional metadata")
         try:
             inserted = store.ingest_document(payload["document_id"], payload["source_uri"], payload["chunks"],
-                                             scope=payload["scope"], scope_id=payload["scope_id"])
+                                             scope=payload["scope"], scope_id=payload["scope_id"],
+                                             metadata=payload.get("metadata"))
         except (ValueError, TypeError) as exc:
             raise HTTPException(400, str(exc)) from None
         except sqlite3.Error:
@@ -1581,6 +1584,24 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         if not deleted:
             raise HTTPException(404, "Evidence record not found in the requested scope")
         return JSONResponse({"status": "deleted"}, headers={"Cache-Control": "no-store"})
+
+    @app.get("/v1/rag/documents")
+    async def rag_list_documents(request: Request, scope: str, scope_id: str,
+                                 limit: int = Query(default=200, ge=1, le=500),
+                                 authorization: str | None = Header(default=None)) -> JSONResponse:
+        authorize(config, authorization)
+        store = request.app.state.rag_store
+        if store is None:
+            raise HTTPException(503, "RAG document catalog is disabled")
+        try:
+            documents = store.list_documents(scope=scope, scope_id=scope_id, limit=limit)
+        except (ValueError, TypeError) as exc:
+            raise HTTPException(400, str(exc)) from None
+        except sqlite3.Error:
+            logger.warning("RAG document catalog read failed")
+            raise HTTPException(503, "RAG index is unavailable") from None
+        return JSONResponse({"documents": documents, "count": len(documents)},
+                            headers={"Cache-Control": "no-store"})
 
     @app.delete("/v1/rag/documents/{document_id}")
     async def rag_delete_document(document_id: str, request: Request, scope: str, scope_id: str,
