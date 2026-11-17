@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+/**
+ * Fast JavaScript/DOM interaction smoke using Lightpanda.
+ * This deliberately does not claim CSS layout or pixel-rendering coverage.
+ */
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright-core';
+import { lightpanda } from '@lightpanda/browser';
+
+const host = '127.0.0.1';
+const port = 9222;
+const baseURL = process.env.APP_URL || 'http://127.0.0.1:4173/';
+let server;
+let browser;
+
+try {
+  server = await lightpanda.serve({ host, port });
+  browser = await chromium.connectOverCDP(`http://${host}:${port}`);
+  const context = browser.contexts()[0] || await browser.newContext();
+  const page = await context.newPage();
+  page.setDefaultTimeout(8000);
+
+  const response = await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  assert.ok(response?.ok(), `App shell did not load: HTTP ${response?.status()}`);
+
+  for (const selector of ['#chatBox', '#userInput', '#sendBtn', '#functionsMenu', '#functionPanelModal']) {
+    assert.equal(await page.locator(selector).count(), 1, `Missing app control: ${selector}`);
+  }
+
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await page.waitForFunction(() => {
+    const panel = document.getElementById('functionPanelModal');
+    return panel && !panel.classList.contains('hidden');
+  });
+
+  await page.locator('#skillPresetSelect').selectOption('custom');
+  await page.waitForFunction(() => {
+    const fields = document.getElementById('skillCustomFields');
+    return fields && !fields.classList.contains('hidden');
+  });
+
+  for (const id of ['customSkillName', 'customSkillInstructions', 'customSkillOutput']) {
+    const field = page.locator('#' + id);
+    const placeholder = await field.getAttribute('placeholder');
+    assert.ok(placeholder, `Missing localized placeholder on #${id}`);
+    assert.equal(await field.getAttribute('aria-label'), placeholder, `Accessible name does not match the localized label on #${id}`);
+  }
+
+  await page.locator('#uiLanguage').selectOption('en');
+  for (const [id, expected] of [
+    ['customSkillName', 'Custom skill name'],
+    ['customSkillInstructions', 'Instructions for this task'],
+    ['customSkillOutput', 'Custom output format (optional)']
+  ]) {
+    assert.equal(await page.locator('#' + id).getAttribute('aria-label'), expected, `English accessible name mismatch on #${id}`);
+  }
+
+  console.log('PASS Lightpanda: app shell, Functions → Skills interaction, custom fields, RU/EN accessible names.');
+} finally {
+  if (browser) await browser.close().catch(() => {});
+  if (server) {
+    server.stdout?.destroy();
+    server.stderr?.destroy();
+    server.kill();
+  }
+}
