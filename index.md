@@ -504,6 +504,7 @@ permalink: /
         <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
       </div>
     </section>
+    <a href="{{ '/notebook/' | relative_url }}" aria-label="Open aNoteBooki Notebook" class="mx-3 my-2 flex min-h-11 items-center gap-3 rounded-xl border border-cyan-900/60 bg-cyan-950/20 px-3 py-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-900/30"><span aria-hidden="true">▤</span><span>aNoteBooki</span><span class="ml-auto text-[10px] font-normal text-cyan-200/70">Notebook</span></a>
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl p-2 space-y-2" aria-label="Настройки памяти">
       <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
