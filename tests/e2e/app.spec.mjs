@@ -233,8 +233,16 @@ test('sidebar order puts Projects and Chats first and keeps memory discreet', as
   await page.locator('#memoryToolsDetails > summary').click();
   await expect(page.locator('#memoryStatusLine')).toBeVisible();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте выкл.');
+  await expect(page.locator('#globalMemoryDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#personalMemoryDetails')).not.toHaveAttribute('open', '');
+  await expect(page.locator('#globalMemoryDetails > summary')).toContainText('Общая память');
+  await expect(page.locator('#personalMemoryDetails > summary')).toContainText('Личная память');
+  await page.locator('#globalMemoryDetails > summary').click();
+  await expect(page.locator('#sharedMemoryInput')).toBeVisible();
   await page.locator('#globalMemoryToggle').check();
   await expect(page.locator('#memoryStatusLine')).toContainText('общая в контексте вкл.');
+  await page.locator('#personalMemoryDetails > summary').click();
+  await expect(page.locator('#memoryInput')).toBeVisible();
 });
 
 test('project creation closes on Escape and restores focus to a visible control', async ({ page }) => {
