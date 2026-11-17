@@ -220,11 +220,18 @@ test('sidebar is a localized navigation landmark with an announced toggle state'
   await expect(sidebar).toHaveAttribute('aria-label', 'Проекты и чаты');
   await expect(toggle).toHaveAttribute('aria-controls', 'sidebar');
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+  await expect(sidebar).toHaveAttribute('inert', '');
 
   await toggle.click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await expect(sidebar).not.toHaveAttribute('aria-hidden');
+  await expect(sidebar).not.toHaveAttribute('inert');
+  await expect(page.locator('[data-action="close-sidebar"]')).toBeFocused();
   await page.locator('[data-action="close-sidebar"]').click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(toggle).toBeFocused();
+  await expect(sidebar).toHaveAttribute('inert', '');
 
   await page.locator('#uiLanguage').selectOption('en');
   await expect(sidebar).toHaveAttribute('aria-label', 'Projects and chats');
