@@ -212,6 +212,28 @@ test('Projects and Chats panels stay balanced and create actions remain availabl
   expect(Math.abs(mobile.projectHeight - mobile.chatHeight)).toBeLessThanOrEqual(1);
 });
 
+test('sidebar is a localized navigation landmark with an announced toggle state', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const sidebar = page.locator('#sidebar');
+  const toggle = page.locator('#appSidebarToggle');
+  await expect(sidebar).toHaveAttribute('role', 'navigation');
+  await expect(sidebar).toHaveAttribute('aria-label', 'Проекты и чаты');
+  await expect(toggle).toHaveAttribute('aria-controls', 'sidebar');
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await page.locator('[data-action="close-sidebar"]').click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(sidebar).toHaveAttribute('aria-label', 'Projects and chats');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await page.locator('[data-action="close-sidebar"]').click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('sidebar order puts Projects and Chats first and keeps memory discreet', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
