@@ -690,7 +690,7 @@ permalink: /
   </div>
 
   <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2">
-    <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
+    <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-controls="sidebar" aria-expanded="false" data-i18n-aria-label="sidebarMenuOpenAria" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
     <div class="header-chat-title min-w-0 flex-1">
       <span id="activeProjectTitle" class="active-project-title" aria-live="polite"></span>
       <h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1>
@@ -1614,7 +1614,7 @@ permalink: /
 
     const UI_TEXT={
       ru:{
-        settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
+        settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',sidebarMenuOpenAria:'Открыть меню',sidebarMenuCloseAria:'Закрыть меню',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryMenuTitle:'🧠 Память',globalMemoryTitle:'🌐 Общая память',personalMemoryTitle:'🔒 Личная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
         appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
@@ -1641,7 +1641,7 @@ permalink: /
         projectSourcesTitle:'Источники проекта',projectSourcesDescription:'Добавляй документы в индекс выбранного проекта. Текст извлекается собственным aLandi Gateway.',projectSourcesStorageNotice:'В Gateway сохраняются извлечённый текст и метаданные. Исходные байты файла не сохраняются.',projectSourcesAdd:'Добавить файл',projectSourcesRefresh:'Обновить список',projectSourcesNoProject:'Сначала выбери проект.',projectSourcesNoConfig:'Настрой URL /v1 и ключ aLandi Gateway в параметрах облака.',projectSourcesDisabled:'На Gateway должны быть включены извлечение документов и RAG.',projectSourcesLoading:'Загружаю источники проекта…',projectSourcesEmpty:'В этом проекте пока нет источников.',projectSourcesSelectFile:'Выбери файл.',projectSourcesUnsupported:'Поддерживаются PDF, DOCX, XLSX, TXT, Markdown, CSV и JSON.',projectSourcesTooLarge:'Файл превышает лимит 8 МиБ.',projectSourcesDuplicate:'Этот файл уже индексирован в проекте: SHA-256 совпадает.',projectSourcesExtracting:'Извлекаю текст на собственном Gateway…',projectSourcesIndexing:'Индексирую фрагменты…',projectSourcesUploaded:'Источник добавлен в индекс проекта.',projectSourcesError:'Не удалось обработать источник.',projectSourcesDeleteConfirm:'Удалить источник и его индексированные фрагменты из этого проекта?',projectSourcesDelete:'Удалить',projectSourcesPreview:'Предпросмотр первого фрагмента',projectSourcesChunks:'фрагм.',projectSourcesParser:'Парсер',projectSourcesSize:'Размер',projectSourcesDeleteDone:'Источник удалён из индекса проекта.',projectSourcesRefreshFailed:'Источник изменён, но список не удалось обновить. Нажми «Обновить список». '
       },
       en:{
-        settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
+        settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',sidebarMenuOpenAria:'Open navigation',sidebarMenuCloseAria:'Close navigation',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryMenuTitle:'🧠 Memory',globalMemoryTitle:'🌐 Global Memory',personalMemoryTitle:'🔒 Personal Memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
         appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
@@ -2783,6 +2783,7 @@ permalink: /
       else sidebar.setAttribute('aria-hidden', 'true');
       overlay.classList.toggle('hidden', !open);
       trigger?.setAttribute('aria-expanded', String(open));
+      if (trigger) { const labelKey=open?'sidebarMenuCloseAria':'sidebarMenuOpenAria';trigger.dataset.i18nAriaLabel=labelKey;trigger.setAttribute('aria-label',UI_TEXT[getUiLanguage()][labelKey]); }
       if (open) closeButton?.focus({ preventScroll: true });
       else if (restoreTriggerFocus) trigger?.focus({ preventScroll: true });
     }
