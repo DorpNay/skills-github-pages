@@ -296,6 +296,18 @@ permalink: /
     #memoryToolsDetails > summary:hover { color:var(--ui-text);background:var(--ui-surface); }
     #memoryToolsDetails[open] { border-color:var(--ui-border)!important;background:var(--ui-surface); }
     #memoryToolsDetails[open] > summary { color:var(--ui-tiffany);border-bottom:1px solid var(--ui-border);border-radius:8px 8px 0 0; }
+    .memory-group-summary { display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;padding:8px 10px;cursor:pointer;list-style:none;font-size:11px;font-weight:700; }
+    .memory-group-summary::-webkit-details-marker { display:none; }
+    .memory-group-count,.memory-group-status { flex:0 0 auto;color:var(--ui-text-muted);font-size:9px;font-weight:600;font-variant-numeric:tabular-nums; }
+    .memory-group-hint { margin:0;color:var(--ui-text-muted);font-size:10px;line-height:1.4; }
+    .memory-item { display:block;margin:0 0 6px;border:1px solid var(--ui-border);border-radius:8px;background:var(--ui-surface);overflow:hidden; }
+    .memory-item-summary { display:block;min-height:36px;padding:8px;cursor:pointer;list-style:none;color:var(--ui-text);font-size:11px;line-height:1.35;overflow-wrap:anywhere; }
+    .memory-item-summary::-webkit-details-marker { display:none; }
+    .memory-item[open] > .memory-item-summary { border-bottom:1px solid var(--ui-border); }
+    .memory-item-meta { display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;padding:6px 8px 0;color:var(--ui-text-muted);font-size:9px;line-height:1.35; }
+    .memory-item-actions { display:flex;justify-content:flex-end;gap:6px;padding:5px 8px 8px; }
+    .memory-item-actions button { min-height:34px;padding:0 10px;border:1px solid var(--ui-border);border-radius:7px;color:var(--ui-text);font-size:10px;font-weight:650; }
+    @media (max-width:640px) { .memory-item-actions button { min-height:44px; } }
     .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
     .project-create-row { min-height:48px;color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border-color:color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
     .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border-color:color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
@@ -494,21 +506,21 @@ permalink: /
         <summary data-i18n="memoryMenuTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Память</summary>
         <div class="p-2 space-y-2">
           <details id="globalMemoryDetails" class="rounded-lg border border-gray-800">
-            <summary data-i18n="globalMemoryTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🌐 Общая память</summary>
+            <summary class="memory-group-summary"><span data-i18n="globalMemoryTitle">🌐 Общая память</span><span id="sharedMemoryCount" class="memory-group-count">0</span><span id="globalMemoryStatus" class="memory-group-status">Контекст выкл.</span></summary>
             <div class="p-2 space-y-2">
-              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
-              <label for="sharedMemoryInput" class="mt-2 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
-              <p class="text-[10px] leading-relaxed text-amber-100/80">Общие факты могут попасть внешнему провайдеру, только если выше включено использование общей памяти. Перенос личной заметки требует отдельного подтверждения.</p>
-              <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
+              <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить общей памяти попадать в контекст.</span></label>
+              <label for="sharedMemoryInput" data-i18n="sharedMemoryInputLabel" class="mt-2 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
+              <p data-i18n="globalMemoryHint" class="memory-group-hint">Выбранные факты · внешние провайдеры получают их только при включении и разрешённой области проекта.</p>
+              <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" data-i18n-placeholder="sharedMemoryPlaceholder" placeholder="Выбранный факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" data-i18n-aria-label="saveSharedMemoryAria" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
               <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
             </div>
           </details>
           <details id="personalMemoryDetails" class="rounded-lg border border-gray-800">
-            <summary data-i18n="personalMemoryTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🔒 Личная память</summary>
+            <summary class="memory-group-summary"><span data-i18n="personalMemoryTitle">🔒 Личная память</span><span id="personalMemoryCount" class="memory-group-count">0</span></summary>
             <div class="p-2 space-y-2">
-              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
-              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
-              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <label for="memoryInput" data-i18n="personalMemoryInputLabel" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
+              <p data-i18n="personalMemoryHint" class="memory-group-hint">IndexedDB этого браузера · только через aLandi gateway; при использовании блокирует внешних провайдеров для всего чата.</p>
+              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" data-i18n-placeholder="personalMemoryPlaceholder" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" data-i18n-aria-label="savePersonalMemoryAria" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
               <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
             </div>
           </details>
@@ -1611,7 +1623,7 @@ permalink: /
         
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного маршрута aLandi aServi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
          readingSettingsTitle:'Читаемость текста',readingSettingsHelp:'Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.',readingFontSizeLabel:'Размер текста сообщений',readingLineHeightLabel:'Межстрочный интервал',readingContrastLabel:'Контраст цветовой схемы',readingContrastStandard:'Стандартный',readingContrastHigh:'Повышенный',readingSettingsSaved:'Настройки читаемости сохраняются на этом устройстве.',
-        globalMemoryOptIn:'Разрешить подходящим заметкам общей памяти попадать в контекст запросов.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',helperMemoryNoProject:'Сначала выбери или создай проект.',helperMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',helperMemoryTitle:'Помощник памяти проекта',helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',helperMemoryNoProject:'Сначала выбери проект.',helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
+        globalMemoryOptIn:'Разрешить общей памяти попадать в контекст.',globalMemoryHint:'Выбранные факты · внешние провайдеры получают их только при включении и разрешённой области проекта.',personalMemoryHint:'IndexedDB этого браузера · только через aLandi gateway; при использовании блокирует внешних провайдеров для всего чата.',sharedMemoryInputLabel:'Общая память (только выбранные факты)',personalMemoryInputLabel:'Личная память локальной модели',sharedMemoryPlaceholder:'Выбранный факт для общей памяти',personalMemoryPlaceholder:'Личный факт для локальной модели',saveSharedMemoryAria:'Сохранить в общую память',savePersonalMemoryAria:'Сохранить в личную память',memoryPersonalMeta:'Личная · локально · private-local',memorySharedManualMeta:'Общая · добавлено вручную · shared',memorySharedPromotedMeta:'Общая · перенесено из личной · shared',memorySavedLabel:'Сохранено',memoryPromoteAction:'В общую',memoryDeleteAction:'Удалить',memoryPromoteAria:'Перенести этот факт в общую память',memoryDeletePersonalAria:'Удалить личный факт',memoryDeleteSharedAria:'Удалить общий факт',personalMemoryEmpty:'Нет личных заметок.',sharedMemoryEmpty:'Нет общих заметок.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если она разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',helperMemoryNoProject:'Сначала выбери или создай проект.',helperMemoryNoConfig:'Не найдены URL /v1 и ключ aLandi gateway. Подключи своё облако в настройках.',helperMemoryTitle:'Помощник памяти проекта',helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',helperMemoryNoProject:'Сначала выбери проект.',helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.'
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
@@ -1637,7 +1649,7 @@ permalink: /
         
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi route. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
          readingSettingsTitle:'Text readability',readingSettingsHelp:'Adjust message text size, spacing and color contrast. Changes are saved automatically and apply in both themes.',readingFontSizeLabel:'Message text size',readingLineHeightLabel:'Line spacing',readingContrastLabel:'Color scheme contrast',readingContrastStandard:'Standard',readingContrastHigh:'High',readingSettingsSaved:'Readability settings are saved on this device.',
-        globalMemoryOptIn:'Allow relevant shared-memory notes to be included in prompts.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',helperMemoryNoProject:'Select or create a project first.',helperMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',helperMemoryTitle:'Project memory helper',helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',helperMemoryNoProject:'Choose a project first.',helperMemoryNoConfig:'Configure the aLandi aServi URL and key in cloud settings.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
+        globalMemoryOptIn:'Allow Global Memory in context.',globalMemoryHint:'Selected facts · external providers receive them only when enabled and allowed by project scope.',personalMemoryHint:'This browser’s IndexedDB · aLandi gateway only; when used, third-party providers are blocked for the whole chat.',sharedMemoryInputLabel:'Global Memory (selected facts only)',personalMemoryInputLabel:'Personal Memory for the local model',sharedMemoryPlaceholder:'Selected fact for Global Memory',personalMemoryPlaceholder:'Personal fact for the local model',saveSharedMemoryAria:'Save to Global Memory',savePersonalMemoryAria:'Save to Personal Memory',memoryPersonalMeta:'Personal · local browser · private-local',memorySharedManualMeta:'Global · added manually · shared',memorySharedPromotedMeta:'Global · promoted from Personal · shared',memorySavedLabel:'Saved',memoryPromoteAction:'Promote to Global',memoryDeleteAction:'Delete',memoryPromoteAria:'Promote this fact to Global Memory',memoryDeletePersonalAria:'Delete Personal Memory item',memoryDeleteSharedAria:'Delete Global Memory item',personalMemoryEmpty:'No Personal Memory items.',sharedMemoryEmpty:'No Global Memory items.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',helperMemoryNoProject:'Select or create a project first.',helperMemoryNoConfig:'aLandi gateway /v1 URL or key is missing. Configure your cloud in Settings.',helperMemoryTitle:'Project memory helper',helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',helperMemoryNoProject:'Choose a project first.',helperMemoryNoConfig:'Configure the aLandi aServi URL and key in cloud settings.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -2568,42 +2580,63 @@ permalink: /
       const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
       const sharedCount=$('sharedMemoryBox')?.querySelectorAll('.memory-item').length||0;
       const globalEnabled=$('globalMemoryToggle')?.checked===true;
-      line.textContent=getUiLanguage()==='en'
+      const english=getUiLanguage()==='en';
+      const personalCountLabel=$('personalMemoryCount');if(personalCountLabel)personalCountLabel.textContent=String(personalCount);
+      const sharedCountLabel=$('sharedMemoryCount');if(sharedCountLabel)sharedCountLabel.textContent=String(sharedCount);
+      const globalStatus=$('globalMemoryStatus');if(globalStatus)globalStatus.textContent=english?(globalEnabled?'Context on':'Context off'):(globalEnabled?'Контекст вкл.':'Контекст выкл.');
+      line.textContent=english
         ? `Memory · personal ${personalCount} · shared ${sharedCount} · global context ${globalEnabled?'on':'off'}`
         : `Память · личных ${personalCount} · общих ${sharedCount} · общая в контексте ${globalEnabled?'вкл.':'выкл.'}`;
     }
+    function createMemoryItemDisclosure(fact,kind) {
+      const language=getUiLanguage();
+      const row=document.createElement('details');row.className='memory-item';row.dataset.memoryId=String(fact.id);
+      const summary=document.createElement('summary');summary.className='memory-item-summary';summary.textContent=fact.fact;summary.title=fact.fact;
+      const meta=document.createElement('div');meta.className='memory-item-meta';
+      const provenance=document.createElement('span');
+      const provenanceKey=kind==='personal'?'memoryPersonalMeta':(fact.promotedFromPrivateId?'memorySharedPromotedMeta':'memorySharedManualMeta');
+      provenance.dataset.i18n=provenanceKey;provenance.textContent=UI_TEXT[language][provenanceKey];
+      const saved=document.createElement('span');saved.className='memory-item-date';
+      const savedLabel=document.createElement('span');savedLabel.dataset.i18n='memorySavedLabel';savedLabel.textContent=UI_TEXT[language].memorySavedLabel;
+      const time=document.createElement('time');const savedAt=new Date(Number(fact.time));
+      if(Number.isFinite(savedAt.getTime())){time.dateTime=savedAt.toISOString();time.textContent=savedAt.toISOString().slice(0,10);}
+      saved.append(savedLabel,time);meta.append(provenance,saved);
+      const actions=document.createElement('div');actions.className='memory-item-actions';
+      if(kind==='personal'){
+        const promote=document.createElement('button');promote.type='button';promote.dataset.action='promote-memory';promote.dataset.memoryId=String(fact.id);
+        promote.dataset.i18n='memoryPromoteAction';promote.textContent=UI_TEXT[language].memoryPromoteAction;
+        promote.dataset.i18nAriaLabel='memoryPromoteAria';promote.setAttribute('aria-label',UI_TEXT[language].memoryPromoteAria);promote.title=UI_TEXT[language].memoryPromoteAria;
+        actions.appendChild(promote);
+      }
+      const remove=document.createElement('button');remove.type='button';remove.dataset.action=kind==='personal'?'delete-memory':'delete-shared-memory';remove.dataset.memoryId=String(fact.id);
+      remove.dataset.i18n='memoryDeleteAction';remove.textContent=UI_TEXT[language].memoryDeleteAction;
+      remove.dataset.i18nAriaLabel=kind==='personal'?'memoryDeletePersonalAria':'memoryDeleteSharedAria';
+      const deleteLabel=UI_TEXT[language][remove.dataset.i18nAriaLabel];remove.setAttribute('aria-label',deleteLabel);remove.title=deleteLabel;
+      actions.appendChild(remove);row.append(summary,meta,actions);return row;
+    }
     async function renderMemory() {
-      const box = $('memoryBox');
-      const facts = await MemoryDB.getAll();
-      box.replaceChildren();
-      if (!facts.length) { box.textContent = 'Нет личных заметок.'; updateMemoryStatusLine(); return; }
-      facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
-        const row = document.createElement('div'); row.className = 'memory-item';
-        const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
-        const promote = document.createElement('button'); promote.type = 'button';
-        promote.dataset.action = 'promote-memory'; promote.dataset.memoryId = fact.id;
-        promote.textContent = '↗'; promote.title = 'Перенести этот факт в общую память';
-        promote.setAttribute('aria-label', 'Перенести выбранный личный факт в общую память');
-        const remove = document.createElement('button'); remove.type = 'button';
-        remove.dataset.action = 'delete-memory'; remove.dataset.memoryId = fact.id;
-        remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить личный факт');
-        row.append(value, promote, remove); box.appendChild(row);
+      const box=$('memoryBox');if(!box)return;
+      const openIds=new Set([...box.querySelectorAll('.memory-item[open]')].map(row=>row.dataset.memoryId));
+      const facts=await MemoryDB.getAll();box.replaceChildren();
+      if(!facts.length){
+        const empty=document.createElement('p');empty.dataset.i18n='personalMemoryEmpty';empty.textContent=UI_TEXT[getUiLanguage()].personalMemoryEmpty;box.appendChild(empty);
+        updateMemoryStatusLine();return;
+      }
+      facts.sort((a,b)=>(b.time||0)-(a.time||0)).forEach(fact=>{
+        const row=createMemoryItemDisclosure(fact,'personal');row.open=openIds.has(String(fact.id));box.appendChild(row);
       });
       updateMemoryStatusLine();
     }
     async function renderSharedMemory() {
-      const box = $('sharedMemoryBox');
-      if (!box) return;
-      const facts = await SharedMemoryDB.getAll();
-      box.replaceChildren();
-      if (!facts.length) { box.textContent = 'Нет общих заметок.'; updateMemoryStatusLine(); return; }
-      facts.sort((a, b) => (b.time || 0) - (a.time || 0)).forEach((fact) => {
-        const row = document.createElement('div'); row.className = 'memory-item';
-        const value = document.createElement('span'); value.className = 'min-w-0 flex-1'; value.textContent = `• ${fact.fact}`;
-        const remove = document.createElement('button'); remove.type = 'button';
-        remove.dataset.action = 'delete-shared-memory'; remove.dataset.memoryId = fact.id;
-        remove.textContent = '×'; remove.setAttribute('aria-label', 'Удалить общий факт');
-        row.append(value, remove); box.appendChild(row);
+      const box=$('sharedMemoryBox');if(!box)return;
+      const openIds=new Set([...box.querySelectorAll('.memory-item[open]')].map(row=>row.dataset.memoryId));
+      const facts=await SharedMemoryDB.getAll();box.replaceChildren();
+      if(!facts.length){
+        const empty=document.createElement('p');empty.dataset.i18n='sharedMemoryEmpty';empty.textContent=UI_TEXT[getUiLanguage()].sharedMemoryEmpty;box.appendChild(empty);
+        updateMemoryStatusLine();return;
+      }
+      facts.sort((a,b)=>(b.time||0)-(a.time||0)).forEach(fact=>{
+        const row=createMemoryItemDisclosure(fact,'shared');row.open=openIds.has(String(fact.id));box.appendChild(row);
       });
       updateMemoryStatusLine();
     }

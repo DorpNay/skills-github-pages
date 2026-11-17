@@ -245,6 +245,61 @@ test('sidebar order puts Projects and Chats first and keeps memory discreet', as
   await expect(page.locator('#memoryInput')).toBeVisible();
 });
 
+test('memory facts expand with scope and provenance; promotion keeps the personal copy', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  await page.locator('#memoryToolsDetails > summary').click();
+  await page.locator('#personalMemoryDetails > summary').click();
+  await page.locator('#memoryInput').fill('PERSONAL_SCOPE_SENTINEL');
+  await page.locator('[data-action="save-memory"]').click();
+
+  const personalRow = page.locator('#memoryBox .memory-item').first();
+  await expect(personalRow).toHaveCount(1);
+  await expect(personalRow).not.toHaveAttribute('open', '');
+  await personalRow.locator('summary').click();
+  await expect(personalRow).toContainText('Личная · локально · private-local');
+  await expect(personalRow).toContainText('Сохранено');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(personalRow).toContainText('Personal · local browser · private-local');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(personalRow).toContainText('Личная · локально · private-local');
+
+  page.once('dialog', dialog => dialog.accept());
+  await personalRow.locator('[data-action="promote-memory"]').click();
+  const sharedRow = page.locator('#sharedMemoryBox .memory-item').first();
+  await expect(sharedRow).toHaveCount(1);
+  await expect(sharedRow).not.toHaveAttribute('open', '');
+  await sharedRow.locator('summary').click();
+  await expect(sharedRow).toContainText('Общая · перенесено из личной · shared');
+  await expect(page.locator('#memoryBox .memory-item')).toHaveCount(1);
+
+  await page.locator('#globalMemoryDetails > summary').click();
+  const globalToggle = page.locator('#globalMemoryToggle');
+  await expect(globalToggle).not.toBeChecked();
+  await globalToggle.check();
+  await expect(page.locator('#globalMemoryStatus')).toHaveText('Контекст вкл.');
+
+  await page.reload();
+  await ensureSidebarOpen(page);
+  await page.locator('#memoryToolsDetails > summary').click();
+  await page.locator('#globalMemoryDetails > summary').click();
+  await page.locator('#personalMemoryDetails > summary').click();
+  await expect(page.locator('#globalMemoryStatus')).toHaveText('Контекст вкл.');
+  await expect(page.locator('#memoryBox .memory-item')).toHaveCount(1);
+  const persistedSharedRow = page.locator('#sharedMemoryBox .memory-item').first();
+  await expect(persistedSharedRow).toHaveCount(1);
+  await persistedSharedRow.locator('summary').click();
+  await expect(persistedSharedRow).toContainText('Общая · перенесено из личной · shared');
+
+  page.once('dialog', dialog => dialog.accept());
+  await persistedSharedRow.locator('[data-action="delete-shared-memory"]').click();
+  await expect(page.locator('#sharedMemoryBox .memory-item')).toHaveCount(0);
+  await expect(page.locator('#memoryBox .memory-item')).toHaveCount(1);
+  await expect(page.locator('#sharedMemoryCount')).toHaveText('0');
+  await expect(page.locator('#personalMemoryCount')).toHaveText('1');
+});
 test('project creation closes on Escape and restores focus to a visible control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
