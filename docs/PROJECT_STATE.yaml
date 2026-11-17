@@ -3,7 +3,7 @@ project_state:
   reviewed_on: "2026-11-17"
   landing_release_strategy:
     document: "docs/LANDING_RELEASE_STRATEGY_RU.md"
-    status: "Active task LANDING-V2-2026-001. Live parent main 67f5f4b05389ef6e24422ece1e59653e6e893258; 0 open PRs; issues #111 and #186 (#186 is unrelated). OR-2026-11-17-004 routes all 18 architecture suggestions into existing K.5 rows. Owner priority: finalize K.5 #1 UI; preserve root-only static Pages/Jekyll V1 boundary."
+    status: "Active task LANDING-V2-2026-001. Live main `bc6cee08c3d28fec3a6ac4d61019d958f92ba779`; 0 open PRs; issues #111 and #186 (#186 unrelated). OR-004 routes all 18 architecture suggestions into existing K.5 rows. UX-040 core and project/personal header scope are VERIFIED by exact Quality/Chromium; owner priority remains K.5 #1 final UI acceptance under the root-only static Pages/Jekyll V1 boundary."
     owner_policy: "main is the only durable product baseline. Latest explicit owner request in NOW.md wins. Owner explicitly authorizes direct commits/merges to main and automatic Pages publication for LANDING-V2-2026-001. No PR branch required. Never force-push, rebase, reset, rewrite history, delete user data, deploy to VPS/host, provision paid resources or handle secrets without separate explicit authorization; exact-head checks remain mandatory."
     sequence:
       - "Read only NOW.md lines 1–100, then batch live main SHA and open PR/issue queues."
@@ -16,13 +16,13 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Live parent main 67f5f4b05389ef6e24422ece1e59653e6e893258; 0 open PRs; issues #111 and #186 (#186 is unrelated). OR-2026-11-17-004 archived; 18 architecture suggestions routed into existing K.5 rows. Owner priority is K.5 #1 UI finalization; no parallel backlog."
+    status: "NOW.md is the sole first-read checkpoint. Live main `bc6cee08c3d28fec3a6ac4d61019d958f92ba779`; 0 open PRs; issues #111 and #186 (#186 unrelated). OR-004 archived; all 18 architecture suggestions routed into existing K.5 rows. UX-040 core and header scope labels exact-head verified; K.5 #1 remains open for remaining Memory/Sources/mobile/accessibility UI."
     branch: "main"
-    base_main: "67f5f4b05389ef6e24422ece1e59653e6e893258"
+    base_main: "bc6cee08c3d28fec3a6ac4d61019d958f92ba779"
     open_prs_at_checkpoint: 0
     open_issues_at_checkpoint: 2
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and chat route/status remain partial; bounded selected context, same-chat result and collapsible status are present. Plan 2 Deep Research method separation is verified by exact Quality/Chromium. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; offline package is not installed."
-    next: "Inspect K.5 #1 owner-designed UI in index.md and E2E; select and implement the smallest complete Projects/Chats/sidebar/header/Memory/mobile-input slice. Keep architecture proposals attached to existing K.5 rows and off the landing critical path."
+    next: "Reconcile K.5 #1 remaining Memory IA/order, project Sources and no-project status stripe against K.6.6–K.6.8; then implement the next bounded mobile/input/accessibility slice. Keep architecture proposals off the landing critical path."
     source_triage:
     status: "HISTORICAL SOURCE TRIAGE SNAPSHOT ONLY. Current queue is 0 open PRs / issue #111. Do not use old PR IDs or this record to route work; consult NOW.md and live GitHub."
     record: "docs/OPEN_SOURCE_TRIAGE_RU.md"
@@ -41,7 +41,7 @@ project_state:
     open_pr_at_start: 37
     open_issue_at_start: 1
     next: "use Graphify on source/architecture changes and weekly drift checks; inspect artifacts for coverage/query quality; select PR #37 follow-ups only when they add unique value"
-  last_volley: "V-2026-11-17-ARCHITECTURE-ROUTING-AND-LANDING-PRIORITY"
+  last_volley: "V-2026-11-17-UX040-HEADER-SCOPE-VERIFIED"
   gate: "PR #33 merged at 05f4c2454c279cc21dcbf08c83ff3c3025838257 and PR #34 merged at e3463f9b048dfda742b8158faf054c617defda9a. PR #35 merged into main at 23add2547a69df877b4baf213957827aa2e8e561. PR-head run #418 passed all required jobs: integrity, security, context, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates also passed. Post-merge main checkpoint 4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e passed Quality workflow #420 (all sentinels, 48 Chromium E2E tests, live-site browser smoke), GitHub Pages deployment run #122 and provenance run #159. The following commit is documentation-only. Live provider smoke, configured private gateway/VPS, all-format document parsing, live voice runtime and hardware benchmarks remain unverified. PR #43 merged at 342d84b00d4e748d6ffa65f250a451f7cee302b0. PR #44 merged at 9145b5f25047fa7de0c407fbc30686fef7586ca4 after gateway, security, context, integrity, Jekyll, Chromium and published-site checks passed. Local whisper.cpp ASR, Piper TTS, assistant read-aloud controls and native mini-player are in main but remain disabled unless local runtimes/models are installed and flags enabled; target-device/model quality and VPS deployment remain unverified. PR #45 merged at 98d715b148bbd5ec1a6f95bf0c619c99e7977c66 for disabled-by-default local document extraction and authenticated capabilities. PR #48 merged at d860df816053161aec297d3d376d3cb9a50a30cf to reject concurrent local ASR/TTS jobs with HTTP 429 instead of queueing. PR #50 merged at fc7e1a3792d9b02f84a94cb5547d5c6db80f4569 after all quality sentinels, Chromium E2E, published-site smoke and provenance passed; the UI now routes PDF/DOCX/XLSX only through the configured local gateway. PR #51 merged at f37eac33514fb0749322b09d11054f3b684b9668; Stop now aborts in-flight local TTS requests and guards against stale playback, with Chromium E2E passing. PR #53 merged at 98472d11006b9fd2ac22f1d0e311a8d0c1ba4f07: opt-in UI transcription for attached audio via local ASR. Local microphone/model quality and target-device benchmarks remain unverified. Browser half-duplex voice dialogue prototype is merged; CI uses mocked ASR/TTS, and hardware, model accuracy, latency and echo remain unverified."
   file_orienter: "project-reference/FILE_ORIENTER_RU.md; detailed on-demand navigation index, not mandatory startup reading"
   memory_audit: "project-reference/MEMORY_RETENTION_AND_SYNC_AUDIT_RU.md; design and acceptance criteria, not yet implementation"
@@ -293,19 +293,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "67f5f4b05389ef6e24422ece1e59653e6e893258"
-  last_main_action: "Live main parent 67f5f4b05389ef6e24422ece1e59653e6e893258. Quality #43977273979 SUCCESS (7/7, built-app Chromium and published-site smoke); Graphify #43977273839 SUCCESS; Pages #43977272921 SUCCESS. Direct new-chat model-only default and legacy per-chat search preference preservation are in the current code/test path. This checkpoint records OR-2026-11-17-004 and routes the 18-point architecture review into existing K.5 rows; no product code changed."
-  last_functional_checkpoint: "9c10e04a50af70a73651adba2deb7d329919ab2a"
-  main_quality: "SUCCESS #43977273979 on exact parent 67f5f4b05389ef6e24422ece1e59653e6e893258; 7/7 jobs passed, including built-app Chromium and published-site smoke."
+  verified_main: "bc6cee08c3d28fec3a6ac4d61019d958f92ba779"
+  last_main_action: "Exact main `bc6cee08c3d28fec3a6ac4d61019d958f92ba779` adds explicit personal/project header context and memory-scope labels. Quality #43998698846 SUCCESS: 7/7 jobs, 140 built-app Chromium + 1 published-site Chromium; Graphify #43998698805 SUCCESS; Pages #43998698607 SUCCESS; published revision matched exact main SHA. UX-040 New Chat project scope E2E is included and passed. No Freshness/Provenance result is claimed on this code SHA."
+  last_functional_checkpoint: "bc6cee08c3d28fec3a6ac4d61019d958f92ba779"
+  main_quality: "SUCCESS #43998698846 on exact main bc6cee08c3d28fec3a6ac4d61019d958f92ba779; 7/7 jobs passed, 140 built-app Chromium tests and 1 published-site Chromium smoke."
   main_freshness: "PENDING exact direct-child checkpoint; parent Freshness evidence is not reused."
-  main_graphify: "SUCCESS #43977273839 on exact parent 67f5f4b05389ef6e24422ece1e59653e6e893258."
+  main_graphify: "SUCCESS #43998698805 on exact main bc6cee08c3d28fec3a6ac4d61019d958f92ba779."
   main_gateway: "Not rerun: no Gateway/backend file changed; latest Gateway #43932615910 passed on the preceding backend baseline."
   main_provenance: "PENDING exact direct-child checkpoint; no pass is assumed."
-  main_pages: "SUCCESS #43977272921 on exact parent 67f5f4b05389ef6e24422ece1e59653e6e893258; exact uncached public revision to be confirmed after this documentation commit."
+  main_pages: "SUCCESS #43998698607 on exact main bc6cee08c3d28fec3a6ac4d61019d958f92ba779; Quality verified published client revision equals exact main SHA."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111, 186]
   runtime_boundary: "Plan 2 is implemented and exact-head verified. AgentRun remains partial: one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder execution. Browser Workspace is not a sandbox; offline and real target-device voice remain unverified."
-  next: "Inspect K.5 #1 owner-designed UI in index.md and E2E; implement one bounded complete UI slice and verify exact HEAD. Architecture proposals stay routed to their existing K.5 rows."
+  next: "Reconcile K.5 #1 remaining Memory IA/order, project Sources and no-project status stripe against K.6.6–K.6.8; then implement the next bounded mobile/input/accessibility slice."
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
   register: "docs/V1_UI_FINALIZATION_RU.md"

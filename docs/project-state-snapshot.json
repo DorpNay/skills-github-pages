@@ -3,17 +3,17 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-17",
   "checkpoint": {
-    "main_sha": "67f5f4b05389ef6e24422ece1e59653e6e893258",
-    "main_commit_subject": "test: opt in to web tools in research fixtures",
-    "main_commit_date": "2026-11-16T23:12:39Z",
-    "last_functional_checkpoint_sha": "9c10e04a50af70a73651adba2deb7d329919ab2a",
-    "last_functional_milestone": "Direct new-chat model-only default with explicit search opt-in and preserved legacy per-chat search preferences; current test-only exact parent 67f5f4b05389ef6e24422ece1e59653e6e893258 passed Quality #43977273979 (7/7 incl. Chromium + published-site smoke), Graphify #43977273839 and Pages #43977272921. Architecture review OR-003 is routed to existing K.5 rows by OR-004; K.5 #1 UI finalization is the owner-priority next slice.",
-    "main_quality_run": 43977273979,
-    "main_pages_deployment_run": 43977272921,
+    "main_sha": "bc6cee08c3d28fec3a6ac4d61019d958f92ba779",
+    "main_commit_subject": "feat: show explicit chat and project scope in header",
+    "main_commit_date": "2026-11-17T01:51:19Z",
+    "last_functional_checkpoint_sha": "bc6cee08c3d28fec3a6ac4d61019d958f92ba779",
+    "last_functional_milestone": "UX-040 core project filter/Back/project-scoped New Chat/active-chat preservation verified; header now always labels personal vs project context and memory scope with RU/EN. Exact Quality #43998698846 passed 140 built-app Chromium + 1 published-site Chromium; Graphify #43998698805 and Pages #43998698607 passed; published revision exact.",
+    "main_quality_run": 43998698846,
+    "main_pages_deployment_run": 43998698607,
     "functional_parent_gateway_run": 43932615910,
-    "functional_parent_quality_run": 43977273979,
-    "functional_parent_graphify_run": 43977273839,
-    "functional_parent_pages_run": 43977272921,
+    "functional_parent_quality_run": 43998698846,
+    "functional_parent_graphify_run": 43998698805,
+    "functional_parent_pages_run": 43998698607,
     "open_pull_requests": [],
     "open_issues": [
       111,
@@ -221,8 +221,8 @@
     "original_v1_baseline_sha": "9b746f7bbb1a12b482bd6f0a7cefd62b3cb454af",
     "main_quality_status": "SUCCESS: all 7 jobs, including Chromium and published GitHub Pages release contract.",
     "main_pages_status": "SUCCESS; live canonical root meta alandi-build-revision exactly matches e4b791076d19e312265eee301c417cc257f3fc48.",
-    "main_freshness_status": "SUCCESS.",
-    "main_provenance_status": "SUCCESS.",
+    "main_freshness_status": "PENDING",
+    "main_provenance_status": "PENDING",
     "main_graphify_status": "SUCCESS.",
     "first_v1_candidate_pr": 139,
     "first_v1_candidate_pr_base": "a7915291354d1b031ce2461b71a553f871959df3",
@@ -266,7 +266,7 @@
     "main_gateway_status": "SUCCESS across Python 3.12/13/14."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": true,
+    "last_main_commit_is_documentation_only": false,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Direct main only, zero open PRs; #111 is the aLandi release-gate issue. #186 is a GitHub Skills Pages exercise created by github-actions[bot], not aLandi product scope. Owner authorizes direct main commits and automatic Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",
@@ -310,7 +310,7 @@
       "revision_verification": "Cache-busted public root returned alandi-build-revision exact 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
     }
   },
-  "last_volley": "V-2026-11-17-ARCHITECTURE-ROUTING-AND-LANDING-PRIORITY",
+  "last_volley": "V-2026-11-17-UX040-HEADER-SCOPE-VERIFIED",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -433,43 +433,36 @@
   },
   "active_ui_pr": null,
   "open_prs": "No open pull requests. One open issue: #111.",
-  "owner_task": "OR-2026-11-17-004",
+  "owner_task": "LANDING-V2-2026-001",
   "main_gateway_run": 43932615910,
-  "main_quality_run": 43970945532,
-  "main_pages_deployment_run": 43970944970,
+  "main_quality_run": 43998698846,
+  "main_pages_deployment_run": 43998698607,
   "main_freshness_run": 43973857682,
   "main_provenance_run": 43973857634,
-  "main_graphify_run": 43970945690,
+  "main_graphify_run": 43998698805,
   "main_external_acquisition_run": 43553056846,
   "main_ollama_artifact_run": 43418126506,
   "main_python_runtime_cache_run": 43553056865,
   "python_runtime_cache_bytes": 80105944,
-  "main_quality_status": "SUCCESS #43970945532 on product/test SHA 6117ceb6d3360bc0b47ef3179d73536f854cebf4.",
-  "main_pages_status": "SUCCESS #43970944970; public root exact 6117ceb6d3360bc0b47ef3179d73536f854cebf4.",
+  "main_quality_status": "SUCCESS",
+  "main_pages_status": "SUCCESS",
   "main_freshness_status": "PASS parent #43973857682; rerun this child.",
   "main_provenance_status": "Previous run #43973857634 caught YAML syntax error; fixed here; rerun required.",
-  "main_graphify_status": "SUCCESS #43970945690.",
+  "main_graphify_status": "SUCCESS",
   "main_gateway_status": "Not rerun: no backend source changed; latest Gateway #43932615910 on previous backend baseline.",
   "owner_request": "OR-2026-11-17-004",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
-    "root_revision": "6117ceb6d3360bc0b47ef3179d73536f854cebf4",
-    "pages_run": 43970944970,
-    "revision_verification": "Fresh uncached fetch returned HTTP 200 and alandi-build-revision exactly 6117ceb6d3360bc0b47ef3179d73536f854cebf4."
+    "root_revision": "bc6cee08c3d28fec3a6ac4d61019d958f92ba779",
+    "pages_run": 43998698607,
+    "revision_verification": "Exact Quality #43998698846 verified cache-busted and canonical published client alandi-build-revision equals bc6cee08c3d28fec3a6ac4d61019d958f92ba779."
   },
-  "owner_request_delta": {
-    "status": "IMPLEMENTED / EXACT-HEAD VERIFICATION FAILED — REPAIR REQUIRED",
-    "scope": "Long-running multi-step completion of the existing LANDING-V2-2026-001 programme with external primary-source research; K.5/K.6.14–K.6.18 remain canonical.",
-    "implementation_status": "Plan 2 is in source on code parent b1e0565908295fd11945107f701081065b1acc98, but Quality/Chromium failed 16/139. Confirmed causes include missing AgentRun HTTP/error helper definitions, settings-profile import not migrating deepResearchMethod, old #agentModeControl test helper, strict duplicate close selector and outdated AgentRun menu copy. Plan 1 remains partial. AgentRun host feature is false, one worker/model slot, no tools/filesystem/network.",
-    "next": "Repair confirmed defects, run exact-head Quality/Chromium, then direct-child Freshness/Provenance/Pages and published root verification.",
-    "parent_main_sha": "b1e0565908295fd11945107f701081065b1acc98",
-    "id": "OR-2026-11-17-002"
-  },
+  "owner_request_delta": "OR-2026-11-17-004",
   "next": [
     "Run direct-child Freshness, Provenance, Quality and Pages for the YAML syntax correction; verify public revision remains exact on product/test SHA.",
     "Inspect Direct/search defaults and legacy preference path; make new Direct chats model-only with explicit search opt-in while preserving saved preferences.",
     "Continue existing K.5/K.6.17–K.6.18 slices without a parallel backlog."
   ],
   "owner_priority_task": "LANDING-V2-2026-001",
-  "owner_priority_summary": "Owner priority OR-2026-11-17-004: finalize K.5 #1 owner-designed UI at the canonical root application. The 18-point Architecture 2.0 review is routed into existing K.5 rows; no duplicate backlog. Preserve static HTML/CSS/JS + Jekyll/GitHub Pages V1 boundary; do not migrate to Vite/Cloudflare or add runtimes/models/fallback/sandbox without measured need and explicit authorization."
+  "owner_priority_summary": "Finalize K.5 #1 owner-designed UI. Architecture 2.0 proposals mapped to existing K.5 rows. UX-040 core verified in Chromium; header personal/project + memory-scope labels verified RU/EN and 390px. Remaining K.5 #1: Memory IA/order, project Sources, no-project status stripe, native mobile/input/accessibility. Static Pages/Jekyll remains canonical."
 }

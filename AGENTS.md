@@ -128,3 +128,10 @@ Parent main: `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; 0 open PRs; issue #111.
 - Owner priority is finalizing the existing root application/UI under K.5 #1 and K.6.1/K.6.6–K.6.8. Do not create a separate marketing /landing/ route or migrate the V1 static HTML/CSS/JS + Jekyll/GitHub Pages stack to Vite/Cloudflare without measured need and separate approval.
 - Live main parent: 67f5f4b05389ef6e24422ece1e59653e6e893258; 0 open PRs; issues #111 and #186 (#186 unrelated). Parent Quality #43977273979, Graphify #43977273839 and Pages #43977272921 succeeded. Freshness/Provenance must be checked on the direct-child checkpoint.
 - Next: inspect K.5 #1 UI scope in index.md and E2E; ship a small complete UI slice with exact-head verification. Architecture/runtime candidates remain attached to their existing K.5 rows and must not delay landing finalization.
+
+
+## UI verification checkpoint — S-078/S-079 (2026-11-17)
+- UX-040 core project list/filter/Back/New Chat scope and active-chat preservation are implemented; exact Quality #43998698846 passed 140 built-app Chromium + 1 published-site Chromium. Graphify #43998698805 and Pages #43998698607 passed on exact main `bc6cee08c3d28fec3a6ac4d61019d958f92ba779`; published revision matched exact SHA.
+- Header now always shows a clear personal/project context capsule, project memory scope, accessible title and RU/EN localization; 390px no-overflow/long-name E2E passed in the same 140-test run.
+- UX-040 remains PARTIAL in the master registry only for long/empty/large lists, keyboard, scroll restoration and native Safari; do not overclaim native mobile or VoiceOver.
+- Next is K.5 #1 remaining Memory IA/project Sources/no-project status/mobile-input. Keep architecture proposals mapped to existing K.5; no parallel backlog.
