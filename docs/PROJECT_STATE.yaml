@@ -293,19 +293,19 @@ voice_selection:
 
 current_checkpoint:
   date: "2026-11-17"
-  verified_main: "c7ac7ab976ae5333010b72370b6f1fec28c9c655"
+  verified_main: "c0c74fb5be14f63edb1666f55600559512ad1c42"
   last_main_action: "Project Sources manager implemented: project-scoped upload via Gateway extraction, SHA-256 deduplication, chunk indexing, catalog, bounded first-chunk preview and scoped delete; original file bytes are not retained. Quality #44006105936 SUCCESS (7/7: 143 built-app Chromium + 1 published-site smoke; deployed revision exact), Graphify #44006105833 SUCCESS, Pages #44006104480 SUCCESS. Gateway #44004983557 PASS on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7; no Gateway files changed after it."
   last_functional_checkpoint: "c7ac7ab976ae5333010b72370b6f1fec28c9c655"
   main_quality: "SUCCESS #44006105936 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655; 7/7 jobs, 143 built-app Chromium tests and 1 published-site Chromium smoke; deployed revision matched."
-  main_freshness: "PENDING exact direct-child state refresh."
+  main_freshness: "FAILED #44007011572: NOW.md omitted the required no-default-PR and exact open-queue markers; repaired in the direct child of c0c74fb5be14f63edb1666f55600559512ad1c42; rerun exact child."
   main_graphify: "SUCCESS #44006105833 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655."
   main_gateway: "SUCCESS #44004983557 on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7 across Python 3.12/13/14; no Gateway files changed in the functional descendant."
-  main_provenance: "PENDING exact direct-child state refresh."
+  main_provenance: "SUCCESS #44007011860 on documentation parent c0c74fb5be14f63edb1666f55600559512ad1c42; rerun exact child."
   main_pages: "SUCCESS #44006104480 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655; deployed client revision verified by Quality live-site smoke."
   open_prs_at_checkpoint: 0
   open_issues_at_checkpoint: [111, 186]
   runtime_boundary: "AgentRun remains one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder execution. Project Sources indexes extracted text and metadata only; original bytes are not retained. ALANDI_RAG_ENABLED and document extraction remain disabled by default. Physical iPhone Safari/VoiceOver and offline package remain unverified."
-  next: "Run exact-child Freshness and Provenance; then validate physical iPhone Safari/VoiceOver and finish compact mobile hierarchy/navigation/accessibility/forms acceptance."
+  next: "Verify exact-child Freshness and Provenance; then validate physical iPhone Safari/VoiceOver and finish compact mobile hierarchy/navigation/accessibility/forms acceptance."
 
 v1_ui_finalization:
   status: "merged in PR #121 at f4d880f; exact-head required workflows passed; post-merge Pages deployment not independently verified"
