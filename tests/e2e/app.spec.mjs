@@ -3049,9 +3049,15 @@ test('compact mobile header controls remain reachable without overlap', async ({
     for (const width of [320, 360, 390]) {
       await page.setViewportSize({ width, height: 844 });
       const metrics = await page.locator('.app-header').evaluate(header => {
-        const ids = ['appSidebarToggle', 'homeThemeToggle', 'uiLanguage', 'toggle-settings'];
-        const controls = ids.map(id => {
-          const element = document.getElementById(id);
+        const selectors = [
+          ['appSidebarToggle', '#appSidebarToggle'],
+          ['homeThemeToggle', '#homeThemeToggle'],
+          ['uiLanguage', '#uiLanguage'],
+          ['settingsToggle', '[data-action="toggle-settings"]']
+        ];
+        const controls = selectors.map(([id, selector]) => {
+          const element = header.querySelector(selector);
+          if (!element) throw new Error(`Missing mobile header control: ${selector}`);
           const rect = element.getBoundingClientRect();
           return { id, x: rect.x, right: rect.right, y: rect.y, bottom: rect.bottom, width: rect.width, height: rect.height };
         });
