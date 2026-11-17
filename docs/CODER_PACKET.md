@@ -185,6 +185,9 @@ The AgentRun `coder` profile now loads a fixed, repository-owned `SKILL.md` pack
 - `test-first-delivery` — bounded acceptance, regression-first changes, exact-HEAD verification and rollback;
 - `security-boundaries` — trust boundaries, fail-closed validation, approval binding and sandbox criteria;
 - `performance-engineering` — representative profiling, incremental indexing and resource-cost discipline.
+- `api-contract-design` — typed schemas, auth boundaries, idempotency, timeouts and resilient integration tests;
+- `database-engineering` — scoped/parameterized reads, SQLite/Postgres selection, migrations, query plans and backup/restore;
+- `debugging-observability` — reproducible root-cause analysis, redacted diagnostics and measured regressions.
 
 The loader accepts only four fixed IDs, checks frontmatter/name agreement, rejects symlinks and path escape, bounds each file and the total prompt, and fails closed if the trusted bundle is unavailable. No external package is added. `allowed-tools` is intentionally absent: these documents are prompt guidance, not permissions. AgentRun still has no filesystem, shell, web, database or repository tools; the GitHub App connector remains separately read-only and allowlisted. Production code execution still requires a separately evaluated sandbox and owner-authorized host configuration.
 

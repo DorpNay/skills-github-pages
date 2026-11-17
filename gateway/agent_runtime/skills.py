@@ -9,6 +9,9 @@ CODER_SKILL_IDS = (
     "test-first-delivery",
     "security-boundaries",
     "performance-engineering",
+    "api-contract-design",
+    "database-engineering",
+    "debugging-observability",
 )
 MAX_SKILL_BYTES = 6_000
 MAX_BUNDLE_CHARS = 16_000

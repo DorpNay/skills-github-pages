@@ -29,6 +29,9 @@ def test_coder_bundle_contains_only_fixed_skills_and_no_capability_grants():
     assert "CODER SKILL BUNDLE" in bundle
     assert "do not grant runtime permissions" in bundle
     assert "shell access" in bundle and "filesystem access" in bundle
+    assert "api-contract-design" in bundle
+    assert "database-engineering" in bundle
+    assert "debugging-observability" in bundle
     assert len(bundle) <= 16_000
 
 
