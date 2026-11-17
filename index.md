@@ -1692,7 +1692,7 @@ permalink: /
     function syncComposerPlaceholder(){
       const input=$('userInput');if(!input)return;
       const english=getUiLanguage()==='en',width=window.innerWidth||document.documentElement.clientWidth;
-      input.placeholder=width<=360?(english?'Type':'Текст'):width<=420?(english?'Type…':'Текст…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
+      input.placeholder=width<=340?'…':width<=360?(english?'Type':'Текст'):width<=420?(english?'Type…':'Текст…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
     }
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;

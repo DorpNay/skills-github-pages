@@ -3228,11 +3228,11 @@ test('composer placeholder stays compact and localized on narrow mobile widths',
   const input = page.locator('#userInput');
   for (const language of ['ru', 'en']) {
     await page.locator('#uiLanguage').selectOption(language);
-    for (const width of [320, 360, 390, 420, 768]) {
+    for (const width of [320, 340, 360, 390, 420, 768]) {
       await page.setViewportSize({ width, height: 844 });
       const expected = language === 'en'
-        ? (width <= 360 ? 'Type' : width <= 420 ? 'Type…' : 'Write a message...')
-        : (width <= 360 ? 'Текст' : width <= 420 ? 'Текст…' : 'Напиши сообщение...');
+        ? (width <= 340 ? '…' : width <= 360 ? 'Type' : width <= 420 ? 'Type…' : 'Write a message...')
+        : (width <= 340 ? '…' : width <= 360 ? 'Текст' : width <= 420 ? 'Текст…' : 'Напиши сообщение...');
       await expect(input).toHaveAttribute('placeholder', expected);
       const metrics = await input.evaluate(element => ({
         scrollHeight: element.scrollHeight,
