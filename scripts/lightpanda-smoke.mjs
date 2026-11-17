@@ -33,19 +33,23 @@ try {
   assert.equal(await sidebar.getAttribute('aria-label'), 'Проекты и чаты');
   assert.equal(await sidebarToggle.getAttribute('aria-controls'), 'sidebar');
   assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(await sidebarToggle.getAttribute('aria-label'), 'Открыть меню');
   assert.equal(await sidebar.getAttribute('aria-hidden'), 'true');
   assert.notEqual(await sidebar.getAttribute('inert'), null);
   await sidebarToggle.click();
   assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(await sidebarToggle.getAttribute('aria-label'), 'Закрыть меню');
   assert.equal(await sidebar.getAttribute('aria-hidden'), null);
   assert.equal(await sidebar.getAttribute('inert'), null);
   assert.equal(await page.evaluate(() => document.activeElement?.dataset.action), 'close-sidebar');
   await page.locator('[data-action="close-sidebar"]').click();
   assert.equal(await sidebarToggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(await sidebarToggle.getAttribute('aria-label'), 'Открыть меню');
   assert.notEqual(await sidebar.getAttribute('inert'), null);
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'appSidebarToggle');
   await page.locator('#uiLanguage').selectOption('en');
   assert.equal(await sidebar.getAttribute('aria-label'), 'Projects and chats');
+  assert.equal(await sidebarToggle.getAttribute('aria-label'), 'Open navigation');
   await page.locator('#uiLanguage').selectOption('ru');
 
   await page.locator('#functionsMenu > summary').click();
