@@ -741,7 +741,7 @@ permalink: /
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
       <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
-      <button id="voiceUnavailableButton" type="button" aria-label="Зажми, чтобы открыть режимы голоса" aria-expanded="false" title="Удерживай, чтобы открыть голосовое меню; обычное нажатие ничего не открывает" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
+      <button id="voiceUnavailableButton" type="button" aria-label="Открыть режимы голоса" aria-expanded="false" title="Нажми, чтобы открыть режимы голоса" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden composer-stop px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
     </div>
@@ -1680,7 +1680,7 @@ permalink: /
       const themeButton=$('homeThemeToggle');if(themeButton){themeButton.title=lang==='en'?'Switch theme':'Сменить тему';themeButton.setAttribute('aria-label',themeButton.title);}
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
-      const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Press and hold for voice modes':'Удерживай, чтобы открыть режимы голоса';voice.setAttribute('aria-label',voice.title);}
+      const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Open voice modes':'Нажми, чтобы открыть режимы голоса';voice.setAttribute('aria-label',lang==='en'?'Open voice modes':'Открыть режимы голоса');}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
     }
     function updateHomeThemeButton(){
@@ -7076,36 +7076,15 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
      $('globalMemoryToggle').addEventListener('change',event=>{const previous=!event.target.checked;if(!safeSet(STORAGE.globalMemoryEnabled,String(event.target.checked))){event.target.checked=previous;updateMemoryStatusLine();return;}updateMemoryStatusLine();showToast(event.target.checked?(getUiLanguage()==='en'?'Global memory enabled.':'Глобальная память включена.'):(getUiLanguage()==='en'?'Global memory disabled.':'Глобальная память отключена.'));});
     $('projectMemoryInput').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();document.querySelector('[data-action="add-project-memory"]').click();}});
     $('userInput').addEventListener('input', () => autoResizeTextarea($('userInput')));
-    let voiceHoldTimer=null,voiceHoldOpened=false;
     const showVoiceMenu=()=>{closeComposerPopovers();$('voiceMenu').classList.remove('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','true');syncComposerPopoverScrim();};
     const hideVoiceMenu=()=>{$('voiceMenu').classList.add('hidden');$('voiceUnavailableButton').setAttribute('aria-expanded','false');syncComposerPopoverScrim();};
     $('composerPopoverScrim').addEventListener('click',event=>{
       event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
       closeComposerPopovers();hideVoiceMenu();
     });
-    const cancelVoiceHold=()=>{
-      if(voiceHoldTimer)clearTimeout(voiceHoldTimer);
-      voiceHoldTimer=null;
-    };
-    $('voiceUnavailableButton').addEventListener('pointerdown',event=>{
-      if(event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
-      voiceHoldOpened=false;
-      cancelVoiceHold();
-      // Don't rely on pointer capture: a stationary hold doesn't need it, and mobile browsers
-      // may cancel a captured pointer when native gestures take over.
-      voiceHoldTimer=window.setTimeout(()=>{voiceHoldTimer=null;voiceHoldOpened=true;showVoiceMenu();},430);
-    });
-    $('voiceUnavailableButton').addEventListener('pointerup',cancelVoiceHold);
-    $('voiceUnavailableButton').addEventListener('pointercancel',event=>{
-      // A mouse pointer cancel shouldn't cancel the long-press timer in browser automation.
-      if(event.pointerType!=='mouse')cancelVoiceHold();
-    });
-    document.addEventListener('pointerup',cancelVoiceHold);
-    document.addEventListener('pointercancel',event=>{
-      if(event.pointerType!=='mouse')cancelVoiceHold();
-    });
-    $('voiceUnavailableButton').addEventListener('keydown',event=>{
-      if((event.key==='Enter'||event.key===' ')&&!event.repeat){event.preventDefault();showVoiceMenu();}
+    $('voiceUnavailableButton').addEventListener('click',()=>{
+      if($('voiceMenu').classList.contains('hidden'))showVoiceMenu();
+      else hideVoiceMenu();
     });
     $('voiceUnavailableButton').addEventListener('contextmenu',event=>event.preventDefault());
     document.addEventListener('pointerdown',event=>{
