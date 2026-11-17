@@ -36,7 +36,7 @@
 - [x] PR #120: порядок памяти → проекты → чаты и компактные статусы.
 - [x] PR #118/#119: chat import/export и project-first actions.
 - [~] Проверить, что общий импорт/экспорт не дублируется в sidebar и project settings; chat actions остаются в chat menu, project bundle — в project settings.
-- [ ] Длинные названия проектов/чатов, пустые списки, большое количество проектов/чатов, keyboard navigation и mobile scroll.
+- [~] Project/chat navigation now truncates long names within flex rows while retaining the full value in `title`; added a 320px no-horizontal-overflow E2E. Empty lists, large counts, full keyboard navigation and native mobile scroll remain open.
 
 ### Research / functions / agents
 - [x] Owner override 2026-11-08 (D-022): Research Studio remains retired; PR #169 removed the modal, wiring and entrypoints. Post-merge public root/landing Chromium verified the absence on exact main SHA.

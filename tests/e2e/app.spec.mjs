@@ -4191,6 +4191,53 @@ test('settings modal traps keyboard focus and restores its opener', async ({ pag
 });
 
 
+test('long project and chat names stay bounded and remain available as titles on narrow screens', async ({ page }) => {
+  const longProject = 'Project name that is deliberately much longer than the sidebar width';
+  const longChat = 'Chat title that is deliberately much longer than the available row width';
+  await page.addInitScript(({ projectName, chatTitle }) => {
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'long-project',
+      name: projectName,
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: '',
+      updatedAt: ''
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'long-chat',
+      title: chatTitle,
+      projectId: 'long-project',
+      projectMemoryEnabled: false,
+      messages: []
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'long-chat');
+  }, { projectName: longProject, chatTitle: longChat });
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectNavToggle').click();
+  const projectButton = page.locator('.project-nav-select[data-project-id="long-project"]');
+  const projectName = projectButton.locator('.project-nav-name');
+  const chatButton = page.locator('#chatList [data-action="switch-chat"][data-chat-id="long-chat"]');
+  await expect(projectButton).toHaveAttribute('title', longProject);
+  await expect(chatButton).toHaveAttribute('title', longChat);
+  await expect(projectName).toHaveCSS('text-overflow', 'ellipsis');
+  await expect(chatButton).toHaveCSS('text-overflow', 'ellipsis');
+  const metrics = await page.evaluate(() => ({
+    sidebarWidth: document.querySelector('#sidebar').clientWidth,
+    sidebarScrollWidth: document.querySelector('#sidebar').scrollWidth,
+    projectNameWidth: document.querySelector('.project-nav-name').clientWidth,
+    projectNameScrollWidth: document.querySelector('.project-nav-name').scrollWidth,
+    chatNameWidth: document.querySelector('#chatList [data-action="switch-chat"]').clientWidth,
+    chatNameScrollWidth: document.querySelector('#chatList [data-action="switch-chat"]').scrollWidth
+  }));
+  expect(metrics.sidebarScrollWidth).toBeLessThanOrEqual(metrics.sidebarWidth + 1);
+  expect(metrics.projectNameScrollWidth).toBeGreaterThan(metrics.projectNameWidth);
+  expect(metrics.chatNameScrollWidth).toBeGreaterThan(metrics.chatNameWidth);
+});
+
 test('owner sidebar contract: balanced Projects and Chats sections, persistent create rows, quiet memory', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

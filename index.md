@@ -2677,7 +2677,7 @@ permalink: /
     function createChatRow(chat,compact=false) {
       const active=chat.id===currentChatId,item=document.createElement('div');item.dataset.chatId=chat.id;
       item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
-      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';
+      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';open.title=open.textContent;
       const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
       const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
       const panel=document.createElement('div');panel.className='chat-row-menu-panel';
@@ -2704,10 +2704,11 @@ permalink: /
         select.type='button';select.dataset.action='select-project-filter';select.dataset.projectId=project.id;
         select.className='project-nav-select';
         select.setAttribute('aria-pressed',String(selectedProjectFilterId===project.id));
-        select.textContent=project.name;
+        select.title=project.name;
+        const projectName=document.createElement('span');projectName.className='min-w-0 truncate project-nav-name';projectName.textContent=project.name;
         const count=document.createElement('span');
         count.className='project-nav-count';count.textContent=String(chats.filter(chat=>chat.projectId===project.id).length);
-        select.appendChild(count);
+        select.append(projectName,count);
         const menu=document.createElement('details');menu.className='chat-row-menu project-row-menu shrink-0';
         const trigger=document.createElement('summary');trigger.className='project-nav-settings';trigger.textContent='⋯';
         trigger.setAttribute('aria-label',english?'Project actions for '+project.name:'Действия проекта '+project.name);
