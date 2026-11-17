@@ -10,7 +10,7 @@
 
 ### Публичная точка входа и root app
 - [x] Контракт маршрутизации обновлён: единственная публичная продуктовая поверхность — root app; `/landing/` и `/assets/css/landing.css` возвращают 404. Не восстанавливать отдельный статический лендинг без нового решения владельца.
-- [x] Pages build + deploy завершились успешно на main SHA `f48488201935f005fd2ac7c97ebc00f985d357b4` (run `44014952378`); live metadata with cache bypass reports the same `alandi-build-revision`, and `/landing/` returns HTTP 404.
+- [x] Pages build + deploy завершились успешно на main SHA `0f1b3cfdef9a25198c6435a64f886db4f6fbd510` (run `44016571123`); live metadata with cache bypass reports the same `alandi-build-revision`, and `/landing/` returns HTTP 404.
 - [~] Screenshot review 320/360/390/768/1024/1440 px: root header, sidebar, composer, settings/function/project dialogs, line lengths, section rhythm and contrast.
 - [ ] Native keyboard/screen-reader pass for the public root app; DOM/E2E assertions are not a VoiceOver certification.
 - [ ] Verify the deployed root revision marker and critical navigation on the actual published Pages URL after the next UI change.
