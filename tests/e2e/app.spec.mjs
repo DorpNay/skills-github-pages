@@ -1960,21 +1960,26 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
 
 
 
-test('voice mode menu closes after selecting voice dialogue and keeps gateway setup explicit', async ({ page }) => {
+test('voice mode menu opens with one tap and keeps gateway setup explicit', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const trigger = page.locator('#voiceUnavailableButton');
   await expect(trigger).toBeVisible();
+  await expect(trigger).toHaveAccessibleName('Открыть режимы голоса');
+  const target = await trigger.boundingBox();
+  expect(target.width).toBeGreaterThanOrEqual(44);
+  expect(target.height).toBeGreaterThanOrEqual(44);
 
-  // Locator.click waits for the element to finish CSS movement before pressing. The composer
-  // transitions from its centered welcome state to the mobile bottom dock after page startup.
-  await trigger.click({ delay: 100 });
-  await expect(page.locator('#voiceMenu')).toBeHidden();
-  await trigger.click({ delay: 500 });
+  await trigger.click();
   await expect(page.locator('#voiceMenu')).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
+  await trigger.click();
+  await expect(page.locator('#voiceMenu')).toBeHidden();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await trigger.click();
+  await expect(page.locator('#voiceMenu')).toBeVisible();
   await page.locator('[data-action="voice-chat-preview"]').click();
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
