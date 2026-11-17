@@ -85,6 +85,7 @@
 
 ## 5. Change log
 | Date | Change | Evidence |
+| 2026-11-17 | Sidebar is now a named navigation landmark; the menu trigger exposes `aria-controls` and synchronized `aria-expanded`. Added RU/EN state assertions to E2E and the fast DOM smoke. | `index.md` `351004a4`; `tests/e2e/app.spec.mjs` `f862c61e`; `scripts/lightpanda-smoke.mjs` `b33b5097`; execution pending |
 | 2026-11-17 | Custom Skill and Agent fields now expose localized accessible names; added RU/EN E2E assertions and a Lightpanda DOM smoke. Test runtime strategy is manual/fast-first; Lightpanda is not visual-layout evidence. | `index.md` `4e35efd`; `tests/e2e/app.spec.mjs` `a2e7789`, `c82e3b0`; `scripts/lightpanda-smoke.mjs`; execution pending |
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
