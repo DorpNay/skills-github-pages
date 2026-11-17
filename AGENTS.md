@@ -37,13 +37,16 @@ The owner explicitly authorizes direct commits/merges to `main`, required connec
 
 ## Exact live checkpoint (2026-11-17)
 
-- Parent main for this direct state correction: `fa8f0a92cf8b51a68145a9c6dae80735afac9747`; 0 open PRs; issues #111 and #186. #186 is an unrelated GitHub Skills Pages exercise.
-- Product/test SHA `6117ceb6d3360bc0b47ef3179d73536f854cebf4` has Plan 2 Deep Research separation IMPLEMENTED / VERIFIED. Quality #43970945532 passed 7/7 jobs (139 built-app Chromium + 1 published-site smoke); Pages #43970944970 and Graphify #43970945690 passed; public root revision matched.
-- Previous state parent Freshness #43973857682 passed; Provenance #43973857634 caught two trailing semicolons in quoted YAML values. This child corrects punctuation only; no validation weakened. Rerun exact-child gates.
-- AgentRun remains IMPLEMENTED / PARTIAL: SQLite DAG, encrypted payloads, bounded context, same-chat result and collapsible status; one worker/model slot, serial inference, host flag false, no tools/web/shell/filesystem/repository execution/local Coder sandbox.
-- OR-2026-11-17-003 is archived in NOW.md; primary-source review/disposition is in INTEL.md. No hosting migration, runtime/dependency/model change, provider fallback, sandbox or permission change accepted.
-- K.6.14–K.6.18 remain binding; K.5 is the only 15-point tracker. Agent Library, model routing, dialogue/simulation, Skills/Research depth, local Coder/offline package and RU/EN/TH translator/grammar remain staged.
-- Next: inspect Direct defaults and legacy search preference handling; make new Direct chats model-only with explicit search opt-in while preserving existing chat preferences and V1 behavior.
+- Functional code/test checkpoint: `c7ac7ab976ae5333010b72370b6f1fec28c9c655`; this documentation-only state refresh is its direct child. Open PRs: 0; open issues: #111 and #186 (#186 is unrelated).
+- Exact Quality #44006105936 SUCCESS (7/7: 143 built-app Chromium tests + 1 published-site Chromium smoke); deployed `alandi-build-revision` matched the functional SHA. Graphify #44006105833 SUCCESS; Pages #44006104480 SUCCESS.
+- Gateway #44004983557 PASS on backend SHA `f69a999b23d30eedb0b9157eabccf97e2dfd04c7` (Python 3.12/13/14); no Gateway files changed after that backend SHA.
+- The first Quality attempt on `31965169483634e64dd5cd98e7dae03d39019620` exposed a real renderer defect: the source loop variable shadowed DOM `document`. The follow-up uses `source`, preserves catalog refresh failures, and asserts 44px touch targets; exact Quality now passes. No safeguards or tests were weakened.
+- Project Sources manager is IMPLEMENTED / VERIFIED in Chromium: project-scoped upload, local Gateway extraction, bounded chunking, SHA-256 duplicate detection, metadata/catalog, bounded preview and scoped delete. Both extraction and RAG capabilities must be enabled. Extracted text/metadata are indexed; original file bytes are not retained. This is not Source Vault.
+- Memory IA/scope/provenance/promotion, one-tap voice menu + Escape/focus return, 16px mobile text-entry controls and the personal/project header context capsule are implemented and covered by E2E. Global prompt blank-default/save-clear and settings-profile round-trip have E2E coverage.
+- AgentRun remains IMPLEMENTED / PARTIAL: SQLite DAG, encrypted payloads, bounded context, same-chat result and collapsible status; one worker/model slot, serial inference, host feature-off, no tools/shell/filesystem/network or local Coder sandbox.
+- K.5 is the only 15-point tracker. Remaining UI acceptance: compact mobile hierarchy, navigation/accessibility/forms at target viewports, physical iPhone Safari/VoiceOver and owner visual acceptance. Chromium does not prove native-device behavior.
+- Freshness and Provenance must pass on this direct-child state refresh; no earlier-head result is reused.
+
 
 ## Targeted UI source review — 2026-11-16
 
