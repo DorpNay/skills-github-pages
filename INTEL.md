@@ -2,6 +2,17 @@
 
 **Review date:** 2026-11-16. Recheck upstream releases and model cards before shipping an artifact.
 
+## Landing 2.0: source-first Notebook, Offline Core and Skill Factory — reviewed 2026-11-17
+
+These sources were checked for architecture direction only. They do not establish aLandi implementation, device compatibility, or production readiness.
+
+- **Groundcast** — https://github.com/rohanhong/groundcast (MIT; repository snapshot checked 2026-11-17). A small local-first reference for turning selected study materials into podcast sessions: fixed typed pipeline, claim verification against source chunks, local TTS, transcript links to page/slide/time. Its README says LLM calls leave the device to the configured provider; therefore it is a design reference, not proof of fully offline generation or a dependency recommendation. Evaluate maintenance, security, resource use and licensing before adoption.
+- **web.dev — Client-side AI performance** — https://web.dev/articles/client-side-ai-performance (checked 2026-11-17). Device feasibility cannot be reliably guaranteed before download; feature-detect WebGPU, account for large model assets, warn before downloads, cache deliberately and handle interrupted transfers. Supports a staged compatibility check and explicit install flow in Offline Core; it does not justify claiming all phones can run local models.
+- **WebLLM — Local Inference** — https://webllm.io/docs/guides/local-inference/ (checked 2026-11-17). Documents WebGPU inference, OPFS model caching and worker execution; SharedArrayBuffer worker mode requires appropriate COOP/COEP headers. Treat browser runtime compatibility and headers as a deployment gate, not a universal browser guarantee.
+- **Agent Skills specification** — https://agentskills.io/specification (checked 2026-11-17). Defines a portable skill directory with required SKILL.md YAML frontmatter and optional scripts/references/assets; allowed-tools is experimental and client support varies. aLandi Factory must add its own provenance, security scanning, eval, immutable version and approval gates; a Skill manifest is not a runtime permission grant.
+
+**Disposition:** retain these as upstream candidates in the Landing 2.0 architecture. Do not install dependencies, download weights, ship voices, activate network access, or grant tools based on this research alone. Check exact releases, model/voice/data licences, hashes, hardware and RU/EN/TH evals before selecting artifacts.
+
 ## Browser automation: fast DOM coverage vs visual fidelity
 
 - [Lightpanda official documentation](https://lightpanda.io/docs/quickstart/): Lightpanda is a JavaScript-capable headless browser with CDP/Playwright/Puppeteer compatibility. Its API/Web-platform coverage is still partial; it deliberately does not perform graphical rendering.
