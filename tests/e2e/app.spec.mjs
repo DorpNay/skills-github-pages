@@ -1544,10 +1544,26 @@ test('project instructions, project memory, and project bundles stay scoped to t
   if(await page.locator('#projectNavigationList').evaluate(el=>el.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
   await page.locator('#projectNavigationList .project-nav-select[data-action="select-project-filter"][data-project-id="'+betaId+'"]').click();
   let chatRow=page.locator('#chatList [data-chat-id="'+betaChatId+'"]');
-  await chatRow.locator('summary[aria-label="Действия чата"]').click();
+  const chatActionTrigger=chatRow.locator('summary[aria-label="Действия чата"]');
+  await chatActionTrigger.click();
   await chatRow.locator('[data-action="chat-project"]').click();
-  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-labelledby', 'chatActionFieldLabel');
-  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-describedby', 'chatActionHelp');
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await expect(page.locator('#chatActionProject')).toHaveAccessibleName('Проект');
+  await expect(page.locator('#chatActionProject')).toHaveAccessibleDescription('Выбери проект или личный чат. Переключатели памяти проекта будут сброшены.');
+  await expect(page.locator('#chatActionProject')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#chatActionModal')).toBeHidden();
+  await expect(chatActionTrigger).toBeFocused();
+
+  await chatActionTrigger.click();
+  await chatRow.locator('[data-action="chat-project"]').click();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.locator('.chat-action-dialog header button[data-action="chat-action-cancel"]')).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.locator('[data-action="chat-action-save"]')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.chat-action-dialog header button[data-action="chat-action-cancel"]')).toBeFocused();
+  await page.locator('#chatActionProject').focus();
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
 
