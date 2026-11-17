@@ -3,17 +3,17 @@
   "repository": "DorpNay/skills-github-pages",
   "captured_at": "2026-11-17",
   "checkpoint": {
-    "main_sha": "fa8f0a92cf8b51a68145a9c6dae80735afac9747",
-    "main_commit_subject": "docs: refresh Plan 2 and architecture review checkpoint",
-    "main_commit_date": "2026-11-16T22:50:28Z",
-    "last_functional_checkpoint_sha": "ca1a034ba036f4a884974ad4922222bd40d2822d",
-    "last_functional_milestone": "Plan 2 Deep Research method separation IMPLEMENTED / VERIFIED on code/test SHA 6117ceb6d3360bc0b47ef3179d73536f854cebf4: Quality #43970945532 passed 7/7 (139 built-app Chromium + 1 published-site smoke); Pages #43970944970 and Graphify #43970945690 passed; public root exact. Documentation parent fa8f0a92cf8b51a68145a9c6dae80735afac9747 had a Provenance YAML parse failure; two punctuation typos are corrected by this direct-child refresh. AgentRun remains partial, one worker/model slot and host-feature-off.",
-    "main_quality_run": 43970945532,
-    "main_pages_deployment_run": 43970944970,
+    "main_sha": "67f5f4b05389ef6e24422ece1e59653e6e893258",
+    "main_commit_subject": "test: opt in to web tools in research fixtures",
+    "main_commit_date": "2026-11-16T23:12:39Z",
+    "last_functional_checkpoint_sha": "9c10e04a50af70a73651adba2deb7d329919ab2a",
+    "last_functional_milestone": "Direct new-chat model-only default with explicit search opt-in and preserved legacy per-chat search preferences; current test-only exact parent 67f5f4b05389ef6e24422ece1e59653e6e893258 passed Quality #43977273979 (7/7 incl. Chromium + published-site smoke), Graphify #43977273839 and Pages #43977272921. Architecture review OR-003 is routed to existing K.5 rows by OR-004; K.5 #1 UI finalization is the owner-priority next slice.",
+    "main_quality_run": 43977273979,
+    "main_pages_deployment_run": 43977272921,
     "functional_parent_gateway_run": 43932615910,
-    "functional_parent_quality_run": 43970945532,
-    "functional_parent_graphify_run": 43970945690,
-    "functional_parent_pages_run": 43970944970,
+    "functional_parent_quality_run": 43977273979,
+    "functional_parent_graphify_run": 43977273839,
+    "functional_parent_pages_run": 43977272921,
     "open_pull_requests": [],
     "open_issues": [
       111,
@@ -310,7 +310,7 @@
       "revision_verification": "Cache-busted public root returned alandi-build-revision exact 619a288a7a57ce1cf1b997c0c1c9b06d464fd66e."
     }
   },
-  "last_volley": "V-2026-11-17-OR003-ARCH-PLAN2",
+  "last_volley": "V-2026-11-17-ARCHITECTURE-ROUTING-AND-LANDING-PRIORITY",
   "model_stack_artifact_checkpoint_2026_11_13": {
     "status": "ARTIFACTS_VERIFIED_IN_ACTIONS_NOT_INSTALLED; PR #185 merged into main; owner-supplied primary checkpoint excluded.",
     "pr": 185,
@@ -433,7 +433,7 @@
   },
   "active_ui_pr": null,
   "open_prs": "No open pull requests. One open issue: #111.",
-  "owner_task": "LANDING-V2-2026-001 / OR-2026-11-17-003",
+  "owner_task": "OR-2026-11-17-004",
   "main_gateway_run": 43932615910,
   "main_quality_run": 43970945532,
   "main_pages_deployment_run": 43970944970,
@@ -450,7 +450,7 @@
   "main_provenance_status": "Previous run #43973857634 caught YAML syntax error; fixed here; rerun required.",
   "main_graphify_status": "SUCCESS #43970945690.",
   "main_gateway_status": "Not rerun: no backend source changed; latest Gateway #43932615910 on previous backend baseline.",
-  "owner_request": "OR-2026-11-17-003",
+  "owner_request": "OR-2026-11-17-004",
   "publication": {
     "root_url": "https://dorpnay.github.io/skills-github-pages/",
     "root_revision": "6117ceb6d3360bc0b47ef3179d73536f854cebf4",
@@ -469,5 +469,7 @@
     "Run direct-child Freshness, Provenance, Quality and Pages for the YAML syntax correction; verify public revision remains exact on product/test SHA.",
     "Inspect Direct/search defaults and legacy preference path; make new Direct chats model-only with explicit search opt-in while preserving saved preferences.",
     "Continue existing K.5/K.6.17–K.6.18 slices without a parallel backlog."
-  ]
+  ],
+  "owner_priority_task": "LANDING-V2-2026-001",
+  "owner_priority_summary": "Owner priority OR-2026-11-17-004: finalize K.5 #1 owner-designed UI at the canonical root application. The 18-point Architecture 2.0 review is routed into existing K.5 rows; no duplicate backlog. Preserve static HTML/CSS/JS + Jekyll/GitHub Pages V1 boundary; do not migrate to Vite/Cloudflare or add runtimes/models/fallback/sandbox without measured need and explicit authorization."
 }

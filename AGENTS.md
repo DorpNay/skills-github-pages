@@ -121,3 +121,10 @@ Parent main: `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; 0 open PRs; issue #111.
 - Continue the owner-approved Plan 1 in order: bounded current-chat context → explicit AgentRun composer routing and same-chat result return → one shared durable-event observer and collapsible chat status. Direct remains default; AgentRun host flag stays false; no implicit tools, shell, filesystem or network grants.
 - Keep offline package/local AI Coder, translator/grammar, Agent Library/multi-model/team/simulation, richer Skills/Research catalogs and plugin research tracked in existing K.5/K.6. Research assistant-side plugins and upstream sources as reference evidence only; connection or runtime integration requires separate explicit authorization.
 - Optimize index.md and documentation only after dependency/reference inventory and exact preservation checks; do not delete or relocate files based on apparent non-use alone.
+
+
+## Owner continuation — OR-2026-11-17-004
+- The 18-point Architecture 2.0 review is routed into the existing K.5 15-point tracker; no parallel backlog. Mapping is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.5.
+- Owner priority is finalizing the existing root application/UI under K.5 #1 and K.6.1/K.6.6–K.6.8. Do not create a separate marketing /landing/ route or migrate the V1 static HTML/CSS/JS + Jekyll/GitHub Pages stack to Vite/Cloudflare without measured need and separate approval.
+- Live main parent: 67f5f4b05389ef6e24422ece1e59653e6e893258; 0 open PRs; issues #111 and #186 (#186 unrelated). Parent Quality #43977273979, Graphify #43977273839 and Pages #43977272921 succeeded. Freshness/Provenance must be checked on the direct-child checkpoint.
+- Next: inspect K.5 #1 UI scope in index.md and E2E; ship a small complete UI slice with exact-head verification. Architecture/runtime candidates remain attached to their existing K.5 rows and must not delay landing finalization.

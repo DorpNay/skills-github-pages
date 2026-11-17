@@ -416,6 +416,32 @@ This is the single 15-point progress view for LANDING-V2-2026-001. Status is evi
 | 14 | K.1.14 Operator runbook | **SPECIFIED / NOT HOST-VERIFIED** | `docs/PRE_LAUNCH_STACK_RU.md` §8 is the owner-only action list. Actual host install, backup/restore, first completion, troubleshooting and rollback must be exercised |
 | 15 | K.2 Model/runtime/storage decision pack | **UPSTREAM RECHECKED / LOCK REFRESH PENDING** | FastAPI 0.163.0 newer but held by seven-day cooldown until 2026-11-21; Pydantic 2.14.3 is an eligible lock candidate vs 2.14.1; pypdf 7.1.0 already current. whisper.cpp 1.9.5, Piper 1.8.0, Tesseract 5.5.4, Ollama 0.40.16 and OpenShell 0.1.8 are latest stable. Final model/resource selection remains open |
 
+### K.5 routing — Architecture 2.0 review OR-2026-11-17-003
+
+The 18 suggestions are intake notes, not a second backlog or implementation authorization. They are attached to the nearest existing K.5 rows below; update those rows in place when evidence or implementation changes. Do not promote speculative technology/version claims without current upstream, compatibility, license, resource and baseline checks.
+
+| Architecture review item | Existing K.5 home | Disposition / boundary |
+|---|---|---|
+| 1. Infrastructure / hosting | #14 Operator runbook; #15 runtime decision pack | Keep GitHub Pages/Jekyll as canonical static UI. Cloudflare Pages/Tunnel/systemd details belong to the runbook only if the owner selects that hosting path; no host migration or VPS action implied. |
+| 2. Backend router / fallback | #11 Modes and feature logic; #14 Operator runbook | Keep routing explicit and privacy-preserving. No silent browser→local→cloud fallback or paid provider activation. |
+| 3. Frontend / Vite / PWA | #1 Owner-designed UI; #2 Functions menu | Continue existing HTML/CSS/JS + Jekyll. Vite/Cloudflare migration is deferred under the V1 boundary; PWA/service-worker work only if a concrete offline journey requires it. |
+| 4. Model runtime / embeddings | #15 Model/runtime/storage decision pack; #12 Efficiency | Compare against current locked/runtime baseline before any replacement or additional server. No model/runtime upgrade by name alone. |
+| 5. Chat/context/token budget | #11 Modes and feature logic; #12 Efficiency | Keep model, effort, search scope, AgentRun strategy and context grants orthogonal; measure token/context overhead before optimization. |
+| 6. Memory / storage / sync | #1 Owner-designed UI; #13 Cache, observability and N₂O | Memory IA is UI work in #1; storage/sync conflict policy, tombstones, WAL and deletion safety stay gated in #13. No cross-device sync by assumption. |
+| 7. Agent runtime / jobs | #4 Agents and orchestration | Reuse the existing SQLite AgentRun contract; one worker/model slot and feature-off host boundary remain until worker, recovery and resource gates pass. |
+| 8. Tools / sandbox | #4 Agents; #7 Local coding workspace; #10 Documents/converters | Explicit grants and isolated workspace only. No shell, arbitrary filesystem, network or side-effect tools by default. |
+| 9. Skills | #5 Skills | Progressive loading, provenance, validation, evals and inert-by-default imports; no separate skill subsystem. |
+| 10. Deep Research | #3 Deep Research | Preserve ResearchTrace and method separation; add methods only with distinct source/tool/eval/artifact contracts. |
+| 11. RAG / multilingual retrieval | #9 Full RAG | Keep FTS5 baseline; compare trigram/vector/RRF candidates on permissioned RU/EN/TH corpus with Recall@5/MRR and citation correctness before adoption. |
+| 12. Connectors / OAuth | #6 Connectors | Existing PKCE foundation remains; real connector handlers, scopes, revocation and audit stay in this row. |
+| 13. Documents / OCR / converters | #10 Documents, scanners and converters | Add bounded Sources intake and parser/OCR/converter capabilities here, with artifact/license/resource and permission gates. |
+| 14. Voice / translation | #8 Voice | Keep ASR/TTS and RU/EN/TH translation/grammar components optional and separately evaluated; no duplicate ASR engines without bake-off. |
+| 15. Local AI Coder | #7 Local coding workspace | Extend the existing browser workspace only after project-scoped access, sandbox, diff approval and test-runner gates. |
+| 16. Offline package | #7 Local coding workspace; #8 Voice; #15 Runtime decision pack | Modular optional package, checksums/licensing/resource gates; not a prerequisite for landing UI finalization. |
+| 17. Performance / observability | #13 Cache, observability and N₂O; #12 Efficiency | Cache embeddings/tools where safe, not private chat responses; add redacted traces/metrics and measured budgets. |
+| 18. N₂O control plane | #13 Cache, observability and N₂O; #14 Operator runbook | Permissions, budgets, audit and operator procedures remain in existing governance/runbook scope; no duplicate control plane. |
+
+**Critical path for landing finalization:** K.5 #1 and its existing K.6 UI acceptance first. The architecture intake does not add new UI dependencies or authorize Vite, Cloudflare migration, runtime replacement, provider fallback, new model artifacts, sandbox activation or paid services.
 **Verified in this checkpoint:** exact main parent `6117ceb6d3360bc0b47ef3179d73536f854cebf4`. Quality #43970945532 SUCCESS across all 7 jobs, including 139 built-app Chromium tests and 1 published-site Chromium smoke; Graphify #43970945690 SUCCESS; Pages #43970944970 SUCCESS. Fresh uncached public root returned HTTP 200 with exact revision `6117ceb6d3360bc0b47ef3179d73536f854cebf4`. Plan 2 method separation and its migration/ResearchTrace/AgentRun routing contract are verified; AgentRun retains its partial/feature-off boundary. Gateway was not rerun because no backend source changed; latest Gateway #43932615910 remains the previous backend pass. Freshness/Provenance will run on this direct-child state refresh. Host activation, target Ollama, sandbox, offline runtime and parallel inference remain unverified.
 
 **Artifact policy:** keep model weights out of the GitHub Pages source tree and Git LFS. Use pinned Actions artifacts as temporary staging, then move required, licensed files to an owner-controlled durable store or verified target host. The owner-supplied primary checkpoint remains excluded.
