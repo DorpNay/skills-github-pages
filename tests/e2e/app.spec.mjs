@@ -2976,7 +2976,8 @@ test('mobile text-entry controls use 16px without disabling user zoom', async ({
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
   expect(viewport).toMatch(/width=device-width/);
-  expect(viewport).not.toMatch(/user-scalable\\s*=\\s*no|max(?:imum)?-scale\\s*=\\s*1(?:\\.0+)?/i);
+  expect(viewport.toLowerCase()).not.toContain('user-scalable=no');
+  expect(viewport.toLowerCase()).not.toContain('maximum-scale=1');
 
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
