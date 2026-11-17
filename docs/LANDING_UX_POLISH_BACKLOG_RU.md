@@ -1,20 +1,22 @@
 # aLandi — остаток оформления и UX-оптимизации сайта
 
-**Срез:** 2026-11-17  
-**Текущая база:** root app на `main`; единственный публичный продуктовый маршрут — `/`, а `/landing/` намеренно отсутствует (404) по контракту `tests/e2e/landing.spec.mjs`.  
+**Срез:** 2026-10-30  
+**Текущая база:** main после merge PR #121 и #122.  
 **Назначение:** единый реестр незавершённого визуального/интерактивного polish после PR #121. Это продолжение `V1_UI_FINALIZATION_RU.md` и `LEGACY_UX_REQUEST_AUDIT_RU.md`, не замена им.
 
 Статусы: [x] выполнено и подтверждено; [~] частично / автоматическая проверка есть, ручной gate нет; [ ] не выполнено; [!] блокер. Закрывать пункт только с тестом, screenshot или owner evidence.
 
 ## 1. Найденные и сохранённые требования
 
-### Публичная точка входа и root app
-- [x] Контракт маршрутизации обновлён: единственная публичная продуктовая поверхность — root app; `/landing/` и `/assets/css/landing.css` возвращают 404. Не восстанавливать отдельный статический лендинг без нового решения владельца.
-- [x] Pages build + deploy завершились успешно на main SHA `f48488201935f005fd2ac7c97ebc00f985d357b4` (run `44014952378`); live metadata with cache bypass reports the same `alandi-build-revision`, and `/landing/` returns HTTP 404.
-- [~] Screenshot review 320/360/390/768/1024/1440 px: root header, sidebar, composer, settings/function/project dialogs, line lengths, section rhythm and contrast.
-- [ ] Native keyboard/screen-reader pass for the public root app; DOM/E2E assertions are not a VoiceOver certification.
-- [ ] Verify the deployed root revision marker and critical navigation on the actual published Pages URL after the next UI change.
-- [ ] Keep the dark/light app themes and reduced-motion behavior consistent; do not add a separate landing theme or duplicate route.
+### Landing / публичная страница
+- [x] Отдельный `/landing/`, hero, CTA, возможности, архитектура, readiness, FAQ, roadmap.
+- [x] Roadmap ticker `1nv3nt10n 1n PrOc3ss…` показывается только внутри раскрытого пункта; не выдаёт фоновые задачи за реально исполняемые.
+- [x] `prefers-reduced-motion` выключает движение и оставляет читаемый текст.
+- [x] **2026-10-30:** добавлены видимые pause controls для каждого из трёх ticker; checkbox управляет `animation-play-state` без JavaScript.
+- [ ] Screenshot review 320/360/390/768/1024/1440 px: hero balance, card rhythm, line lengths, section spacing, contrast, footer and CTA.
+- [ ] Проверить keyboard-only и screen reader чтение всех трёх раскрываемых roadmap пунктов и pause controls.
+- [ ] Проверить опубликованный Pages, а не только PR preview/Jekyll build; ссылки и canonical после merge.
+- [ ] Проверить светлую/тёмную тему? Landing сейчас намеренно самостоятельная тёмная публичная страница; не добавлять переключатель без требования и цельного дизайна.
 
 ### Корневое приложение — визуальная иерархия
 - [x] PR #117/#120: header hierarchy, project label, clock polish, sidebar grouping, memory/project statuses, synchronized theme/language.
@@ -27,9 +29,8 @@
 ### Popovers, menus, dialogs
 - [x] PR #117: chat-row menu placement viewport-safe; PR #115: scrim и inert first outside tap.
 - [~] Проверить все composer popovers у четырёх краёв viewport, короткую высоту, экранную клавиатуру и nested scroll.
-- [~] Settings, project-create и project-settings dialogs: Escape, focus return и Tab/Shift+Tab containment реализованы; Settings и project-create имеют E2E regression, выполнение тестов pending. Остальные dialog/menu patterns, scroll lock и background inert проверить отдельно.
-- [x] Settings Save/Close остаются sticky; добавлены начальный focus на Close, Tab/Shift+Tab trap, Escape close и возврат фокуса к открывшему control (runtime E2E добавлен, запуск ещё pending).
-- [ ] Проверить короткий viewport, открытую iPhone keyboard и safe-area на реальном Safari.
+- [ ] Проверить Escape, focus trap/return, accessible names, scroll lock и background inert для всех modal/dialog.
+- [ ] Sticky Save/Close в Settings при длинном scroll и мобильной клавиатуре — проверить, исправить только при воспроизводимом дефекте.
 - [ ] Native Popover API / CSS Anchor Positioning рассматривать только как progressive enhancement после support matrix; сохранить существующий JS fallback. Не мигрировать ради моды.
 
 ### Sidebar, проекты, чаты
