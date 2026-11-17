@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
-const NOTEBOOK_PATH = process.env.LIVE_SITE_URL ? new URL('notebook/', process.env.LIVE_SITE_URL).toString() : '/notebook/';
+const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
+const NOTEBOOK_PATH = process.env.LIVE_SITE_URL ? './notebook/' : '/notebook/';
 
-test('root navigation exposes the dedicated aNoteBooki route', async ({ page }) => { await page.goto('/', { waitUntil: 'domcontentloaded' }); await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(1); });
+test('root navigation exposes the dedicated aNoteBooki route', async ({ page }) => { await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' }); await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(1); });
 
 test('aNoteBooki persists notes and URL references locally with project/chat provenance', async ({ page }) => {
   let sourceFetches = 0;
@@ -49,6 +50,11 @@ test('aNoteBooki persists notes and URL references locally with project/chat pro
   expect(fileRecord.sha256).toMatch(/^[a-f0-9]{64}$/);
   expect(fileRecord.provenance.originalBytesRetained).toBe(false);
   expect(fileRecord.extractedText).toContain('Evidence stays local.');
+  await page.locator('#sourceFiles').setInputFiles([{ name: 'would-be-partial.md', mimeType: 'text/markdown', buffer: Buffer.from('Should not persist.') }, { name: 'unsupported.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.7') }]);
+  await page.locator('#importFilesButton').click();
+  await expect(page.locator('#globalStatus')).toContainText('Supported text formats');
+  const noPartialImport = await page.evaluate(async () => { const n=(await window.AlandiNotebookStore.listNotebooks())[0]; return (await window.AlandiNotebookStore.listItems(n.id)).some(x=>x.fileName==='would-be-partial.md'); });
+  expect(noPartialImport).toBe(false);
   expect(sourceFetches).toBe(0);
 
   await page.reload({ waitUntil: 'domcontentloaded' });
