@@ -15,6 +15,7 @@
 - At the start of every turn, append the latest owner task to NOW.md before implementation: complete message verbatim in OWNER REQUEST ARCHIVE; update CURRENT/NEXT. If it contains credentials, secrets or unnecessary sensitive personal data, redact only those spans and mark the redaction.
 - After every material step, append a dated JOURNAL entry with task ID, status, exact paths, branch/parent/resulting SHA, commands/check IDs and outcomes, limits, rollback and next action. Do not log private reasoning.
 - Read only task-relevant source/test/spec files after NOW. PROJECT_STATE, VOLLEY_LOG, registries, orchestrator and architecture maps are on-demand references, never a mandatory startup bundle.
+- Keep orientation minimal: NOW.md lines 1–100 plus one batched live main/PR/issue read. Do not repeat a full orienter/registry/archive pass or narrate orientation; move directly to the next safe task step.
 - Historical PR IDs in registries/snapshots are evidence only; never resume them unless the latest explicit owner request names the work and live GitHub confirms its current scope.
 - If a prior chat cannot be recovered, say so; never invent its task or resume a stale PR.
 
@@ -126,8 +127,8 @@ Parent main: `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; 0 open PRs; issue #111.
 ## Owner continuation — OR-2026-11-17-004
 - The 18-point Architecture 2.0 review is routed into the existing K.5 15-point tracker; no parallel backlog. Mapping is in docs/MASTER_TASK_REGISTRY_ADDENDUM_2026-11-02_RU.md §K.5.
 - Owner priority is finalizing the existing root application/UI under K.5 #1 and K.6.1/K.6.6–K.6.8. Do not create a separate marketing /landing/ route or migrate the V1 static HTML/CSS/JS + Jekyll/GitHub Pages stack to Vite/Cloudflare without measured need and separate approval.
-- Live main parent: 67f5f4b05389ef6e24422ece1e59653e6e893258; 0 open PRs; issues #111 and #186 (#186 unrelated). Parent Quality #43977273979, Graphify #43977273839 and Pages #43977272921 succeeded. Freshness/Provenance must be checked on the direct-child checkpoint.
-- Next: inspect K.5 #1 UI scope in index.md and E2E; ship a small complete UI slice with exact-head verification. Architecture/runtime candidates remain attached to their existing K.5 rows and must not delay landing finalization.
+- Live main code/test parent: 560de1256b7e1934588064b9d78e8a3f1a52b7a0; 0 open PRs; issues #111 and #186 (#186 unrelated). Mobile text-entry controls are 16px <=640px; E2E covers 320/390px. Graphify #43999719873 and Pages #43999720097 succeeded; Quality #43999719950 was running at checkpoint capture. Freshness/Provenance must be checked on the direct-child checkpoint.
+- Next: continue K.5 #1 remaining Memory IA, project Sources, no-project status stripe and native mobile/voice acceptance. Do not repeat orientation or reopen architecture/runtime proposals.
 
 
 ## UI verification checkpoint — S-078/S-079 (2026-11-17)
@@ -135,3 +136,10 @@ Parent main: `619a288a7a57ce1cf1b997c0c1c9b06d464fd66e`; 0 open PRs; issue #111.
 - Header now always shows a clear personal/project context capsule, project memory scope, accessible title and RU/EN localization; 390px no-overflow/long-name E2E passed in the same 140-test run.
 - UX-040 remains PARTIAL in the master registry only for long/empty/large lists, keyboard, scroll restoration and native Safari; do not overclaim native mobile or VoiceOver.
 - Next is K.5 #1 remaining Memory IA/project Sources/no-project status/mobile-input. Keep architecture proposals mapped to existing K.5; no parallel backlog.
+
+
+## Mobile input checkpoint — S-080
+
+- `index.md` applies 16px mobile font size to text inputs, textareas and selects at <=640px; non-text controls are excluded and browser zoom remains available.
+- E2E in `tests/e2e/app.spec.mjs` checks visible text controls at 320px/390px and horizontal overflow. Exact Quality #43999719950 was running; Graphify #43999719873 and Pages #43999720097 succeeded on 560de1256b7e1934588064b9d78e8a3f1a52b7a0.
+- Physical iPhone Safari/VoiceOver remains unverified; do not mark native zoom behavior VERIFIED.
