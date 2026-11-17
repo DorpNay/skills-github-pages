@@ -85,6 +85,7 @@
 
 ## 5. Change log
 | Date | Change | Evidence |
+| 2026-11-17 | Custom Skill and Agent fields now expose localized accessible names; added RU/EN E2E assertions and a Lightpanda DOM smoke. Test runtime strategy is manual/fast-first; Lightpanda is not visual-layout evidence. | `index.md` `4e35efd`; `tests/e2e/app.spec.mjs` `a2e7789`, `c82e3b0`; `scripts/lightpanda-smoke.mjs`; execution pending |
 |---|---|---|
 | 2026-10-30 | Consolidated remaining visual/interaction tasks from legacy UX audit, V1 UI checklist and landing source. | `LEGACY_UX_REQUEST_AUDIT_RU.md`, `V1_UI_FINALIZATION_RU.md`, `landing/index.html`, `tests/e2e/landing.spec.mjs` |
 | 2026-10-30 | Added explicit pause controls to landing roadmap tickers and Playwright pause/resume test. | Commits `f42c42d`, `b213c8a`; PR #121 exact-head Chromium/Quality passed; native keyboard/screen-reader confirmation pending |
