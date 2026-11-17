@@ -3988,6 +3988,30 @@ test('settings and function panels close on backdrop click without leaving a sta
 });
 
 
+test('settings modal traps keyboard focus and restores its opener', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const opener = page.locator('[data-action="toggle-settings"]');
+  const modal = page.locator('#settingsModal');
+  await opener.click();
+  await expect(modal).toBeVisible();
+  await expect(modal.locator('[data-action="close-settings"]')).toBeFocused();
+
+  const focusable = modal.locator('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const first = focusable.first();
+  const last = focusable.last();
+  await first.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await last.focus();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
+  await expect(opener).toBeFocused();
+});
+
+
 test('owner sidebar contract: balanced Projects and Chats sections, persistent create rows, quiet memory', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
