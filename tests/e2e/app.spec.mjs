@@ -2981,21 +2981,31 @@ test('search presets fit one line, localize, and persist per chat', async ({ pag
 });
 
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
   expect(viewport).toMatch(/width=device-width/);
   expect(viewport.toLowerCase()).not.toContain('user-scalable=no');
   expect(viewport.toLowerCase()).not.toContain('maximum-scale=1');
 
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeVisible();
+
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
     const controls = await page.locator(
-      'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):visible, textarea:visible, select:visible'
+      'input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):visible, textarea:visible, select:not(.header-language-select):visible'
     ).evaluateAll(elements => elements.map(element => ({
       id: element.id || element.tagName.toLowerCase(),
+      tag: element.tagName.toLowerCase(),
       fontSize: Number.parseFloat(getComputedStyle(element).fontSize)
     })));
-    expect(controls.length).toBeGreaterThan(0);
+    expect(controls.map(control => control.id)).toEqual(expect.arrayContaining([
+      'projectCreateNameInput',
+      'projectCreateInstructionsInput',
+      'projectCreateMemoryScopeSelect'
+    ]));
     expect(controls.every(control => control.fontSize >= 16), JSON.stringify(controls)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
