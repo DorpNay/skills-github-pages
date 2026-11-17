@@ -621,9 +621,9 @@ permalink: /
         <div class="p-3"><section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
         <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi aServi</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
-          <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
-          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
-          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
+          <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" aria-describedby="cloudBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
+          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="cloudModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
+          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="cloudApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <button type="button" data-action="connect-alandi-aservi" data-i18n="cloudConnect" class="w-full rounded-xl border border-cyan-700 bg-cyan-950/50 px-3 py-2.5 text-sm font-semibold text-cyan-100">Проверить и подключить</button>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
@@ -3673,12 +3673,12 @@ permalink: /
       field.dataset.state=text?'error':'';field.setAttribute('aria-invalid',String(Boolean(text)));
       if(error){error.textContent=text;error.classList.toggle('hidden',!text);}
     }
-    function validateCloudBaseUrl(value){if(!value)return '';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return 'Нужен HTTP(S) URL.';if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return 'Для удалённого сервера нужен HTTPS.';return '';}catch(_){return 'Проверь формат URL.';}}
+    function validateCloudBaseUrl(value){if(!value)return '';const english=getUiLanguage()==='en';try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol))return english?'Use an HTTP(S) URL.':'Нужен HTTP(S) URL.';if(url.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(url.hostname))return english?'Remote servers must use HTTPS. HTTP is allowed only for localhost.':'Для удалённого сервера нужен HTTPS; HTTP допустим только для localhost.';return '';}catch(_){return english?'Enter a valid URL.':'Проверь формат URL.';}}
     function setCloudFieldConnection(state){['cloudBaseUrl','cloudModel','cloudApiKey'].forEach(id=>{const field=$(id);if(field&&field.dataset.state!=='error')field.dataset.state=state==='connected'?'connected':'';});}
     function setCloudStatus(state,message=''){
-      const dot=$('cloudStatusDot'),copy=$('cloudStatus');
-      if(dot){dot.dataset.state=state;dot.title=state==='connected'?'Подключено':state==='checking'?'Проверка':'Нет подключения';}
-      if(copy){copy.dataset.state=state;copy.textContent=state==='connected'?(getUiLanguage()==='en'?'Connected':'Подключено'):state==='checking'?(getUiLanguage()==='en'?'Checking…':'Проверка…'):(getUiLanguage()==='en'?'Disconnected':'Не подключено');}
+      const dot=$('cloudStatusDot'),copy=$('cloudStatus'),english=getUiLanguage()==='en';
+      if(dot){dot.dataset.state=state;dot.title=state==='connected'?(english?'Connected':'Подключено'):state==='checking'?(english?'Checking':'Проверка'):(english?'Disconnected':'Нет подключения');}
+      if(copy){copy.dataset.state=state;copy.textContent=String(message||(state==='connected'?(english?'Connected':'Подключено'):state==='checking'?(english?'Checking…':'Проверка…'):(english?'Disconnected':'Не подключено')));}
       if(state!=='connected')setCloudFieldConnection(state);
     }
     function getCloudSettings(){
@@ -3769,7 +3769,7 @@ permalink: /
       if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error','Для удалённого API нужен HTTPS.');return;}
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="test-connection"]');
-      if(button){button.disabled=true;button.textContent='Проверяю…';}
+      if(button){button.disabled=true;button.textContent=getUiLanguage()==='en'?'Checking…':'Проверяю…';}
       updateApiKeyLamp('pending','Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
       showStatus('Проверяю подключение…');
       let result=null,lastError=null;
@@ -3833,7 +3833,7 @@ permalink: /
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
           // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
-          setCloudStatus('checking','Модель ответила. Проверяю health-check gateway…');
+          setCloudStatus('checking',getUiLanguage()==='en'?'Model responded. Checking gateway health…':'Модель ответила. Проверяю health-check gateway…');
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
         updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
@@ -3876,7 +3876,7 @@ permalink: /
           throw new Error('HTTP '+response.status+(detail?': '+detail:''));
         }
         if(!cloudSettingsStillCurrent()){
-          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setCloudStatus('disconnected',getUiLanguage()==='en'?'Settings changed during the check. Result was not saved.':'Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         const healthUrl=new URL(baseUrl);
@@ -3890,7 +3890,7 @@ permalink: /
         const fingerprint=await providerKeyFingerprint(key);
         if(!fingerprint)throw new Error('Не удалось вычислить контрольный отпечаток ключа в этом браузере.');
         if(!cloudSettingsStillCurrent()){
-          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setCloudStatus('disconnected',getUiLanguage()==='en'?'Settings changed during the check. Result was not saved.':'Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         safeSet('ai_alandi_cloud_base_url',baseUrl);
@@ -3900,17 +3900,17 @@ permalink: /
         safeSet('ai_provider_connection_alandi',JSON.stringify(verified));
         $('providerPreset').value='';applyProviderPreset('alandi',true);$('baseUrl').value=baseUrl;$('modelName').value=model;$('apiKey').value=key;
         setCloudFieldConnection('connected');setCloudStatus('connected');
-        showToast('aServi подключён и проверен.');
+        showToast(getUiLanguage()==='en'?'aServi is connected and verified.':'aServi подключён и проверен.');
       }catch(error){
         if(!cloudSettingsStillCurrent()){
-          setCloudStatus('disconnected','Настройки изменились во время проверки. Результат не сохранён.');
+          setCloudStatus('disconnected',getUiLanguage()==='en'?'Settings changed during the check. Result was not saved.':'Настройки изменились во время проверки. Результат не сохранён.');
           return;
         }
         setCloudStatus('disconnected');
         setCloudFieldError('cloudApiKey',getUiLanguage()==='en'?'Connection failed. Check server URL and key.':'Не удалось подтвердить соединение. Проверь URL сервера и ключ.');
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
-        if(button){button.disabled=false;button.textContent='Проверить и подключить';}
+        if(button){button.disabled=false;button.textContent=getUiLanguage()==='en'?'Check and connect':'Проверить и подключить';}
       }
     }
     async function pasteIntoField(id){

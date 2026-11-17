@@ -19,7 +19,7 @@
 ### Корневое приложение — визуальная иерархия
 - [x] PR #117/#120: header hierarchy, project label, clock polish, sidebar grouping, memory/project statuses, synchronized theme/language.
 - [~] Общий screenshot review desktop/mobile после последнего PR #121.
-- [ ] Единый проход по typography, contrast, spacing, empty states, inline errors и secondary actions.
+- [~] aServi cloud fields now reference their inline error messages with aria-describedby; URL validation, connection progress/status and success copy follow RU/EN. Remaining forms and empty/error states still need a full pass.
 - [ ] Полная RU/EN проверка микротекстов, подсказок, статусов, светлой темы модалок и пустых состояний.
 - [ ] Проверить pencil/edit state у system prompt и возврат в readonly.
 - [ ] Проверить touch targets (проектная цель 44×44 CSS px) и отсутствие конкурирующих controls.

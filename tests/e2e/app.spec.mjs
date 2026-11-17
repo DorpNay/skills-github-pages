@@ -2118,11 +2118,28 @@ test('aLandi cloud probe rejects HTTP 200 proxy text as proof of a model connect
   await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
   await page.locator('[data-action="connect-alandi-aservi"]').click();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected', { timeout: 15000 });
+  for (const id of ['cloudBaseUrl', 'cloudModel', 'cloudApiKey']) {
+    await expect(page.locator('#' + id)).toHaveAttribute('aria-describedby', id + 'Error');
+  }
+  await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#cloudApiKeyError')).toContainText('Не удалось подтвердить соединение');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
 });
 
 
+
+test('aServi URL validation is localized and announced by its field', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#cloudBaseUrl').fill('http://remote.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-cloud-placeholder-key');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Remote servers must use HTTPS. HTTP is allowed only for localhost.');
+  await expect(page.locator('#cloudStatus')).toHaveText('Disconnected');
+});
 
 test('voice mode menu opens with one tap and keeps gateway setup explicit', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -2228,6 +2245,7 @@ test('aLandi cloud probe cannot overwrite settings changed while its request is 
   await page.locator('#cloudModel').fill('');
   releaseProbe();
   await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'disconnected');
+  await expect(page.locator('#cloudStatus')).toHaveText('Настройки изменились во время проверки. Результат не сохранён.');
   await expect(page.locator('#cloudModel')).toHaveValue('');
   await expect(page.locator('#cloudApiKey')).toHaveValue('first-cloud-race-key');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_provider_connection_alandi'))).toBeNull();
