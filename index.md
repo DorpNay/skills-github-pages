@@ -147,7 +147,9 @@ permalink: /
     .app-header { background:var(--ui-surface)!important;border-color:var(--ui-border)!important; }
     .brand-wordmark { display:inline-block;background:linear-gradient(120deg,var(--ui-text),var(--ui-tiffany-bright));color:transparent;background-clip:text;-webkit-background-clip:text;white-space:nowrap;user-select:none; }
     .header-chat-title { flex:1;min-width:0;max-width:none;line-height:1.2; }
-    .active-project-title { display:block;color:var(--ui-tiffany-bright);font-size:9px;font-weight:750;line-height:1.15;letter-spacing:.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .active-project-title { display:inline-flex;align-items:center;width:fit-content;max-width:100%;min-width:0;margin-bottom:3px;padding:2px 7px;border:1px solid var(--ui-border);border-radius:999px;background:var(--ui-surface-raised);color:var(--ui-text-muted);font-size:8px;font-weight:700;line-height:1.2;letter-spacing:.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .active-project-title[data-context="project"] { color:var(--ui-tiffany-bright);background:color-mix(in srgb,var(--ui-tiffany) 12%,var(--ui-surface));border-color:color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border)); }
+    .active-project-title[data-context="personal"] { color:var(--ui-text-muted);background:color-mix(in srgb,var(--ui-text-muted) 7%,var(--ui-surface));border-color:var(--ui-border); }
     .mode-hint-row { display:flex;align-items:center;gap:.5rem;min-width:0; }
     .mode-hint { min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
     .brand-subtitle { display:block;font-size:9px;letter-spacing:.06em;color:var(--ui-text-muted);white-space:nowrap; }
@@ -651,7 +653,7 @@ permalink: /
   <header class="app-header px-3 py-2 border-b flex items-center shrink-0 gap-2">
     <button type="button" id="appSidebarToggle" data-action="toggle-sidebar" aria-label="Открыть меню" class="header-icon text-xl px-2 py-1 shrink-0">☰</button>
     <div class="header-chat-title min-w-0 flex-1">
-      <span id="activeProjectTitle" class="active-project-title hidden"></span>
+      <span id="activeProjectTitle" class="active-project-title" aria-live="polite"></span>
       <h1 id="activeChatTitle" class="font-semibold text-xs sm:text-sm truncate">Новый чат</h1>
     </div>
     <div id="aLandiClock" class="clock-shell shrink-0" aria-label="Местное время">
@@ -2034,13 +2036,33 @@ permalink: /
       }
       return row;
     }
+    function updateActiveChatHeader(chat) {
+      const label=$('activeProjectTitle');if(!label)return;
+      const activeChat=chat||chats.find(item=>item.id===currentChatId)||null;
+      const activeProject=activeChat?.projectId?projects.find(project=>project.id===activeChat.projectId):null;
+      const english=getUiLanguage()==='en';
+      if(!activeProject) {
+        const text=english?'Personal chat · no project':'Личный чат · без проекта';
+        label.textContent=text;label.dataset.context='personal';label.title=text;label.setAttribute('aria-label',text);
+      } else {
+        const scope=activeProject.memoryScope==='project-and-global'
+          ? (english?'scope: project + global':'область: проект + общая')
+          : (english?'scope: project only':'область: только проект');
+        const prefix=english?'🔒 Project: ':'🔒 Проект: ';
+        label.textContent=prefix+activeProject.name+' · '+scope;
+        label.dataset.context='project';
+        label.title=english
+          ? 'Project: '+activeProject.name+'. Memory scope: '+(activeProject.memoryScope==='project-and-global'?'project + global':'project only')+'.'
+          : 'Проект: '+activeProject.name+'. Область памяти: '+(activeProject.memoryScope==='project-and-global'?'проект + общая':'только проект')+'.';
+        label.setAttribute('aria-label',label.title);
+      }
+      label.classList.remove('hidden');
+    }
     function renderActiveChat() {
       const chat = getCurrentChat();
       $('activeChatTitle').textContent = chat.title || 'Новый чат';
       const activeProject=chat.projectId?projects.find(project=>project.id===chat.projectId):null;
-      const projectTitle=$('activeProjectTitle');
-      projectTitle.textContent=activeProject?.name||'';
-      projectTitle.classList.toggle('hidden',!activeProject);
+      updateActiveChatHeader(chat);
       const box = $('chatBox');
       box.replaceChildren();
       renderAgentRunChatStatus();
@@ -2306,6 +2328,7 @@ permalink: /
       document.querySelector('[data-action="add-project-memory"]')?.toggleAttribute('disabled',!settingsProject);
       renderProjectNavigation();
       renderRequestProjectChoices();
+      updateActiveChatHeader(chat);
     }
     function createProject(){
       const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100);
