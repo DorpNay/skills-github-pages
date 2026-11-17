@@ -209,6 +209,9 @@ permalink: /
       #modeToolbar .toolbar-menu > summary { display:flex;align-items:center; }
       #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px;display:grid;place-items:center; }
       #inputArea #userInput { min-height:44px; }
+      body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+      body textarea,
+      body select { font-size:16px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
