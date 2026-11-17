@@ -374,9 +374,24 @@ def test_gateway_opt_in_memory_rag_and_exact_template_router(tmp_path):
         indexed = client.post("/v1/rag/ingest", headers=auth, json={
             "document_id": "doc-1", "source_uri": "https://example.test/page",
             "scope": "project", "scope_id": "alandi",
+            "metadata": {"original_name": "notes.md", "mime_type": "text/markdown",
+                         "size_bytes": 512, "sha256": "b" * 64, "parser": "markdown-text",
+                         "character_count": 38, "source_type": "file"},
             "chunks": [{"chunk_id": "c1", "content": "aLandi gateway uses bounded concurrency", "page_number": 1}]
         })
         assert indexed.status_code == 200 and indexed.json()["chunks"] == 1
+        other_scope = client.post("/v1/rag/ingest", headers=auth, json={
+            "document_id": "doc-private", "source_uri": "https://example.test/private",
+            "scope": "project", "scope_id": "another-project",
+            "chunks": [{"chunk_id": "c2", "content": "private project source content"}]
+        })
+        assert other_scope.status_code == 200
+        catalog = client.get("/v1/rag/documents", params={"scope": "project", "scope_id": "alandi"}, headers=auth)
+        assert catalog.status_code == 200
+        assert catalog.json()["count"] == 1
+        assert catalog.json()["documents"][0]["metadata"]["original_name"] == "notes.md"
+        assert catalog.json()["documents"][0]["chunk_count"] == 1
+        assert client.get("/v1/rag/documents", params={"scope": "project", "scope_id": "another-project"}, headers=auth).json()["count"] == 1
         retrieval = client.post("/v1/rag/retrieve", headers=auth, json={
             "query": "gateway concurrency", "scope": "project", "scope_id": "alandi", "top_k": 3
         })
