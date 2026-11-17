@@ -1,11 +1,7 @@
 name: Step 2
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - index.md
+  workflow_dispatch:
 
 permissions:
   contents: read
