@@ -541,10 +541,12 @@ test('request context popover scrolls within a short viewport and traps keyboard
     overflowY: getComputedStyle(element).overflowY,
     scrollHeight: element.scrollHeight,
     clientHeight: element.clientHeight,
+    nestedOverscroll: getComputedStyle(element.querySelector('#requestProjectChecks')).overscrollBehaviorY,
     viewportHeight: window.visualViewport?.height || window.innerHeight
   }));
   expect(metrics.maxHeight).toBeLessThanOrEqual(metrics.viewportHeight - 16);
   expect(metrics.overflowY).toBe('auto');
+  expect(metrics.nestedOverscroll).toBe('contain');
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
   await last.focus();
   await page.keyboard.press('Tab');

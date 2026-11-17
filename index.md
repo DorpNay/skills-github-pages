@@ -179,6 +179,7 @@ permalink: /
     .composer-popover-option strong { display:block;font-size:12px; }
     .composer-popover-option small { display:block;margin-top:3px;color:var(--ui-text-muted);font-size:10px;line-height:1.35; }
     .context-popover { max-height:min(72dvh,480px);overflow-y:auto; }
+    #requestProjectChecks { overscroll-behavior:contain; }
     .request-project-choice { display:flex;align-items:flex-start;gap:9px;padding:10px;border-radius:10px;cursor:pointer;font-size:12px; }
     .request-project-choice:hover { background:var(--ui-tiffany-soft); }
     .request-project-choice input { margin-top:2px;accent-color:var(--ui-tiffany); }
