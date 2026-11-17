@@ -491,19 +491,29 @@ permalink: /
     <section id="memoryPanel" class="mx-3 my-2 rounded-xl p-2 space-y-2" aria-label="Настройки памяти">
       <p id="memoryStatusLine" class="px-2 pb-1 text-[9px] leading-tight text-gray-500" role="status" aria-live="polite">Память · личных 0 · общих 0 · общая в контексте выкл.</p>
       <details id="memoryToolsDetails" class="rounded-xl border border-gray-800">
-            <summary data-i18n="memoryMenuTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Память</summary>
+        <summary data-i18n="memoryMenuTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🧠 Память</summary>
+        <div class="p-2 space-y-2">
+          <details id="globalMemoryDetails" class="rounded-lg border border-gray-800">
+            <summary data-i18n="globalMemoryTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🌐 Общая память</summary>
             <div class="p-2 space-y-2">
               <label class="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400"><input id="globalMemoryToggle" type="checkbox" class="mt-0.5"><span data-i18n="globalMemoryOptIn">Разрешить подходящим заметкам общей памяти попадать в контекст, если режим памяти текущего проекта это допускает.</span></label>
-              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
-              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
-              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
-              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
-              <label for="sharedMemoryInput" class="mt-3 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
+              <label for="sharedMemoryInput" class="mt-2 block text-xs text-amber-200 font-semibold">Общая память (только выбранные факты)</label>
               <p class="text-[10px] leading-relaxed text-amber-100/80">Общие факты могут попасть внешнему провайдеру, только если выше включено использование общей памяти. Перенос личной заметки требует отдельного подтверждения.</p>
               <div class="flex gap-1 mt-1"><input id="sharedMemoryInput" type="text" maxlength="500" placeholder="Факт для общей памяти" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-shared-memory" class="bg-amber-800 hover:bg-amber-700 px-2 rounded text-xs" aria-label="Сохранить в общую память">＋</button></div>
               <div id="sharedMemoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет общих заметок.</div>
             </div>
           </details>
+          <details id="personalMemoryDetails" class="rounded-lg border border-gray-800">
+            <summary data-i18n="personalMemoryTitle" class="cursor-pointer select-none px-3 py-2 text-xs font-semibold">🔒 Личная память</summary>
+            <div class="p-2 space-y-2">
+              <label for="memoryInput" class="text-xs text-gray-200 font-semibold">Личная память локальной модели</label>
+              <p class="text-[10px] leading-relaxed text-emerald-200/80">Хранится в IndexedDB этого браузера. Используется только через aLandi gateway. Если личная память вошла в контекст, сторонние провайдеры блокируются для всего чата, включая fallback.</p>
+              <div class="flex gap-1 mt-1"><input id="memoryInput" type="text" maxlength="500" placeholder="Личный факт для локальной модели" class="min-w-0 flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-xs"><button type="button" data-action="save-memory" class="bg-blue-700 hover:bg-blue-600 px-2 rounded text-xs" aria-label="Сохранить в личную память">＋</button></div>
+              <div id="memoryBox" class="mt-2 bg-gray-900 p-2 rounded text-xs text-gray-300 max-h-36 overflow-y-auto border border-gray-800" aria-live="polite">Нет личных заметок.</div>
+            </div>
+          </details>
+        </div>
+      </details>
     </section>
     <p id="projectStatusLine" class="sr-only" role="status" aria-live="polite">Личный чат · без проекта</p>
 
@@ -1579,7 +1589,7 @@ permalink: /
     const UI_TEXT={
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
-        memoryLabel:'🧠 Долгосрочная память',memoryMenuTitle:'🧠 Память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
+        memoryLabel:'🧠 Долгосрочная память',memoryMenuTitle:'🧠 Память',globalMemoryTitle:'🌐 Общая память',personalMemoryTitle:'🔒 Личная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
         appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
@@ -1605,7 +1615,7 @@ permalink: /
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
-        memoryLabel:'🧠 Long-term memory',memoryMenuTitle:'🧠 Memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
+        memoryLabel:'🧠 Long-term memory',memoryMenuTitle:'🧠 Memory',globalMemoryTitle:'🌐 Global Memory',personalMemoryTitle:'🔒 Personal Memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
         appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
