@@ -840,3 +840,14 @@ This addendum reconciles the two latest owner prompts with K.6.1–K.6.14 and th
 7. Add golden-set evaluation for adequacy, terminology, preservation, grammar precision/recall and latency on target hardware.
 
 **Current maturity:** SPECIFIED. No embedded translator or preinstalled grammar component is claimed IMPLEMENTED yet.
+
+
+## K.6.19 Landing 2.0 Product Architecture 2.0 — OR-2026-11-17-014
+
+**Authority:** owner request OR-2026-11-17-014 is archived verbatim in `NOW.md`. This is the visible product-level contract extending K.6.9/K.6.10/K.6.13/K.6.17/K.6.18 and K.5. K.5 remains the only 15-point delivery tracker.
+
+Mandatory outcomes: (1) Source-first Notebook with exact selected-source chat, follow-ups, citations, evidence and comparison; (2) Notebook Studio podcast/audio, editable deck, chart-slide, diagrams, infographics and reports, all claim-to-BlockRef grounded; (3) extend existing Coder Workspace with Skills, DB/tool adapters and separately isolated sandbox; (4) downloadable standalone Offline Core in Settings with manifest/checksum/licences and strict local-only/no-fallback; (5) AI Studio separating RAG Knowledge Packs, Skills, dataset curation, LoRA/QLoRA and full pretraining; (6) source/book/page/image-to-Skill, Task Template or Agent Blueprint factory with evals, security/licence scan, human approval and version rollback; (7) shared local file layer with reference/attach/import, permission, parsing/OCR/HTML-image→JSON, quotas and deletion lineage; (8) visible IA preserving four Functions entries, Notebook Sources/Chat/Evidence/Studio, Offline Core in Settings and distinct Model Lab.
+
+Reuse existing IndexedDB, Gateway FTS5, Evidence Ledger, AgentRun DAG, Project Sources and Coder Workspace. FACT at base SHA `12ebcdb0120e7e5b4bf31960642ad40cead55cb9`: Notebook source-chat/Studio is not implemented; RAG and extraction flags default off; AgentRun has one serial worker and no tools/filesystem/network; Workspace has no sandboxed code execution. Shared SourceRecord/BlockRef/ArtifactRecord contracts and `unsupported_claim_count=0` for verified exports are mandatory design gates.
+
+Delivery order: Local File/Source contract → Notebook source chat/evidence → report+podcast → editable deck/chart → Coder+sandbox → Offline Core → AI Studio → Skill Factory → catalog surfacing. Each phase needs RU/EN/TH fixtures, scope/security/licence checks, exact-head verification and rollback. Full detail: `docs/LANDING_V2_PRODUCT_ARCHITECTURE_2_0_RU.md`; research report `01a1e8c8-4101-7a4a-90d4-dfe5da530fae`. Status: SPECIFIED / owner-required; no new runtime or dependency is claimed implemented.
