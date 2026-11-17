@@ -7,6 +7,7 @@ cd "$ROOT"
 
 node scripts/check-action-pinning.mjs
 node --test tests/check-action-pinning.test.mjs
+python -m unittest discover -s tests -p 'test_project_state_freshness.py' -v
 node scripts/quality-agents.mjs integrity
 node scripts/quality-agents.mjs security
 node scripts/quality-agents.mjs context
