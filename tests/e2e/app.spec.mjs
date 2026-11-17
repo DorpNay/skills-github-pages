@@ -1546,6 +1546,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   let chatRow=page.locator('#chatList [data-chat-id="'+betaChatId+'"]');
   await chatRow.locator('summary[aria-label="Действия чата"]').click();
   await chatRow.locator('[data-action="chat-project"]').click();
+  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-labelledby', 'chatActionFieldLabel');
+  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-describedby', 'chatActionHelp');
   await page.locator('#chatActionProject').selectOption(alphaId);
   await page.locator('[data-action="chat-action-save"]').click();
 
@@ -1558,6 +1560,8 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const activeAlphaRow=page.locator('#chatList [data-chat-id="'+alphaChatId+'"]');
   await activeAlphaRow.locator('summary[aria-label="Действия чата"]').click();
   await activeAlphaRow.locator('[data-action="chat-project"]').click();
+  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-labelledby', 'chatActionFieldLabel');
+  await expect(page.locator('#chatActionProject')).toHaveAttribute('aria-describedby', 'chatActionHelp');
   await page.locator('#chatActionProject').selectOption(betaId);
   await page.locator('[data-action="chat-action-save"]').click();
   await expect(page.locator('#currentProjectSelect')).toHaveValue(betaId);
