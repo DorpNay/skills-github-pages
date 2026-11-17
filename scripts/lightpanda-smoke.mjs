@@ -56,7 +56,23 @@ try {
     assert.equal(await page.locator('#' + id).getAttribute('aria-label'), expected, `English accessible name mismatch on #${id}`);
   }
 
-  console.log('PASS Lightpanda: app shell, Functions → Skills interaction, custom fields, RU/EN accessible names.');
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await page.locator('#agentTeamScenario').selectOption('custom');
+  await page.waitForFunction(() => {
+    const fields = document.getElementById('agentCustomFields');
+    return fields && !fields.classList.contains('hidden');
+  });
+
+  for (const [id, expected] of [
+    ['agentTeamCustomScenario', 'Describe the team scenario'],
+    ['agentCustomRoles', 'Roles and responsibilities, one per line']
+  ]) {
+    assert.equal(await page.locator('#' + id).getAttribute('aria-label'), expected, `English accessible name mismatch on #${id}`);
+  }
+
+  console.log('PASS Lightpanda: app shell, Functions → Skills/Agents interactions, custom fields, RU/EN accessible names.');
 } finally {
   if (browser) await browser.close().catch(() => {});
   if (server) {
