@@ -470,7 +470,7 @@ permalink: /
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
-  <aside id="sidebar" role="navigation" aria-label="Проекты и чаты" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
+  <aside id="sidebar" role="navigation" aria-label="Проекты и чаты" aria-hidden="true" inert class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
     <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Проекты и чаты</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
@@ -2772,11 +2772,19 @@ permalink: /
     }
     function toggleSidebar(force) {
       const sidebar = $('sidebar'); const overlay = $('sidebarOverlay');
+      const trigger = $('appSidebarToggle');
+      const closeButton = sidebar.querySelector('[data-action="close-sidebar"]');
       const open = typeof force === 'boolean' ? force : sidebar.classList.contains('-translate-x-full');
+      const restoreTriggerFocus = !open && sidebar.contains(document.activeElement);
       if (!open) $('memoryToolsDetails').open = false;
       sidebar.classList.toggle('-translate-x-full', !open);
+      sidebar.inert = !open;
+      if (open) sidebar.removeAttribute('aria-hidden');
+      else sidebar.setAttribute('aria-hidden', 'true');
       overlay.classList.toggle('hidden', !open);
-      $('appSidebarToggle')?.setAttribute('aria-expanded', String(open));
+      trigger?.setAttribute('aria-expanded', String(open));
+      if (open) closeButton?.focus({ preventScroll: true });
+      else if (restoreTriggerFocus) trigger?.focus({ preventScroll: true });
     }
     function toggleSettings(force) {
       const modal=$('settingsModal'),open=typeof force==='boolean'?force:modal.classList.contains('hidden');
