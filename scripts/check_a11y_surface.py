@@ -125,12 +125,12 @@ def main() -> int:
         if not has_accessible_name(node, ids, parser.labels_for) and not node.text_content
     ]
 
-    script = re.search(r"const\\s+fieldTexts\\s*=\\s*\\{(.*?)\\}\\s*;\\s*Object\\.entries\\(fieldTexts\\)", source, re.S)
+    script = re.search(r"const\s+fieldTexts\s*=\s*\{(.*?)\}\s*;\s*Object\.entries\(fieldTexts\)", source, re.S)
     if not script:
         issues.append("runtime fieldTexts accessibility map was not found")
     else:
         for field_id in sorted(RUNTIME_LABEL_IDS):
-            if not re.search(rf"\\b{re.escape(field_id)}\\s*:", script.group(1)):
+            if not re.search(rf"\b{re.escape(field_id)}\s*:", script.group(1)):
                 issues.append(f"runtime accessible-name map is missing {field_id}")
 
     if unnamed_buttons:
