@@ -47,7 +47,23 @@ try {
     assert.equal(await field.getAttribute('aria-label'), placeholder, `Accessible name does not match the localized label on #${id}`);
   }
 
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await page.locator('#agentTeamScenario').selectOption('custom');
+  await page.waitForFunction(() => {
+    const fields = document.getElementById('agentCustomFields');
+    return fields && !fields.classList.contains('hidden');
+  });
+  for (const id of ['agentTeamCustomScenario', 'agentCustomRoles']) {
+    assert.equal(await page.locator('#' + id).getAttribute('aria-label'), await page.locator('#' + id).getAttribute('placeholder'), `Russian accessible name mismatch on #${id}`);
+  }
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
   await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await page.locator('#skillPresetSelect').selectOption('custom');
   for (const [id, expected] of [
     ['customSkillName', 'Custom skill name'],
     ['customSkillInstructions', 'Instructions for this task'],
@@ -64,7 +80,6 @@ try {
     const fields = document.getElementById('agentCustomFields');
     return fields && !fields.classList.contains('hidden');
   });
-
   for (const [id, expected] of [
     ['agentTeamCustomScenario', 'Describe the team scenario'],
     ['agentCustomRoles', 'Roles and responsibilities, one per line']
