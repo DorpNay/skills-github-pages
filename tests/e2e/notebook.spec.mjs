@@ -35,7 +35,7 @@ test('aNoteBooki persists notes and URL references locally with project/chat pro
   await page.locator('#sourceTitle').fill('Credentialed reference');
   await page.locator('#sourceUrl').fill('https://user:secret@example.com/private');
   await page.locator('#saveSourceButton').click();
-  await expect(page.locator('#globalStatus')).toContainText('URL с логином или паролем не сохраняются.');
+  await expect(page.locator('#globalStatus')).toContainText('URL credentials are not allowed.');
   await expect(page.locator('#notebookItems')).not.toContainText('Credentialed reference');
 
   await page.locator('#sourceTitle').fill('Example reference');
@@ -55,6 +55,7 @@ test('aNoteBooki persists notes and URL references locally with project/chat pro
   await expect(page.locator('#activeNotebookTitle')).toHaveText('Research notebook');
   await expect(page.locator('#notebookItems')).toContainText('Verified finding');
   await expect(page.locator('#notebookItems')).toContainText('Example reference');
+  await expect(page.locator('#notebookItems')).toContainText('research-notes.md');
   await expect(page.locator('#notebookProject')).toHaveValue('project-notebook-1');
   await expect(page.locator('#notebookChat')).toHaveValue('chat-notebook-1');
   const audit = await page.evaluate(async () => {
