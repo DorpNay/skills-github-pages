@@ -146,6 +146,7 @@ class LazyGraphRAG:
                 scope_id TEXT NOT NULL,
                 source_uri TEXT NOT NULL,
                 created_at INTEGER NOT NULL,
+                metadata_json TEXT NOT NULL DEFAULT '{}',
                 UNIQUE(scope, scope_id, document_id)
             )""",
             """CREATE TABLE IF NOT EXISTS rag_chunks (
@@ -236,17 +237,19 @@ class LazyGraphRAG:
                     self._migrate_v1(db)
                 else:
                     self._create_schema(db)
-                    db.execute("PRAGMA user_version=2")
             else:
                 self._create_schema(db)
-                db.execute("PRAGMA user_version=2")
+            columns = {row["name"] for row in db.execute("PRAGMA table_info(rag_documents)").fetchall()}
+            if "metadata_json" not in columns:
+                db.execute("ALTER TABLE rag_documents ADD COLUMN metadata_json TEXT NOT NULL DEFAULT '{}'")
+            db.execute("PRAGMA user_version=3")
             self.fts5_secure_delete_enabled = self._configure_fts5_secure_delete(db)
             db.commit()
         if self.path != ":memory:":
             os.chmod(self.path, 0o600)
 
     def ingest_document(self, document_id: str, source_uri: str, chunks: list[dict[str, Any]], *,
-                        scope: str, scope_id: str) -> int:
+                        scope: str, scope_id: str, metadata: dict[str, Any] | None = None) -> int:
         if not isinstance(document_id, str) or not document_id or len(document_id) > 160:
             raise ValueError("document_id must be present and bounded")
         if not isinstance(source_uri, str) or not source_uri or len(source_uri) > 2048:
@@ -257,6 +260,33 @@ class LazyGraphRAG:
                 any(ord(char) < 32 for char in source_uri)):
             raise ValueError("source_uri must be a safe HTTPS URL without embedded credentials or control characters")
         self._scope(scope, scope_id)
+        if metadata is None:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise ValueError("metadata must be an object")
+        allowed_metadata = {"original_name", "mime_type", "size_bytes", "sha256",
+                            "parser", "character_count", "source_type", "imported_at"}
+        if set(metadata) - allowed_metadata:
+            raise ValueError("metadata contains unsupported fields")
+        for key in ("original_name", "mime_type", "parser", "source_type", "imported_at"):
+            value = metadata.get(key)
+            if value is not None and (not isinstance(value, str) or len(value) > 255 or
+                                      any(ord(char) < 32 for char in value)):
+                raise ValueError(f"metadata.{key} must be a bounded printable string")
+        for key in ("size_bytes", "character_count"):
+            value = metadata.get(key)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):
+                raise ValueError(f"metadata.{key} must be a non-negative integer")
+        digest = metadata.get("sha256")
+        if digest is not None and (not isinstance(digest, str) or
+                                   re.fullmatch(r"[0-9a-fA-F]{64}", digest) is None):
+            raise ValueError("metadata.sha256 must be a 64-character hexadecimal digest")
+        try:
+            metadata_json = json.dumps(metadata, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+        except (TypeError, ValueError):
+            raise ValueError("metadata must contain only finite JSON values") from None
+        if len(metadata_json.encode("utf-8")) > 16 * 1024:
+            raise ValueError("metadata exceeds 16 KiB")
         if not isinstance(chunks, list) or len(chunks) > 10_000:
             raise ValueError("chunks must be a bounded list")
 
@@ -290,11 +320,12 @@ class LazyGraphRAG:
             db.execute("DELETE FROM rag_chunk_concepts WHERE chunk_key IN (SELECT chunk_key FROM rag_chunks WHERE document_key=?)",
                        (document_key,))
             db.execute("DELETE FROM rag_chunks WHERE document_key=?", (document_key,))
-            db.execute("""INSERT INTO rag_documents(document_key, document_id, scope, scope_id, source_uri, created_at)
-                          VALUES (?, ?, ?, ?, ?, ?)
+            db.execute("""INSERT INTO rag_documents(document_key, document_id, scope, scope_id, source_uri, created_at, metadata_json)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)
                           ON CONFLICT(scope, scope_id, document_id) DO UPDATE SET
-                          source_uri=excluded.source_uri, created_at=excluded.created_at""",
-                       (document_key, document_id, scope, scope_id, source_uri, now))
+                          source_uri=excluded.source_uri, created_at=excluded.created_at,
+                          metadata_json=excluded.metadata_json""",
+                       (document_key, document_id, scope, scope_id, source_uri, now, metadata_json))
             inserted = 0
             for chunk_id, content, page, _ in prepared:
                 chunk_key = self._chunk_key(document_key, chunk_id)
@@ -307,6 +338,38 @@ class LazyGraphRAG:
                 inserted += 1
             db.commit()
             return inserted
+
+    def list_documents(self, *, scope: str, scope_id: str, limit: int = 200) -> list[dict[str, Any]]:
+        self._scope(scope, scope_id)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 500:
+            raise ValueError("limit must be between 1 and 500")
+        with closing(self._connect()) as db:
+            rows = db.execute("""
+                SELECT d.document_id, d.source_uri, d.created_at, d.metadata_json,
+                       COUNT(c.chunk_key) AS chunk_count
+                FROM rag_documents d
+                LEFT JOIN rag_chunks c ON c.document_key=d.document_key
+                WHERE d.scope=? AND d.scope_id=?
+                GROUP BY d.document_key
+                ORDER BY d.created_at DESC, d.document_id ASC
+                LIMIT ?
+            """, (scope, scope_id, limit)).fetchall()
+        documents: list[dict[str, Any]] = []
+        for row in rows:
+            try:
+                metadata = json.loads(row["metadata_json"])
+            except (TypeError, ValueError):
+                metadata = {}
+            if not isinstance(metadata, dict):
+                metadata = {}
+            documents.append({
+                "document_id": row["document_id"],
+                "source_uri": row["source_uri"],
+                "created_at": row["created_at"],
+                "chunk_count": row["chunk_count"],
+                "metadata": metadata,
+            })
+        return documents
 
     def delete_document(self, document_id: str, *, scope: str, scope_id: str) -> bool:
         if not isinstance(document_id, str) or not document_id or len(document_id) > 160:
