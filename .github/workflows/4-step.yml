@@ -1,11 +1,7 @@
 name: Step 4
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - _posts/*.md
+  workflow_dispatch:
 
 permissions:
   contents: write
