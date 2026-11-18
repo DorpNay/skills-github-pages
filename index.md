@@ -2718,7 +2718,7 @@ permalink: /
     function createChatRow(chat,compact=false) {
       const active=chat.id===currentChatId,item=document.createElement('div');item.dataset.chatId=chat.id;
       item.className=`chat-row ${compact?'chat-row-compact':''} p-2 rounded-xl flex items-center gap-1.5 group transition-colors ${active?'bg-blue-600/15 border border-blue-500/35 text-white':'hover:bg-white/5 border border-transparent text-gray-300'}`;
-      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';open.title=open.textContent;
+      const open=document.createElement('button');open.type='button';open.dataset.action='switch-chat';open.dataset.chatId=chat.id;if(active)open.setAttribute('aria-current','page');open.className='text-left truncate font-medium text-sm flex-1 min-w-0 rounded-lg px-1.5 py-2';open.textContent=chat.title||'Новый чат';open.title=open.textContent;
       const menu=document.createElement('details');menu.className='chat-row-menu shrink-0';
       const summary=document.createElement('summary');summary.textContent='⋯';summary.setAttribute('aria-label',getUiLanguage()==='en'?'Chat actions':'Действия чата');summary.title=summary.getAttribute('aria-label');
       const panel=document.createElement('div');panel.className='chat-row-menu-panel';
@@ -2776,7 +2776,13 @@ permalink: /
     }
     function renderChatList() {
       renderProjectUI({preserveDraft:true});
-      const list=$('chatList');list.replaceChildren();
+      const list=$('chatList');
+      const focusedControl=list.contains(document.activeElement)?document.activeElement:null;
+      const focusedChatId=focusedControl?.dataset.chatId||focusedControl?.closest('.chat-row[data-chat-id]')?.dataset.chatId||'';
+      const focusedAction=focusedControl?.dataset.action||'';
+      const focusedMenuTrigger=focusedControl?.matches('.chat-row-menu summary')===true;
+      const previousScrollTop=list.scrollTop;
+      list.replaceChildren();
       if(selectedProjectFilterId!==null&&selectedProjectFilterId!==''&&!projects.some(project=>project.id===selectedProjectFilterId))selectedProjectFilterId=null;
       const visibleChats=selectedProjectFilterId===null
         ? chats
@@ -2803,6 +2809,14 @@ permalink: /
         list.appendChild(empty);
       }
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
+      list.scrollTop=previousScrollTop;
+      if(focusedChatId){
+        const row=Array.from(list.querySelectorAll('.chat-row[data-chat-id]')).find(item=>item.dataset.chatId===focusedChatId);
+        const target=row&&(focusedAction
+          ? Array.from(row.querySelectorAll('[data-action]')).find(item=>item.dataset.action===focusedAction&&item.dataset.chatId===focusedChatId)
+          : focusedMenuTrigger?row.querySelector('.chat-row-menu summary'):row.querySelector('button'));
+        if(target&&!target.disabled)target.focus({preventScroll:true});
+      }
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
@@ -7181,9 +7195,16 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'create-project': createProject();break;
           case 'select-project-filter': {
             control.closest('.chat-row-menu')?.removeAttribute('open');
-            selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+            selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();
+            const selectedFilter=Array.from($('projectNavigationList').querySelectorAll('[data-action="select-project-filter"]')).find(item=>item.dataset.projectId===selectedProjectFilterId);
+            selectedFilter?.focus({preventScroll:true});event.preventDefault();break;
           }
-          case 'clear-project-filter': selectedProjectFilterId=null;renderProjectNavigation();renderChatList();event.preventDefault();break;
+          case 'clear-project-filter': {
+            const projectId=control.dataset.projectId||control.closest('.project-nav-item')?.dataset.projectId||'';
+            selectedProjectFilterId=null;renderProjectNavigation();renderChatList();
+            const restoredFilter=Array.from($('projectNavigationList').querySelectorAll('[data-action="select-project-filter"]')).find(item=>item.dataset.projectId===projectId);
+            (restoredFilter||$('projectNavToggle'))?.focus({preventScroll:true});event.preventDefault();break;
+          }
           case 'save-project': saveProject();break;
           case 'toggle-project-navigation': {
             const list=$('projectNavigationList'),open=list.classList.toggle('hidden')===false;

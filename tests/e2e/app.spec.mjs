@@ -5109,6 +5109,7 @@ test('project filters announce empty chat states and expose the selected unassig
     await page.locator('#projectNavToggle').click();
   }
   await page.locator('#projectNavigationList .project-nav-select[data-project-id="' + emptyProjectId + '"]').click();
+  await expect(page.locator('#projectNavigationList .project-nav-select[data-project-id="' + emptyProjectId + '"]')).toBeFocused();
   await expect(page.locator('#chatList [role="status"]')).toHaveText('В этом проекте пока нет чатов.');
   await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'false');
   await page.locator('#projectlessNavButton').click();
@@ -5119,6 +5120,42 @@ test('project filters announce empty chat states and expose the selected unassig
   await expect(page.locator('#chatScopeBackButton')).toBeHidden();
 });
 
+
+
+test('long chat navigation preserves scroll position and restores keyboard focus after switching chats', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 720 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const selectedChatId = await page.evaluate(() => {
+    const now = new Date().toISOString();
+    const chats = Array.from({ length: 40 }, (_, index) => ({
+      id: 'e2e-long-chat-' + index,
+      title: 'Long chat ' + String(index + 1).padStart(2, '0'),
+      messages: [],
+      projectId: null,
+      createdAt: now,
+      updatedAt: now,
+      searchMode: 'offline'
+    }));
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats));
+    localStorage.setItem('ai_current_chat_v87', chats[0].id);
+    return chats[chats.length - 1].id;
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const list = page.locator('#chatList');
+  const before = await list.evaluate(element => {
+    element.scrollTop = element.scrollHeight;
+    return { scrollTop: element.scrollTop, scrollHeight: element.scrollHeight, clientHeight: element.clientHeight };
+  });
+  expect(before.scrollHeight).toBeGreaterThan(before.clientHeight);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="' + selectedChatId + '"]').click();
+  await expect(page.locator('#appSidebarToggle')).toBeFocused();
+  await page.locator('#appSidebarToggle').click();
+  await expect(page.locator('#chatList [data-chat-id="' + selectedChatId + '"] [aria-current="page"]')).toBeVisible();
+  const after = await list.evaluate(element => ({ scrollTop: element.scrollTop, scrollHeight: element.scrollHeight }));
+  expect(after.scrollTop).toBe(before.scrollTop);
+  expect(after.scrollHeight).toBe(before.scrollHeight);
+});
 
 test('long project navigation stays internally scrollable without hiding the chats section', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 480 });
