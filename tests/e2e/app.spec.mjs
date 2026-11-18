@@ -483,6 +483,33 @@ test('composer text attachment validation and unsupported-file warning localize 
   await expect(page.locator('#toast')).toContainText('Текстовый файл слишком большой (лимит 256 КБ): oversized-ru.txt');
 });
 
+
+test('provider settings validate Cloudflare ID and model before persisting, with English feedback', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('cloudflare');
+
+  await page.locator('#cloudflareAccountId').fill('not-a-valid-account-id');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#toast')).toContainText('Cloudflare Account ID must contain 32 hexadecimal characters.');
+  expect(await page.evaluate(() => localStorage.getItem('ai_cloudflare_account_id'))).toBeNull();
+
+  const accountId = '0123456789abcdef0123456789abcdef';
+  await page.locator('#cloudflareAccountId').fill(accountId);
+  await page.locator('#modelName').fill('');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#toast')).toContainText('Enter a model ID.');
+  expect(await page.evaluate(() => localStorage.getItem('ai_cloudflare_account_id'))).toBeNull();
+
+  await page.locator('#modelName').fill('@cf/openai/gpt-oss-120b');
+  await page.locator('[data-action="save-settings"]').click();
+  await expect(page.locator('#toast')).toContainText('Settings saved.');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_cloudflare_account_id'))).toBe(accountId);
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_base_url'))).toBe('https://api.cloudflare.com/client/v4/accounts/' + accountId + '/ai/v1');
+});
+
 test('project create modal labels, options and close name are localized in RU and EN', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const openCreate = async () => {

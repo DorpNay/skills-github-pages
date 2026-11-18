@@ -254,6 +254,7 @@ PR #122 добавил только эксплуатационную надёж�
 - GitHub — [Publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site); branch/folder source and Actions deployment are explicit publishing choices.
 
 ## 7. Change log
+| 2026-11-18 | Provider Settings now localizes Cloudflare ID/Base URL/model validation and save confirmation; Cloudflare Account ID is staged until all required validation passes. Pollinations PKCE setup errors localize RU/EN. Added EN validation/no-partial-write regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Composer attachment feedback now localizes media/video, audio, document and text-file limits/errors, unsupported-file reasons/warnings, attachment metadata and remove accessible names in RU/EN. Added focused RU/EN regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Project-create modal localization follow-up: local project-limit error now follows RU/EN; regression assertion matches the canonical shared-memory option copy. | `index.md`; `tests/e2e/app.spec.mjs` |
 | 2026-11-18 | Project-create modal labels, placeholders, memory-scope options and accessible close name now localize RU/EN; source register adds W3C WCAG 3.3.1/3.3.3 and SCR32 as the basis for required-field error patterns. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |

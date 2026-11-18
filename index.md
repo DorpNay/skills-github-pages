@@ -1132,11 +1132,12 @@ permalink: /
       return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
     }
     async function beginPollinationsOAuth() {
+      const english=getUiLanguage()==='en';
       const appKey=$('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations'))||'';
       if(!/^pk_[A-Za-z0-9_-]+$/.test(appKey)) {
-        showToast('Нужен Pollinations App Key с префиксом pk_. Создайте его на enter.pollinations.ai/keys.', 'error'); return;
+        showToast(english?'A Pollinations App Key starting with pk_ is required. Create one at enter.pollinations.ai/keys.':'Нужен Pollinations App Key с префиксом pk_. Создайте его на enter.pollinations.ai/keys.', 'error'); return;
       }
-      if(!crypto?.subtle||!crypto?.getRandomValues) { showToast('Этот браузер не поддерживает безопасный PKCE; откройте сайт по HTTPS в актуальном браузере.', 'error'); return; }
+      if(!crypto?.subtle||!crypto?.getRandomValues) { showToast(english?'This browser does not support secure PKCE. Open the site over HTTPS in a current browser.':'Этот браузер не поддерживает безопасный PKCE; откройте сайт по HTTPS в актуальном браузере.', 'error'); return; }
       const redirect=new URL(location.href); redirect.search=''; redirect.hash='';
       const redirectUri=redirect.toString(),state=randomBase64Url(32),verifier=randomBase64Url(48);
       const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));
@@ -1152,7 +1153,7 @@ permalink: /
         safeSessionSet(POLLINATIONS_SESSION.redirectUri,redirectUri),
         safeSessionSet(POLLINATIONS_SESSION.clientId,appKey)
       ].every(Boolean);
-      if(!stored) { showToast('Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
+      if(!stored) { showToast(english?'Could not prepare a secure OAuth session. Check your browser privacy settings.':'Не удалось подготовить защищённую OAuth-сессию. Проверьте настройки приватности браузера.', 'error'); return; }
       const params=new URLSearchParams({response_type:'code',client_id:appKey,redirect_uri:redirectUri,models:'text',budget:'5',expiry:'7',state,code_challenge:challenge,code_challenge_method:'S256'});
       location.assign('https://enter.pollinations.ai/authorize?'+params.toString());
     }
@@ -3637,33 +3638,35 @@ permalink: /
     });
 
     function saveSettings() {
-      if(currentProvider()==='cloudflare'){
-        const accountId=$('cloudflareAccountId').value.trim();
-        if(!/^[a-f0-9]{32}$/i.test(accountId)){showToast('Cloudflare Account ID должен содержать 32 шестнадцатеричных символа.','error');return;}
-        safeSet(STORAGE.cloudflareAccountId,accountId);
-        $('baseUrl').value=`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`;
-      }
+      const english=getUiLanguage()==='en';
+      const provider=currentProvider();
+      const cloudflareAccountId=provider==='cloudflare'?$('cloudflareAccountId').value.trim():'';
       let baseUrl = $('baseUrl').value.trim().replace(/\/+$/, '');
+      if(provider==='cloudflare'){
+        if(!/^[a-f0-9]{32}$/i.test(cloudflareAccountId)){showToast(english?'Cloudflare Account ID must contain 32 hexadecimal characters.':'Cloudflare Account ID должен содержать 32 шестнадцатеричных символа.','error');return;}
+        baseUrl=`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountId}/ai/v1`;
+        $('baseUrl').value=baseUrl;
+      }
       const enteredApiKey = $('apiKey').value.trim();
       const model = $('modelName').value.trim();
-      const provider=currentProvider();
       let parsed=null;
       if(baseUrl){
         try { parsed = new URL(baseUrl); }
-        catch (_) { showToast('Укажите корректный Base URL, например https://api.example.com/v1', 'error'); return; }
-        if (!['https:', 'http:'].includes(parsed.protocol)) { showToast('Base URL должен начинаться с http:// или https://.', 'error'); return; }
+        catch (_) { showToast(english?'Enter a valid Base URL, for example https://api.example.com/v1.':'Укажите корректный Base URL, например https://api.example.com/v1', 'error'); return; }
+        if (!['https:', 'http:'].includes(parsed.protocol)) { showToast(english?'Base URL must start with http:// or https://.':'Base URL должен начинаться с http:// или https://.', 'error'); return; }
         const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
         if (parsed.protocol !== 'https:' && !localHost) {
-          showToast('Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.', 'error'); return;
+          showToast(english?'GitHub Pages requires an HTTPS Base URL. HTTP is allowed only for localhost.':'Для GitHub Pages нужен HTTPS Base URL. HTTP доступен только для localhost.', 'error'); return;
         }
       } else if(provider!=='alandi') {
-        showToast('Укажите Base URL для выбранного провайдера.', 'error'); return;
+        showToast(english?'Enter a Base URL for the selected provider.':'Укажите Base URL для выбранного провайдера.', 'error'); return;
       }
-      if (!model) { showToast('Укажите имя модели.', 'error'); return; }
+      if (!model) { showToast(english?'Enter a model ID.':'Укажите имя модели.', 'error'); $('modelName').focus({preventScroll:true}); return; }
       if (/\/chat\/completions$/i.test(baseUrl)) baseUrl = baseUrl.replace(/\/chat\/completions$/i, '');
       const existingKey=safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'',apiKey=enteredApiKey||existingKey;
       const saved=[
         safeSet(STORAGE.provider,provider),safeSet(STORAGE.baseUrl,baseUrl),
+        ...(provider==='cloudflare'?[safeSet(STORAGE.cloudflareAccountId,cloudflareAccountId)]:[]),
         ...(provider==='gemini'&&enteredApiKey?[safeSet(STORAGE.apiKey,enteredApiKey)]:[]),
         ...(enteredApiKey?[safeSet(providerKeyStorage(provider),enteredApiKey)]:[]),
         safeSet(STORAGE.model,model),
@@ -3675,7 +3678,7 @@ permalink: /
       if(!$('apiKey').value.trim()&&apiKey)$('apiKey').value=apiKey;
       $('systemPromptInput').readOnly=true;$('editSystemPrompt').setAttribute('aria-pressed','false');$('editSystemPrompt').classList.remove('is-editing');$('editSystemPrompt').textContent='✎';
       $('promptEditHint').textContent='';
-      refreshApiKeyLamp();showToast('Настройки сохранены');
+      refreshApiKeyLamp();showToast(english?'Settings saved.':'Настройки сохранены');
       if ($('allowCrossProviderFallback').checked) void refreshConnectedModelCatalogs({ quiet: true, force: false });
       else if (getProviderRequestKey(provider) || provider === 'pollinations') void refreshModelCatalog({ quiet: true, force: false, provider });
     }

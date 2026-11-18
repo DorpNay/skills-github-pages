@@ -120,3 +120,5 @@
 | 2026-11-18 | Project-create modal’s project-limit validation now uses RU/EN copy; EN memory-scope option assertion aligned with the canonical UI_TEXT string. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Composer attachment feedback now localizes media/video, audio, document and text-file limits/errors, unsupported-file reasons/warnings, attachment metadata and remove accessible names in RU/EN. Added RU/EN oversized-text and unsupported-file Playwright regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Provider Settings now localizes Cloudflare ID/Base URL/model validation and save confirmation; Cloudflare Account ID is staged until all required validation passes, preventing an invalid form from persisting it. Pollinations PKCE setup errors localize RU/EN. Added EN validation/no-partial-write regression. | `index.md`; `tests/e2e/app.spec.mjs` |
