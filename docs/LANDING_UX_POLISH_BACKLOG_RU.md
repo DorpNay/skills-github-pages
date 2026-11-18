@@ -87,6 +87,7 @@
 - [ ] Keep Chromium as a manual-only check for viewport geometry, CSS reflow, overflow and screenshots; do not infer those properties from DOM-only tests.
 
 ## 5. Change log
+| 2026-11-18 | Settings IA: split existing Additional settings into four purpose-labelled groups (appearance/accessibility, behavior/instructions, privacy/fallback, settings transfer); preserve control IDs and handlers; add RU/EN copy and focused E2E assertions. | `index.md`; `tests/e2e/app.spec.mjs`; exact-head browser execution pending |
 | Date | Change | Evidence |
 | 2026-11-17 | Connectors panel now explicitly reports an unconfigured registry and does not imply live connection checks; decorative progress ticker removed. RU/EN E2E added; runtime execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
 | 2026-11-17 | Chat action dialog now focuses its active field, traps Tab/Shift+Tab, closes on Escape and restores the originating chat-menu focus (or a safe fallback after list rerender); the no-project path also restores focus after its notice. The move-project select has a localized accessible name/description. | `index.md` `50ff6ec6`, `72327b4e`; `tests/e2e/app.spec.mjs` `097876f6`, `6e5e0ce3`; runtime verification pending |

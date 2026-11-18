@@ -666,29 +666,40 @@ permalink: /
       <details id="additionalSettings" class="settings-subpanel rounded-xl border border-gray-700">
         <summary class="px-3 py-3 text-sm font-semibold cursor-pointer select-none" data-i18n="legacySettings">Дополнительные настройки</summary>
         <div class="p-3 space-y-3"><input type="hidden" id="uiTheme" value="dark">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
-            
-            <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
-            <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
-            
-          </div>
-<section id="readingSettings" class="rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="readingSettingsTitle">
+          <section class="settings-group rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="settingsAppearanceGroupTitle">
+            <h3 id="settingsAppearanceGroupTitle" class="text-sm font-semibold" data-i18n="settingsAppearanceGroup">Внешний вид и доступность</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 border-b border-gray-800 pb-3">
+              <label class="text-[11px] text-gray-400">Анимация<select id="uiMotion" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="auto">Авто</option><option value="reduced">Уменьшить</option><option value="off">Выкл.</option></select></label>
+              <label class="text-[11px] text-gray-400">Поле ввода<select id="composerPosition" class="advanced-control mt-1 w-full bg-gray-900 rounded border border-gray-700"><option value="bottom" data-i18n="composerBottom">Снизу</option><option value="top" data-i18n="composerTop">Сверху</option></select></label>
+            </div>
+            <section id="readingSettings" class="rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="readingSettingsTitle">
         <div><h3 id="readingSettingsTitle" class="text-sm font-semibold" data-i18n="readingSettingsTitle">Читаемость текста</h3><p class="mt-1 text-xs leading-relaxed" data-i18n="readingSettingsHelp">Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.</p></div>
         <label for="readingFontSize" class="block text-xs"><span data-i18n="readingFontSizeLabel">Размер текста сообщений</span><output id="readingFontSizeValue" class="float-right font-semibold tabular-nums">15 px</output><input id="readingFontSize" type="range" min="14" max="22" step="1" value="15" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
         <label for="readingLineHeight" class="block text-xs"><span data-i18n="readingLineHeightLabel">Межстрочный интервал</span><output id="readingLineHeightValue" class="float-right font-semibold tabular-nums">1.6</output><input id="readingLineHeight" type="range" min="1.4" max="2" step="0.1" value="1.6" class="mt-2 w-full" aria-describedby="readingSettingsHelp"></label>
         <label for="readingContrast" class="block text-xs"><span data-i18n="readingContrastLabel">Контраст цветовой схемы</span><select id="readingContrast" class="advanced-control mt-1 w-full rounded border border-gray-700 bg-gray-900"><option value="standard" data-i18n="readingContrastStandard">Стандартный</option><option value="high" data-i18n="readingContrastHigh">Повышенный</option></select></label>
         <p id="readingSettingsStatus" class="text-xs" role="status" aria-live="polite" data-i18n="readingSettingsSaved">Настройки читаемости сохраняются на этом устройстве.</p>
-      </section>
-<label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
+            </section>
+          </section>
+          <section class="settings-group rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="settingsBehaviorGroupTitle">
+            <h3 id="settingsBehaviorGroupTitle" class="text-sm font-semibold" data-i18n="settingsBehaviorGroup">Поведение и инструкции</h3>
+            <label for="systemPromptInput" data-i18n="systemPromptLabel" class="block text-xs text-gray-400">Системный промпт</label>
        <div class="prompt-editor"><textarea id="systemPromptInput" rows="4" readonly class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none resize-y" placeholder="Свои правила для всех запросов"></textarea><button type="button" id="editSystemPrompt" data-action="edit-system-prompt" class="prompt-pencil" aria-pressed="false" aria-label="Редактировать системный промпт" title="Редактировать">✎</button></div><p id="promptEditHint" class="sr-only" aria-live="polite"></p>
-       <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
+          </section>
+          <section class="settings-group rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="settingsPrivacyGroupTitle">
+            <h3 id="settingsPrivacyGroupTitle" class="text-sm font-semibold" data-i18n="settingsPrivacyGroup">Приватность и резервирование</h3>
+            <label class="flex items-start gap-2 text-xs text-gray-300 mt-2"><input id="allowCrossProviderFallback" type="checkbox" class="mt-0.5 rounded bg-gray-800 border-gray-700"><span><strong>Разрешить резерв у другого провайдера</strong><span class="block text-[11px] leading-relaxed text-amber-200/80">По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.</span></span></label>
       <p class="text-[10px] leading-relaxed text-gray-500">Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.</p>
-       <div class="grid grid-cols-2 gap-2">
+          </section>
+          <section class="settings-group rounded-xl border border-gray-700 p-3 space-y-3" aria-labelledby="settingsTransferGroupTitle">
+            <h3 id="settingsTransferGroupTitle" class="text-sm font-semibold" data-i18n="settingsTransferGroup">Перенос настроек</h3>
+            <div class="grid grid-cols-2 gap-2">
         <button type="button" data-action="export-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Скачать профиль настроек</button>
         <button type="button" data-action="import-settings-profile" class="bg-gray-700 hover:bg-gray-600 py-2 px-2 rounded text-xs text-gray-200">Импорт профиля</button>
       </div>
       <input type="file" id="settingsProfileFile" class="hidden" accept="application/json,.json">
-      <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p></div>
+      <p class="text-[10px] leading-relaxed text-gray-500">Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.</p>
+          </section>
+        </div>
       </details>
       <button type="button" id="recoveryBackupButton" data-action="download-recovery-backup" class="hidden w-full bg-amber-800 hover:bg-amber-700 py-2 rounded text-xs text-amber-50">Скачать резервную копию истории</button>
     </div>
@@ -1624,7 +1635,7 @@ permalink: /
         appearanceTitle:'Внешний вид',languageLabel:'Язык',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
-        legacySettings:'Дополнительные настройки',composerPlaceholder:'Напиши сообщение...',
+        legacySettings:'Дополнительные настройки',settingsAppearanceGroup:'Внешний вид и доступность',settingsBehaviorGroup:'Поведение и инструкции',settingsPrivacyGroup:'Приватность и резервирование',settingsTransferGroup:'Перенос настроек',composerPlaceholder:'Напиши сообщение...',
         modeLabel:'Объём:',modeGroupAria:'Объём работы',modeFast:'⚡ Быстро',modeDeep:'🔬 Тщательно',searchLabel:'🌐 Веб-поиск',
         modeFastShort:'Быстро',modeDeepShort:'Тщательно',modeFastHelp:'Быстро: в прямом режиме — 1 раунд и 1 вызов инструмента; в конвейере это лимит исследовательского этапа.',modeDeepHelp:'Тщательно: до 4 раундов, 3 вызовов за раунд и 8 за запуск; в конвейере лимит относится к исследовательскому этапу.',
         searchModeSummaryPrefix:'🌐 Веб',searchModeNormal:'Обычный',searchModeNormalShort:'Веб: обычный',searchModeNormalHelp:'Стандартный охват результатов и источников; не меняет бюджет обработки.',searchModeMore:'Расширенный',searchModeMoreShort:'Веб: расширенный',searchModeMoreHelp:'Больше результатов, источников и извлечённого текста на один поиск; не увеличивает число раундов.',searchModeOffline:'Выкл.',searchModeOfflineShort:'Веб: выкл.',searchModeOfflineHelp:'Веб-инструменты выключены; облачному API всё ещё может требоваться интернет.',
@@ -1651,7 +1662,7 @@ permalink: /
         appearanceTitle:'Appearance',languageLabel:'Language',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
-        legacySettings:'Additional settings',composerPlaceholder:'Write a message...',
+        legacySettings:'Additional settings',settingsAppearanceGroup:'Appearance & accessibility',settingsBehaviorGroup:'Behavior & instructions',settingsPrivacyGroup:'Privacy & fallback',settingsTransferGroup:'Settings transfer',composerPlaceholder:'Write a message...',
         modeLabel:'Effort:',modeGroupAria:'Effort',modeFast:'⚡ Quick',modeDeep:'🔬 Thorough',searchLabel:'🌐 Web search',
         modeFastShort:'Quick',modeDeepShort:'Thorough',modeFastHelp:'Quick: one tool round and one tool call in direct mode; in the pipeline this limits the research stage.',modeDeepHelp:'Thorough: up to 4 rounds, 3 calls per round and 8 per run; in the pipeline this budget applies to the research stage.',
         searchModeSummaryPrefix:'🌐 Web',searchModeNormal:'Standard',searchModeNormalShort:'Web: standard',searchModeNormalHelp:'Standard result and source coverage; does not change the execution budget.',searchModeMore:'Expanded',searchModeMoreShort:'Web: expanded',searchModeMoreHelp:'More results, sources and extracted text per search; does not increase execution rounds.',searchModeOffline:'Off',searchModeOfflineShort:'Web: off',searchModeOfflineHelp:'Web tools are off; cloud APIs may still need internet.',

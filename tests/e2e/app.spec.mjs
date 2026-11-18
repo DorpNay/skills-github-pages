@@ -5039,3 +5039,19 @@ test('legacy chats and imports without an explicit web-search opt-in stay model-
   })).toBe('offline');
   await expect(page.locator('#toggleSearch')).not.toBeChecked();
 });
+
+
+test('global settings are grouped by purpose and localized in Russian and English', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').first().click();
+  await page.locator('#additionalSettings > summary').click();
+  await expect(page.locator('#settingsAppearanceGroupTitle')).toHaveText('Внешний вид и доступность');
+  await expect(page.locator('#settingsBehaviorGroupTitle')).toHaveText('Поведение и инструкции');
+  await expect(page.locator('#settingsPrivacyGroupTitle')).toHaveText('Приватность и резервирование');
+  await expect(page.locator('#settingsTransferGroupTitle')).toHaveText('Перенос настроек');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#settingsAppearanceGroupTitle')).toHaveText('Appearance & accessibility');
+  await expect(page.locator('#settingsBehaviorGroupTitle')).toHaveText('Behavior & instructions');
+  await expect(page.locator('#settingsPrivacyGroupTitle')).toHaveText('Privacy & fallback');
+  await expect(page.locator('#settingsTransferGroupTitle')).toHaveText('Settings transfer');
+});
