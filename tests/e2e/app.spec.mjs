@@ -453,6 +453,36 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
 
 
 
+
+test('composer text attachment validation and unsupported-file warning localize in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'oversized.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.alloc(256 * 1024 + 1)
+  });
+  await expect(page.locator('#toast')).toContainText('Text file exceeds the 256 KB limit: oversized.txt');
+
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'unsupported.zip',
+    mimeType: 'application/zip',
+    buffer: Buffer.from('not an extractable source')
+  });
+  await expect(page.locator('#draftAttachments')).toContainText('not processed');
+  await expect(page.locator('#draftAttachments')).toContainText('Some selected files are not supported yet.');
+  await expect(page.locator('#draftAttachments [data-action="remove-draft-attachment"]')).toHaveAccessibleName('Remove attachment unsupported.zip');
+
+  await page.locator('#uiLanguage').selectOption('ru');
+  await page.locator('#draftAttachments [data-action="remove-draft-attachment"]').click();
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'oversized-ru.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.alloc(256 * 1024 + 1)
+  });
+  await expect(page.locator('#toast')).toContainText('Текстовый файл слишком большой (лимит 256 КБ): oversized-ru.txt');
+});
+
 test('project create modal labels, options and close name are localized in RU and EN', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const openCreate = async () => {

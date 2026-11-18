@@ -1275,3 +1275,6 @@ def script_lang(s: str) -> str:
 
 
 - [2026-11-18] S-143 | IMPLEMENTED / E2E PENDING — PROJECT CREATE VALIDATION COPY PARITY | Parent main `b75ba9f04fccbf22aaa24397948f84fbe09a3f39`. Local project-limit error now localizes RU/EN; corrected the modal localization regression to match the existing canonical English shared-memory option text. Updated existing UX backlog and V1 checklist. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue high-traffic composer and settings copy parity.
+
+
+- [2026-11-18] S-144 | IMPLEMENTED / E2E PENDING — COMPOSER ATTACHMENT FEEDBACK RU/EN | Parent main `ca3147bbc602451ad761f9522c92bf84b3ff2edd`. Localized media/video extraction feedback, audio/document/text limits and errors, unsupported-file reasons/warning, attachment metadata and remove-button accessible names. Added Playwright regression for oversized text files and unsupported-file warnings in both RU/EN. Updated existing UX backlog and V1 checklist; no attachment capability or file-size limit changed. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue remaining RU/EN copy parity and check current Pages/Graphify exact HEAD.
