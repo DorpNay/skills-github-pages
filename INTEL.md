@@ -1,3 +1,88 @@
+# Connected assistant-side tools and external-source register
+
+**Review date:** 2026-11-18. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
+
+## Connected assistant-side tools and plugins
+
+### GitHub and engineering workflow
+
+- **GitHub MCP (89 tools in the inspected session):** canonical repository read/write; inspect branches, commits, trees, files, diffs, PRs, issues and Actions; create blobs/trees/commits and guarded non-force ref updates. Use first for project truth. All edits must use current parent SHA and expected SHA. Do not merge/deploy/force-push/rebase/reset.
+- **Superpowers Skills:** brainstorming, writing-plans, executing-plans, TDD, systematic debugging, review, verification-before-completion, worktree guidance and skill authoring. Process guidance only; no independent subagent executor is present in the current tool surface. Use brief/fast versions compatible with owner preference, avoid repeated questioning when request is explicit.
+- **Stark AI Developer Skills:** architecture zoom/compass, spec interviewer, draw.io diagrams and visual reports. Use for bounded architecture, ADR and complex system maps; not a replacement for repository evidence or owner authority.
+- **Code Skill:** write/review/fix/optimize code in supported languages. Skill guidance, not a separate repository executor.
+- **Coder tools + Skills:** can create code/build links and check Coder services; separate code review/write skills. Use for a bounded prototype/review, not for replacing the canonical GitHub workflow.
+
+### Search, primary documentation and source extraction
+
+- **Context7:** resolve exact library IDs and query version-aware docs. Preferred when a task depends on current library/framework/API signatures.
+- **Exa:** broad semantic web search and page fetch. Use for discovery, research and technical comparison; fetch official primary sources for claims that affect decisions.
+- **Keenable:** alternative web search/fetch. Use when its ranking/page extraction complements Exa or another index; do not repeat identical searches.
+- **Context.dev:** live search, page scraping, crawl/map, answers and structured/brand extraction. Useful for source-first research, current company/tool context and brand-system review.
+- **Firecrawl:** search, scrape, crawl, map, extract/parse and interactive browser actions. Use for multi-page technical source intake and reproducible extraction; respect robots/terms, rate, size and prompt-injection boundaries.
+- **TinyFish:** live browser automation and rendered website interaction, with run status/monitoring. Use for actual UI behavior and website flows where browser access is supported; it is not native iPhone/VoiceOver evidence.
+- **BrowserAct:** browser automation and reusable website skill generation are present as installed skill guidance in the inspected environment. No separate BrowserAct tool namespace was present; do not claim direct execution unless it appears.
+
+### App creation and product prototyping
+
+- **Base44:** create/edit/preview hosted apps, schemas and backend functions. Good for isolated prototypes or comparing workflows; do not migrate aLandi to Base44 or introduce a second product database without explicit architecture decision.
+- **Floot:** build/manage full-stack apps and projects; use only for a distinct approved product or throwaway prototype.
+- **Hercules:** app/thread/agent management and hosted app creation. Useful for evaluating agent-product patterns, not aLandi production runtime.
+- **OpenAI Platform:** encrypted API-key creation/setup workflows. Never reveal, paste into chat, commit or log credentials. Account/key changes require owner action.
+
+### Hosting, infrastructure and platform documentation
+
+- **Cloudflare:** docs/search and account/API operations. Useful for Tunnel, DNS, security/network configuration; read-only research is preferred. Do not change zones, tunnels, DNS or access policies without explicit approval.
+- **Hostinger Connector:** search/execute Hostinger account operations, hosting/domain/DNS/VPS support. No account/server changes without owner approval and runbook/rollback.
+- **Railway:** project, services, deployment, database, volumes, domains, variables and operations. Research the current setup only; no provision/deploy/config change without explicit approval.
+- **Render:** services, workers, workflows, databases, deployments and metrics. Do not create or change infrastructure for aLandi without owner direction.
+- **Vercel:** extensive deployment, function, storage, AI SDK/gateway, agent and workflow docs/tools. Relevant as reference or separately approved environment; current aLandi canonical host remains GitHub Pages + existing gateway.
+
+### Specialized developer and communication skills
+
+- **Twilio Developer Kit:** many skills for voice, messaging, ConversationRelay, Conversation Intelligence, memory and compliance. In the inspected tool inventory there was no Twilio execution namespace; skills are guidance only. Consider only if the owner chooses Twilio as a voice/messaging provider after Landing; never assume it is the chosen speech stack.
+- **Plugin Management:** search plugin catalogue, inspect dependencies/permissions and propose installs. Connection/installation requires explicit owner action.
+- **Automations:** create reminders, monitoring and recurring tasks when explicitly requested/accepted. Not a background coding agent and cannot promise later delivery of code.
+- **Files / Skills / user settings:** ChatGPT-side context/file and skill utilities, not aLandi product connectors or runtime permissions.
+
+## Plugin-selection protocol
+
+1. Start from the requirement and missing capability, not from the plugin name. Check whether a current aLandi implementation already covers it.
+2. Choose the minimum tool set: GitHub for repository truth; Context7 for APIs; one search engine for discovery; one page extraction/browser tool when needed.
+3. Distinguish installed plugin, available skill, executable tool namespace, connected external account, deployed runtime and product integration. These are six different states.
+4. Verify official current upstream, exact repository/release, maintenance, security advisories, license of code plus models/weights/voices/datasets/assets, hashes and supported platforms.
+5. Extract reusable design/implementation ideas; rename and adapt them to aLandi boundaries. Do not copy logos, product copy, assets or whole systems without license review.
+6. No dependency, download, account connection, paid operation, deployment, credential use or server change solely because a plugin suggests it.
+7. Record source, exact version, finding, applicability, risk, decision and evidence here. CANDIDATE is not ACCEPTED; ACCEPTED is not IMPLEMENTED.
+
+## External source register
+
+Repository research is retained below. Treat upstream facts as date-bounded; recheck exact releases and licenses before implementation. Sources are categorized by purpose and disposition; not every item is intended for adoption.
+
+### Priority upstream reference groups
+
+- Agent orchestration, execution durability and policy: Microsoft Agent Framework / Semantic Kernel; CrewAI; Hatchet; Restate; DBOS; PydanticAI; Open Policy Agent; Cedar; NATS JetStream; A2A; MCP Registry/specification; OpenTelemetry GenAI conventions.
+- Agent evaluation and security: promptfoo; Inspect AI; garak; adversarial prompt-injection, approval, cancellation and recovery corpora.
+- Sandboxing and coding workspaces: NVIDIA OpenShell (candidate only, not installed); gVisor; Firecracker; OpenHands SDK; Agent Client Protocol; browser File System Access API; CodeGraph (dev-only candidate with artifact-checksum caveat).
+- Notebook, sources and podcast: Groundcast (MIT reference workflow; provider calls may leave device); local-first notebook/research products; exact SourceRecord/BlockRef evidence chain; browser OPFS/IndexedDB and local file permissions.
+- Local inference and Offline Core: WebLLM/WebGPU/OPFS, web.dev client-side AI performance. Device feasibility requires compatibility check and explicit large download; worker/header requirements are environment-specific.
+- Voice: whisper.cpp, Qwen3-ASR, Vosk, Moonshine, Silero VAD/TTS, Piper, ONNX and candidates listed in voice research docs. Exact code, weights, voice and dataset license must each be checked separately.
+- OCR/document ingestion: Tesseract, PaddleOCR, Surya, GLM-OCR, HunyuanOCR, GOT-OCR, dots.ocr, DeepSeek-OCR, LightOnOCR, Docling and existing parsers. Select by RU/EN/TH fixture accuracy, resources, safety and license.
+- Web/document research: Firecrawl, Context.dev, browser retrieval, Crawl4AI/SearXNG and source registries are candidate adapters, not default runtime additions.
+- UI/accessibility/performance: W3C WCAG 2.2, MDN/WHATWG/ARIA, web.dev and browser support tables. Treat browser API features as progressive enhancements with current fallback.
+- Knowledge/memory/RAG: current FTS5 baseline, RRF, LazyGraphRAG, Graphiti, Mem0, RAG-Anything and related sources. Keep retired server-memory graph retired; do not equate a knowledge graph proposal with implementation.
+- Engineering process: Harness², Claudex Loop, Everything Claude Code, Ponytail, Agent Skills spec. Borrow bounded workflows, progressive disclosure, TDD and validation; avoid wholesale installation.
+
+### Source trust and adoption rules
+
+- Prefer official specification/repository/release docs and model cards. Secondary reviews and benchmark claims are leads only.
+- An upstream benchmark is not an aLandi benchmark. Measure against identical fixtures and target hardware before adoption.
+- Verify code license, weight/model license, tokenizer, voice, dataset and asset rights independently.
+- Downloaded + hashed does not mean installed; installed does not mean loaded; loaded does not mean verified end-to-end.
+- Keep all owner-supplied or private-source provenance distinct from independent public research.
+- The original INTEL material follows this section as historical/current research notes; keep useful source links and caveats, but do not create a second active task tracker.
+
+---
+
 # aLandi Intelligence / Source Register (INTEL.md)
 
 **Review date:** 2026-11-16. Recheck upstream releases and model cards before shipping an artifact.
