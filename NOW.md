@@ -15,7 +15,7 @@ GitHub main — истина о проекте. Project Sources синхрони
 
 ## Приоритет владельца
 1. **Сейчас:** завершить root app UI — sidebar, проекты/чаты, меню, формы, dialogs, composer, Functions panels, visual system, mobile, RU/EN, accessibility.
-2. После landing — каркасы отдельных workspace страниц aCodingi и aNoteBooki, только с уже существующим функционалом.
+2. После landing — отдельные workspace страницы aCodingi и aNoteBooki, только с уже существующим функционалом. aSoundi — позже, отдельной аудиостудией после аудита voice stack.
 3. Затем — chat/modes/models/memory/status/events и request routing.
 4. Далее — реальные Deep Research, AgentRun/subagents, Skills и Connectors; Notebook/Source Vault, converters и Coder runtime.
 5. Потом — Offline Core/local-server switch; Voice/ASR/TTS/podcast — после landing.
@@ -24,6 +24,7 @@ GitHub main — истина о проекте. Project Sources синхрони
 
 ## Принципы aLandi
 - Русский язык общения; английский для кода, identifiers, API и схем.
+- Пункт становится завершённым `[x]` только после commit в `main`; `[~]` означает частичную реализацию. `VERIFIED` — отдельный статус только по фактическим exact-HEAD checks и указанной среде.
 - Быстрый темп и крупные связные пакеты; реализовывать, а не бесконечно исследовать/тестировать. Но focused safety/regression checks и exact-head CI обязательны.
 - Не задавать повторно вопросы с уже известными ответами. Инициатива не равна полномочиям; владелец принимает решения.
 - Минимальные обратимые изменения; сохранять совместимость, текущий стек и существующие пользовательские данные.
@@ -52,7 +53,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Не восстанавливать отменённые владельцем server-memory graph и отдельную /landing/ страницу.
 
 ## Плагины и источники
-Сверяться с INTEL.md. GitHub — для project truth; Context7 — для версионной документации; Exa/Keeneable — для discovery; Context.dev/Firecrawl — для crawl/extraction; TinyFish — для live browser behavior. Не вызывать дублирующие поисковые движки без причины.
+Сверяться с INTEL.md. GitHub — для project truth; Context7 — для версионной документации; Exa/Keenable — для discovery; Context.dev/Firecrawl — для crawl/extraction; TinyFish — для live browser behavior. Не вызывать дублирующие поисковые движки без причины.
 Наличие plugin/Skill не равно executable namespace, подключённому аккаунту, deployed service или aLandi runtime. Текущая доступность проверяется в сессии. Host/Cloud/provider tools не трогать без отдельного разрешения.
 
 ## Ошибки, которые нельзя повторять
@@ -66,11 +67,13 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Открытые owner gates
 - Provider set/UX — только после landing; спросить владельца, не угадывать.
-- Подтверждены названия aCodingi и aNoteBooki; оставшиеся два studio names/boundaries не выдумывать.
+- Подтверждены названия aCodingi, aNoteBooki и aSoundi; дополнительные studio names/boundaries не выдумывать без подтверждения владельца.
 - «Dessa» в голосовом запросе — неоднозначный upstream; идентифицировать точно до выбора.
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
-## Последний checkpoint (не заменяет live проверку)
-- Не хранить в ориентире динамические SHA/очереди. Последний подтверждённый code snapshot: 42a63dbd6cea81e97e7a577fce159700186771ac, Pages #44297733956 и Graphify #44297733900 SUCCESS; последующие commits были документационной консолидацией.
-- После консолидации проверить exact-head Pages/Graphify и live revision marker; эти checks не подтверждают VPS или native iOS.
-- Следующий пакет после docs gate: P0 sidebar density, adjacent Create actions, collapsible Projects и project settings IA.
+## Последний checkpoint (2026-11-18; не заменяет live проверку)
+- IMPLEMENTED в `main`: sidebar Create-действия стоят в заголовках секций, сворачивание Projects отдаёт высоту Chats; Research убрал дубли Quick/Thorough и web breadth; Agents разделяет runtime/role blueprint/planned topologies; AgentRun chat/panel timelines отображают allowlisted Gateway events с реальным `occurred_at`.
+- Exact-HEAD Pages build/deploy и Graphify успешны для четырёх UI commits: `3f20322f` (#643/#1414), `8d88296f` (#644/#1415), `4bd7df01` (#645/#1416), `6f6914f2` (#646/#1417). Это не подтверждает Gateway/VPS, браузерный E2E, native iPhone Safari или VoiceOver.
+- E2E и quality-sentinel assertions обновлены в репозитории, но Chromium/quality workflow в этой сессии не запускались. Не повышать их до VERIFIED.
+- Следующий пакет: остатки P0 — измерить desktop density (целевой ориентир около 2× компактнее без потери читаемости), проверить сохранение focus/scroll/selection в sidebar, полный responsive 320–1440, меню/dialogs, chat-row actions, composer/forms, RU/EN, theme/motion, accessibility и dead-control sweep.
+- Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.

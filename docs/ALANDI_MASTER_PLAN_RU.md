@@ -3,7 +3,7 @@
 **Единственный полный список работ.** Короткий вход — NOW.md. Внешние источники, плагины и инструменты — INTEL.md.
 **База консолидации (не текущий HEAD):** 2026-11-18 · DorpNay/skills-github-pages · main 42a63dbd6cea81e97e7a577fce159700186771ac. После этого baseline были созданы последовательные docs commits; следующий SHA всегда проверять live.
 
-> Статусы: SPECIFIED — требование; IMPLEMENTED — артефакт/код присутствует; VERIFIED — конкретная проверка на указанном SHA/среде; DEFERRED — осознанная отсрочка; RETIRED — отменено владельцем. Старые DONE-галочки находятся только в конце и остаются историческими. Новые задачи закрываются в активной части лишь после коммита в main; VERIFIED дополнительно требует доказательства проверки.
+> Статусы: SPECIFIED — требование; IMPLEMENTED — артефакт/код присутствует в `main`; PARTIAL — реализована только часть acceptance; VERIFIED — конкретная проверка на указанном SHA/среде; DEFERRED — осознанная отсрочка; RETIRED — отменено владельцем. Старые DONE-галочки находятся только в конце и остаются историческими. Новые задачи закрываются в активной части лишь после коммита в main; VERIFIED дополнительно требует доказательства проверки.
 
 ## 0. Исполнительные правила
 
@@ -35,22 +35,22 @@
 
 ### P0 — Root app / landing UI finish (сейчас)
 
-- [ ] P0.1 Sidebar: облегчить визуальный вес, сделать компактнее и тоньше; сократить высоту строк проектов/чатов примерно в 2–3 раза, не уменьшать удобство touch target и доступность.
-- [ ] P0.2 Создание: прижать Create Project и Create Chat к соответствующим заголовкам секций; не смешивать кнопки с рядами элементов.
-- [ ] P0.3 Collapsible Projects: сворачивание списка проектов должно сразу отдавать место чату; сохранить focus, scroll, selected project и состояние раскрытия.
-- [ ] P0.4 Project Settings: лаконичные логические группы: chat/project context, profile/instructions, memory scope, files/sources/data; удалить дубли, но сохранить все реальные действия и миграции.
+- [~] P0.1 Sidebar: IMPLEMENTED compact headings/rows and independent scrolling; mobile Create/primary rows preserve 44px touch targets. Still measure desktop density and approach ~2× reduction without harming readability (commit `3f20322f`).
+- [x] P0.2 Создание: Create Project и Create Chat размещены компактными `＋`-действиями прямо в заголовках секций, с локализуемыми accessible names (commit `3f20322f`).
+- [~] P0.3 Collapsible Projects: collapse gives the freed height to Chats; expanded list has internal scroll cap. Focus/scroll/selection persistence needs browser acceptance (commit `3f20322f`; E2E added, not run).
+- [~] P0.4 Project Settings: FACT — form is already grouped by Context, Profile, Memory, Sources and Data; no rebuild needed. Mobile density, actions, save/cancel/migrations and duplicate audit remain.
 - [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
-- [ ] P0.6 Mobile: меньшие и более тонкие controls/chrome, адаптивная плотность, безопасные поля, визуальный порядок; не терять доступность 44px основных touch targets.
+- [~] P0.6 Mobile: sidebar/Create targets preserve 44px in the first UI slice; the rest of root app still needs a complete mobile visual pass and real-device check.
 - [ ] P0.7 Responsive: диапазон 320–1440px, portrait/landscape, keyboard/VisualViewport, no horizontal overflow, длинные строки и сообщения.
-- [ ] P0.8 Menus/dialogs: единый lifecycle open/close/Escape/outside click/focus entry/trap/restore/scroll containment/background inert/viewport positioning/cancel.
+- [~] P0.8 Menus/dialogs: FACT — primary Settings/Functions/Project dialogs already have focus lifecycle and keyboard/outside-close in code/E2E. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [ ] P0.9 Chat row actions: rename/move/clone/delete/clear/export; keyboard, touch, confirmation/cancel, устойчивость focus/scroll/active item.
 - [ ] P0.10 Composer: empty/populated/long draft, attachment/context/voice menus, stop/cancel/retry/regenerate, keyboard reposition, no duplicate search/effort controls.
 - [ ] P0.11 Forms: required/validation/error/success/busy/disabled/offline, localized messages, first-invalid focus, safe clearing/retry; никаких ложных connected/green states.
-- [ ] P0.12 Functions IA: четыре панели остаются самостоятельными; группировка и progressive disclosure, честное разделение available/partial/blueprint/unavailable.
-- [ ] P0.13 Deep Research panel: убрать дублирование Quick/Thorough, Internet/offline и общих настроек запроса. Показывать каталоги различных research methods, запуск только при наличии настоящего handler.
-- [ ] P0.14 Agents panel: разные разделы — agent library/profiles, teams/templates, subagents, multi-agent topologies, custom builder, skills/model/capabilities; незапущенное оставить blueprint.
-- [ ] P0.15 Live chat status: реальный run/event strip с timestamp, task, current stage, model/agent/tool/source, progress, result/error/approval/cancel/reconnect; не подменять events анимацией.
-- [ ] P0.16 RU/EN: полный проход labels/help/tooltips/validation/empty/error/disabled/dynamic panels; динамические панели обновляются после смены языка.
+- [~] P0.12 Functions IA: four independent panels exist. Research and Agents now separate active runtime / saved blueprint / planned methods; Skills and Connectors still need contract and visual audit.
+- [x] P0.13 Deep Research panel: duplicate Quick/Thorough and web breadth removed; real `multi_step_evidence_report` (sequential stages on one model) remains selectable, other methods are a non-interactive planned catalogue. No fake multi-agent independence (commit `8d88296ffc1ef86a7df0ed9368e897bc40e9d425`).
+- [~] P0.14 Agents panel: runtime separated from saved role blueprint; read-only catalogue includes specialist profiles, chat-directed subagents, parallel teams, review/debate, coding team, swarm/DAG and custom builder as PLANNED. Actual runtime remains one Gateway worker/concurrency=1; independent subagents/agent library/builder are not implemented (commit `4bd7df01…`).
+- [~] P0.15 Live chat status: chat and panel show allowlisted Gateway events and real `occurred_at` timestamps. Full model/tool/source/progress/error/approval/cancel/reconnect semantics still need integration (commit `6f6914f2…`).
+- [~] P0.16 RU/EN: new Research/Agent sections and Create actions are localized RU/EN; full pass over validation/empty/error/loading/disabled and all dynamic panels remains.
 - [ ] P0.17 Theme/motion/accessibility: light/dark, prefers-reduced-motion и user override, keyboard-only, visible focus, contrast, names/landmarks/live regions.
 - [ ] P0.18 Remove deadwood: tracing всех controls, handlers, duplicated state, stale flags и ненужного payload; удалить только после поиска всех consumers, migration/import/export и regression contract.
 - [ ] P0.19 Performance: измерить payload/startup/render/network; убирать только доказанные DOM scans, sync work и дублирование, не минифицировать и не добавлять build tooling наугад.
@@ -59,10 +59,11 @@
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
 - [ ] P1.1 aCodingi — отдельная same-origin workspace page/route; сохранить нынешний /workspace/ функционал и интегрировать в общий shell/project/chat identity.
-- [ ] P1.2 aNoteBooki — отдельная Notebook page, не popup; показать source/chat/evidence/studio разделы лишь для реально имеющихся функций.
+- [ ] P1.2 aNoteBooki — отдельная Notebook page, не popup; before implementation build current feature-parity map from official Gemini NotebookLM/Notebook references (do not copy closed source); expose only genuinely available source/chat/evidence/studio functions.
 - [ ] P1.3 Обе студии — landscape-first workspace. В portrait на телефоне сохранять desktop-like плотную рабочую поверхность с внутренними скроллами/панелями, а не растянутые мобильные карточки; отдельно проверить landscape.
 - [ ] P1.4 Общие session/navigation/return-to-chat contracts; не создавать отдельный deployment, вторую БД или параллельный app shell.
-- [ ] P1.5 Четыре studio routes в историческом запросе не имеют полного подтверждённого списка имён; не выдумывать два недостающих.
+- [ ] P1.5 Не выдумывать дополнительные studio names/routes и границы, пока владелец не подтвердит их назначение.
+- [ ] P1.6 aCodingi knowledge base: curated starter repositories, reference implementations, code patterns and runnable examples; pin versions and record upstream/source, license, security scan, prerequisites, provenance and compatibility. Index selectively; no indiscriminate huge-repo downloads or untrusted auto-execution.
 
 ### P2 — Чат, модели, режимы, память и данные
 
@@ -70,7 +71,7 @@
 - [ ] P2.2 Матрица Quick/Thorough × search normal/more/offline × strategy × profile × model/provider × attachments × project/memory scope; проверить persisted/migration/import/export/request body/precedence.
 - [ ] P2.3 Internet/tools по необходимости: решение о поиске, вызовах и подключении skills/tools — только по policy и grant; агентам web access отдельно.
 - [ ] P2.4 Model routing и weights: main-only baseline, task-specific helper/specialist evaluation, model residency, hardware budgets, latency/quality/cost and failure route.
-- [ ] P2.5 Context engineering: prompt hierarchy, bounded context, token budget, stale state, cancellation, tool-round/deadline, response schema and provider-compatible multimodal content.
+- [ ] P2.5 Context engineering: prompt hierarchy, bounded context, token budget, stale state, cancellation, tool-round/deadline, response schema and provider-compatible multimodal content. Add user-facing transparency of actions/evidence/status; never expose private chain-of-thought.
 - [ ] P2.6 Memory: global/personal/project/chat/Notebook/research/agent scopes, provenance, user edits, stale facts, retention, deletion, derived data, export, cross-scope leak tests.
 - [ ] P2.7 Cache: browser cache, inference prefix/KV reuse, exact response cache; correctness of scopes/invalidation and strict bypass for tools, streams, media, errors, partial and dynamic research.
 - [ ] P2.8 After landing, have the provider decision session with owner. No assumption about the desired provider set.
@@ -90,6 +91,7 @@
 - [ ] P3.9 Skill lifecycle: import/create, manifest, source provenance/licenses, injection/security scanning, tests/evals, approval, version/diff, enable/disable/export/rollback; scripts inert before approval.
 - [ ] P3.10 Connectors registry: real GitHub/repository and approved file/cloud connectors, least-privilege OAuth/API scopes, encrypted secret lifecycle, consent/revoke, quotas, error and deletion cleanup.
 - [ ] P3.11 Capability/model routing: roles, Skills and models remain separate concerns; a role/Skill never grants permissions.
+- [ ] P3.12 aCodingi controlled local workspace: explicit user-selected directory/files, validated paths/symlinks, scoped read/write grants, diff-first edits, sandboxed execution, resource/egress limits, cancel/rollback and audit. Browser File System Access alone is not a general local shell or OS sandbox.
 
 ### P4 — Notebook, Source Vault, ingestion and conversions
 
@@ -122,6 +124,7 @@
 - [ ] P6.5 Podcast as Notebook artifact, grounded script, TTS, transcript and source links.
 - [ ] P6.6 Audio format/codec/sample rate/duration/hash/voice/model/license/provenance/retention/export contracts.
 - [ ] P6.7 Verify upstreams and licenses including user-mentioned VoiceStudio/Whisper and ambiguous “Dessa” reference; do not assume exact project identity.
+- [ ] P6.8 aSoundi — separate audio studio shell/route after landing; audio generation, editing, voice and podcast runtime only after source/license audit and corresponding ASR/TTS/pipeline acceptance. Do not pull aSoundi into P0 landing.
 
 ### P7 — Provider owner session (строго после landing)
 
@@ -143,12 +146,12 @@
 
 ## 3. Текущий ближайший пакет реализации
 
-- [ ] Первый UI пакет: sidebar row density, adjacent Create actions, collapsible Projects space recovery and project settings hierarchy.
-- [ ] Второй UI пакет: menus and dialogs lifecycle, chat-row action completeness, composer geometry and form validation/error states.
-- [ ] Третий UI пакет: four Functions panels IA and removal of duplicate Research/Agent concepts, real status strip surface contract.
-- [ ] Fourth UI package: RU/EN, mobile 320–1440, typography/spacing/theme/motion/accessibility and dead-control audit.
-- [ ] Only after UI: studio shell routes aCodingi/aNoteBooki; do not widen studio feature scope at this stage.
-- [ ] At end of landing: full package verification and then owner provider consultation.
+- [~] Первый UI пакет: sidebar Create/section headings/space recovery IMPLEMENTED; остаётся довести desktop row density и проверить focus/scroll/selection persistence. Project Settings уже имеют базовую логическую IA; нужна mobile/action acceptance.
+- [~] Второй UI пакет: основные dialog focus/keyboard сценарии уже присутствуют; остаток — полный menu/popover sweep, chat-row action completeness, composer geometry/keyboard и все form states.
+- [~] Третий UI пакет: Research duplicate controls removed, current method selector/catalogue and Agent topology roadmap IMPLEMENTED; осталось довести Skills/Connectors IA и полную real status-strip semantics. См. P0.12–P0.15.
+- [ ] Fourth UI package: RU/EN, mobile 320–1440, typography/spacing/theme/motion/accessibility, browser matrix and dead-control audit.
+- [ ] Only after P0 acceptance: aCodingi/aNoteBooki workspace shells, without broadening studio runtime scope. aSoundi comes later after landing.
+- [ ] At end of landing: run complete package verification and then owner provider consultation.
 
 ## 4. Imported historical registers — open/partial task rows
 
@@ -1893,3 +1896,17 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 ### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — orthogonal chat settings, 2026-10-30
 - [x] PR #121 merged at `f4d880f`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; exact-head Chromium/Quality passed. Native iPhone/VoiceOver remains manual. _(source line 217)_
+
+## 6. Архив реализованных пакетов — 2026-11-18 (append-only)
+
+Этот раздел — хвостовой журнал уже попавших в `main` изменений. Не читать его при обычном ориентировании; новые завершённые пакеты добавлять только сюда. Наличие записи IMPLEMENTED не означает прохождение неисполненного E2E или проверку live runtime.
+
+### P0 UI — sidebar, Research, Agents and operational timeline
+
+- **IMPLEMENTED — Sidebar structure (commit `3f20322f0fd1be539644fd84d798cfbaff3f133e`).** Create Project/Chat actions moved into their own section headings; collapsed Projects returns available space to Chats; desktop row density and mobile 44px touch targets adjusted. Residual density and state-persistence acceptance remains active at P0.1/P0.3.
+- **IMPLEMENTED — Deep Research panel (commit `8d88296ffc1ef86a7df0ed9368e897bc40e9d425`).** Duplicate Quick/Thorough and web-breadth controls removed; one real sequential evidence-report workflow selectable per chat; future research methods are listed without fake launch controls.
+- **IMPLEMENTED — Agents panel IA (commit `4bd7df011b2c21dc64d3d233caba89848fce6a03`).** Honest saved-role blueprint labels and a planned-only topology catalogue. Independent agents/subagents/swarm are not yet implemented.
+- **IMPLEMENTED — AgentRun timeline timestamps (commit `6f6914f2dd3fd506df10d8ba08a55a04dc893a35`).** Chat and Functions timelines use allowlisted Gateway event types and actual `occurred_at` timestamps; no model chain-of-thought or raw event payload is exposed.
+- **VERIFIED — exact-HEAD Pages and Graphify only:** commit `3f20322f`: Pages #643 SUCCESS / Graphify #1414 SUCCESS; `8d88296f`: #644 / #1415 SUCCESS; `4bd7df01`: #645 / #1416 SUCCESS; `6f6914f2`: #646 / #1417 SUCCESS.
+- **NOT RUN:** the updated Chromium E2E and quality-sentinel suites were committed but not executed during this work session. No Gateway live runtime, private VPS/Tunnel/Ollama, iPhone Safari/VoiceOver, audio hardware or model-weight installation was checked.
+- **Next:** finish active P0 residuals; keep P1 studio shells and P7 provider decisions behind the landing gate.
