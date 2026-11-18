@@ -282,18 +282,28 @@ permalink: /
       #userInput { max-height:min(30vh,240px);max-height:min(30dvh,240px); }
     }
     @media (max-width:360px) { #userInput { padding-left:4px;padding-right:4px; } }
-    #sidebar { overflow-y:auto; overscroll-behavior:contain; }
-    #sidebar > :not(#chatList) { flex-shrink:0; }
-    .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:8px;flex:0 0 auto;height:clamp(220px,30vh,280px);min-height:220px;max-height:280px;margin:8px 12px;padding:10px;border:1px solid var(--ui-border);border-radius:16px;background:var(--ui-surface); }
+    #sidebar { overflow-y:auto;overscroll-behavior:contain; }
+    #sidebar > :not(#chatList):not(#chatSection):not(#projectPanel) { flex-shrink:0; }
+    .sidebar-main-section { box-sizing:border-box;display:flex;flex-direction:column;gap:5px;flex:0 0 auto;height:auto;min-height:0;max-height:none;margin:6px 10px;padding:7px;border:1px solid var(--ui-border);border-radius:13px;background:var(--ui-surface); }
+    .sidebar-section-header { display:flex;align-items:center;gap:5px;min-width:0; }
+    .sidebar-section-toggle { flex:1 1 auto;min-width:0; }
+    .sidebar-section-create { display:grid;place-items:center;flex:0 0 34px;width:34px;min-width:34px;height:34px;min-height:34px;padding:0;border-radius:9px;font-size:18px;line-height:1; }
+    #projectPanel { flex:0 0 auto; }
+    #projectPanel:has(#projectNavigationList:not(.hidden)) { flex:0 1 auto;max-height:min(42vh,390px);max-height:min(42dvh,390px); }
+    #projectNavToggle { min-height:34px;padding:0 9px;border-radius:9px;text-align:left; }
+    #projectNavigationList { flex:1 1 auto;min-height:0;max-height:min(34vh,300px);max-height:min(34dvh,300px);overflow-y:auto;overscroll-behavior:contain; }
     #projectNavigation { display:flex;flex:1;flex-direction:column;min-height:0;gap:8px; }
-    #projectNavigationList { flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain; }
-    #chatSection { min-height:220px; }
-    #chatNavToggle { display:flex;align-items:center;justify-content:space-between;width:100%;min-height:40px;padding:0 10px;border-radius:10px;text-align:left; }
-    #chatNavigationContent { display:flex;flex:1;flex-direction:column;min-height:0;gap:6px; }
+    #chatSection { flex:1 1 0;min-height:0;max-height:none; }
+    #chatSection:has(#chatNavigationContent.hidden) { flex:0 0 auto; }
+    #chatNavToggle { display:flex;flex:1 1 auto;align-items:center;justify-content:space-between;min-width:0;min-height:34px;padding:0 8px;border-radius:9px;text-align:left; }
+    #chatNavigationContent { display:flex;flex:1 1 auto;flex-direction:column;min-height:0;gap:4px;overflow:hidden; }
     #chatNavigationContent.hidden { display:none; }
-    #chatNavigationContent > .chat-primary-actions { display:grid;gap:6px;padding:0 2px; }
-    #sidebar #chatList { flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto; }
-    #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:8px 12px; }
+    #chatNavigationContent > .chat-primary-actions { display:grid;gap:4px;padding:0 2px; }
+    #sidebar #chatList { display:flex;flex:1 1 auto;flex-direction:column;gap:3px;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;padding:3px 4px; }
+    #chatList .chat-row { display:flex;align-items:center;gap:4px;min-height:28px;padding:1px 4px;border-radius:9px; }
+    #chatList .chat-row > [data-action="switch-chat"] { min-height:24px;padding:2px 6px;font-size:11px;line-height:1.3; }
+    #chatList .chat-row .chat-row-menu summary { width:26px;height:26px; }
+    #memoryPanel { border:0!important;background:transparent!important;padding:4px 6px;margin:6px 10px; }
     #memoryToolsDetails { border-color:transparent!important;background:transparent; }
     #memoryToolsDetails > summary { padding:7px 9px;font-size:10px;font-weight:600;color:var(--ui-text-muted);border-radius:8px; }
     #memoryToolsDetails > summary:hover { color:var(--ui-text);background:var(--ui-surface); }
@@ -310,22 +320,30 @@ permalink: /
     .memory-item-meta { display:flex;flex-wrap:wrap;align-items:center;gap:5px 10px;padding:6px 8px 0;color:var(--ui-text-muted);font-size:9px;line-height:1.35; }
     .memory-item-actions { display:flex;justify-content:flex-end;gap:6px;padding:5px 8px 8px; }
     .memory-item-actions button { min-height:34px;padding:0 10px;border:1px solid var(--ui-border);border-radius:7px;color:var(--ui-text);font-size:10px;font-weight:650; }
-    @media (max-width:640px) { .memory-item-actions button { min-height:44px; } }
-    .project-create-row,.chat-create-row { display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:44px;padding:0 12px;border:1px solid var(--ui-border);border-radius:11px;font-size:12px;font-weight:650;text-align:left; }
-    .project-create-row { min-height:48px;color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border-color:color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
-    .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border-color:color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
+    @media (max-width:640px) {
+      .memory-item-actions button { min-height:44px; }
+      #sidebar .sidebar-main-section { margin:5px 8px;padding:6px;gap:4px; }
+      #sidebar .sidebar-section-create { flex-basis:44px;width:44px;min-width:44px;height:44px;min-height:44px; }
+      #sidebar #projectNavToggle,#sidebar #chatNavToggle { min-height:40px; }
+      #projectNavigationList .project-nav-select { min-height:40px; }
+      #projectNavigationList .project-row-menu summary.project-nav-settings { flex-basis:44px;width:44px;height:44px; }
+      #chatList .chat-row { min-height:44px;padding:2px 5px; }
+      #chatList .chat-row > [data-action="switch-chat"] { min-height:40px; }
+      #chatList .chat-row .chat-row-menu summary { width:40px;height:40px; }
+    }
+    .project-create-row { color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
+    .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
     .chat-scope-back { min-height:36px;padding:0 10px;border-radius:9px;color:var(--ui-text-muted);font-size:11px;text-align:left; }
-    .project-nav-item { display:flex;align-items:center;gap:6px;padding:4px;border:1px solid var(--ui-border);border-radius:11px;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
+    .project-nav-item { display:flex;align-items:center;gap:4px;padding:1px;border:1px solid var(--ui-border);border-radius:9px;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
     .project-nav-item.is-active { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
-    .project-nav-select { display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;min-height:40px;padding:0 8px;border-radius:8px;text-align:left;font-size:12px;color:var(--ui-text); }
+    .project-nav-select { display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0;min-height:24px;padding:0 6px;border-radius:7px;text-align:left;font-size:11px;color:var(--ui-text); }
     .project-nav-count { flex-shrink:0;color:var(--ui-text-muted);font-size:10px;font-variant-numeric:tabular-nums; }
-    .project-nav-settings { display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:9px;color:var(--ui-text-muted);font-size:22px;line-height:1; }
-    .project-row-menu summary.project-nav-settings { flex:0 0 44px;width:44px;height:44px; }
+    .project-nav-settings { display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:7px;color:var(--ui-text-muted);font-size:18px;line-height:1; }
+    .project-row-menu summary.project-nav-settings { flex:0 0 24px;width:24px;height:24px; }
     .project-nav-settings:hover,.project-row-menu[open] .project-nav-settings { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-row-menu-panel button { min-height:40px; }
     @media (max-width:640px) { .project-row-menu-panel button { min-height:44px; } }
     #projectCreateModal section { background:var(--ui-surface); }
-    @media (max-width:380px) { .sidebar-main-section { height:clamp(220px,34vh,280px); } }
     #chatBox, #memoryBox { color:var(--ui-text); }
     #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
@@ -476,25 +494,29 @@ permalink: /
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" role="navigation" aria-label="Проекты и чаты" aria-hidden="true" inert class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
-    <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-4 border-b border-gray-800 flex justify-between items-center">
+    <div class="sticky top-0 z-20 bg-gray-950/95 backdrop-blur p-3 border-b border-gray-800 flex justify-between items-center">
       <h2 class="font-bold text-sm" data-i18n="sidebarTitle">💬 Проекты и чаты</h2>
       <button type="button" data-action="close-sidebar" aria-label="Закрыть меню" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-800 text-gray-400 hover:text-white text-lg">✕</button>
     </div>
     
     
     <section id="projectPanel" class="sidebar-main-section project-main-section" aria-label="Проекты">
-      <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold project-nav-heading">
-        <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
-      </button>
-      <button type="button" data-action="open-project-create" data-i18n="createProject" class="project-create-row">＋ Создать проект</button>
+      <div class="sidebar-section-header">
+        <button id="projectNavToggle" type="button" data-action="toggle-project-navigation" aria-expanded="false" aria-controls="projectNavigationList" class="sidebar-section-toggle flex items-center justify-between gap-2 rounded-xl text-sm font-semibold project-nav-heading">
+          <span>▣ <span data-i18n="projectsTitle">Проекты</span></span><span id="projectNavChevron" aria-hidden="true">⌄</span>
+        </button>
+        <button type="button" data-action="open-project-create" data-i18n-aria-label="createProject" aria-label="Создать проект" class="sidebar-section-create project-create-row">＋</button>
+      </div>
       <div id="projectNavigationList" class="hidden space-y-1.5" aria-label="Список проектов"></div>
       <button type="button" id="projectRecoveryBackupButton" data-action="download-project-recovery-backup" class="hidden w-full rounded-lg border border-amber-800 bg-amber-950/40 py-2 text-xs text-amber-100">Скачать резервную копию проектов</button>
     </section>
     <section id="chatSection" class="sidebar-main-section chat-main-section" aria-label="Чаты">
-      <button id="chatNavToggle" type="button" data-action="toggle-chat-navigation" aria-expanded="true" aria-controls="chatNavigationContent" class="chat-section-summary text-sm font-semibold">
-        <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span class="flex items-center gap-2"><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span><span id="chatNavChevron" aria-hidden="true">⌃</span></span>
-      </button>
-      <button type="button" data-action="new-chat" data-i18n="newPersonalChat" class="chat-create-row">＋ Новый чат</button>
+      <div class="sidebar-section-header">
+        <button id="chatNavToggle" type="button" data-action="toggle-chat-navigation" aria-expanded="true" aria-controls="chatNavigationContent" class="sidebar-section-toggle chat-section-summary text-sm font-semibold">
+          <span>💬 <span data-i18n="chatsTitle">Чаты</span></span><span class="flex items-center gap-2"><span id="chatSectionCount" class="text-[10px] text-gray-500">0</span><span id="chatNavChevron" aria-hidden="true">⌃</span></span>
+        </button>
+        <button type="button" data-action="new-chat" data-i18n-aria-label="newPersonalChat" aria-label="Новый личный чат" class="sidebar-section-create chat-create-row">＋</button>
+      </div>
       <div id="chatNavigationContent" class="chat-nav-content">
         <div class="chat-primary-actions">
           <button type="button" id="chatScopeBackButton" data-action="clear-project-filter" class="chat-scope-back hidden">← Все чаты</button>
@@ -502,7 +524,7 @@ permalink: /
             <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
           </button>
         </div>
-        <div id="chatList" class="overflow-y-auto p-2 space-y-1.5 text-sm" aria-label="Список чатов"></div>
+        <div id="chatList" class="overflow-y-auto px-1 py-1 text-sm flex flex-col gap-1" aria-label="Список чатов"></div>
       </div>
     </section>
     <a href="{{ '/notebook/' | relative_url }}" aria-label="Open aNoteBooki Notebook" class="mx-3 my-2 flex min-h-11 items-center gap-3 rounded-xl border border-cyan-900/60 bg-cyan-950/20 px-3 py-3 text-sm font-semibold text-cyan-100 hover:bg-cyan-900/30"><span aria-hidden="true">▤</span><span>aNoteBooki</span><span class="ml-auto text-[10px] font-normal text-cyan-200/70">Notebook</span></a>

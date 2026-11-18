@@ -196,39 +196,90 @@ test('global prompt saves explicit owner text and persists an intentional clear'
   await expect(page.locator('#systemPromptInput')).toHaveValue('');
 });
 
-test('Projects and Chats panels stay balanced and create actions remain available when collapsed', async ({ page }) => {
+test('sidebar uses compact section actions and gives collapsed Projects space to Chats', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const now = new Date().toISOString();
+    const projects = Array.from({ length: 8 }, (_, index) => ({
+      id: 'e2e-sidebar-project-' + index,
+      name: 'Sidebar project ' + (index + 1),
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: now,
+      updatedAt: now
+    }));
+    localStorage.setItem('ai_projects_v1', JSON.stringify(projects));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   await expect(page.locator('#sidebar h2')).toHaveText('💬 Проекты и чаты');
-  const desktop = await page.evaluate(() => {
-    const projects = document.getElementById('projectPanel');
-    const chats = document.getElementById('chatSection');
-    return {
-      projectHeight: projects.getBoundingClientRect().height,
-      chatHeight: chats.getBoundingClientRect().height,
-      projectSurface: getComputedStyle(projects).backgroundColor,
-      chatSurface: getComputedStyle(chats).backgroundColor
-    };
-  });
-  expect(Math.abs(desktop.projectHeight - desktop.chatHeight)).toBeLessThanOrEqual(1);
-  expect(desktop.projectSurface).not.toBe(desktop.chatSurface);
+  const collapsed = await page.evaluate(() => ({
+    projectHeight: document.getElementById('projectPanel').getBoundingClientRect().height,
+    chatHeight: document.getElementById('chatSection').getBoundingClientRect().height,
+    projectSurface: getComputedStyle(document.getElementById('projectPanel')).backgroundColor,
+    chatSurface: getComputedStyle(document.getElementById('chatSection')).backgroundColor
+  }));
+  expect(collapsed.chatHeight).toBeGreaterThan(collapsed.projectHeight * 2);
+  expect(collapsed.projectSurface).not.toBe(collapsed.chatSurface);
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toBeVisible();
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toHaveAccessibleName('＋ Создать проект');
   await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
-  await page.locator('#chatNavToggle').click();
-  await expect(page.locator('#chatNavigationContent')).toBeHidden();
-  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toHaveAccessibleName('＋ Новый личный чат');
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  const mobile = await page.evaluate(() => ({
+  await page.locator('#projectNavToggle').click();
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'true');
+  const expanded = await page.evaluate(() => ({
+    projectHeight: document.getElementById('projectPanel').getBoundingClientRect().height,
+    chatHeight: document.getElementById('chatSection').getBoundingClientRect().height,
+    projectListHeight: document.getElementById('projectNavigationList').getBoundingClientRect().height
+  }));
+  expect(expanded.projectHeight).toBeGreaterThan(collapsed.projectHeight + 80);
+  expect(expanded.chatHeight).toBeLessThan(collapsed.chatHeight);
+  expect(expanded.projectListHeight).toBeGreaterThan(100);
+  await expect(page.locator('#chatNavToggle')).toBeVisible();
+
+  await page.locator('#projectNavToggle').click();
+  const recollapsed = await page.evaluate(() => ({
     projectHeight: document.getElementById('projectPanel').getBoundingClientRect().height,
     chatHeight: document.getElementById('chatSection').getBoundingClientRect().height
   }));
-  expect(Math.abs(mobile.projectHeight - mobile.chatHeight)).toBeLessThanOrEqual(1);
-});
+  expect(recollapsed.projectHeight).toBeLessThan(expanded.projectHeight);
+  expect(recollapsed.chatHeight).toBeGreaterThan(expanded.chatHeight);
 
+  await page.locator('#chatNavToggle').click();
+  await expect(page.locator('#chatNavigationContent')).toBeHidden();
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toBeVisible();
+  await page.locator('#chatNavToggle').click();
+  await expect(page.locator('#chatNavigationContent')).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const mobile = await page.evaluate(() => {
+    const projectAction = document.querySelector('#projectPanel [data-action="open-project-create"]');
+    const chatAction = document.querySelector('#chatSection [data-action="new-chat"]');
+    return {
+      projectHeight: document.getElementById('projectPanel').getBoundingClientRect().height,
+      chatHeight: document.getElementById('chatSection').getBoundingClientRect().height,
+      projectAction: { width: projectAction.getBoundingClientRect().width, height: projectAction.getBoundingClientRect().height },
+      chatAction: { width: chatAction.getBoundingClientRect().width, height: chatAction.getBoundingClientRect().height }
+    };
+  });
+  expect(mobile.projectHeight).toBeLessThan(100);
+  expect(mobile.chatHeight).toBeGreaterThan(mobile.projectHeight * 2);
+  expect(mobile.projectAction.width).toBeGreaterThanOrEqual(44);
+  expect(mobile.projectAction.height).toBeGreaterThanOrEqual(44);
+  expect(mobile.chatAction.width).toBeGreaterThanOrEqual(44);
+  expect(mobile.chatAction.height).toBeGreaterThanOrEqual(44);
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#projectPanel [data-action="open-project-create"]')).toHaveAccessibleName('＋ Create project');
+  await expect(page.locator('#chatSection [data-action="new-chat"]')).toHaveAccessibleName('＋ New personal chat');
+});
+  
 test('sidebar is a localized navigation landmark with an announced toggle state', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const sidebar = page.locator('#sidebar');
