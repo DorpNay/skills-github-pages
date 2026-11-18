@@ -5157,6 +5157,52 @@ test('long chat navigation preserves scroll position and restores keyboard focus
   expect(after.scrollHeight).toBe(before.scrollHeight);
 });
 
+
+test('chat row menu supports keyboard traversal and restores focus after clone and delete cancellation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const now = new Date().toISOString();
+    const chats = Array.from({ length: 3 }, (_, index) => ({
+      id: 'e2e-menu-chat-' + index,
+      title: 'Menu chat ' + (index + 1),
+      messages: [],
+      projectId: null,
+      createdAt: now,
+      updatedAt: now,
+      searchMode: 'offline'
+    }));
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats));
+    localStorage.setItem('ai_current_chat_v87', chats[0].id);
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+
+  const row = page.locator('#chatList .chat-row[data-chat-id="e2e-menu-chat-0"]');
+  const trigger = row.locator('.chat-row-menu summary');
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  await expect(row.locator('.chat-row-menu')).toHaveAttribute('open', '');
+  await page.keyboard.press('Tab');
+  await expect(row.locator('[data-action="chat-rename"]')).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(trigger).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(row.locator('.chat-row-menu')).not.toHaveAttribute('open', '');
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await row.locator('[data-action="chat-clone"]').click();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(4);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="e2e-menu-chat-0"] .chat-row-menu summary')).toBeFocused();
+
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#chatList .chat-row[data-chat-id="e2e-menu-chat-1"] .chat-row-menu summary').click();
+  await page.locator('#chatList .chat-row[data-chat-id="e2e-menu-chat-1"] [data-action="delete-chat"]').click();
+  await expect(page.locator('#chatList .chat-row[data-chat-id="e2e-menu-chat-1"] .chat-row-menu summary')).toBeFocused();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(4);
+});
+
 test('long project navigation stays internally scrollable without hiding the chats section', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 480 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

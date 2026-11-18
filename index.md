@@ -2781,6 +2781,8 @@ permalink: /
       const focusedChatId=focusedControl?.dataset.chatId||focusedControl?.closest('.chat-row[data-chat-id]')?.dataset.chatId||'';
       const focusedAction=focusedControl?.dataset.action||'';
       const focusedMenuTrigger=focusedControl?.matches('.chat-row-menu summary')===true;
+      const focusedInMenuPanel=Boolean(focusedControl?.closest('.chat-row-menu-panel'));
+      const hadFocusWithinList=Boolean(focusedControl);
       const previousScrollTop=list.scrollTop;
       list.replaceChildren();
       if(selectedProjectFilterId!==null&&selectedProjectFilterId!==''&&!projects.some(project=>project.id===selectedProjectFilterId))selectedProjectFilterId=null;
@@ -2810,12 +2812,17 @@ permalink: /
       }
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
       list.scrollTop=previousScrollTop;
-      if(focusedChatId){
+      if(hadFocusWithinList){
         const row=Array.from(list.querySelectorAll('.chat-row[data-chat-id]')).find(item=>item.dataset.chatId===focusedChatId);
-        const target=row&&(focusedAction
-          ? Array.from(row.querySelectorAll('[data-action]')).find(item=>item.dataset.action===focusedAction&&item.dataset.chatId===focusedChatId)
-          : focusedMenuTrigger?row.querySelector('.chat-row-menu summary'):row.querySelector('button'));
-        if(target&&!target.disabled)target.focus({preventScroll:true});
+        const fallbackRow=row||Array.from(list.querySelectorAll('.chat-row[data-chat-id]')).find(item=>item.dataset.chatId===currentChatId)||list.querySelector('.chat-row[data-chat-id]');
+        const target=row
+          ? focusedInMenuPanel||focusedMenuTrigger
+            ? row.querySelector('.chat-row-menu summary')
+            : focusedAction
+              ? Array.from(row.querySelectorAll('[data-action]')).find(item=>item.dataset.action===focusedAction&&item.dataset.chatId===focusedChatId)
+              : row.querySelector('button')
+          : fallbackRow?.querySelector('[data-action="switch-chat"]');
+        if(target&&!target.disabled&&!target.closest('[inert]'))target.focus({preventScroll:true});
       }
     }
     function updateMemoryStatusLine(){
@@ -6208,6 +6215,14 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       if (!chats.some((chat) => chat.id === id)) return;
       updateState(null, id); toggleSidebar(false);
     }
+    function focusChatRowMenu(id) {
+      requestAnimationFrame(()=>{
+        const rows=Array.from($('chatList').querySelectorAll('.chat-row[data-chat-id]'));
+        const row=rows.find(item=>item.dataset.chatId===id)||rows.find(item=>item.dataset.chatId===currentChatId)||rows[0];
+        const target=row?.querySelector('.chat-row-menu summary')||row?.querySelector('[data-action="switch-chat"]')||$('appSidebarToggle');
+        if(target&&!target.disabled&&!target.closest('[inert]'))target.focus({preventScroll:true});
+      });
+    }
     function deleteChat(id) {
       if (chats.length <= 1) { alert('Нельзя удалить единственный чат.'); return; }
       if (activeChatId === id) stopGeneration();
@@ -7254,20 +7269,30 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
           case 'new-chat-in-project': control.closest('.chat-row-menu')?.removeAttribute('open');createNewChatInProject(control.dataset.projectId);break;
-          case 'chat-clear': control.closest('.chat-row-menu')?.removeAttribute('open');clearChatById(control.dataset.chatId);break;
+          case 'chat-clear': {
+            const chatId=control.dataset.chatId;control.closest('.chat-row-menu')?.removeAttribute('open');
+            clearChatById(chatId);focusChatRowMenu(chatId);break;
+          }
           case 'clear-chat': clearCurrentChat(); break;
           case 'switch-chat': if(voiceConversationActive)stopVoiceConversation(false);switchChat(control.dataset.chatId); break;
           case 'chat-rename': {
             const menu=control.closest('.chat-row-menu'),returnFocus=menu?.querySelector('summary');
             menu?.removeAttribute('open');openChatActionDialog('rename',control.dataset.chatId,returnFocus);break;
           }
-          case 'chat-clone': control.closest('.chat-row-menu')?.removeAttribute('open');cloneChat(control.dataset.chatId);break;
+          case 'chat-clone': {
+            const chatId=control.dataset.chatId;control.closest('.chat-row-menu')?.removeAttribute('open');
+            cloneChat(chatId);focusChatRowMenu(chatId);break;
+          }
           case 'chat-action-cancel': closeChatActionDialog();break;
           case 'chat-project': {
             const menu=control.closest('.chat-row-menu'),returnFocus=menu?.querySelector('summary');
             menu?.removeAttribute('open');openChatActionDialog('project',control.dataset.chatId,returnFocus);break;
           }
-          case 'delete-chat': control.closest('.chat-row-menu')?.removeAttribute('open');if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(control.dataset.chatId); break;
+          case 'delete-chat': {
+            const chatId=control.dataset.chatId;control.closest('.chat-row-menu')?.removeAttribute('open');
+            if(confirm(getUiLanguage()==='en'?'Delete this chat?':'Удалить этот чат?'))deleteChat(chatId);
+            focusChatRowMenu(chatId);break;
+          }
           case 'export-chat': control.closest('.chat-row-menu')?.removeAttribute('open');exportChatById(control.dataset.chatId);break;
           case 'import-chats': control.closest('.chat-row-menu')?.removeAttribute('open');$('importFile').click();break;
           case 'export-settings-profile': exportSettingsProfile(); break;
