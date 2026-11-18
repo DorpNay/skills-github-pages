@@ -116,3 +116,5 @@
 | 2026-11-18 | Storage failure and rollback messages for chat/project persistence now localize RU/EN through a shared text helper; added an English quota-failure regression that checks rollback and mode restoration. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Project-create modal now localizes its title, close accessible name, field labels/placeholders, memory-scope label/options and submit action in RU/EN. Added a focused localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Project-create modal’s project-limit validation now uses RU/EN copy; EN memory-scope option assertion aligned with the canonical UI_TEXT string. | `index.md`; `tests/e2e/app.spec.mjs` |

@@ -1272,3 +1272,6 @@ def script_lang(s: str) -> str:
 
 
 - [2026-11-18] S-142 | IMPLEMENTED / E2E PENDING — PROJECT CREATE MODAL RU/EN PARITY | Parent main `d26a7cf261be1eaf1db5b6be3f4748c9b9e8b5ac`. Added UI_TEXT-backed RU/EN strings for the project-create title, close accessible name, name/instructions labels and placeholders, memory-scope label/options and submit action. Added a Playwright regression checking both languages. V1 source register now cites W3C WCAG 2.2 SC 3.3.1/3.3.3 and W3C SCR32 as the basis for textual, field-associated validation errors. Updated existing UX backlog and checklist; no runtime/API/dependency change. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue RU/EN copy parity across remaining modals and composer attachment errors.
+
+
+- [2026-11-18] S-143 | IMPLEMENTED / E2E PENDING — PROJECT CREATE VALIDATION COPY PARITY | Parent main `b75ba9f04fccbf22aaa24397948f84fbe09a3f39`. Local project-limit error now localizes RU/EN; corrected the modal localization regression to match the existing canonical English shared-memory option text. Updated existing UX backlog and V1 checklist. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue high-traffic composer and settings copy parity.

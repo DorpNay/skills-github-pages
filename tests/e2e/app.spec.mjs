@@ -474,7 +474,7 @@ test('project create modal labels, options and close name are localized in RU an
   await expect(page.locator('label[for="projectCreateNameInput"]')).toHaveText('Project name');
   await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('placeholder', 'Project name');
   await expect(page.locator('label[for="projectCreateInstructionsInput"]')).toHaveText('Project instructions');
-  await expect(page.locator('#projectCreateMemoryScopeSelect option[value="project-and-global"]')).toHaveText('Project memory + shared memory (if allowed)');
+  await expect(page.locator('#projectCreateMemoryScopeSelect option[value="project-and-global"]')).toHaveText('Project memory + shared memory (when enabled)');
   await expect(page.locator('#projectCreateModal [data-action="close-project-create"]')).toHaveAccessibleName('Close project creation');
   await expect(page.locator('#projectCreateModal [data-action="create-project"]')).toHaveText('＋ Create project');
 });

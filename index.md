@@ -2578,7 +2578,7 @@ permalink: /
       const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100),english=getUiLanguage()==='en';
       if(!name){setProjectNameError('projectCreateNameInput',english?'Enter a project name.':'Укажи название проекта.');input.focus({preventScroll:true});return;}
       setProjectNameError('projectCreateNameInput');
-      if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
+      if(projects.length>=200){showToast(english?'The local project limit (200) has been reached.':'Достигнут предел локальных проектов (200).','error');return;}
       const previousProjects=projects.slice(),previousChats=chats.slice(),previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       const projectChat=createChat((getUiLanguage()==='en'?'New chat · ':'Новый чат · ')+project.name,[],project.id);
