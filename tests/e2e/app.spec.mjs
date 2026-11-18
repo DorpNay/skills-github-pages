@@ -1636,6 +1636,17 @@ test('project instructions, project memory, and project bundles stay scoped to t
   const alphaId=await createProject('Alpha Project','ALPHA_PROJECT_INSTRUCTION_SENTINEL');
   const alphaChatId=await page.evaluate(id=>JSON.parse(localStorage.getItem('ai_chats_v87')||'[]').find(chat=>chat.projectId===id)?.id,alphaId);
   await openProjectSettingsForId(page,alphaId);
+
+  await expect(page.locator('#projectContextGroupTitle')).toHaveText('Контекст чата и проекта');
+  await expect(page.locator('#projectProfileGroupTitle')).toHaveText('Профиль проекта');
+  await expect(page.locator('#projectMemoryGroupTitle')).toHaveText('Память проекта');
+  await expect(page.locator('#projectDataGroupTitle')).toHaveText('Данные проекта');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#projectContextGroupTitle')).toHaveText('Chat and project context');
+  await expect(page.locator('#projectProfileGroupTitle')).toHaveText('Project profile');
+  await expect(page.locator('#projectMemoryGroupTitle')).toHaveText('Project memory');
+  await expect(page.locator('#projectDataGroupTitle')).toHaveText('Project data');
+  await page.locator('#uiLanguage').selectOption('ru');
   await page.locator('#projectMemoryInput').fill('ALPHA_PROJECT_MEMORY_SENTINEL');
   await page.locator('[data-action="add-project-memory"]').click();
   await expect(page.locator('#projectMemoryBox')).toContainText('ALPHA_PROJECT_MEMORY_SENTINEL');
