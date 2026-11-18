@@ -1,5 +1,5 @@
 # aLandi — NOW / единственный ориентир
-**Срез:** 2026-11-18 · **Канон:** DorpNay/skills-github-pages · **Последний известный main:** 1d07f8f01e278fe7bff5b7983fe1021b63483ef9 (проверь live SHA в начале следующей задачи).
+**Срез:** 2026-11-18 · **Канон:** DorpNay/skills-github-pages · **Live SHA/PR/issues/Actions всегда считывать заново; ориентир не хранит доверенный текущий SHA.**
 
 ## Начало каждой задачи
 1. Прочитать только этот файл, строки 1–100.
@@ -71,6 +71,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
 ## Последний checkpoint (не заменяет live проверку)
-- Main: 1d07f8f01e278fe7bff5b7983fe1021b63483ef9.
-- На предыдущем SHA 42a63dbd6cea81e97e7a577fce159700186771ac Pages #44297733956 и Graphify #44297733900 были SUCCESS. Новые docs commits ещё требуют exact-head checks.
-- Следующий шаг: сверить source inventory, проверить references, обновить AGENTS.md как короткие инженерные правила, retire только старые orientation/task-list файлы; затем продолжить P0 sidebar/UI.
+- Не хранить в ориентире динамические SHA/очереди. Последний подтверждённый code snapshot: 42a63dbd6cea81e97e7a577fce159700186771ac, Pages #44297733956 и Graphify #44297733900 SUCCESS; последующие commits были документационной консолидацией.
+- После консолидации проверить exact-head Pages/Graphify и live revision marker; эти checks не подтверждают VPS или native iOS.
+- Следующий пакет после docs gate: P0 sidebar density, adjacent Create actions, collapsible Projects и project settings IA.

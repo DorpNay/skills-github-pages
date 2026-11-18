@@ -1,7 +1,7 @@
 # aLandi — единый мастер-план и реестр реализации
 
 **Единственный полный список работ.** Короткий вход — NOW.md. Внешние источники, плагины и инструменты — INTEL.md.
-**Живой срез:** 2026-11-18 · DorpNay/skills-github-pages · main · HEAD 42a63dbd6cea81e97e7a577fce159700186771ac.
+**База консолидации (не текущий HEAD):** 2026-11-18 · DorpNay/skills-github-pages · main 42a63dbd6cea81e97e7a577fce159700186771ac. После этого baseline были созданы последовательные docs commits; следующий SHA всегда проверять live.
 
 > Статусы: SPECIFIED — требование; IMPLEMENTED — артефакт/код присутствует; VERIFIED — конкретная проверка на указанном SHA/среде; DEFERRED — осознанная отсрочка; RETIRED — отменено владельцем. Старые DONE-галочки находятся только в конце и остаются историческими. Новые задачи закрываются в активной части лишь после коммита в main; VERIFIED дополнительно требует доказательства проверки.
 
@@ -20,7 +20,7 @@
 
 ## 1. Проверенный baseline на момент объединения
 
-- FACT: live main HEAD 42a63dbd6cea81e97e7a577fce159700186771ac; open PRs: 0; open issue #111 (owner/live host release gates) and unrelated #186.
+- FACT at consolidation start: main HEAD 42a63dbd6cea81e97e7a577fce159700186771ac; open PRs: 0; open issue #111 (owner/live host release gates) and unrelated #186. Docs consolidation advanced main afterward.
 - VERIFIED: Graphify run #44297733900 SUCCESS and Pages deploy #44297733956 SUCCESS, both exact HEAD 42a63dbd6cea81e97e7a577fce159700186771ac. Combined status API returned no status records; do not conflate that endpoint with Actions results.
 - FACT: latest 15 commits since stale checkpoint 60de827 entered main; include row/menu focus, validation, persistence, i18n and live panel refresh fixes.
 - FACT: four Functions panels exist: Agents, Deep Research, Skills, Connectors. Connectors honestly reports unconfigured registry; no live connector is implied.
