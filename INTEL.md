@@ -1321,3 +1321,569 @@ No external runtime, UI framework, model, agent platform or new package was inst
 - Offline/training: [Transformers.js](https://huggingface.co/docs/transformers.js/index), [WebLLM](https://github.com/mlc-ai/web-llm), [PEFT](https://huggingface.co/docs/peft/index), [Unsloth](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide). Browser WebGPU is not proof of tested offline capability; weights/data/tokenizer licences separate.
 - Render/eval/skills: [PptxGenJS](https://gitbrent.github.io/PptxGenJS/), [python-pptx](https://python-pptx.readthedocs.io/), [Ragas](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/), [Agent Skills spec](https://agentskills.io/specification), [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/). Candidates only; pin versions and verify licence before adoption.
 - Reuse existing aLandi IndexedDB, Gateway FTS5, Evidence Ledger, AgentRun and Coder Workspace. No dependencies, model weights, paid services or runtime were installed. Research-reported benchmark deltas, eviction timing and skill vulnerability percentages are not adopted as project facts without independent verification.
+
+
+---
+
+# Integrated legacy external-source catalogues (2026-11-18)
+
+The following catalogues were merged here so INTEL.md is the single source/technique list. They are retained as historical research records, not implementation authorization. Candidate status, stale release notes, licenses and benchmarks must be rechecked before adoption.
+
+## Technique and architecture register — migrated from docs/TECHNIQUE_REGISTER_RU.md
+
+# Реестр проектов, техник и инженерных решений aLandi
+
+**Срез источников: 2026-11-16.** Этот документ отвечает на практический вопрос: что именно мы переносим в текущий aLandi, что оставляем справочником, а что сознательно не ставим. Ссылка на проект не означает его установки.
+
+## Базовый принцип
+
+Рабочая архитектура остаётся: статический AI Mobile Agent / GitHub Pages → авторизованный aLandi Lite Gateway → Ollama → одна активная модель на VPS с 8 GB RAM. Инструкции развёртывания находятся в [ALANDI_IMPLEMENTATION_GUIDE_RU.md](ALANDI_IMPLEMENTATION_GUIDE_RU.md). UI и существующий код не переписываются на новый framework без измеримого основания.
+
+## Реестр решений
+
+| Проект | Что это | Что заимствуем / решение |
+|---|---|---|
+| [Harness²](https://github.com/google-research/harness2) | Исследовательский harness с циклом Propose–Probe–Compose и проверкой гипотез. | **Заимствовать bounded loop:** сначала сформулировать гипотезу/план, выполнить небольшой probe, проверить результат, затем compose. Не запускать полноценный benchmark harness и его executor на production VPS; сетевые полномочия и sandbox настройки проверять строго. |
+| [Claudex Loop](https://github.com/chaseai-yt/claudex-loop) | Workflow для структурированного планирования, реализации, review и проверки. Ты писал «cloudex-loop»; ближайший проверенный проект с таким названием — Claudex Loop. Если подразумевался другой URL, его надо сверить отдельно. | **Взять как процесс, не как runtime:** каждый значимый patch должен включать goal → probe → минимальный diff → независимую проверку → тесты → отчёт. |
+| [Everything Claude Code / ECC](https://github.com/affaan-m/ECC) | Набор coding-agent skills, rules, hooks, TDD/review/evaluation и compaction patterns. | **Избирательно применять TDD, security review, context compaction и verified learning.** Не устанавливать весь Claude-specific hook/MCP комплект в браузерный сайт или VPS; не переносить чужие project-specific инструкции без аудита. |
+| [Ponytail](https://github.com/DietrichGebert/ponytail) | Набор prompt/practices вокруг простых изменений и отказа от лишней сложности. | **Принять YAGNI и минимальные диффы:** не добавлять framework/service без подтверждённой нужды; всегда указывать, какое измерение или тест улучшает изменение. |
+| [Agent Skills specification](https://agentskills.io/specification) | Формат для навыков с кратким описанием и раскрываемыми по требованию инструкциями. | **Применять progressive disclosure.** Сейчас сайт имеет собственные on-demand assets в папке skills и загружает их только в Deep / Research; сохранить текущий контракт и regression tests. Не менять расширения/формат всех навыков массово без выгоды для загрузчика. |
+| [Hono](https://github.com/honojs/hono) | Лёгкий TypeScript web framework для нескольких JavaScript runtime. | **Не переносить backend на Hono:** текущий FastAPI gateway уже реализован, покрыт контрактными тестами и работает совместно с Ollama. Переписывание добавит риск и не даст доказанного выигрыша на 8 GB. |
+| [Public APIs каталог](https://github.com/public-apis/public-apis) и [public-api сервер](https://github.com/davemachado/public-api) | Два разных проекта с похожими именами: первый — каталог открытых API, второй — служба для каталога. | **Только справочник разработчика.** Не добавлять как обязательный runtime или зависимости inference. Уточнять точный upstream, когда пользователь называет просто «Public API». |
+| [Free Programming Books](https://github.com/EbookFoundation/free-programming-books) | Каталог бесплатных учебников/курсов программирования. | **Оставить источником обучения**, не скачивать целый каталог на сервер и не подмешивать книги к системному prompt. |
+| [Developer Roadmap](https://github.com/kamranahmedse/developer-roadmap) / [roadmap.sh](https://roadmap.sh) | Учебные дорожные карты по разработке и технологиям. | **Использовать для плана освоения**, не runtime-компонент приложения. |
+| [OpenMAIC](https://github.com/THU-MAIC/OpenMAIC) | Отдельная multi-agent interactive classroom платформа. Код в upstream помечен MIT, но проект требует свежий Node/pnpm, PostgreSQL и provider credentials/long-running app. | **Не устанавливать на базовый VPS:** дублирует существующий продуктовый интерфейс, добавляет БД и сервисы, требует отдельного сценария «виртуальный класс». Вернуться только при явной потребности. |
+| [Every App](https://github.com/every-app/every-app) | Платформа для персональных приложений на инфраструктуре Cloudflare, а не кэш Ollama. | **Не подключать в текущем runtime.** Изучать, если появится отдельная задача быстро строить изолированные персональные приложения; не путать с Cloudflare Tunnel. |
+| [Agent-Reach](https://github.com/Panniantong/Agent-Reach) | Установка/набор capability adapters для доступа к research-площадкам и интернет-источникам; часть каналов зависит от аккаунтов/cookies и может ломаться. | **Не запускать installer по умолчанию.** Добавлять только отдельный source adapter с ясным allowlist, проверкой URL/SSRF и отдельными секретами. Текущие поиск/evidence trail сохраняются. |
+| [Trail-Code](https://github.com/trailhq/Trail-Code) | Инструменты контекста кодовой базы/графа и долговременных project learnings. Это не модель и не кэш ответов LLM. | **Dev-only эксперимент**, если реальная навигация по коду станет бутылочным горлышком. Не ставить как постоянный server service; не принимать его findings автоматически в правила безопасности. |
+| [Cactus Needle](https://github.com/cactus-compute/needle) | Маленькая модель/инструментарий для ограниченных structured extraction/tool-call задач, не универсальная code LLM. | **Только необязательный benchmark** для локального extraction/tool routing. Проверить точный артефакт/лицензию, language support и telemetry; upstream предусматривает opt-out через NEEDLE_TELEMETRY=0 и DO_NOT_TRACK=1. Не заменяет Qwen3.5 основной диалог. |
+| [AirLLM](https://github.com/lyogavin/airllm) | Layer-wise/offload inference, в основном интересен экономией GPU VRAM за счёт дискового ввода-вывода. | **Не считать магическим способом ускорить большие модели на CPU.** Не ставить в текущий 8-GB runtime; только отдельное измерение на GPU host при конкретной задаче. |
+| [Open-Generative-AI](https://github.com/Anil-matcha/Open-Generative-AI) | Студия генерации изображений/видео с множеством подключаемых провайдеров. Это не единый локальный LLM runtime. | **Отложить до отдельного Image/Video feature.** Явно различать локальное исполнение и стороннюю генерацию; проверять лицензию моделей и условия API. |
+| [dsh-our-free-model](https://github.com/ebony-vinyl/dsh-our-free-model) | Плагин DeepSeek Harness с публичными внешними gateway/модельными каналами и локальным relay. | **Не подключать внешние бесплатные каналы к приватным данным.** «Free» не гарантирует приватность, SLA или неизменность условий upstream. Заимствовать только приёмы актуализации каталогов/обнаружения ошибок провайдера. |
+| [CLI-Anything](https://github.com/HKUDS/CLI-Anything) | Метод разработки agent-friendly CLI с help, JSON output, понятными exit codes и тестированием end-to-end. | **Применить к будущим административным/benchmark CLI:** фиксированный allowlist команд, валидируемые аргументы, dry-run, JSON и exit status. Не выдавать обычному браузерному агенту shell-доступ. |
+| [RAG-Anything](https://github.com/HKUDS/RAG-Anything) | Multimodal RAG, который раскладывает документы на текст/таблицы/формулы/картинки и сохраняет связи содержимого. Полная установка может требовать тяжёлые парсеры и системные зависимости. | **Принять архитектуру parser → структурные фрагменты → provenance page/bbox → retrieval → citations.** Полный runtime не ставить на 8 GB до benchmark реального корпуса и памяти. |
+| [Pliny / L1B3RT4S](https://github.com/elder-plinius/L1B3RT4S) | Prompt-jailbreak / «liberation» примеры; это не runtime и не безопасная агентная система. | **Не включать jailbreak-тексты в system prompt/skills.** Можно держать безопасные отрицательные prompt-injection тесты, доказывающие, что документы не меняют правила инструментов/авторизации. |
+| [taste-skill](https://github.com/Leonxlnx/taste-skill) | Frontend design skill: сначала осмотреть существующий продукт, задать art direction, проверить реальные изображения/атрибуцию и браузерные screenshots. | **Взять только audit-first QA:** не редизайнить страницу, если это не требование; проверить desktop/mobile, keyboard/focus, reduced motion, затем исправить 1–3 конкретных дефекта. |
+| [AI Engineering from Scratch](https://github.com/rohitg00/ai-engineering-from-scratch) | Учебный инженерный курс с исполняемыми задачами и retrieval/agent упражнениями. Это наиболее вероятный upstream для упоминания «AI / FROM SCRATCH», но имя в исходном запросе было неоднозначным. | **Build → run → test → benchmark → compare.** Сохранять runnable artifact и измеряемый результат, не переносить весь учебный runtime в проект. |
+| [Moonshine Voice](https://github.com/moonshine-ai/moonshine) | On-device speech toolkit, отдельный от текущей задачи aLandi gateway. | **Не часть текущего плана развёртывания.** Рассматривать позднее только если пользователь отдельно запросит голосовой интерфейс и есть точная модель/лицензия для нужного языка. |
+
+## Уже сделано в aLandi
+
+- Сохраняется текущий статический AI Mobile Agent и его режимы; новый framework не внедряется.
+- Существующие on-demand skills и evidence trail остаются частью приложения.
+- В правильном репозитории реализуется preset aLandi Self-hosted Gateway без скрытого fallback на Gemini при пустом custom Base URL.
+- Добавляется точный SQLite L2 cache: 900 секунд TTL, ограничение размера/количества, ключ с hash-scope credentials, только завершённый plain text с явной низкой temperature; stream, tools, multimodal/structured content, ошибки/partial outputs и динамические Research stages обходят его.
+- Добавляются тесты и deployment guide. Наличие в реестре не означает, что внешние модели/сервисы были установлены или что VPS уже настроен.
+
+## Очерёдность внедрения
+
+1. Проверить версию и развернуть базовый gateway/Ollama, не трогая рабочие существующие маршруты.
+2. Проверить auth, CORS, allowlist, body/timeouts, cancellation и ресурсный baseline.
+3. Проверить L0 / L1 / L2 как разные механизмы и запустить miss-hit-bypass тесты.
+4. Измерить один основной model tag на собственном golden set.
+5. И только после подтверждённой необходимости планировать OCR/RAG, дополнительные runtime или графовую память.
+
+
+## Дополнение 2026-10-21: память-граф и bounded agent teams
+
+- [64 роли, память, проекты, документы и RAG](ALANDI_AGENT_MEMORY_KNOWLEDGE_RU.md)
+- [Аудит OpenMAIC, Paperclip, HyperFrames, RuFlo, Coucou, OpenShell, Impeccable, DBX, Grok Register, Jev Ultrafast, Utopia, FreeDomain, witr, PinchTab и Vert](TECHNOLOGY_AUDIT_2026-10-21_RU.md)
+- Взяты принципы: bounded fan-out, role/task registry, budgets, approval/review gates, eval-gated learning, temporal facts, indexed browser actions, deterministic video rendering и provenance-aware RAG.
+- Полные сторонние runtime не добавляются в базовый 8-GB stack. Vert не интегрируется без точного upstream; Grok Register отклонён по причине массовой регистрации и обхода anti-abuse.
+
+
+## Дополнительный аудит источников (2026-10-27)
+
+Построчные решения по списку пользователя находятся в [OPEN_SOURCE_TRIAGE_RU.md](OPEN_SOURCE_TRIAGE_RU.md). Основные технические выводы:
+
+- **Graphify — пилот для разработки:** построить локальный graph/report и проверить, сокращает ли он время поиска связей в клиенте, gateway, memory, tests и конфигурации; generated output не добавлять в runtime до измерения пользы.
+- **GitIngest — инструмент контекстного снимка:** полезен для ограниченного текстового обзора репозитория; не передавать secrets/private source без проверки обработки данных.
+- **GitMCP — инструмент чтения upstream:** подключать адрес конкретного репозитория, а не generic endpoint по умолчанию; MCP results не считать доверенными инструкциями.
+- **GitReverse — пропустить для навигации:** синтетический prompt не даёт проверяемого dependency graph.
+- **DevOps-каталоги, Compose/Kubernetes examples, public APIs и MCP server lists — справочники, не runtime-зависимости.** Шаблоны переносить по одному после license/security review и тестов.
+- **Модели, neuron steering, аудиоразделение, semantic cache и disk-backed state — эксперименты.** Не менять активную модель или автоматическое поведение без golden eval, ресурсных замеров целевого хоста и rollback.
+- Точные upstream для неоднозначных имён и концептуальных строк отмечены как «уточнить» в triage; не угадывать по похожему имени.
+
+
+## Graphify — решение после повторного чтения upstream (2026-10-27)
+
+- Назначение: dev-only code navigation/cross-file graph; не runtime feature.
+- Основание: upstream README/quickstart/pyproject.toml; Apache-2.0, package `graphifyy`, CLI `graphify`, Python >=3.10; local tree-sitter parsing for code; semantic pass for docs/media may use a model.
+- Риски: substantial dependency footprint, fast-moving release, model usage for docs/media, stale generated output. Pin version and exclude secrets/build output.
+- Решение: **pilot verified, dev-only**. Main run `40637941303` built a code-only graph with 988 nodes, 2780 edges and 60 source files (224 inline UI JS nodes, 14 SQL schema nodes, 23 RAG module nodes); ten focused queries returned graph neighborhoods. PR #76 added source-change and weekly triggers. Artifacts expire after seven days and are not committed or loaded at runtime. Limits: some query output truncates at 700 tokens, nine Playwright E2E files yielded no symbols, and community labels are generic. See `docs/ALANDI_ARCHITECTURE_MAP_RU.md`; session continuity is recorded only in root `NOW.md`.
+
+
+## Local helper model for project-memory compression — prototype
+
+- A small model is used only after a manual click to propose durable project-memory candidates; it does not plan tasks, change active chat model or automatically alter memory.
+- The browser cannot choose a model. ALANDI_HELPER_MODEL is an exact operator-configured Ollama tag and blank by default.
+- Boundaries: max 80 source facts, per-fact 600 chars, combined input 512–8000 chars, at most 12 candidates of 240 chars, timeout 1–180 s, same inference semaphore, keep_alive=0, no-store response, secret-like input/output filtering.
+- Each candidate is rendered via textContent and saved only by explicit user action after rechecking the active project and duplicates.
+- Status: merged in PR #69 at `4c9096999fbb3e1265150c420b136066c555285b`; exact-head Gateway/Quality/Chromium/published-site/provenance passed. Live helper model inference remains unverified; the endpoint stays disabled unless the operator configures an exact local Ollama tag.
+
+## Synthetic local-model smoke harness — engineering tool, not model selection (2026-10-30)
+
+- Recovered as `gateway/evals/run_local_model_benchmark.py` with tests in `gateway/tests/test_local_model_benchmark.py`.
+- Fixed RU/EN/TH prompts; request count, timeout and response size are bounded; API key is read only from `ALANDI_API_KEY`; redirects are refused to prevent forwarding a bearer token; plain HTTP is restricted to loopback.
+- Success means only a non-empty API response. This is not a correctness score, model-quality benchmark, RAM/PSS measurement or first-token benchmark. Gateway Tests passed on the exact PR #123 code head; target-host execution remains a separate gate.
+- No helper model is selected or wired by this tool. The main model remains responsible for planning, complex reasoning and synthesis; an optional small helper may only perform bounded tasks after shared RU/EN/TH evaluation and resource measurements.
+
+## Reciprocal Rank Fusion for scoped RAG — merged baseline (2026-10-28)
+
+- PR #77 merged at `91557e4eab1b122341bed578cdf4775ff867007f`; combines FTS5/BM25 and lexical-concept graph candidate rankings using RRF with `k=60` and deterministic tie-breaks.
+- No schema/API/dependency change; source/page provenance and scope filtering remain intact; `ALANDI_RAG_ENABLED=false` stays the default.
+- The score is only for ordering, not confidence/probability. Automated tests passed on exact PR head; no production-quality improvement is claimed until a labelled >=50-query golden set compares Recall@5, MRR/nDCG, citation correctness, latency and peak RSS.
+- Full criteria: `docs/RAG_RRF_EVALUATION_RU.md`, `EVALS.md` EV-RAG-RRF-001, `DECISIONS.md` D-018.
+
+
+## 2026-11-08 — обновление техник после нового upstream-прохода
+
+| Technique | Status | Применение в aLandi | Ограничение / gate |
+|---|---|---|---|
+| **Durable execution semantics** (Conductor / Temporal) | ACCEPT — principles only | Idempotency keys for side effects; explicit timeout/retry/cancellation; persisted checkpoints for long jobs; durable approval state; recovery drill | At-least-once means a tool can execute twice; no runtime adoption without real long-running workload and storage/ops budget |
+| **Single-instruction + task-routing manifest** | ACCEPT | One concise `AGENTS.md`; `PROJECT_ORCHESTRATOR_RU.md` routes to one system map, one task register, one source inventory and relevant validators | Do not create another agent runtime, routing database or parallel backlog |
+| **Modality-specific RAG probes** | ACCEPT | Add image-only/table-only questions, layout/table integrity checks, page/bbox lineage and citation support tests; select OCR by document class (born-digital vs scanned) and profile per-stage latency | Docling 2.148.0 vendor run: 6.6 s/page default vs 1.8 no-OCR on 4 vCPU / 15 GB; scanned OCR ~15 s/page. This is not a target-host benchmark; parser success does not prove retrieval or answer correctness |
+| **Local ASR candidate evaluation** | PILOT CANDIDATE | Benchmark Qwen3-ASR-0.6B int8 via sherpa-onnx against the current baseline for Russian/Thai; record WER/CER, RTF, p50/p95 latency, peak RSS, cancellation | Verify exact model artifact and license; no install/promotion until target hardware and privacy tests pass |
+| **Inference runtime tuning** | SOURCE-VALIDATED | Use llama.cpp docs for KV cache, batching, thread/CPU affinity and speculative decoding comparison | Keep Ollama baseline; only switch after same-model/same-hardware benchmark and rollback |
+| **Code graph selection** | PILOT CANDIDATE | Graphify stays current dev-only baseline; exclude vendored upstream snapshots from `.graphifyignore`. Current PR #169 graph: 1,122 nodes / 3,014 edges / 69 source files after vendor exclusion. CodeGraph (Apache-2.0, local SQLite/tree-sitter, 34 MCP tools, architecture CI gate) merits a disposable 10-task comparison | Upstream zero-telemetry claim needs code review; compare task accuracy, source coverage, index/update time and peak RAM; no runtime dependency |
+| **Model/source artifact provenance** | ACCEPT | Keep manifest, upstream revision/tag/full commit, exact license, artifact hash, size, downloader and verification procedure in Git. Vendored source snapshots require LICENSE + UPSTREAM-MANIFEST; exclude third-party trees from first-party Graphify indexing | Never place model weights in Pages source tree; use model cache/registry or governed Release assets if legal and within limits. Git blob SHA-1 proves file identity, not a substitute for SHA-256 on downloaded binaries |
+
+
+## Дополнение 2026-11-08 — Evidence-driven main-first orchestration
+
+**Статус: ACCEPTED AS OPERATING METHOD; runtime adoption not implied.** Source batch is recorded in INTEL.md.
+
+- **Session Sync Capsule:** one batched live snapshot of main SHA/subject, all open PR IDs/title/base/head/draft/mergeability, open issues, selected exact-head check runs/statuses, and current Pages deployment. Treat snapshot as ephemeral until logged; never route by remembered PR number.
+- **Single active writer / parallel read-only:** one PR branch may receive dependent writes; independent source/code reads may fan out. Each bounded slice completes exact-head checks → guarded merge → main integrity/quality → Pages live verification → immediate closure/disposition before selecting next slice. If the slice is blocked, checkpoint the reason and exact next action; do not open a speculative successor PR.
+- **Durable handoff record:** append every complete owner request and material action to root `NOW.md`, including exact paths, parent/result SHA, commands/checks, limits, rollback and next step. Update K.5/PROJECT_STATE/snapshot/VOLLEY_LOG only at material milestones. No parallel handoff files, transcripts or private reasoning.
+- **Graph-aided inspection:** use Graphify/code graph only when a code-level task needs caller/test discovery; verify findings against exact source and tests. Mark inferred links and graph limitations; never treat graph as proof. It is not a startup orientation step.
+- **Acceptance as executable constraint:** for owner invariants, add structural/freshness/E2E checks where stable; root AGENTS is concise routing, deeper canonical docs hold detail. Never weaken test assertions for a green run.
+- **Decision threshold for durable workflow engines:** continue the current simple deterministic pipeline unless measured long-running jobs, recovery/approval requirements and injected-failure tests demonstrate a need; compare operational footprint and idempotency semantics before adopting Temporal/LangGraph/Restate/DBOS.
+- **Knowledge loop:** batch ~300 source catalog by themes, cross-check primary source and failure evidence, capture version/license/provenance and aLandi-fit decision in existing INTEL/triage/technique/DECISIONS/EVALS destinations. Acquire artifacts only after isolated pilot, baseline comparison, integrity checks and owner-visible approval.
+
+**Primary source anchors:** OpenAI Agents SDK runner/multi-agent docs; Temporal durable execution docs/blog; LangGraph workflows/checkpointers; GitLab AI-assisted development handbook; Graphify architecture docs; GitHub exact-head status/merge queue/Pages docs; OWASP Agentic Top 10 2026; NIST AI RMF GenAI Profile. URLs and evidence summary are in INTEL.md.
+
+
+## 2026-11-08 — typed worker capability contract and inert Skill boundary
+
+**Status: SPECIFIED / safety contract; independent runtime remains DEFERRED.** Detailed canonical contract: `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`; lifecycle/Builder design: `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`.
+
+- Each worker task must receive a minimal typed packet: run/task/parent IDs, idempotency key, objective, bounded input refs, output schema, model policy, deadline, token/tool/output budgets, explicit read/write/network/memory/execute scopes, approval, cancellation and evaluation contract. No implicit full chat/project history.
+- Effective capability is the intersection `task_request ∩ agent_profile ∩ user_grant ∩ environment_policy`; empty intersection fails closed, never falls back.
+- A Skill is inert instructions/resources, not credentials or a policy grant. Import/preview does not execute scripts; provenance/license, prompt injection, secrets, path traversal, executable/dependency inventory, version/hash and eval review precede admission.
+- Binding a Skill to a worker pins a specific version and minimal excerpts; Skill instructions cannot widen tool allowlists, bypass approvals, increase budgets or reveal credentials.
+- Blueprint-only state may be edited/saved; it must not display a Run/worker status unless an independently permissioned, traced, cancellable and eval-gated runtime exists.
+
+
+## 2026-11-08 — Graphify UI Surface bridge (CI-only)
+
+**Status: IMPLEMENTED IN PR #169 branch / exact Graphify workflow verification pending.** `scripts/graphify_ui_surface.py` adds deterministic CSS selector, DOM ID/class and JavaScript selector/mutation relationships to the Graphify JSON graph. It uses stable SHA-256-derived node IDs, source-file/line provenance, `tinycss2==1.4.0` pinned in the workflow, and explicit `EXTRACTED` vs `INFERRED` confidence. Exact simple-selector matches score 0.65; token-overlap candidates score 0.25; class mutation edges score 0.35. The graph labels are candidates, not proof of runtime/computed style. Unit tests cover deterministic relations, provenance, confidence bounds and selector mismatches. The Graphify workflow runs the unit test before graph extraction and executes the bridge only on the disposable tracked-file staging graph; script/test are excluded from the graph input itself.
+
+## 2026-11-08 — research intake disposition
+
+The PR #131/#125 research-doc sweep added 103 distinct URL refs to `INTEL.md` as **prior-research candidates / current upstream recheck pending**. They are not promoted to adopted techniques. Source admission still requires current version, exact upstream pin, license/provenance, security and hardware/storage fit, measurable baseline, reproducible evaluation and rollback. The single-source catalog policy is preserved; the duplicate 88-URL `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a second register.
+
+
+## 2026-11-08 — AgentRun SQLite state store prototype (PR #169 candidate)
+
+**Status: PROTOTYPE / offline persistence only; exact Gateway CI pending.** `gateway/agent_runtime/store.py` provides a bounded local SQLite run/task state journal with idempotency keys, explicit run transitions, typed metadata schemas, task leases/fencing, retry budgets, cancellation, immutable event records, scope checks, SQLite busy timeout/foreign keys/secure_delete and restrictive DB file mode. It deliberately does not call models, execute tools, grant capabilities, schedule workers, coordinate multiple hosts, provide sandbox/approval enforcement or guarantee exactly-once external side effects. Backup/restore and retention are operationally out of scope; use SQLite online backup or quiesced consistent copies. The tests are isolated offline in `gateway/tests/test_agent_run_store.py`. This is a storage building block; Agent Blueprint/Worker Capability contract remains separate and DEFERRED until runtime policy, trace, approval, recovery and adversarial evals are implemented.
+
+
+## 2026-11-16 — owner-directed agent, model and tooling review
+
+**Status: SOURCE-VALIDATED / design dispositions recorded; no runtime or dependency adopted.** This work maps to the existing K.5 programme (Deep Research, Agents, Skills, Coder, modes/efficiency and model/runtime decision pack). It creates no parallel backlog.
+
+| Source | Evidence-backed capability | aLandi disposition |
+|---|---|---|
+| [Ternary Bonsai 2 2B](https://huggingface.co/prism-ml/Ternary-Bonsai-2-2B-gguf) | Same 1.88B model in three packings: PTQ1_0 429,183,456 bytes (SHA-256 pinned), PQ2_0 0.52 GB (official default), Q2_0 0.55 GB (upstream llama.cpp b11556+); PTQ/PQ require PrismML fork. | **CANDIDATE / ARTIFACT STAGED.** Actions artifact #14192531688 verified (429,196,247 bytes; archive SHA-256 41ced309f0ff10e4bd9b0c464bf3fe42013e60e4d27cd308666744618c18655a; expires 2026-12-16). Embedded model file SHA-256 36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa. 430 MB is a packing, not a smaller parameter model. Generic local OpenAI-compatible adapter and same-hardware RU/EN/TH eval required before install/selection. |
+| [Needle 2](https://huggingface.co/Cactus-Compute/needle2) | 45M, 14 MB binary, ~28 MB RAM; constrained tool JSON, confidence gate, top-five tool retrieval; v2.0.4 has a repeat-initialization crash report. | **DEFER.** Model card does not establish RU/EN/TH quality; benchmark only in an isolated process after lifecycle and schema-size tests. |
+| [ghost-infer](https://github.com/affifuddin-hazam/ghost-infer) | Apache-2.0 Rust GGUF runtime, OpenAI-compatible API, NVIDIA-GPU-first; upstream benchmark uses 8 GB RTX 2060 SUPER with 24 GB host RAM. | **RESEARCH ONLY.** Current 8-GB VPS has no verified GPU/host memory fit. |
+| [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) / [Codex](https://github.com/openai/codex) | Specialist-as-tool vs handoff, guardrails, approvals, sessions/traces/resume; local coding harness and workspace lifecycle. | **PATTERNS ONLY.** Extend existing AgentRun/SQLite and capability contracts; do not add a second orchestrator or grant shell from a role name. |
+| [Stakpak](https://github.com/stakpak/agent) | Warden network guardrails, secret substitution, isolated subagents, async task/progress lifecycle. | **PATTERNS ONLY.** Reuse deterministic tool/network policy, secret redaction, per-worker scopes and recovery. |
+| [Cloudroom](https://github.com/davidondrej/cloudroom) | One sandbox/branch per thread and persistent event history; README/docs conflict on sandbox admin rights; approval prompts are not used by default. | **PATTERNS ONLY.** Learn isolation/event model; reject no-approval default and resolve upstream permission claims before reuse. |
+| [Kiri](https://github.com/LeeCheneler/kiri) and [control plane](https://github.com/Yeshwanthyk/kiri) | Local-first workspace, allow/ask/off permissions, worker delegation, keyboard-first session control. | **UX/WORKFLOW REFERENCE.** Two distinct projects; no dependency. |
+| [Obscura](https://github.com/h4ckf0r0day/obscura) | Apache-2.0 V8/CDP/MCP browser; private-network blocking, DNS checks, token/origin/resource guards. | **DEFER browser adapter.** Only isolated worker with URL/SSRF policy and no ambient credentials. |
+| [Memorilla](https://github.com/snap-stanford/memorilla) | Apache-2.0 latent query-conditioned memory; documented H100 80-GB CUDA workflows and GRPO training. | **RESEARCH CANDIDATE.** Compare idea against current MemoryManager/RAG; not suitable for current 8-GB host training. |
+| [React Bits](https://github.com/DavidHDev/react-bits) | Animated React components; MIT + Commons Clause restricts redistribution/porting of components. | **VISUAL REFERENCE ONLY.** Implement original vanilla HTML/CSS/JS; no copying/porting or React dependency. |
+| [OpenAI support-agent demo](https://github.com/openai/openai-support-agent-demo) | MIT Next.js example of File Search, suggested actions and human-in-the-loop review. | **FLOW REFERENCE ONLY.** Exact chat-demo identity remains ambiguous; no Next.js migration. |
+| [KL divergence](https://spinningup.openai.com/en/latest/algorithms/trpo.html) / [critic-free RL](https://arxiv.org/html/2605.08666) | Policy-divergence constraint and GRPO/RLOO-style training methods. | **TRAINING/EVAL RESEARCH ONLY.** Neither is a runtime agent or independent reviewer. |
+| VoxCPM2 | Owner explicitly asked to defer voice-context review. | **DEFERRED.** |
+
+### aLandi-native agent execution design direction
+
+- One coordinator owns the run, task graph and final result. It may call a specialist as a bounded tool (manager retains control) or hand off only when the specialist should own the rest of the turn.
+- Every worker receives a minimal typed packet: run/task/parent IDs, idempotency key, objective, bounded input references, output schema, model policy, deadline, token/tool/output budgets, explicit read/write/execute/network/data scopes, approval, cancellation and eval contract. Never pass the full conversation by default.
+- Effective capability is the intersection of task request, agent profile, owner grant and environment policy; an empty intersection fails closed. Imported Skills remain inert and cannot grant permissions.
+- Parallel workers require separate execution contexts, bounded fan-out/concurrency, queue leases/fencing, durable events/checkpoints, retry/idempotency, cancellation and recovery. One model slot remains the baseline until a measured need justifies more.
+- Independent review requires an actually independent verifier or deterministic checks. A same-model critic is useful structured feedback but is not independent evidence.
+- Coder requires an isolated workspace manifest, patch preview, command/test allowlist, approval tickets bound to exact arguments, redacted logs, recoverable file operations and a tested sandbox. OpenShell v0.1.8 remains staged, not installed.
+- Model routing is task-based: deterministic code first; a small model only for bounded classification/extraction/reranking/tool selection; the main model for complex planning/synthesis. Do not assign one model to each of 64 role labels.
+
+### Next implementation order
+
+1. Correct the two stale Research Trace E2E assertions on exact main and restore green Quality/Chromium.
+2. Finish explicit Research Trace → EvidenceLedger save using only returned source-quote IDs; then add provider adapters and resumable run state.
+3. Extend existing AgentRun to a real bounded specialist/worker lifecycle; add isolated contexts, task graph, leases, event resume, approval and failure-injection tests before exposing parallel modes.
+4. Wire Coder only to a tested isolated workspace; no host shell or broad filesystem access.
+5. Run the task-based RU/EN/TH model bake-off on the actual target hardware. Bonsai 2 2B is a candidate only after a supported runtime path; Needle 2 is not a default multilingual model.
+6. Keep browser automation, latent memory and RL training behind separate opt-in experiments and measurable acceptance gates.
+
+No external package, runtime, model weights or UI framework was installed in this review.
+
+## 2026-11-16 — OR-012: Agent Library, local model routing, browser/Coder and RU/EN/TH offline language
+
+**Статус: SOURCE-VALIDATED / решения по применению записаны; зависимости не устанавливались.**
+
+| Подсистема | Upstream / подтверждённый факт | Принцип для aLandi | Не делать |
+|---|---|---|---|
+| Agent Skills | [agentskills.io specification](https://agentskills.io/specification): папка Skill с обязательным `SKILL.md`, YAML-frontmatter (`name`, `description`), optional `scripts/`, `references/`, `assets/`, license/compatibility. `allowed-tools` помечен experimental. | Versioned manifest, progressive disclosure, provenance/license, test/eval, dependency list, enable/disable and rollback. Skill describes procedure; real permission comes only from policy broker. | Не трактовать imported Skill или `allowed-tools` как ACL или разрешение на браузер/файлы/shell. |
+| Model Registry | [Ollama /api/ps](https://docs.ollama.com/api/ps) gives digest, size, quantization details, VRAM, context length and expiry; [Ollama /api/show](https://docs.ollama.com/api-reference/show-model-details) gives license, capabilities, params and model_info. | Store exact digest, license, task/language capabilities, measured quality, latency, load time, RAM/VRAM, context; route by task-fit + hardware budget. Return NoFit explicitly. | Не распределять «одна модель на профессию» и не считать число установленных моделей доказательством возможности параллельного выполнения. |
+| Runtime scheduling | [Ollama FAQ](https://docs.ollama.com/faq): simultaneous models only when memory permits; otherwise queued/unloaded; parallel requests multiply context memory. | Keep worker/model slot=1 as current safe baseline. Measure on target host before tuning loaded-model count, parallelism or queue depth. | Не увеличивать `OLLAMA_NUM_PARALLEL` / loaded models до RAM/VRAM/latency measurement. |
+| Browser capability | [Cloudflare Browser Run](https://developers.cloudflare.com/agents/examples/browser-agent/), [Playwright sessions](https://developers.cloudflare.com/browser-run/playwright/), [Guardrails](https://developers.cloudflare.com/browser-run/features/guardrails/). Guardrails are per-session hostname allowlists; omitting them permits unrestricted HTTP(S). | Future adapter gets one isolated per-run browser session, explicit allowed domains, no ambient credentials, bounded navigation/extraction, audit and explicit approval for write/submit. | Не внедрять CDP as broad agent tool or assume default Browser Run policy is restricted. No Cloudflare runtime integration now. |
+| Local Coder isolation | [Vercel Sandbox firewall](https://vercel.com/docs/sandbox/concepts/firewall): supports deny-all and domain allowlist policies; persistent sandboxes snapshot filesystem. | Reuse ideas for separate isolated executor, explicit workspace manifest, no-network default, approved commands, patch preview, argument-bound tickets, audit and recovery. | Не add Vercel sandbox as dependency or give BrowserLocal file handle direct shell/test rights. |
+| Queue/recovery | [Vercel Queues Python SDK](https://vercel.com/docs/queues/python-sdk): durable queue delivery is retry-oriented, so handlers must be idempotent. | Existing SQLite leases/fencing/event cursor remain; request digest includes prompt + context, and retry reconciles the same run. | Не add a second queue (Redis/Vercel/Temporal) for the current single-host prototype. |
+| Offline MT | [Argos Translate](https://github.com/argosopentech/argos-translate) is MIT code; models are separate `.argosmodel` packages and can pivot through an intermediate language. [Live package index](https://github.com/argosopentech/argospm-index/blob/main/index.json) lists EN↔RU and EN↔TH 1.9 directions. | Candidate local translation adapters; each packaged model gets immutable source, revision, SHA-256, per-artifact license, size, hardware profile and golden-set test. | The index has no weight SHA/license, so don't bundle based on index presence or software MIT license alone. |
+| Grammar EN/RU | [LanguageTool](https://github.com/languagetool-org/languagetool) core is LGPL-2.1+; [language matrix](https://dev.languagetool.org/languages) checked v6.6 (2025-03-27) lists EN/RU, not Thai; [embedded server](https://dev.languagetool.org/http-server.html) lacks AI cloud rules. | Local baseline for explicit grammar-check action in English/Russian, subject to jar/dictionary/license pin and measured packaging size. | Don't imply full cloud parity; don't include proprietary/cloud-only rules. |
+| Thai text tooling | [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp) code Apache-2.0; project separates CC0/CC-BY-4.0 data/models; supports segmentation/POS/text processing and spelling/correction utilities. | Candidate Thai tokenizer/spell/lexicon component. Add model-backed grammar correction only after Thai golden-set evaluation. | Don't label segmentation/spell correction as comprehensive Thai grammar checking. |
+| Research method catalog | [OpenAI Deep Research cookbook](https://developers.openai.com/cookbook/examples/deep_research_api/introduction_to_deep_research_api_agents), [Anthropic multi-agent research](https://www.anthropic.com/research/multi-agent-research-system), [LangChain Open Deep Research](https://www.langchain.com/blog/open-deep-research), [NVIDIA Deep Researcher](https://github.com/NVIDIA-AI-Blueprints/deep-researcher-agent). | Decompose target menu into source lookup, evidence report, comparison, literature review, audit and Notebook synthesis, each with a real method handler, citation policy, budget and eval. Existing four-stage aLandi pipeline stays one `multi_step_evidence_report`. | Не label same-model critique as independent review or expose unimplemented menu options as executable. |
+
+### Assistant-side plugin roles, separated from product capabilities
+- GitHub: canonical code, branch/HEAD and exact CI evidence.
+- Exa: broad semantic search and upstream discovery; Firecrawl: developer documentation and extraction; Context.dev: live search/page scrape.
+- Superpowers: plan/TDD/verification process.
+- Coder: build-link/app-generation workflow, not direct GitHub repository editing.
+- Cloudflare/Vercel: primary-source references for browser, firewall, sandbox and queue patterns; not integrated aLandi runtime providers.
+- Base44/Floot/Hercules: alternative app builders; Railway/Render/Hostinger: hosting. Avoid competing builds/hosting products. TinyFish/BrowserAct: browser automation tools, not default runtime agent tools.
+- Connector availability does not equal owner authorization or product capability. Live credentials and per-run grants are separate.
+
+### Translator readiness decision
+1. Argos EN↔RU/TH package directions are discovery candidates only; obtain per-package version, immutable artifact SHA, license notice and test corpus before download/redistribution.
+2. LanguageTool is a realistic offline grammar baseline for EN/RU but not Thai, and its embedded server doesn't include upstream cloud AI features.
+3. PyThaiNLP is a Thai language-processing toolbox, not an all-purpose grammar checker.
+4. Therefore the translator feature can be designed around capability matrix and replaceable language adapters; do not promise full offline parity across RU/EN/TH until a golden set and target-hardware tests pass.
+
+**No new runtime, package, model artifact, connector or external account was installed.**
+
+
+## 2026-11-16 — OR-013: Bounded context packets and prompt-injection-resistant AgentRun handoff
+
+**Статус: IMPLEMENTED / exact-head verification pending.**
+
+| Источник | Подтверждённый принцип | Применение в aLandi |
+|---|---|---|
+| [OWASP Prompt Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html) | Диалоги, файлы, retrieved content, страницы и tool output — недоверенные каналы. Маркеры/разделители сами по себе не защищают. Разрешения и валидация аргументов проверяются вне LLM на границе исполнения. | Контекст сериализуется как untrusted JSON reference data; не выдаёт никаких разрешений. Будущие tools обязаны иметь отдельный policy broker и серверную проверку прав. |
+| [OWASP RAG Security](https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html) | Нужны provenance, integrity manifest, размерные лимиты, контроль доступа при retrieval, fail-closed и аудит. SHA-256 подтверждает совпадение с baseline, но не безопасность содержимого. | Для выбранных источников сохранять ID/kind/scope/inclusion reason; позднее добавить signed provenance при проектном Sources ingestion. |
+| [OpenAI Agents SDK Sessions](https://openai.github.io/openai-agents-python/sessions/) | Session history извлекается перед run; callback позволяет ограничить/переупорядочить историю. Session ID не аутентифицирует пользователя и не авторизует доступ. | Контекст передаётся явно в запросе, а не подтягивается по opaque scope ID. Не копировать SDK session storage. |
+| [OpenAI Agents SDK Context](https://openai.github.io/openai-agents-python/context/) | Local app context не посылается LLM; доступность инструмента не равна разрешению на операцию — проверка остаётся в реализации tool. | Разделять metadata/authorization и сериализуемые reference excerpts. |
+| [AG-UI Events](https://docs.ag-ui.com/concepts/events) | Run lifecycle требует старт и терминальный success/error; activity поддерживает snapshot/delta, subagent attribution. | Следующий UI slice использует durable SQLite events как recovery truth, compact activity projection как сворачиваемое окно. |
+| [IETF Idempotency-Key draft](https://ietf-wg-httpapi.github.io/idempotency/draft-ietf-httpapi-idempotency-key-header.html) | Одинаковый key + fingerprint — replay; тот же key с иным payload — conflict; concurrent duplicate — отдельный случай. | Существующий SQLite store сравнивает request fingerprint; goal_ref теперь включает канонический prompt/context/profile/model/strategy digest. |
+| [Pydantic strict config](https://pydantic.dev/docs/validation/latest/api/pydantic/config/) | `strict=True` и `extra='forbid'` предотвращают coercion и молчаливое игнорирование неизвестных полей. | Ручной валидатор контекста и allowlist верхнеуровневых API полей; не добавлять новую runtime dependency. |
+
+### OR-013 packet contract
+- Version 1; message roles только `user` / `assistant`; никакого `system`, `developer`, `tool` или произвольного вложенного metadata.
+- Source item содержит только opaque `id`, allowlisted `kind`, `scope`, `inclusion_reason` и extracted text; ID уникальны между сообщениями и источниками.
+- Лимиты: до 40 messages и 40 sources, до 12,000 chars на item, суммарно не более настроенного `agent_runs_max_prompt_chars`; пустой пакет запрещён.
+- Контекст шифруется существующим Fernet vault. В SQLite metadata/event rows остаются только непрозрачные ID/digest.
+- Digest включает prompt, canonical packet, profile, model и strategy. Повтор с тем же ключом и тем же digest возвращает существующий run; изменённый packet конфликтует.
+- Не включаются автоматические полные транскрипты, все файлы проекта, URL fetching, memory или tool outputs без отдельного typed ingestion и явного включения.
+
+**Граница:** prompt delimiter не является security boundary. Даже после этого среза у AgentRun нет tools/browser/filesystem/shell/network; AgentRun остаётся feature-off.
+
+
+## Open-source candidate triage — migrated from docs/OPEN_SOURCE_TRIAGE_RU.md
+
+# aLandi — аудит open-source-кандидатов
+
+Дата среза: 2026-10-27  
+Статус: первичный triage по списку пользователя; **не означает, что перечисленные проекты установлены или интегрированы в runtime**.
+
+## Решение по архитектуре
+
+Не переносить целые приложения без измеримой необходимости. Сохранять текущую архитектуру: статический UI → собственный gateway → изолированный model runtime; проектная память и RAG — с явным scope, provenance и выключенными по умолчанию экспериментами. Внешние документы и результаты инструментов считать недоверенными. Новые модели и инструменты включать через feature flag, allowlist, подтверждение владельца и тесты.
+
+## Полный первичный проход
+
+Формат: **название | решение | что взять или почему отказаться**.
+
+1. Open Notebook | источник решения | Заимствовать workflow исследований: коллекции источников, заметки и Q&A с ссылками; не встраивать вторую самостоятельную платформу.
+2. no AI slop | источник решения | Взять редакторские критерии против повторов, шаблонных вступлений и пустых выводов; не использовать как фильтр фактов.
+3. I Have ADHD | внедрить принцип | Короткие действия, следующий шаг, ограниченные списки и видимый прогресс — в инструкциях агентам и ответах; без медицинских выводов.
+4. Bruno | использовать в разработке | Git-версионируемые API-коллекции полезны для ручной проверки gateway; не добавлять в runtime.
+5. heretic | пропустить как runtime | Abliteration не улучшает архитектуру; требует отдельного аудита модели, датасета, лицензии и safety eval.
+6. Open Interpreter | источник решения | Взять sandbox, ограничение workspace, permissions и явное одобрение команд; не давать gateway произвольный shell.
+7. SpiderFoot | пропустить сейчас | OSINT расширяет поверхность сбора персональных данных и сетевых запросов; вне ядра ассистента.
+8. Scrapy | опциональный адаптер | Для разрешённого извлечения публичных страниц — только отдельный worker с allowlist доменов, лимитами и SSRF-защитой.
+9. LocalAI | альтернативный backend | Сохранить как кандидат за единым provider interface; не заменять Ollama без сравнительных тестов.
+10. yt-dlp | опциональный импортёр | Позже — явный импорт медиа с проверкой прав, ограничением размера и запретом автозапуска.
+11. Metasploit Framework | пропустить | Эксплуатационный фреймворк не нужен в обычном ассистенте; не включать offensive actions по умолчанию.
+12. nmap | пропустить из ядра | Сканирование сети — отдельный opt-in инструмент только для собственных/разрешённых хостов.
+13. ComfyUI (повтор) | адаптер позже | Внешний backend генерации изображений через локальный API; сначала контракт media jobs, квоты и очистка файлов.
+14. OpenClaw | источник решения | Изучать orchestration; не переносить runtime без аудита permissions, изоляции и цепочки поставки.
+15. edge0 | кандидат локального этапа | SSD-offload MoE перспективен при ограниченной RAM; нужен benchmark на целевом железе, заявленные цифры не гарантия.
+16. bitnet.cpp | кандидат локального этапа | Изучить низкобитный CPU inference; проверить совместимость модели, качество и скорость на реальном устройстве.
+17. manimGX | уточнить | Точное upstream-имя и репозиторий не установлены; не внедрять по одному названию.
+18. DeerFlow 2.0 | источник решения | Исследовать исследовательские workflow; не импортировать большой агентный стек без сравнения с bounded DAG.
+19. ollaya | уточнить / пропустить | Вероятная опечатка или неоднозначный проект; не считать его Ollama без подтверждения.
+20. EmbeddingGemma2 | кандидат модели | Рассмотреть локальные embeddings после проверки точного model card, лицензии, размера и retrieval eval.
+21. LibreTranslate | опциональный сервис | Локальный перевод может снизить отправку текста наружу; нужен отдельный адаптер и RU/EN eval.
+22. SearXNG | приоритетный источник интеграции | Самостоятельный метапоиск подходит приватному web-search gateway; нужны таймауты, ограничение запросов и очистка результатов.
+23. self-evolution | источник принципа, не автопилот | Предлагать улучшения через eval, diff, approval и rollback; автономное изменение production отклонить.
+24. agent bridge | источник решения | Нужен стабильный typed bridge между UI, gateway и инструментами; внедрять после идентификации upstream/API.
+25. llmtrim | экспериментальный кандидат | Проверить context compression на golden set; принять только при сохранении фактов, цитат и качества.
+26. The Agency | источник skills | Брать узкие проверенные роли/инструкции; не клонировать набор промптов как архитектуру.
+27. gstack | workflow reference | Заимствовать этапы review/test/browser QA по одному skill с тестами.
+28. awesome-opus5-5-videos | каталог ресурсов | Сохранить как необязательную ссылку для обучения; не runtime-зависимость.
+29. Syncthing | кандидат синхронизации | Для переносимой локальной памяти подходит file sync; позже нужны конфликт-резолвинг, шифрование и backup/restore тест.
+30. Cloudflare Code Mode | кандидат tool adapter | Изучить typed API/tool access; исполнять только в изоляции с ограниченными capabilities.
+31. MiniMind | учебный источник | Использовать для экспериментов с малыми моделями, не production dependency без benchmark.
+32. onenMaic | уточнить | Точное имя/репозиторий не подтверждены.
+33. OpenCloud | кандидат файловой интеграции | Сравнить с local-first подходом; не добавлять второй files backend без конкретного сценария.
+34. OpenAI agent manage/mover | уточнить | Название не идентифицирует однозначный upstream.
+35. Can I Vibecode | ресурс/каталог | Полезен для обучения/discovery, не архитектурная зависимость.
+36. Vitrine | уточнить | Имя неоднозначно; upstream не идентифицирован.
+37. anmolkapil/plexo | исследовать отдельно | Нужны подтверждённые назначение, лицензия, активность и конкретный выигрыш.
+38. concou | уточнить | Точное upstream-имя не установлено.
+39. system-prompts-and-models-of-ai-tools | справочник | Использовать как исследовательский материал; не копировать чужие промпты без проверки лицензии и безопасности.
+40. Official MCP Registry | приоритетный discovery | Использовать для поиска MCP-серверов; отдельно проверять издателя, permissions, лицензии, зависимости и schema. Registry не равен allowlist доверия.
+41. AppFlowy | внешний продукт/интеграция | Рассматривать как экспорт/knowledge connector; не встраивать его workspace в UI aLandi.
+42. foooc b us | уточнить | Неоднозначная строка, проект не идентифицирован.
+43. Colibry | уточнить | Имя неоднозначно; нужна точная ссылка.
+44. AirLLM | экспериментальный backend | Проверить memory-saving inference на подходящем checkpoint/устройстве; не обещать любую большую модель на малой RAM.
+45. skilspectator | уточнить | Точный upstream не подтверждён; возможно опечатка.
+46. slee-persis/GVS5H | исследовать отдельно | Польза, лицензия и API не подтверждены в этом проходе; исходники не копировать до аудита.
+47. DeepInfer | уточнить | Название неоднозначно без URL.
+48. Muse Code | источник решений | Проверять идеи coding agent на задачах и тестах; не добавлять второй runtime без доказанного преимущества.
+49. Understand Anything | источник решения | Полезны карта кодовой базы и связи; начать с лёгкого индекса с provenance, не держать второй тяжёлый индексатор постоянно.
+50. agent memory | исследовать категорию | Сравнить Mem0/Hindsight/Graphiti с существующей SQLite/FTS5 scoped memory; не подключать несколько конкурирующих stores.
+51. scientific agent skills | приоритетный пакет навыков | Добавлять узкие навыки поиска литературы, проверки доказательств и воспроизводимых вычислений с цитированием.
+52. diagram design | skill/reference | Заимствовать правила читаемых диаграмм и проверять рендеринг; не добавлять runtime-зависимость.
+53. OpenViking | memory/context candidate | Сравнить retrieval и provenance с текущей памятью; не мигрировать без eval и export/restore теста.
+54. grill-me | skill-кандидат | Режим уточняющих вопросов для проектирования включать по запросу, не превращать каждый диалог в опрос.
+55. TimesFM | специализированная модель | Подходит для временных рядов, не общего чата; отдельный optional skill/backend.
+56. Ruflo | источник решения | Изучить координацию агентов; предпочесть bounded DAG и явные бюджеты вместо бесконтрольного swarm.
+57. MiniCPM-V apps | мультимодальный кандидат | Проверить локальный vision/OCR на реальных данных и целевом железе; не загружать автоматически.
+58. Voice Studio | уточнить | Название неоднозначно; voice runtime требует собственного контрактного и privacy-аудита.
+59. Orca | уточнить | Несколько проектов/моделей с таким именем; нужен точный upstream.
+60. Headroom | уточнить | Неясно, какой именно проект имеется в виду.
+61. CLI-Anything | источник решения | Полезны узкие CLI-адаптеры; запускать в sandbox с allowlist и approval.
+62. Open WebUI | reference/опциональный UI | Benchmark UX и MCP-поддержки; не сливать второй UI в текущий статический клиент.
+63. Handy | уточнить | Имя неоднозначно; нужна ссылка.
+64. Meetily | опциональный импортёр | Потенциально полезны локальные транскрипты встреч; opt-in с согласием участников и явным хранением.
+65. Vain | уточнить | Точный upstream не установлен.
+66. OpenCode | workflow/reference | Заимствовать provider-agnostic coding workflow; не запускать второй агент в фоне без необходимости.
+67. Open Notebook (повтор) | объединено с №1 | Дубликат, повторная интеграция не нужна.
+68. Dyad | внешний инструмент разработки | Опция для локального vibecoding, не часть runtime aLandi.
+69. AgenticSeek | reference | Изучить локальный агентный workflow; browser/OS-control требует sandbox и approval.
+70. Duix Avatar | опциональная мультимодальность | Аватар не усиливает базовый интеллект; отложить до рабочего voice/media pipeline и проверки лицензий.
+71. theAlgorithms/python | учебный источник | Ссылаться на алгоритмы для обучения; проверять лицензию/provenance перед копированием.
+72. ML-for-beginners | учебный источник | Использовать в учебных маршрутах, не в runtime.
+73. homemade-machine-learning | учебный источник | Примеры для обучения; не production dependency.
+74. machine-learning-interview | учебный источник | Библиотека обучения при необходимости; не влияет на ядро.
+75. deep-learning-papers-reading-roadmap | research resource | Сохранить как последовательный маршрут чтения статей.
+76. tensorflow-examples | учебный источник | Не внедрять в runtime; использовать, если конкретная задача требует TensorFlow.
+77. PyTorch/tutorials | учебный источник | Для воспроизводимых экспериментов, не runtime.
+78. llama-course | учебный источник | Для обучения по LLM, не зависимость продукта.
+79. generative-ai-for-beginners | учебный источник | Учебный ресурс, не часть продукта.
+80. awesome-ChatGPT-prompts | справочник с низким приоритетом | Не переносить коллекцию массово; каждую инструкцию проверять по задаче, лицензии и eval.
+81. 500-AI-ML-DL-CV-NLP-Projects-with-code | каталог примеров | Discovery only; лицензии и код проверять у каждого отдельного проекта.
+82. awesome-machine-learning | каталог | Использовать для поиска, не добавлять зависимости только за наличие в списке.
+83. Papers with Code | research discovery | Статьи/реализации полезны, но результаты сверять с первоисточниками.
+84. Caveman | skill-кандидат | Рассмотреть краткий режим как переключаемый стиль, не глобальное сокращение инженерных ответов.
+85. Graphify | кандидат индексации | Проверить выигрыш над текущими индексами на offline eval по кодовой базе.
+86. Browser Harness | кандидат тестирования | Полезны реальные browser smoke tests; внешнюю навигацию ограничивать доменами.
+87. Claude Video | уточнить | Не интегрировать без точной ссылки, API и лицензии.
+88. Open Design | reference/skill | Заимствовать правила дизайн-системы и доступности; не заменять UI вслепую.
+89. Codebird | уточнить | Имя неоднозначно; нужен точный upstream.
+90. Impeccable | skill-кандидат | Дизайн-review checklist — если подтверждены лицензия и формат skill; автоматическую правку не считать доказанным улучшением.
+91. Design Extract | кандидат tooling | Изучить извлечение дизайн-токенов с проверкой источника, прав и точности.
+92. n8n MCP | интеграция через границу | Внешний workflow connector при конкретном сценарии; auth, scopes, approval и аудит обязательны.
+
+## Конкретные улучшения для ядра
+
+1. **Единый upstream registry**: canonical URL, license, дата проверки, статус, риск, разрешения, benchmark и rollback для каждого кандидата.
+2. **Skill-first**: ADHD-friendly output, no-slop review, grill-me, scientific research и diagram design — маленькие versioned skills, а не новые сервисы.
+3. **Tool gateway**: web/CLI/browser/MCP проходят typed schema, least privilege, allowlist, timeouts, budgets, approval и audit; никакого shell из browser UI.
+4. **Портативная память**: source of truth — экспортируемые Markdown/JSON/SQLite; индексы пересоздаваемы; project scope и provenance обязательны; sync — opt-in с конфликтами.
+5. **Provider abstraction**: Ollama остаётся текущим путём; LocalAI/edge0/bitnet.cpp/AirLLM — кандидаты benchmark, а не обязательные параллельные сервисы.
+6. **Импорт медиа/документов**: Scrapy/yt-dlp/Meetily/OCR — opt-in jobs с лимитами, проверкой прав, очисткой и запретом исполнения содержимого.
+7. **Evaluation gate**: golden-set regression, security fixtures, license/provenance check, resource budget, feature flag off by default и rollback.
+8. **Не интегрировать сейчас**: Metasploit, SpiderFoot, nmap, автоматическое self-evolution, бесконтрольный swarm, второй UI и несколько конкурирующих memory stores.
+
+## Границы уверенности
+
+- Для однозначных имён использованы первичные README/официальные источники там, где они были найдены.
+- «Уточнить» — не отрицательная оценка, а отсутствие однозначной идентификации.
+- «Источник решения» не означает копирование исходников.
+- Этот документ не устанавливает пакеты и не доказывает live-поведение.
+- До переноса кода проверить лицензию upstream, зависимостей и модели.
+
+
+## Проход по дополнительному списку пользователя — 2026-10-27
+
+Формат журнала: **[Название] | [статус] | [конкретный вывод]**. Статусы отражают решение по текущей архитектуре, а не рейтинг проекта. «Пилот» означает сначала проверить локально/в CI; «уточнить» — не найден однозначный upstream или не хватает данных для безопасного решения.
+
+- [Graphify](https://github.com/Graphify-Labs/graphify) | пилот | Построить локальный граф кода/документации и оценить пользу для ориентирования; не включать графогенератор в runtime.
+- [GitIngest](https://github.com/coderamp-labs/gitingest) | использовать по запросу | Получать ограниченный текстовый слепок публичного репозитория; не отправлять приватные данные/секреты в hosted-сервис.
+- [GitMCP](https://github.com/idosal/git-mcp) | использовать по запросу | Читать документы и код конкретного upstream через MCP; результаты считать недоверенными и проверять по исходному репозиторию.
+- [GitReverse](https://github.com/filiksyos/gitreverse) | пропустить для навигации | Генерирует синтетический prompt, но не заменяет граф зависимостей и проверяемую навигацию по коду.
+- [DrawDB](https://github.com/drawdb-io/drawdb) | источник решения | Использовать для ER-диаграмм при реальной задаче схемы; не добавлять отдельный runtime в aLandi.
+- [slvDev/esp32-ai](https://github.com/slvDev/esp32-ai) | пропустить для aLandi runtime | MIT-проект запускает 28,9M-параметрическую story-модель на ESP32-S3, но авторы прямо указывают, что она не умеет отвечать на вопросы/следовать инструкциям; интересен только как edge-computing reference.
+- [xtool-org/xtool](https://github.com/xtool-org/xtool) | пропустить для текущего runtime | Инструмент сборки/деплоя iOS-приложений через SwiftPM на Linux/Windows/macOS; полезен только если появится отдельная нативная iOS-разработка.
+- [Zagitta/gpu-unlock](https://github.com/Zagitta/gpu-unlock) | пропустить | Kernel module меняет режимы выдачи FP/BF16-инструкций на NVIDIA RTX 30; это рискованная низкоуровневая модификация GPU, не улучшение кода/архитектуры aLandi.
+- [ps5lm] | уточнить | Не найден однозначный upstream; не подключать неидентифицированный инструмент.
+- [PentAGI](https://github.com/vxcontrol/pentagi) | пропустить из ядра | Автономный агентный стек требует отдельного аудита полномочий и инфраструктуры; не переносить runtime.
+- [AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) | источник решения | Сравнивать bounded task execution и human approval; не добавлять второй оркестратор без eval.
+- [Strix](https://github.com/usestrix/strix) | исследовать отдельно | Security testing допустим только в разрешённом тестовом контуре; не давать агенту произвольное сканирование/эксплуатацию.
+- [Turnitout-Humanizer](https://github.com/AhmadHassan-BTed/Turnitout-Humanizer) | пропустить | Проект прямо позиционируется как средство обхода AI/plagiarism detectors; не интегрировать обход академических проверок и не переносить его правила.
+- [decomwtf] | уточнить | Не найден однозначный upstream; нужна точная ссылка или описание.
+- [AppFlowy](https://github.com/AppFlowy-IO/AppFlowy) | отложить | Возможен knowledge/export connector, но второй workspace не оправдан без конкретного сценария и плана синхронизации.
+- [Minimo (video)] | уточнить | Неясно, какой именно видеопроект имеется в виду; нужен URL, лицензия и use case.
+- [experiential] | уточнить | Слишком общее название для однозначной идентификации.
+- [Perplexia] | уточнить | Неоднозначные продукты с похожим названием; требуется канонический URL.
+- [Hugging Bay] | уточнить | Возможно опечатка или неофициальный ресурс; не приравнивать автоматически к Hugging Face.
+- [angkorgit] | уточнить | Не удалось однозначно установить upstream по названию; нужна ссылка.
+- [DevOps Exercises](https://github.com/bregman-arie/devops-exercises) | справочник | Использовать как учебный каталог и чек-листы; не добавлять в runtime.
+- [Awesome Compose](https://github.com/docker/awesome-compose) | справочник | Выбирать отдельные проверенные Compose-примеры для разработки; не копировать весь каталог в deployment.
+- [Starter Workflows](https://github.com/actions/starter-workflows) | использовать выборочно | Брать шаблоны GitHub Actions только после проверки permissions, pinning actions и минимальных прав.
+- [Terraform Samples] | уточнить | Название не указывает однозначный репозиторий; до URL не переносить инфраструктурный код.
+- [Kubernetes Examples](https://github.com/kubernetes/examples) | справочник | Брать отдельные примеры только при реальном переходе на Kubernetes; не вводить кластер для малого VPS.
+- [Real DevOps Projects] | уточнить | Не найден однозначный upstream по общему названию.
+- [Google Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo) | отложить | Полезен как тестовый пример распределённой системы, но чрезмерен для обычного aLandi deployment.
+- [Alertmanager](https://github.com/prometheus/alertmanager) | использовать при настройке мониторинга | Рассмотреть для маршрутизации реальных Prometheus alerts, только если появится полноценный мониторинг и on-call сценарий.
+- [Argo CD](https://github.com/argoproj/argo-cd) | отложить | GitOps полезен при наличии Kubernetes; не вводить Kubernetes/Argo CD ради одного приложения на VPS.
+- [Minikube](https://github.com/kubernetes/minikube) | dev-only | Подходит для локального обучения и smoke-тестов Kubernetes, не production runtime.
+- [SPECTRALAYERS PRO] | пропустить из open-source внедрения | Это коммерческий продукт, не исходный код для интеграции; не включать proprietary GUI/software в aLandi runtime.
+- [UVR5 / Ultimate Vocal Remover GUI](https://github.com/Anjok07/ultimatevocalremovergui) | кандидат на отдельный аудио-пилот | Может помочь с разделением источников аудио, но сначала проверить лицензии каждого используемого model weight, размер, GPU/VRAM и качество на целевых записях.
+- [GLM-5.3-Flash] | отложить | Поддержка заявлена в xLLM для специализированных ускорителей, но это не подтверждает совместимость с текущим Ollama/8-GB VPS и не заменяет отдельную проверку model card, лицензии весов, формата и benchmark.
+- [memvid](https://github.com/memvid/memvid) | эксперимент | Проверить компактную мультимодальную архивную память на тестовом корпусе; не заменять source-linked records без теста целостности, поиска и восстановления.
+- [obra/superpowers](https://github.com/obra/superpowers) | источник процесса | MIT-набор навыков coding-agent с TDD, планированием и review; заимствовать процесс по одному, не подключать весь набор автоматически и не давать ему права вне текущего repo workflow.
+- [opendroid] | уточнить | Имя неоднозначно; нужен канонический URL и threat model.
+- [kev] | уточнить | Не найден однозначный upstream/назначение по одному имени.
+- [Kev-4B](https://benchlm.ai/compare/glm-5-3-flash-vs-kev-4b) | пропустить как основную чат-модель | Найден model card/benchmark reference для небольшой decision-модели, но публичная сравнимая benchmark-строка с GLM отсутствует; не считать универсальной диалоговой моделью.
+- [paperthin] | уточнить | Не найден однозначный проект; не внедрять по названию.
+- [Apache2.0 instant wake up - aws infinity] | уточнить | Похоже на концепцию/публикацию, а не подтверждённый артефакт; нужен исходный URL и воспроизводимые замеры.
+- [STATELESS COROUTINE SLICES FLUSH TO DISK ZERO RAM WASTED] | экспериментальная гипотеза | Проверить bounded disk-backed state и crash recovery; абсолютное «zero RAM» технически неверно и не является критерием приёмки.
+- [Steering neurons L14 N8949 +1 / L13 N7956 -1 for Qwen 3.5 4B] | отложить | Не применять steering без точного checkpoint, происхождения/лицензии, воспроизводимого метода и safety/quality eval.
+- [harness learning research] | источник принципа | Принять цикл гипотеза → ограниченный probe → измерение → решение; самообучение не меняет production без review и rollback.
+- [semantic cache] | пилот | Исследовать после exact-cache baseline; обязательны scope/model/prompt version keys, privacy, TTL и eval ложных совпадений.
+- [sana] | уточнить | Название неоднозначно между моделями/проектами; нужен точный URL/model card.
+- [agent-usage-guard] | исследовать отдельно | Лимиты/учёт использования потенциально полезны, но нужен точный upstream и сравнение с текущими gateway budgets.
+- [xerj-org/xerj](https://github.com/xerj-org/xerj) | кандидат на отдельный retrieval-пилот | Локальный Rust search/MCP server с BM25/vector/hybrid search потенциально полезен для поиска по коду и документам, но сначала сравнить с Graphify и текущим FTS5/RAG; не добавлять второй поисковый runtime без eval и замера ресурсов.
+- [Harper](https://github.com/Automattic/harper) | кандидат dev-tool для английского | Официальный README описывает offline grammar checker, но текущая поддержка только английского; не подходит для русской грамматики без будущего языкового backend, не менять текст без подтверждения/undo.
+- [vane] | уточнить | Название неоднозначно; нужен канонический URL.
+- [dessa] | уточнить | Не удалось идентифицировать однозначный upstream по названию.
+- [Cloudflare R2] | кандидат хранения | Рассматривать для object storage с шифрованием, lifecycle и тестом восстановления; R2 сам по себе не является backup-политикой.
+- [ripienaar/free-for-dev](https://github.com/ripienaar/free-for-dev) | справочник | Использовать для discovery бесплатных сервисов; проверять актуальные лимиты, privacy и условия.
+- [public-apis/public-apis](https://github.com/public-apis/public-apis) | справочник | Каталог полезен для discovery, но не allowlist; каждый endpoint требует проверки auth, privacy, CORS и стабильности.
+- [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | справочник | Использовать для поиска MCP-инструментов; проверять владельца, разрешения, цепочку поставки и изоляцию.
+- [NaiboWang/EasySpider](https://github.com/NaiboWang/EasySpider) | отдельный browser-automation пилот | Может пригодиться для UI-задач; запускать в изолированной сессии с allowlist доменов, лимитами и подтверждением внешних действий.
+- [slee-persis/GVS5H](https://github.com/slee-persis/GVS5H) | уточнить перед исследованием | Репозиторий идентифицирован по URL из списка, но назначение, лицензия и полезный API не подтверждены; не переносить код до аудита.
+- [Open Notebook](https://github.com/lfnovo/open-notebook) | источник решения | Взять workflow коллекций источников, заметок и Q&A с citations; не встраивать вторую самостоятельную платформу.
+- [Bruno](https://github.com/usebruno/bruno) | dev-only | Git-версионируемые API-коллекции полезны для ручной проверки gateway; не добавлять в пользовательский runtime.
+- [Hugging Face Transformers](https://github.com/huggingface/transformers) | справочник/benchmark tooling | Использовать для проверки model cards, совместимости и локальных экспериментов; не тянуть библиотеку в production gateway без конкретной задачи.
+- [Cloudflare R2 / GitMCP / GitIngest / GitReverse] | разделять по назначению | R2 — object storage; GitMCP — удалённый MCP-доступ к upstream; GitIngest — текстовый snapshot; GitReverse — синтетический prompt; технологии не взаимозаменяемы.
+
+### Уточнения после дополнительной проверки upstream (2026-10-27)
+
+- [xerj-org/xerj](https://github.com/xerj-org/xerj) найден как локальный search/MCP engine (Apache-2.0); это потенциальный альтернативный retrieval pilot, не готовая зависимость.
+- [Automattic/harper](https://github.com/Automattic/harper) — Apache-2.0, offline и English-only; для русской грамматики сейчас не подходит.
+- [Turnitout-Humanizer](https://github.com/AhmadHassan-BTed/Turnitout-Humanizer) прямо заявляет evasion of plagiarism/AI detectors; исключить из проекта.
+- [Zagitta/gpu-unlock](https://github.com/Zagitta/gpu-unlock) — kernel module для изменения FP/BF16 issue rate RTX 30; исключить из aLandi, не запускать на сервере.
+- [slvDev/esp32-ai](https://github.com/slvDev/esp32-ai) и [xtool-org/xtool](https://github.com/xtool-org/xtool) идентифицированы, но не дают прямой пользы текущему web/gateway runtime.
+- GLM-5.3-Flash упоминается в xLLM deployment news, но это не подтверждает подходящий model artifact/license/runtime для нашего host; отложить.
+
+### Следующие действия после первичного triage
+
+1. Graphify: upstream изучен, но локальный запуск заблокирован отсутствием сетевого доступа в рабочем контейнере (git clone завершился DNS error); повторить пилот в среде с репозиторием и Python/uv.
+2. PR #37 закрыт без merge: ветка отстала от main, Chromium и HTML/JavaScript integrity checks упали, Pages smoke был skipped. Не потерять полезные идеи из PR: composer positioning/safe-area, per-chat search/research settings, voice-menu tap/backdrop и Tavily depth; перепроверить и переносить по одному на актуальную базу.
+3. Issue #1 закрыт с reason not_planned и пояснением: это исторический GitHub Skills exercise, не дефект aLandi; закрытие не утверждает, что tutorial завершён.
+4. Для строк «уточнить» запросить точный URL только если пользователь ожидает дальнейшее исследование конкретного кандидата; до этого не внедрять.
+5. Для runtime-кандидата требовать лицензию, происхождение, resource budget, feature flag, regression/eval и rollback.
+
+
+## Повторная проверка Graphify upstream — 2026-10-27
+
+- Прочитаны [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify), [quickstart](https://docs.graphify.com/quickstart) и [pyproject.toml](https://github.com/Graphify-Labs/graphify/blob/v8/pyproject.toml) через Exa.
+- Подтверждено upstream: Apache-2.0; пакет `graphifyy`, CLI `graphify`, Python >=3.10; code parsing через локальный tree-sitter AST; semantic extraction docs/media может использовать модель; dependency footprint заметный.
+- Решение: disposable dev environment, pinned version, `graphify extract . --code-only --timing`, `graphify cluster-only . --no-label`, `graphify export html`, `graphify query`; проверка exclusions, ресурсные замеры и сравнение на реальных навигационных вопросах. Не ставить в gateway и не использовать hosted Cloud для пользовательских данных.
+- Исполнение **BLOCKED**: локальный `git clone` завершился DNS-ошибкой `Could not resolve host: github.com`; CLI не установлен и граф не создан.
+- Промежуточный артефакт `docs/ALANDI_ARCHITECTURE_MAP_RU.md` — кураторская схема, не подмена AST graph.
+
+
+## 2026-11-05 — refreshed high-signal candidates (research only)
+
+| Upstream / inspected revision | Verified project/license snapshot | Reusable pattern | aLandi decision |
+|---|---|---|---|
+| [XERJ](https://github.com/xerj-org/xerj) — `83c9f0d123bac010a25ca2cf02ff093b08ee68ce` | Apache-2.0 | Local Rust binary; BM25 + vector + hybrid; code definitions; MCP; source citations. Upstream token-saving benchmark is not independently verified. `--insecure` disables auth/TLS. | Highest-priority retrieval bake-off against SQLite FTS5 + Graphify. No adoption until same-corpus quality/resource/security comparison. |
+| [Memvid](https://github.com/memvid/memvid) — `e6bd9f7b9c38cd8d5370fa0fc936ac1dcd751813` | Apache-2.0 | Append-only immutable memory frames, checksums, versioning, portable single-file capsule and temporal inspection. | Isolated export/archive prototype only; preserve SQLite as canonical store until deletion/conflict/recovery tests pass. Benchmark claims remain upstream-reported. |
+| [RAG-Anything](https://github.com/HKUDS/RAG-Anything) — `2cd2b3329c470ccb53923f8a6d320596b34e56c5` | MIT | Typed multimodal document decomposition and provenance-preserving cross-modal retrieval. Built around LightRAG and optional heavy parsers/VLM. | Borrow parser→typed fragments→provenance→retrieval architecture. Do not install the full stack on the 8-GB host before corpus and memory evaluation. |
+| [Graphify](https://github.com/Graphify-Labs/graphify) — `59b5ab1151e031fb42e39cfc9a50bf96f2d57ae0` (`v8`) | Apache-2.0 | Deterministic AST graph with explicit extracted/inferred edge labels and queryable provenance. | Keep dev-only; strengthen confidence/ambiguity reporting and artifact coverage tests in existing Graphify pilot. No runtime graph DB. |
+| [Superpowers](https://github.com/obra/superpowers) — `22f0b463e7a5e579904dd6211a520321035526f7` | MIT | Spec-first workflow, owner approval, implementation plan, red/green TDD, review/fix cycle. | Adopt selected workflow patterns into existing engineering loop; no wholesale plugin install or permission expansion. |
+| [Temporal durable execution](https://temporal.io/blog/temporal-langgraph-plugin-durable-execution) / [LangGraph checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers) / [Pydantic AI durable execution](https://pydantic.dev/docs/ai/durable-execution/) | Official technical documentation; engine licenses vary by component | Distinguish state checkpoints from durable execution/replay, approval waits, retries and idempotent activities. | Use as design references for #134 AgentRun and future long-running workflows; no engine adoption until current lifecycle prototype and resource need are proven. |
+
+**Next evaluation:** fixed corpus + query set; report Recall@5, MRR, nDCG, citation correctness, latency, RSS, index size, deletion semantics and operational/security boundaries. Keep vendor benchmarks separate from aLandi measurements.
+
+## 2026-11-07 — owner-provided upstream sweep (research only)
+
+Exact upstream HEADs and declared license/capability evidence are recorded in [INTEL.md](../INTEL.md), section “Owner-provided upstream sweep — 2026-11-07”. This extends the 2026-10-27 triage; it does not replace earlier decisions or authorize installation.
+
+| Candidate | Triage decision | aLandi relevance / gate |
+|---|---|---|
+| Flint — [JustVugg/flint](https://github.com/JustVugg/flint) / [airene/flint](https://github.com/airene/flint) | **AMBIGUOUS / DEFER** | Two distinct repositories: reversible context/memory tooling vs local Developer/Reviewer control room. Ask which one the owner intended before a focused pilot. |
+| [DashBeam](https://github.com/tonyantony300/dashbeam) | **RESEARCH / DEFER** | P2P transfer reference. If revisited, require v0.7.2+ and recheck Iroh dependency security; AGPL-3.0 is a code-reuse gate. |
+| [img2threejs](https://github.com/img2threejs/img2threejs) | **FUTURE MEDIA REFERENCE** | Potential image→procedural 3D Skill; not needed for current UI/gateway and not photogrammetry. |
+| [ArchiveBox](https://github.com/ArchiveBox/ArchiveBox) | **CANDIDATE / DEFER** | Durable web-source archive could complement Research Studio, but adds browser/extractor services and sensitive-cookie/URL storage risks. Evaluate isolated public-only archival first. |
+| [SearXNG](https://github.com/searxng/searxng) | **EXISTING PRIORITY CANDIDATE / NO NEW DEPLOYMENT** | Remains a candidate search backend; test the existing optional adapter with timeouts, allowlists, limiter, egress/SSRF checks and RU/EN/TH result quality. AGPL-3.0-or-later. |
+| [Ponytail](https://github.com/DietrichGebert/ponytail) | **SELECTIVE PROCESS REFERENCE** | Reuse YAGNI/minimal-diff ideas only; current LOOP/AGENTS already encode similar principles. Do not install its hooks/plugin wholesale or treat upstream benchmark claims as proven. |
+| [changedetection.io](https://github.com/dgtlmoon/changedetection.io) | **CANDIDATE FOR UPSTREAM WATCH** | Could monitor release/security/source pages; requires domain allowlist, DNS/IP validation, egress controls, per-watch budgets and authenticated UI before deployment. |
+| [LocalSend](https://github.com/localsend/localsend) | **NATIVE-COMPANION REFERENCE / DEFER** | Cross-platform LAN transfer is not safely equivalent to browser file access. Prefer native app/protocol boundary, HTTPS fingerprint/PIN and explicit receive approval; never expose plain-HTTP reverse-download as trusted. |
+| [MiroFish](https://github.com/666ghj/MiroFish) | **EXPERIMENTAL RESEARCH ONLY** | Social simulation may support scenario exploration, but upstream FAQ explicitly disclaims calibrated classical ABM validity. Do not present output as predictive evidence. AGPL-3.0. |
+| [Edge-Drop](https://github.com/Deepender25/Edge-Drop) | **DESKTOP UX REFERENCE ONLY** | Windows Electron clipboard shelf; no direct browser/runtime fit. |
+| [Craft Anything](https://github.com/storytold/craft-anything) | **EARLY-ALPHA / SECURITY DEFER** | Software inspection/rebuild tool surface could inform Research Studio, but reverse-engineering, generated code and agent execution need sandbox/legal gates. Other adapters are not all live-verified. |
+| [Agent Lightning](https://github.com/microsoft/agent-lightning) | **TRAINING REFERENCE / DEFER** | Useful only if aLandi later evaluates agent RL; verl/vLLM/Kubernetes/GPU training stack is outside current 8-GB inference deployment. |
+| [Datalab Marker](https://github.com/datalab-to/marker) / [Surya](https://github.com/datalab-to/surya) | **HIGH-PRIORITY DOC-PARSER BAKE-OFF** | Compare with the existing parser and Docling on the same RU/EN/TH PDF/DOCX/PPTX/XLSX corpus; measure extraction quality, citations, latency, RAM and GPU requirement. Audit model-weight OpenRAIL-M terms separately from Apache code. Hosted API is a separate data-processing decision. |
+| [diagram-design](https://github.com/cathrynlavery/diagram-design) | **OPTIONAL DOCS SKILL / DEFER** | Could produce polished one-file HTML/SVG diagrams. Keep Mermaid/draw.io as editable source of truth; inspect Skill scripts and PRIVACY.md before install. |
+| [HarnessRouter](https://github.com/HarnessRouter/harnessrouter) | **ARCHITECTURE REFERENCE / DEFER** | Potential unified harness API pattern, but external CLIs, session persistence, files and cancellation introduce a large execution/security surface. Compare contracts first; no runtime integration. |
+| [Sound Center](https://github.com/Azare77/sound_center) | **NOT FOR CORE / GPL REVIEW** | Local player and podcast UX, not generation. Use only as a UX reference unless GPL-3.0-or-later reuse is explicitly accepted. |
+| [PocketPal AI](https://github.com/a-ghorbani/pocketpal-ai) | **MOBILE ARCHITECTURE REFERENCE** | Useful for offline mobile inference, Whisper/TTS and device acceleration; app code MIT does not license every model/voice. No replacement of the static web client. |
+| [sammyZi/pdf-tools](https://github.com/sammyZi/pdf-tools) | **MOBILE UX REFERENCE** | Android scanner/PDF tools and on-device OCR; app MIT but Google ML Kit and bundled model terms remain separate. No runtime copy. |
+
+**Decision:** source-validated candidates only. No dependency, Skill, model, binary, dataset or code was downloaded, installed, copied or deployed. Any pilot requires a separate bounded proposal with pinned upstream revision, dependency/license manifest, threat model, baseline, acceptance metrics, rollback and explicit owner approval.
+
+
+## 2026-11-08 — повторный тематический проход: orchestration / RAG / local inference / voice / code navigation
+
+| Кандидат | Evidence / ограничение | Решение для aLandi |
+|---|---|---|
+| Conductor durable execution | Официальная семантика at-least-once; side effects могут повторяться после сбоя worker | **ACCEPT principles only:** idempotency, retry budget, checkpoint, durable approval, recovery drill. Runtime DEFERRED |
+| Temporal LangGraph plugin | Public Preview на 2026-07-16; решает durable recovery/human interrupts, но добавляет отдельную инфраструктуру | **DEFER** до реальной потребности в multi-hour/day workflow |
+| CodeGraph | Apache-2.0, SQLite/tree-sitter, 34 MCP tools, architecture rules/CI gate; upstream claims local/zero telemetry, но нет aLandi baseline | **PILOT CANDIDATE**; сначала disposable 10-task comparison с Graphify и grep, без установки в runtime |
+| Docling | MIT; structured document model с page/bbox provenance; 2.148.0 vendor benchmark: 6.6 s/page default, 1.8 s/page no-OCR on 4 vCPU / 15 GB; scanned OCR ~15 s/page | **ACCEPT architecture**, не runtime на 8-GB serving VPS; отдельный corpus-specific offline benchmark |
+| RAG-Anything | Полезные failure-mode probes для таблиц/картинок/OCR; full install может быть тяжёлым | **ACCEPT test patterns**, не устанавливать framework |
+| llama.cpp server | Continuous batching, parallel decode, KV quantization и OpenAI-compatible API | **DEFER runtime replacement**; сравнивать с Ollama только при измеренном bottleneck |
+| Qwen3-ASR-0.6B int8 via sherpa-onnx | RU/TH в language list; upstream streaming limitation and exact artifact/license need verification | **PILOT CANDIDATE**; compare WER/CER, RAM, latency and cancellation against current ASR baseline |
+| Moonshine streaming | Current MIT streaming table does not list RU/TH; some older non-English models use Community License | **NOT SELECTED** for RU/TH default |
+| OpenVoiceStream | MIT; hardware-first Jetson/Rockchip/Hailo/Raspberry Pi and per-accelerator quantization | **EDGE REFERENCE ONLY**; not generic x86 VPS candidate |
+| GitHub Releases / Pages artifact model | Git LFS unsupported by Pages; Pages site ≤1 GB; release asset <2 GiB | **ACCEPT acquisition boundary:** weights outside Pages tree, manifest + SHA in Git |
+
+Ни один новый runtime, модель или крупный артефакт в этом проходе не скачан, установлен или активирован. Решения по источникам не означают реализацию. Ссылки и первичные ограничения внесены в `INTEL.md`.
+
+
+## 2026-11-08 — selected upstream source snapshots archived (PR #169, not yet merged)
+
+- **Memvid v2.0.140** — Apache-2.0, upstream commit `e18fe55494379e2ab7397ce03655e8abbc5e0c31`. Imported curated 22-file / 727,588-byte source/license subset from reviewed PR #155; all source Git blob SHA-1 values matched the pinned upstream commit or current main. Per-file SHA-256 values are retained from upstream manifest but not recomputed in this pass. Excludes binaries, model/filter assets, external dictionaries and third-party dependency source; not a complete/buildable mirror.
+- **RAG-Anything v1.4.1** — MIT, upstream commit `0ef67b4d476b66407a03a39e5b17e756fc0aef29`. Imported 17 selected source/docs/tests and retained the previously archived `raganything/parser.py`; all 18 source file Git blob SHA-1s and MIT LICENSE SHA-1 independently matched the exact upstream commit. UPSTREAM-MANIFEST now enumerates all verified files.
+- Both are research/reference-only, `ship=false`, excluded from runtime; no dependencies/model weights installed. Whole selected archive SHA-256 remains OPEN, recorded as null in provenance; per-file Git blob evidence is exact.
+
+
+## 2026-11-08 — PR #131/#125 branch research reconciliation
+
+- Preserved 17 non-duplicate research/spec snapshots and their 103 unique candidate URL refs in INTEL. These documents have a historical snapshot banner and a current main/PR boundary; old status claims are not promoted to live facts.
+- `AGENT_RESEARCH_CATALOG_RU.md` was not copied as a parallel source register because all 88 URLs are already in INTEL. Source candidate table links to the origin research docs and marks current-version review pending.
+- The Graphify UI Surface bridge is CI-only, deterministic and source-provenanced; no UI runtime code or model calls are introduced by the bridge.
+- SECURITY.md is now available for responsible disclosure. Jekyll title/description branding is updated while retaining `jekyll-github-metadata` and source archive exclusions.
+
+
+## 2026-11-14 — OpenShell sandbox candidate refresh
+
+OpenShell v0.1.8 (2026-11-10) is the current pinned sandbox candidate for Coder. Its tag commit is GitHub-signature verified and the release is Apache-2.0. The acquisition workflow stages only Ubuntu 24.04 x86_64 assets as a temporary Actions artifact with fixed SHA-256 and package/archive checks. It does not install or enable arbitrary shell. The owner host must first be checked for OS, architecture, Docker/Podman/VM support, kernel and resources. v0.1.8 migration caveats: symlink policy paths in writable workspaces fail closed; non-Authorization credential placement needs explicit metadata; Python SDK moved to ai-openshell/sdk-python. OpenHands v1.38.0 was rechecked but is not selected as a primary runtime; its unsandboxed mode grants host filesystem access.
