@@ -39,7 +39,13 @@ const suites = {
       assert.ok(researchPanel.includes('id="researchMethodRoadmapDetails"'), 'Research must distinguish future methods from active procedures.');
       assert.equal(researchPanel.includes('data-action="select-processing-mode"'), false, 'Research must not duplicate the global effort controls.');
       assert.equal(researchPanel.includes('data-action="open-search-mode-settings"'), false, 'Research must not duplicate the global web-access controls.');
-      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\s\S]*?<\/section>/)?.[0] || '';
+      const agentPanelStart = source.indexOf('<section id="agentFunctionSettings"');
+      const skillPanelStart = source.indexOf('<section id="skillFunctionSettings"', agentPanelStart);
+      const agentPanel = source.slice(agentPanelStart, skillPanelStart);
+      assert.ok(agentPanel.includes('id="agentTopologyRoadmapDetails"'), 'Agents must distinguish planned topologies from current runtime.');
+      assert.ok(agentPanel.includes('data-i18n="agentTopologySubagents"'), 'Chat-directed subagents must be explicit as a planned capability.');
+      assert.equal(agentPanel.includes('roadmap-ticker'), false, 'Do not display an animated placeholder as agent progress.');
+      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\\s\\S]*?<\\/section>/)?.[0] || '';
       assert.ok(connectorPanel, 'Connectors must open an independent panel.');
       assert.ok(connectorPanel.includes('functionConnectorsDescription'), 'Connectors must explain the current connection state.');
       assert.equal(/<(?:button|input|select|textarea)\b/i.test(connectorPanel), false, 'Do not show fake connector actions before a real registry and permissions exist.');
@@ -47,6 +53,8 @@ const suites = {
     ['independent processing controls and on-demand resources', () => {
       includes('async function runMultiAgentResearch', 'Multi-agent research needs its own staged pipeline.');
       includes('id="deepResearchMethodSelect"', 'Deep Research method selection must be separate from AgentRun.');
+      includes('function createAgentRuntimeEventRow(event)', 'AgentRun timelines must render Gateway event timestamps.');
+      includes('const occurredAt=Number(event.occurred_at)', 'AgentRun event times must come from the Gateway event record.');
       includes('async function agentRuntimeFetch(config, path, options = {})', 'AgentRun requests must use the bounded authenticated Gateway client.');
       includes('function agentRuntimeErrorText(error)', 'AgentRun errors must use a safe localized message.');
       includes("credentials: 'omit'", 'AgentRun must not send ambient browser credentials.');

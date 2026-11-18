@@ -558,7 +558,7 @@ test('Research and Agent function panels update their dynamic copy when language
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
   await expect(page.locator('label[for="agentRuntimeProfile"]')).toContainText('Worker profile');
   await expect(page.locator('label[for="agentRuntimeModel"]')).toContainText('Allowed model');
-  await expect(page.locator('#agentRuntimeEvents')).toHaveAttribute('aria-label', 'AgentRun events');
+  await expect(page.locator('#agentRuntimeEvents')).toHaveAttribute('aria-label', 'AgentRun event timeline');
   await expect(page.locator('#agentRuntimeProfile option[value=""]')).toHaveText('Unavailable');
 });
 
@@ -3083,7 +3083,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
     }
     if (url.pathname === '/v1/agent-runs/run-e2e-success/events') return route.fulfill({ json: {
       run_id: 'run-e2e-success',
-      events: [{ event_id: 1, event_type: 'run_started', metadata: { stage: 'model-completion' } }],
+      events: [{ event_id: 1, event_type: 'run_started', occurred_at: Date.parse('2026-11-18T09:32:10.000Z') / 1000, metadata: { stage: 'model-completion' } }],
       next_after_event_id: 1, state: 'succeeded'
     } });
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
@@ -3101,6 +3101,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
   await expect(page.locator('#agentRuntimeEvents')).toContainText('Выполнение начато');
+  await expect(page.locator('#agentRuntimeEvents time')).toHaveAttribute('datetime', '2026-11-18T09:32:10.000Z');
   await expect(page.locator('#agentRuntimeOutput')).toContainText('Safe text answer');
   await expect(page.locator('#agentRuntimeOutput img')).toHaveCount(0);
   expect(submitted).toEqual({
@@ -3769,7 +3770,15 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('#researchFunctionSettings')).toBeHidden();
   await expect(page.locator('#agentRuntimeGroupTitle')).toHaveText('Доступность AgentRun');
-  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Шаблон команды');
+  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Сохранённый шаблон команды');
+  await expect(page.locator('#agentTeamSizeValue')).toHaveText(/4 роли/);
+  const topologyRoadmap = page.locator('#agentTopologyRoadmapDetails');
+  await expect(topologyRoadmap).toBeVisible();
+  await expect(topologyRoadmap).not.toHaveAttribute('open', '');
+  await topologyRoadmap.locator('summary').click();
+  for (const topology of ['Субагенты по поручению из чата','Параллельная команда / fan-out–fan-in','Дебаты и независимое рецензирование','Команда разработки','Настраиваемый рой / DAG']) await expect(topologyRoadmap).toContainText(topology);
+  await expect(topologyRoadmap.locator('button, input, select, textarea')).toHaveCount(0);
+  await topologyRoadmap.locator('summary').click();
   await expect(page.locator('#skillProfileGroupTitle')).toHaveText('Профиль задачи');
   await expect(page.locator('#skillOutputGroupTitle')).toHaveText('Цель и формат результата');
   await modal.locator('[data-action="close-function-panel"]').first().click();
@@ -3806,7 +3815,8 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Agents/);
   await menu.locator('[data-function="agents"]').click();
   await expect(page.locator('#agentRuntimeGroupTitle')).toHaveText('AgentRun availability');
-  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Team blueprint');
+  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Saved team blueprint');
+  await expect(page.locator('#agentTopologyRoadmapDetails summary')).toContainText('Agent topology catalogue · roadmap');
   await expect(closePanel).toHaveAccessibleName('Close');
   await closePanel.click();
   await expect(modal).toBeHidden();
