@@ -484,6 +484,37 @@ test('composer text attachment validation and unsupported-file warning localize 
 });
 
 
+
+test('third-party provider settings labels and controls localize in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+
+  await expect(page.locator('#providerPreset')).toHaveAttribute('aria-label', 'Сторонний API');
+  await expect(page.locator('#providerPreset option[value=""]')).toHaveText('Выберите стороннего провайдера');
+  await expect(page.locator('#cloudflareAccountLabel')).toHaveCount(0);
+  await page.locator('#providerPreset').selectOption('cloudflare');
+  await expect(page.locator('label[for="cloudflareAccountId"]')).toHaveText('Cloudflare Account ID (32 шестнадцатеричных символа)');
+  await expect(page.locator('#cloudflareAccountId')).toHaveAttribute('placeholder', 'Account ID из Cloudflare Dashboard');
+  await expect(page.locator('#cloudflareAccountGroup')).toContainText('Account ID не секрет');
+  await page.locator('#providerPreset').selectOption('pollinations');
+  await expect(page.locator('[data-action="connect-pollinations"]')).toHaveText('Подключить аккаунт Pollinations · PKCE');
+  await expect(page.locator('[data-action="test-connection"]')).toHaveText('Проверить соединение и модель');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#providerPreset')).toHaveAttribute('aria-label', 'Third-party API');
+  await expect(page.locator('#providerPreset option[value=""]')).toHaveText('Choose a third-party provider');
+  await page.locator('#providerPreset').selectOption('cloudflare');
+  await expect(page.locator('label[for="cloudflareAccountId"]')).toHaveText('Cloudflare Account ID (32 hexadecimal characters)');
+  await expect(page.locator('#cloudflareAccountId')).toHaveAttribute('placeholder', 'Account ID from Cloudflare Dashboard');
+  await expect(page.locator('#cloudflareAccountGroup')).toContainText('The Account ID is not a secret');
+  await page.locator('#providerPreset').selectOption('pollinations');
+  await expect(page.locator('[data-action="connect-pollinations"]')).toHaveText('Connect Pollinations account · PKCE');
+  await expect(page.locator('[data-action="test-connection"]')).toHaveText('Test connection and model');
+  await expect(page.locator('#apiKey')).toHaveAttribute('placeholder', 'API key');
+  await expect(page.locator('#modelName')).toHaveAttribute('placeholder', 'Model ID');
+});
+
 test('provider settings validate Cloudflare ID and model before persisting, with English feedback', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#uiLanguage').selectOption('en');

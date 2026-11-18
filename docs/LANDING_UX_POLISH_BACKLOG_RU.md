@@ -122,3 +122,5 @@
 | 2026-11-18 | Composer attachment feedback now localizes media/video, audio, document and text-file limits/errors, unsupported-file reasons/warnings, attachment metadata and remove accessible names in RU/EN. Added RU/EN oversized-text and unsupported-file Playwright regression. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Provider Settings now localizes Cloudflare ID/Base URL/model validation and save confirmation; Cloudflare Account ID is staged until all required validation passes, preventing an invalid form from persisting it. Pollinations PKCE setup errors localize RU/EN. Added EN validation/no-partial-write regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Third-party provider settings now localize provider selection, model search/catalog labels, docs links, Cloudflare account label/help, API key/Base URL/model placeholders, Pollinations controls and connection buttons in RU/EN. Added provider-panel localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
