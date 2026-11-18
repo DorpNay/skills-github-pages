@@ -5118,3 +5118,42 @@ test('project filters announce empty chat states and expose the selected unassig
   await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'false');
   await expect(page.locator('#chatScopeBackButton')).toBeHidden();
 });
+
+
+test('long project navigation stays internally scrollable without hiding the chats section', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 480 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    const now = new Date().toISOString();
+    const manyProjects = Array.from({ length: 30 }, (_, index) => ({
+      id: 'e2e-long-project-' + index,
+      name: 'Long project ' + String(index + 1).padStart(2, '0'),
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: now,
+      updatedAt: now
+    }));
+    localStorage.setItem('ai_projects_v1', JSON.stringify([...manyProjects, ...projects]));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  if (await page.locator('#projectNavigationList').evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  const metrics = await page.locator('#projectNavigationList').evaluate(element => ({
+    overflowY: getComputedStyle(element).overflowY,
+    maxHeight: getComputedStyle(element).maxHeight,
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight
+  }));
+  expect(metrics.overflowY).toBe('auto');
+  expect(metrics.maxHeight).not.toBe('none');
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+  await page.locator('#projectNavigationList').evaluate(element => { element.scrollTop = element.scrollHeight; });
+  await expect(page.locator('#chatSection')).toBeVisible();
+  await expect(page.locator('#chatSection #chatNavToggle')).toBeVisible();
+  await expect(page.locator('#sidebar')).toHaveJSProperty('scrollTop', 0);
+});
