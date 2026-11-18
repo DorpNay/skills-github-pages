@@ -87,6 +87,7 @@
 - [ ] Keep Chromium as a manual-only check for viewport geometry, CSS reflow, overflow and screenshots; do not infer those properties from DOM-only tests.
 
 ## 5. Change log
+| 2026-11-18 | Chat/project navigation: replace CSS-generated chat empty copy with a real `role=status` node (`aria-atomic=true`); expose the selected «Без проекта» scope via `aria-pressed`; project-empty state is also programmatically announced. RU E2E added; execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
 | 2026-11-18 | Functions IA: separate AgentRun availability from saved team blueprint; separate chat-scoped Skill profile from goal/output preferences. RU/EN copy and focused E2E assertions added. Exact-head Pages #44285344948 + Graphify #44285346620 SUCCESS; public revision marker matches `d9b57cb`. TinyFish verified RU headings, boundary copy, close and no runtime errors; EN live and Playwright pending. | `index.md`; `tests/e2e/app.spec.mjs`; `NOW.md` |
 | 2026-11-18 | Settings IA: split existing Additional settings into four purpose-labelled groups; Project Settings now separates chat/project context, project profile, project memory and project data while retaining the existing Sources disclosure. RU/EN behavior verified by live browser on published exact main `de8cccb`; Pages and Graphify both SUCCESS on that SHA. Playwright regression authored but not executed. | `index.md`; `tests/e2e/app.spec.mjs`; `NOW.md` |
 | Date | Change | Evidence |

@@ -5080,3 +5080,41 @@ test('global settings are grouped by purpose and localized in Russian and Englis
   await expect(page.locator('#settingsPrivacyGroupTitle')).toHaveText('Privacy & fallback');
   await expect(page.locator('#settingsTransferGroupTitle')).toHaveText('Settings transfer');
 });
+
+test('project filters announce empty chat states and expose the selected unassigned scope', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const emptyProjectId = await page.evaluate(() => {
+    const projects = JSON.parse(localStorage.getItem('ai_projects_v1') || '[]');
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = 'e2e-empty-project';
+    const now = new Date().toISOString();
+    projects.unshift({
+      id,
+      name: 'Empty project',
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: now,
+      updatedAt: now
+    });
+    localStorage.setItem('ai_projects_v1', JSON.stringify(projects));
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats.filter(chat => chat.projectId !== id)));
+    return id;
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const projectList = page.locator('#projectNavigationList');
+  if (await projectList.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  await page.locator('#projectNavigationList .project-nav-select[data-project-id="' + emptyProjectId + '"]').click();
+  await expect(page.locator('#chatList [role="status"]')).toHaveText('В этом проекте пока нет чатов.');
+  await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'false');
+  await page.locator('#projectlessNavButton').click();
+  await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#chatList [data-chat-id]')).toHaveCount(1);
+  await page.locator('#chatScopeBackButton').click();
+  await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
+});

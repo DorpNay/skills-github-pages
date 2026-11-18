@@ -231,7 +231,7 @@ permalink: /
     #chatNavToggle[aria-expanded="true"] { border-bottom:1px solid var(--ui-border);color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     #chatNavToggle[aria-expanded="false"] { color:var(--ui-text);background:transparent; }
     #chatList { min-height:5rem;max-height:min(38vh,420px); }
-    #chatList.is-empty::after { content:attr(data-empty-label);display:block;padding:12px;color:var(--ui-text-muted);font-size:11px; }
+    .chat-list-empty-state { display:block;padding:12px;color:var(--ui-text-muted);font-size:11px;line-height:1.5; }
     #projectNavigationList .chat-row { min-height:38px; }
     #projectNavigationList .chat-row .chat-row-menu summary { width:30px;height:30px; }
     @media (prefers-reduced-transparency:reduce) { .project-nav-item,#chatSection { background:var(--ui-surface); } }
@@ -497,7 +497,7 @@ permalink: /
       <div id="chatNavigationContent" class="chat-nav-content">
         <div class="chat-primary-actions">
           <button type="button" id="chatScopeBackButton" data-action="clear-project-filter" class="chat-scope-back hidden">← Все чаты</button>
-          <button type="button" id="projectlessNavButton" data-action="projectless-nav" class="project-nav-unassigned" aria-label="Показать чаты без проекта">
+          <button type="button" id="projectlessNavButton" data-action="projectless-nav" class="project-nav-unassigned" aria-label="Показать чаты без проекта" aria-pressed="false">
             <span aria-hidden="true">○</span><span data-i18n="noProjectNav">Без проекта</span><span id="projectlessChatCount" class="ml-auto text-[10px] text-gray-500">0</span>
           </button>
         </div>
@@ -2736,6 +2736,7 @@ permalink: /
       const unassignedCount=chats.filter(chat=>!chat.projectId).length;
       $('projectlessChatCount').textContent=String(unassignedCount);
       $('projectlessNavButton').classList.toggle('is-active',selectedProjectFilterId==='');
+      $('projectlessNavButton').setAttribute('aria-pressed',String(selectedProjectFilterId===''));
       for(const project of projects) {
         const row=document.createElement('div');
         row.className='project-nav-item'+(selectedProjectFilterId===project.id?' is-active':'');
@@ -2768,6 +2769,7 @@ permalink: /
       }
       if(!projects.length){
         const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';
+        empty.setAttribute('role','status');empty.setAttribute('aria-atomic','true');
         empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);
       }
     }
@@ -2785,13 +2787,20 @@ permalink: /
       back.textContent=english
         ? '← All chats'+(selectedProject?' · '+selectedProject.name:selectedProjectFilterId===''?' · No project':'')
         : '← Все чаты'+(selectedProject?' · '+selectedProject.name:selectedProjectFilterId===''?' · Без проекта':'');
-      list.dataset.emptyLabel=selectedProject
-        ? (english?'No chats in this project yet.':'В этом проекте пока нет чатов.')
-        : selectedProjectFilterId===''
-          ? (english?'No personal chats yet.':'Нет личных чатов без проекта')
-          : (english?'No chats yet.':'Пока нет чатов.');
       list.classList.toggle('is-empty',visibleChats.length===0);
       $('chatSectionCount').textContent=String(visibleChats.length);
+      if(!visibleChats.length){
+        const empty=document.createElement('p');
+        empty.className='chat-list-empty-state';
+        empty.setAttribute('role','status');
+        empty.setAttribute('aria-atomic','true');
+        empty.textContent=selectedProject
+          ? (english?'No chats in this project yet.':'В этом проекте пока нет чатов.')
+          : selectedProjectFilterId===''
+            ? (english?'No personal chats yet.':'Нет личных чатов без проекта.')
+            : (english?'No chats yet.':'Пока нет чатов.');
+        list.appendChild(empty);
+      }
       visibleChats.forEach(chat=>list.appendChild(createChatRow(chat,false)));
     }
     function updateMemoryStatusLine(){
