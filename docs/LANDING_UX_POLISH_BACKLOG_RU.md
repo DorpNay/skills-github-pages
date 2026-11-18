@@ -110,3 +110,5 @@
 | 2026-11-18 | Project create/edit forms now mark the project name required, expose localized inline errors, focus the invalid field, and clear the error as the name is corrected. Added a create→edit validation/focus Playwright regression; execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Fixed custom Skill persistence contract: bounded name/instructions/output fields are now accepted by `persistChatMutation()`; success toast is RU/EN. Added apply→localStorage→reload Playwright regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Fixed Agent blueprint persistence contract: custom scenario, role preset, scenario text and custom roles are now accepted by the bounded chat mutation allowlist. Added apply/change→reload Playwright regression for custom blueprint fields. | `index.md`; `tests/e2e/app.spec.mjs` |

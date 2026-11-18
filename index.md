@@ -1345,7 +1345,8 @@ permalink: /
       const allowedUpdateKeys = new Set([
         'searchMode', 'deepResearchMethod', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
         'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy', 'executionMode',
-        'customSkillName', 'customSkillInstructions', 'customSkillOutput'
+        'customSkillName', 'customSkillInstructions', 'customSkillOutput',
+        'agentTeamScenario', 'agentRolePreset', 'agentTeamCustomScenario', 'agentCustomRoles'
       ]);
       const updateEntries = Object.entries(updates);
       // Mutations originate from bounded UI handlers; reject unknown keys (including prototype keys).

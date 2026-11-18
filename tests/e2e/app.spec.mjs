@@ -4952,6 +4952,40 @@ test('custom skill fields expose localized accessible names', async ({ page }) =
 });
 
 
+
+test('custom Agent blueprint fields persist to the active chat and survive reload', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await page.locator('#agentTeamScenario').selectOption('custom');
+  await page.locator('#agentTeamCustomScenario').fill('Review a bounded UI release for accessibility and regressions.');
+  await page.locator('#agentTeamCustomScenario').dispatchEvent('change');
+  await page.locator('#agentCustomRoles').fill('Researcher: inspect requirements.\nReviewer: challenge evidence.\nCoordinator: summarize risks.');
+  await page.locator('#agentCustomRoles').dispatchEvent('change');
+  const saved = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    const chat = chats.find(item => item.id === id);
+    return chat && {
+      agentTeamScenario: chat.agentTeamScenario,
+      agentRolePreset: chat.agentRolePreset,
+      agentTeamCustomScenario: chat.agentTeamCustomScenario,
+      agentCustomRoles: chat.agentCustomRoles
+    };
+  });
+  expect(saved).toMatchObject({
+    agentTeamScenario: 'custom',
+    agentTeamCustomScenario: 'Review a bounded UI release for accessibility and regressions.',
+    agentCustomRoles: 'Researcher: inspect requirements.\nReviewer: challenge evidence.\nCoordinator: summarize risks.'
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#agentTeamScenario')).toHaveValue('custom');
+  await expect(page.locator('#agentTeamCustomScenario')).toHaveValue('Review a bounded UI release for accessibility and regressions.');
+  await expect(page.locator('#agentCustomRoles')).toHaveValue('Researcher: inspect requirements.\nReviewer: challenge evidence.\nCoordinator: summarize risks.');
+});
+
 test('custom Skill profile persists its bounded fields to the active chat', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenu > summary').click();
