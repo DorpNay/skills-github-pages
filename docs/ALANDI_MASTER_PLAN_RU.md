@@ -1367,6 +1367,220 @@
 ### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement: product work after the original V-016 checklist (not part of its original 81 items)
 - [x] **AI-MEM-006 — RETIRED BY OWNER 2026-11-07:** server graph API, feature flags, storage and browser bridge were removed in the current PR #169 implementation. PR #27/#29 and their CI results remain historical evidence only; do not enable or restore this capability. _(source line 184)_
 - [x] **AI-MEM-007 — RETIRED BY OWNER 2026-11-07:** per-chat server-memory retrieval gate and UI state removed with the graph bridge. Browser-local project notes remain; conversation delta sync and independent scoped RAG are separate and preserved. _(source line 185)_
+
+## 4E. Launch, privacy, readiness and governance source checklists (reconciled 2026-11-18)
+
+The following source rows were not yet represented by a unique ID/text in the imported registries. They retain source path and line number. Legacy deployment actions remain owner-gated; these rows do not authorize host changes.
+
+### Open / partial
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — Автоматические проверки на точном PR HEAD
+- [ ] Integrity: HTML structure, JS parse, immutable Action SHAs. _(source line 115)_
+- [ ] Security: no credentials, safe markdown, safe provider routing and tools. _(source line 116)_
+- [ ] Context: bounded memory/context/tool-loop behavior. _(source line 117)_
+- [ ] Jekyll build: root app and `/landing/` output. _(source line 118)_
+- [ ] Chromium E2E: chat, settings, project, Research Studio, provider state, export/import, landing. _(source line 119)_
+- [ ] Landing responsive sweep: 320, 360, 390, 768, 1024, 1440 CSS px; no horizontal overflow. _(source line 120)_
+- [ ] Landing SEO/link checks: `lang`, title, description, canonical, CTA and relative paths. _(source line 121)_
+- [ ] Reduced-motion behavior: ticker static when OS requests reduced motion; no fake progress. _(source line 122)_
+- [ ] Gateway contract/security tests on PRs that touch gateway. _(source line 123)_
+- [ ] Project State Freshness exact SHA + exact live queue. _(source line 124)_
+- [ ] License/provenance check. _(source line 125)_
+- [ ] Graphify is developer-only artifact; inspect quality and do not ship to runtime. _(source line 126)_
+- [ ] After merge: post-merge Pages deployment and actual published-site smoke. _(source line 127)_
+
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — Ручные/owner gates
+- [ ] Native iPhone Safari: keyboard, safe area, focus, VoiceOver, touch, rotation, 320–390 width. _(source line 131)_
+- [ ] GitHub branch rules and required checks inspected in repository settings. _(source line 132)_
+- [ ] VPS inventory before any installation or reconfiguration; do not replace existing services blindly. _(source line 133)_
+- [ ] Ollama model tag, digest, license, disk/RAM/PSS, cold/warm timings and concurrency=1 recorded. _(source line 134)_
+- [ ] Gateway service listens on loopback; Ollama private on loopback; external origin accessible only through intended HTTPS Tunnel. _(source line 135)_
+- [ ] Valid/invalid Bearer key, allowlisted model, completion, SSE, cache HIT/BYPASS, timeout and reboot tested. _(source line 136)_
+- [ ] No prompt, user file/media body, secret or private memory in logs/traces/artifacts by default. _(source line 137)_
+- [ ] Owner has confirmed whether the first deployment is personal/limited access; never imply public multi-user auth. _(source line 138)_
+
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — Future post-landing requirements — voice (not part of the frozen landing V1)
+- [ ] **P0-13. Editable speech-to-text:** запись с микрофона, локальная транскрипция, редактирование распознанного текста до отправки, RU/EN/TH quality tests. _(source line 244)_
+- [ ] **P0-14. Conversational voice assistant:** полноценный естественный turn-taking, streaming transcript/response, VAD, barge-in, cancellation, echo cancellation, transcript alignment. Текущий half-duplex prototype — только основа, не завершённая функция. _(source line 245)_
+- [ ] **P0-15. Read selected text aloud:** выделение произвольного фрагмента ответа/сообщения и озвучивание только выделенного содержимого. _(source line 246)_
+- [ ] **P0-16. Read one whole message aloud:** стабильный TTS для целого сообщения, voice choice, mini-player, pause/resume/stop, cleanup and stale-request protection. _(source line 247)_
+- [ ] **P0-17. Read multiple selected messages aloud:** multi-select messages, ordered playback queue, pause/resume/skip/stop, cancellation and queue state; no parallel Piper jobs. _(source line 248)_
+- [ ] **P0-18. First-release voice acceptance:** реальные microphone/speaker tests на целевых устройствах; RU/EN/TH; word error rate, first transcript latency, first audio latency, interruption latency, echo, CPU/GPU/RAM, model license and SHA-256. Без этого не обещать «почти человеческий» realtime. _(source line 249)_
+
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — P1 — small helper models, GPU inference and agent orchestration
+- [ ] **P1-10. Helper model registry:** специализированные роли (classification, extraction, rerank, summary, memory candidate, skill synthesis), exact model ID/digest/license, capability, context/token budget, timeout, concurrency and eval. _(source line 252)_
+- [ ] **P1-11. GPU inference profile:** Ollama GPU vs llama.cpp server benchmark; GPU-only inference mode must fail closed if no compatible GPU is detected. CPU still runs OS/API/orchestration; the requirement is no mandatory CPU model inference, not zero CPU usage for the whole host. _(source line 253)_
+- [ ] **P1-12. High-throughput optional serving:** evaluate vLLM only on compatible accelerator hardware and when continuous batching/throughput materially helps. It is not the default 8-GB/single-model deployment. _(source line 254)_
+- [ ] **P1-13. Multi-agent runtime:** bounded DAG/fan-out, queue/backpressure, per-agent scope/permissions, deadline, budget, cancellation propagation, idempotency, checkpoints, traces, retries and eval harness. Current four-stage research pipeline is not a swarm. _(source line 255)_
+- [ ] **P1-14. Mass-agent load test:** establish safe concurrency, VRAM admission, memory residency/eviction, fairness, queue limits and degraded-mode behavior before increasing agent count. _(source line 256)_
+
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — P1 — internal notebook / Knowledge-to-Skill
+- [ ] **P1-15. Knowledge-to-Skill pipeline:** authorized books, PDFs, office documents, websites and repo sources → bounded extraction → chapters/sections → source/page provenance → skill generation → injection/license scan → human review → versioned private skill. _(source line 259)_
+- [ ] **P1-16. Skill lifecycle:** schema validation, scope isolation (personal/project), diff, versioning, rollback, deletion/retention and import/export. _(source line 260)_
+- [ ] **P1-17. Safe ingestion:** MIME sniffing, archive/path traversal defense, XXE/bomb limits, parser timeout, temp cleanup, invisible Unicode scan, prompt injection scan and no automatic external provider fallback. _(source line 261)_
+
+### docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md — 8. Остаток landing/app polish из актуального main
+- [ ] Скриншоты и визуальная проверка landing на 320/360/390/768/1024/1440 px; hero, карточки, CTA, spacing, contrast, footer. _(source line 274)_
+- [ ] Keyboard-only и screen-reader проверка трёх раскрываемых roadmap секций и pause controls. _(source line 275)_
+- [ ] Published Pages smoke после merge; canonical, ссылки и реальный deployment. _(source line 276)_
+- [ ] App screenshot pass desktop/mobile; typography, contrast, spacing, empty/error states, RU/EN, light/dark. _(source line 277)_
+- [ ] Все composer popovers на краях viewport, коротком viewport, с клавиатурой и nested scroll. _(source line 278)_
+- [ ] Dialog Escape/focus trap/return/scroll lock/background inert; sticky Settings actions. _(source line 279)_
+- [ ] Проверка дублирования chat import/export и project bundle actions. _(source line 280)_
+- [ ] Long names, large lists, keyboard navigation, 44px touch targets. _(source line 281)_
+- [ ] Functional menu отражает только реально зарегистрированные skills/agents/connectors and permissions. _(source line 282)_
+- [ ] Native iPhone Safari, VoiceOver, safe-area, keyboard, rotation and touch cancellation — owner gate. _(source line 283)_
+- [ ] Keep Native Popover API/CSS Anchor Positioning progressive enhancement only; preserve JS fallback. _(source line 284)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Шаг 3. Подтвердить целевой профиль
+- [ ] Есть доступ к имеющемуся VPS либо подтверждена итоговая цена нового. _(source line 70)_
+- [ ] ОС/архитектура совместимы с выбранным runbook. _(source line 71)_
+- [ ] Достаточно RAM/диска после учёта уже работающих сервисов и модели. _(source line 72)_
+- [ ] Известно, кто имеет SSH/root access и как восстановиться при неудачном обновлении. _(source line 73)_
+- [ ] Домен, DNS и план ежемесячных затрат понятны. _(source line 74)_
+- [ ] Никакие существующие сервисы не будут удалены/перенастроены без инвентаризации. _(source line 75)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Этап D — обязательные локальные gates
+- [ ] /livez возвращает HTTP 200 без обращения к Ollama. _(source line 108)_
+- [ ] /readyz возвращает HTTP 200 при доступной Ollama; `/healthz` — совместимый alias `/readyz`. _(source line 109)_
+- [ ] Неавторизованный /v1/models возвращает HTTP 401. _(source line 110)_
+- [ ] Авторизованный /v1/models показывает только разрешённую модель. _(source line 111)_
+- [ ] Небольшой completion завершается и возвращает модельный ответ. _(source line 112)_
+- [ ] Повтор exact-запроса даёт ожидаемый cache HIT, а cache bypass действительно работает. _(source line 113)_
+- [ ] Порты 8000 и 11434 слушают только loopback. _(source line 114)_
+- [ ] В логах нет API ключа, пользовательского prompt, приватного документа или сырого аудио. _(source line 115)_
+- [ ] Права env/config соответствуют инструкции; service перезапускается без ручного shell state. _(source line 116)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Этап G — reboot, backup и rollback
+- [ ] Перезапусти gateway и Ollama, проверь health/capabilities после рестарта. _(source line 138)_
+- [ ] Перезагрузи VPS в согласованное окно и подтверди автозапуск сервисов/Tunnel. _(source line 139)_
+- [ ] Сделай backup конфигураций и необходимой SQLite data; секреты хранить отдельным защищённым способом. _(source line 140)_
+- [ ] Проверь restore на безопасной копии, прежде чем считать backup рабочим. _(source line 141)_
+- [ ] Подготовь rollback: отключить hostname/tunnel route; вернуть предыдущий env/config; восстановить known-good commit/service unit; проверить health. Не удалять данные, volumes и старые сервисы ради чистоты. _(source line 142)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Код и сайт
+- [ ] Все выбранные PR проверены по актуальному HEAD и нужным required checks; после merge повторно проверены main Quality и Pages deployment. _(source line 157)_
+- [ ] Лендинг не обещает работающий hosted endpoint, автоматическую синхронизацию, включённый voice/OCR или multi-user SaaS, если это не подтверждено. _(source line 158)_
+- [ ] Проверены mobile layout, клавиатура/viewport, навигация, доступность клавиатурой и отсутствие внешних обязательных JS-зависимостей на лендинге. _(source line 159)_
+- [ ] Все ссылки и инструкции ведут к актуальным путям; нет несуществующих contact/support обещаний. _(source line 160)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Сервер и безопасность
+- [ ] API работает за HTTPS Tunnel; origin ports закрыты; auth/CORS/allowlist/limits проверены. _(source line 163)_
+- [ ] Модель не превышает заданный RAM/latency budget под тестом; restart and reboot проверены. _(source line 164)_
+- [ ] Секреты не попали в git/history/logs/artifacts. _(source line 165)_
+- [ ] Backup восстановлен в тестовой копии; rollback известен. _(source line 166)_
+- [ ] Есть владелец расходов, мониторинг диска/RAM и расписание обновлений. _(source line 167)_
+
+### docs/PRE_LAUNCH_STACK_RU.md — Продукт и политика
+- [ ] Определён закрытый круг первых пользователей и путь обратной связи. _(source line 170)_
+- [ ] На лендинге раскрыты ограничения и зависимость от пользовательского gateway. _(source line 171)_
+- [ ] Подготовлены Terms/Privacy policy только под фактические data flows; не писать «данные никогда не покидают устройство», если может быть выбран внешний provider. _(source line 172)_
+- [ ] Для открытого multi-user доступа отдельно спроектированы auth/session, tenant isolation, quotas, abuse controls, cost controls и retention/deletion. До этого не выдавать личный beta за публичный SaaS. _(source line 173)_
+
+### docs/LAUNCH_PRIVACY_REVIEW_RU.md — 2. Что обязательно подтвердить владельцу перед публичным Privacy Notice
+- [ ] Оператор: физическое лицо или юридическое лицо, публичное имя/бренд и юридический адрес, если применимо. _(source line 25)_
+- [ ] Контакт для запросов на доступ/удаление и вопросов приватности (лучше отдельный адрес поддержки; не выдумывать адрес до его создания). _(source line 26)_
+- [ ] География оператора, хостинга, предполагаемых пользователей и целевые страны запуска. _(source line 27)_
+- [ ] Целевая аудитория и минимальный возраст, если применимо. _(source line 28)_
+- [ ] Будет ли это личный интерфейс одного владельца, ограниченная beta по приглашениям или публичный многопользовательский продукт. _(source line 29)_
+- [ ] Реальная схема входа и авторизации: сейчас отдельная multi-user auth система не подтверждена. _(source line 30)_
+- [ ] Точные домены, hosting providers, Tunnel mode/plan и фактически подключённые внешние AI/search providers. _(source line 31)_
+- [ ] Какие данные собираются: чаты, выбранный контекст, проекты/инструкции, вложения, provider settings, browser storage, server-side cache, diagnostic logs, billing/support messages. _(source line 32)_
+- [ ] Retention по каждой категории: browser data, server cache, logs, temporary files, backup copies. Если срок неизвестен, сначала измерить/проверить, а не угадывать. _(source line 33)_
+- [ ] Реальная политика удаления и экспорта: что удаляется сразу, что остаётся в резервных копиях и когда копии ротируются. _(source line 34)_
+- [ ] Фактическая обработка Cloudflare/GitHub Pages/VPS и внешнего провайдера: metadata/access logs, location/jurisdiction, applicable terms. _(source line 35)_
+- [ ] Используются ли analytics, cookies beyond essential browser storage, tracking pixels, telemetry или third-party frontend assets. _(source line 36)_
+- [ ] Как обрабатываются запросы об удалении, security incident, credential compromise и закрытии аккаунта, если появится account system. _(source line 37)_
+- [ ] Кто отвечает за support и стоимость вычислений; есть ли автоматические биллинговые ограничения/quotas. _(source line 38)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — V0 — Контракт и безопасность
+- [ ] `GET /v1/capabilities` отражает только реально включённые функции. _(source line 31)_
+- [ ] Неавторизованные запросы получают 401; тело, длительность и время выполнения ограничены. _(source line 32)_
+- [ ] Конкурентные ASR/TTS задачи не копятся бесконечной очередью; корректно возвращается 429. _(source line 33)_
+- [ ] Временные аудиофайлы удаляются при успехе и ошибке; сырой звук не пишется в логи и долговременную память. _(source line 34)_
+- [ ] Проверены лицензии и SHA-256 бинарника/моделей/голоса; runtime пути задаются оператором, ничего не скачивается автоматически. _(source line 35)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — V1 — Реальный локальный ASR
+- [ ] Установлены совместимые `whisper.cpp`, `ffprobe` и локальная ASR-модель. _(source line 38)_
+- [ ] На целевом устройстве браузер действительно получает микрофонное разрешение, записывает поддерживаемый MIME/кодек и корректно останавливает треки. _(source line 39)_
+- [ ] Русская, английская и тайская короткие записи проходят через настоящий endpoint; ошибки формата/пустой записи объясняются пользователю. _(source line 40)_
+- [ ] Транскрипт вставляется в composer и остаётся редактируемым; автоматической отправки нет. _(source line 41)_
+- [ ] Измерены время до первой расшифровки, длительность аудио, пиковая RAM и точность на фиксированном небольшом тестовом наборе. _(source line 42)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — V2 — Реальный локальный TTS
+- [ ] Установлены совместимые Piper runtime и voice model с проверенной лицензией. _(source line 45)_
+- [ ] Несколько ответов на русском/английском синтезируются в валидный WAV и воспроизводятся на целевом iPhone/браузере. _(source line 46)_
+- [ ] Stop отменяет запрос и воспроизведение; повторное нажатие не запускает дубликат. _(source line 47)_
+- [ ] Измерены latency, длительность генерации, размер WAV и RAM. _(source line 48)_
+- [ ] Синтез отключён при недоступном runtime, без имитации успешного ответа. _(source line 49)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — V3 — Half-duplex голосовой помощник
+- [ ] Кодовый half-duplex цикл и mock E2E существуют (PR #60); реальная последовательность запись → ASR → редактируемый текст → запрос → TTS → воспроизведение → следующий ход на целевом устройстве не проверена. _(source line 52)_
+- [ ] Нет автоматической отправки до подтверждённого состояния, если режим явно не настроен на это. _(source line 53)_
+- [ ] Ошибка на любом этапе оставляет пользователя в восстанавливаемом состоянии; нет скрытой повторной записи или позднего воспроизведения. _(source line 54)_
+- [ ] Отдельно проверены iOS Safari, блокировка/разблокировка экрана, переключение аудиоустройства и прерывание звонком. _(source line 55)_
+- [ ] Только после измерений решить, нужен ли streaming/VAD/barge-in; не добавлять их как фиктивную настройку. _(source line 56)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — D0 — Защищённое извлечение
+- [ ] Проверить `ALANDI_DOCUMENT_EXTRACTION_ENABLED=false` по умолчанию; включать только на намеренно настроенном gateway. _(source line 61)_
+- [ ] Проверить реальные сигнатуры/MIME, расширения, пределы размера, страниц/листов, ZIP entries, коэффициента сжатия, времени и длины извлечённого текста. _(source line 62)_
+- [ ] Проверить повреждённые файлы, архивную бомбу, неверное расширение, пустой/сканированный PDF, превышение лимитов и cleanup временных данных. _(source line 63)_
+- [ ] Сохранить `no-store`; не отправлять документ в стороннего провайдера без явного выбора и применимых настроек согласия/приватности. _(source line 64)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — D1 — Путь от вложения до ответа модели
+- [ ] На реальном gateway вложить по одному TXT, PDF с текстовым слоем, DOCX, XLSX, CSV и JSON. _(source line 67)_
+- [ ] Подтвердить, что извлечённое содержимое действительно включено в prompt активного провайдера, а не просто отображено в UI. _(source line 68)_
+- [ ] Проверить страницы/листы и происхождение источника; для таблиц не терять заголовки, порядок и значения ячеек. _(source line 69)_
+- [ ] Недоступный parser или превышение лимита блокирует отправку с понятной ошибкой, а не создаёт впечатление, что модель прочитала файл. _(source line 70)_
+- [ ] Проверить раздельные сценарии собственного и стороннего провайдера: документ не должен незаметно менять выбранный маршрут. _(source line 71)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — D2 — Следующий уровень ingestion (не считать реализованным)
+- [ ] OCR для сканированных PDF и изображений — отдельный локальный компонент, лицензия, лимиты и тесты. _(source line 74)_
+- [ ] Chunking с page/offset/source hash, preview и подтверждением перед индексацией. _(source line 75)_
+- [ ] Re-index/delete, удаление производных chunks вместе с источником, provenance и тесты scope isolation. _(source line 76)_
+- [ ] XLSX: отдельно определить формулы, отображаемые значения, листы и лимиты. _(source line 77)_
+- [ ] Видео: выборка кадров не равна расшифровке звука; audio track, ASR и синхронизация требуют отдельного pipeline. _(source line 78)_
+- [ ] Google Drive OAuth/Picker/sync не обещать до завершения UI, encrypted token storage, revoke и проверки удаления индекса. _(source line 79)_
+
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — UX и режимы
+- [ ] **Голосовое сообщение:** UI/code path реализован; пользователь может записать фрагмент, отредактировать расшифровку и отправить вручную. Реальный микрофон/модель на целевом устройстве ещё не проверены. _(source line 104)_
+- [ ] **Живой разговор (первый этап — half-duplex):** прототип цикла есть, но это не streaming/full-duplex. Проверить реальные ASR/TTS, задержку, отмену, echo и состояние UI на устройстве. _(source line 105)_
+- [ ] Переключение в живой режим не включается само собой; видимые Start/Stop и разрешение микрофона обязательны. Stop прекращает запись, ASR, запрос модели и воспроизведение настолько полно, насколько позволяют используемые API. _(source line 106)_
+- [ ] Для локального TTS показывать только голоса, чьи файлы и runtime действительно установлены и прошли проверку. Если доступен один голос, не рисовать второй фиктивный вариант. _(source line 108)_
+- [ ] Голос хранится как предпочтение выбранного режима/чата согласно принятой модели настроек; не передавать это предпочтение внешнему провайдеру, если синтез остаётся локальным. _(source line 109)_
+- [ ] При смене языка выбирать совместимый установленный голос либо объяснять, что голос недоступен; не делать тихий fallback на внешний сервис. _(source line 110)_
+- [ ] Расшифровка и ответ видны текстом, если пользователь не включил отдельный режим аудио-only. Пользователь может исправить распознанный текст до отправки. _(source line 111)_
+
+### docs/WORKSTREAM_GOVERNANCE_RU.md — 7. Governance task ledger
+- [ ] GOV-003 — apply explicit titles/banners/labels to all existing future/research PRs after reviewing each PR and current labels. _(source line 99)_
+- [ ] GOV-004 — add repository-side merge protection/automation only after checking existing rulesets and obtaining owner approval; labels alone are not a security boundary. _(source line 100)_
+- [ ] GOV-005 — update master registry and orienters when PR #127 is revised/merged. _(source line 101)_
+
+### docs/START_HERE_RU.md — 5. Проверка «готово»
+- [ ] Pages deployment успешен, сайт открывается. _(source line 54)_
+- [ ] VPS: Ollama и gateway активны. _(source line 55)_
+- [ ] Gateway доступен только через Tunnel; публичные порты 8000/11434 закрыты. _(source line 56)_
+- [ ] HTTPS hostname отвечает; неправильный API key получает 401. _(source line 57)_
+- [ ] Из чата проходит реальный completion через gateway. _(source line 58)_
+- [ ] Cache MISS → повтор HIT; bypass действительно обходит cache. _(source line 59)_
+- [ ] После перезагрузки VPS gateway и Tunnel запускаются автоматически. _(source line 60)_
+- [ ] Сохранены backup env/config и инструкции rollback (сам секрет — отдельно и защищённо). _(source line 61)_
+
+### Retired
+
+
+### Historical completed source marks
+### docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md — UX и режимы
+- [x] **Выбор установленного голоса:** PR #75 добавил allowlisted список preinstalled Piper voices из authenticated `/v1/capabilities` и UI selector; API валидирует voice ID. Остаются выбор конкретных packs, artifact-specific license/SHA-256, реальный синтез и UX-проверка на устройстве. _(source line 107)_
+
+### docs/WORKSTREAM_GOVERNANCE_RU.md — 7. Governance task ledger
+- [x] GOV-001 — define LANDING vs RESEARCH/FUTURE/SPIKE separation. _(source line 97)_
+- [x] GOV-002 — define branch/PR naming and merge policy. _(source line 98)_
+
+## 4D. Accepted improvements and requirements carried into the priority plan
+
+Source: docs/ACCEPTED_IMPROVEMENTS.md. Current accepted tracks are represented in P0/P2/P3: AI-AGENT-005 — policy-enforced autonomous orchestration (real capability/permission policy, not a prompt promise); AI-UI-005 — adaptive-minimalist private workspace with owner-controlled changes. AI-MEM-007 — opt-in browser-to-server project memory bridge — is explicitly RETIRED and must not be reintroduced. The source file contains the concise acceptance record; no new permission is granted by that historical decision.
+
+Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve manual and explicit provider-mode separation; isolate history/context per route; never auto-fallback between providers; keep Personal/Project/Global memory scopes distinct and permissioned; user can refuse/revoke memory access; show provider and route status honestly; avoid claiming a connected/unavailable provider as active. These requirements are consolidated into P2.2–P2.10 and release gates; older conflicting defaults are superseded by later owner overrides.
 ## 5. Completed archive — читать в последнюю очередь
 
 Следующие строки были отмечены [x] в старых реестрах. Это исторические отметки; не считать их автоматически подтверждёнными на текущем SHA. Не возвращать в работу без нового требования или контр-evidence.
