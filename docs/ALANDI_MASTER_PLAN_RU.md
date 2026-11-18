@@ -947,6 +947,426 @@
 ### MASTER_TASK_REGISTRY_RU.md — GUIDE — `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`
 - [ ] **GUIDE-553 — RETIRED BY OWNER 2026-11-07** (строка 553; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`): Owner removed the server-memory graph; this auth/scope/cascade-delete gate is obsolete. Do not restore the graph. _(исходный статус: RETIRED; строка 516)_
 
+
+## 4C. Дополнительные актуальные source checklists (перенесены при консолидации 2026-11-18)
+
+Эти строки появились или обновлялись позднее исторического master registry. Повторяющиеся stable IDs и точные дубликаты исключены; исходные пути и строки сохранены. Source checkbox — историческая отметка и не заменяет текущую проверку.
+
+### Open / partial
+### docs/USER_REQUEST_CHECKLIST.md — A. База, управление и непрерывность
+- [ ] Проверить все старые регрессии: создание чата, история, экспорт/импорт, отмена, повтор запроса. _(source line 14)_
+- [ ] Обновить сведения о реальном состоянии системы: код, контракт, эксперимент, развёрнутая служба, измеренная метрика. _(source line 15)_
+
+### docs/USER_REQUEST_CHECKLIST.md — B. Первичное облако aLandi и API-провайдеры
+- [ ] Начальный статус облака — красный/неподтверждённый; зелёный возможен лишь после реального модельного ответа и успешной `/healthz`-проверки при следующем запуске. Живой пользовательский gateway ещё не сконфигурирован. _(source line 20)_
+- [ ] Хранить адрес, модель и ключ aLandi отдельно; не считать наличие ключа доказательством связи. _(source line 21)_
+- [ ] Проверять сохранённое соединение при запуске через health-check, а не доверять вечному старому зелёному статусу. _(source line 22)_
+- [ ] Перенести старые настройки провайдеров в свёрнутый дополнительный раздел. _(source line 23)_
+- [ ] Вынести ключ Tavily в под-раздел инструментов и веб-поиска. _(source line 24)_
+- [ ] Добавить кнопку вставки для ключей провайдера и своего gateway. _(source line 25)_
+- [ ] После явной вставки ключа запускать один ограниченный refresh каталога и тест соединения. _(source line 26)_
+- [ ] Блокировать конкурирующие одновременные тесты подключения. _(source line 27)_
+- [ ] При явной ошибке доступности модели искать не более трёх альтернатив того же провайдера. _(source line 29)_
+- [ ] Не делать retry альтернативных моделей на 401/403, 429, сетевой ошибке или общем сбое API. _(source line 30)_
+- [ ] Принимать корректные текстовые массивы, refusals/tool-calls и варианты совместимого ответа, не путать валидный JSON-envelope с ошибкой формата. _(source line 31)_
+- [ ] Kilo Auto Free доступен как обычный альтернативный провайдер в общем списке: без ключа, только по явному выбору и без скрытого fallback. Официальная документация предупреждает, что промпты могут поступать провайдерам, которые логируют их/используют для улучшения моделей; конфиденциальные данные туда не отправлять. См. `docs/V016_IMPLEMENTATION_CHECKLIST.md` и [официальное предупреждение Kilo](https://kilo.ai/docs/getting-started/using-kilo-for-free). _(source line 32)_
+- [ ] Обновить все модельные ID по официальным динамическим каталогам; статические preset считать только fallback. _(source line 33)_
+- [ ] Провести E2E-проверку реального пользовательского выбора Kilo и документацию об обработке данных сторонним шлюзом. _(source line 34)_
+- [ ] Проверить официальные endpoints, CORS, лимиты, схему аутентификации и формат ошибок каждого сохранённого провайдера. _(source line 36)_
+- [ ] Никогда не переносить ключи из одного провайдера в другой и не экспортировать ключи в settings-profile. _(source line 37)_
+
+### docs/USER_REQUEST_CHECKLIST.md — C. Главный экран, визуальная система и язык
+- [ ] Переоформить шапку в бренд aLandi и перенести название активного чата в подпись. _(source line 40)_
+- [ ] Добавить пасхалку «a land i → i land AI». _(source line 41)_
+- [ ] Добавить реальные цифровые часы и аналоговые стрелки с дискретным обновлением. _(source line 42)_
+- [ ] Добавить основной переключатель тёмной/светлой темы на главном экране. _(source line 43)_
+- [ ] Добавить RU/EN переключатель и сохранять выбранный язык. _(source line 44)_
+- [ ] Обновить шрифтовой fallback без обязательной внешней загрузки; улучшить радиусы и состояния элементов. _(source line 45)_
+- [ ] Реализовать центрирование поля ввода в пустом чате и увеличение высоты по мере ввода. _(source line 46)_
+- [ ] Перемещать длинный черновик из центрального режима в привычную нижнюю позицию. _(source line 47)_
+- [ ] Добавить ограниченное прикрепление текстовых файлов (.txt, .md, .csv, .json, .log) с размерными лимитами. _(source line 48)_
+- [ ] Мобильная кнопка голоса, удержание и свайп покрыты успешным PR #21 Chromium E2E. Это только preview: микрофон, ASR, TTS, AEC и аудиотранспорт не подключены. _(source line 49)_
+- [ ] Полностью пройти мобильную/настольную проверку размеров и областей касания. _(source line 50)_
+- [ ] Проверить клавиатурную доступность, visible focus, контраст, screen reader и reduced-motion. _(source line 51)_
+- [ ] Перевести все пользовательские надписи, подсказки и ошибки интерфейса; текущий RU/EN перевод неполный. _(source line 52)_
+- [ ] Сокращены ключевые инструкции настроек: cloud/API, ключи, CORS, контекст и веб-поиск. Полный аудит всех подсказок и согласование RU/EN ещё не завершены. _(source line 53)_
+- [ ] Провести визуальную регрессию desktop/mobile и проверить, что анимации не мешают длинному вводу. _(source line 54)_
+
+### docs/USER_REQUEST_CHECKLIST.md — D. Чаты, проекты, инструкции и память
+- [ ] Project CRUD присутствует в клиенте: создать, переименовать/редактировать, удалить с подтверждением; повторно проверить E2E на текущей ветке. _(source line 57)_
+- [ ] Проектные инструкции редактируются и добавляются в контекст как предпочтения, не как политика безопасности; подтвердить тестами precedence. _(source line 58)_
+- [ ] Текущий чат можно привязать/отвязать от проекта; проектная принадлежность видна в интерфейсе. _(source line 59)_
+- [ ] Есть экспорт/импорт project bundle с чатом, инструкциями и памятью; проверить схему, duplicate IDs, limits, malicious content. _(source line 60)_
+- [ ] Browser-local global/project memory имеют отдельные явные toggles; global context по умолчанию выключен. E2E проверяет состояние переключателя, но отдельный multi-project prompt-leak test для browser-local global facts ещё не закрыт. _(source line 61)_
+- [ ] Реализовать authenticated API/индексацию project sources только после согласованного backend contract; не имитировать работающий индекс на пустой заглушке. _(source line 63)_
+- [ ] Межпроектные проверки: RAG retrieval/delete — `gateway/tests/test_six_layers.py::test_rag_retrieval_preserves_citations_and_isolates_scopes` и `test_rag_scope_bound_ids_allow_same_document_name_without_leak_or_cross_delete`; Evidence Ledger — `gateway/tests/test_coder_packet.py::test_evidence_ledger_stores_scoped_provenance_and_exact_quote`; exact-response cache — `gateway/tests/test_app.py::test_exact_cache_key_separates_project_specific_prompt_context`. Cache key зависит от полного payload, а не от отдельного project-ID ACL; browser-global memory leak test и отдельный cache project-scope contract остаются открытыми. Серверная graph-memory изоляция retired. _(source line 64)_
+- [ ] RAG source deletion is scope-checked and removes chunk/concept/FTS rows; SQLite `secure_delete` plus version-gated FTS5 `secure-delete` regression tests passed on PR #24 HEAD and post-merge main. This still does **not** erase evidence-ledger copies, WAL/journals, backups or browser-local source copies; system-wide crypto-erasure remains open. _(source line 65)_
+- [ ] Проверить экспорт, исправление и удаление пользовательских фактов и связанные derived records. _(source line 66)_
+- [ ] Реализовать удаление/криптостирание по всем реальным слоям; не обещать SLA ≤60 секунд без измерения. _(source line 67)_
+- [ ] Полноценный viewer источников/индекса, citation lineage и cross-device project memory остаются задачами последующих фаз. _(source line 71)_
+
+### docs/USER_REQUEST_CHECKLIST.md — E. Инструменты, маршрутизация, веб-поиск и отказы
+- [ ] Сохранить ограничение по числу шагов инструментов и исследовательских вызовов; не запускать неограниченный retry loop. _(source line 74)_
+- [ ] Сохранить явный opt-in для fallback к другому облачному провайдеру. _(source line 75)_
+- [ ] Проверить все циклы tool-calls на max rounds, общий deadline, cancellation, bounded concurrency и корректное продолжение assistant/tool messages. _(source line 76)_
+- [ ] При ошибке инструмента пробовать совместимый способ/альтернативный инструмент только в пределах явного policy и бюджета. _(source line 77)_
+- [ ] Показывать правдивую timeline событий: фактический вызов, источник, duration, результат, ошибка; не показывать скрытые рассуждения. _(source line 78)_
+- [ ] Внедрить 12-шаговый Deep Research state machine, повторный поиск при пробелах и проверку утверждений против ссылок. _(source line 80)_
+- [ ] Проверить prompt-injection в проектных инструкциях и загруженных документах. _(source line 81)_
+- [ ] Проверить SSRF/redirect protections, MIME/size/time limits, безопасную очистку временных файлов и отсутствие секретов в логах. _(source line 82)_
+- [ ] Не кэшировать streaming, tool calls, web research, multimedia, errors или partial outputs. _(source line 83)_
+- [ ] Проверить точную инвалидацию exact cache при изменении prompt, project instructions или tool schema. _(source line 84)_
+- [ ] Измерить retry rate, повторные дубликаты, частоту 429/5xx, latency и успешность tool-циклов. _(source line 85)_
+
+### docs/USER_REQUEST_CHECKLIST.md — F. V-016: зависимости, аудио, память, бюджеты и лицензии
+- [ ] Проверить CI-гейт триады: точный проверенный URL + лицензия конкретного артефакта + источник технического утверждения. _(source line 89)_
+- [ ] Не включать модели/голоса в установщик до проверки точной лицензии, весов, voice artifact и checksums. _(source line 90)_
+- [ ] Внедрить ALBF binary framing только вместе с real transport и тестами на усечение, CRC, max payload и cancellation. _(source line 91)_
+- [ ] Сделать bake-off ASR/TTS с измерением RTF, first audio, e2e p95 и потребления PSS; не опираться на неподтверждённые цифры. _(source line 92)_
+- [ ] Подтвердить native audio capture/processing прежде, чем обещать отсутствие PCM/аудио hotpath в Python. _(source line 93)_
+- [ ] Проверить безопасную изоляцию tool workspace; не называть subprocess без sandbox production-изоляцией. _(source line 95)_
+- [ ] Проверить scope isolation, no-PII logs, prompt priority stack и fail-safe privacy policy. _(source line 96)_
+- [ ] Измерить профиль laptop_8gb_cpu_mvp на целевом 8-GB железе, включая combined LLM+RAG+tools и cold-tier eviction. _(source line 97)_
+- [ ] Не заявлять p95 900/2500 ms, regret ≤1.25, PII leak=0 или crypto-erase SLA, пока нет воспроизводимых evals. _(source line 98)_
+- [ ] Полностью пересмотреть список зависимостей/отклонённых технологий в V-016 и не вводить CUT/PAT items как production-зависимости. _(source line 99)_
+- [ ] Проверить Third-party NOTICE и права распространения каждой включённой библиотеки/модели. _(source line 100)_
+
+### docs/USER_REQUEST_CHECKLIST.md — G. Выпуск и финальный аудит
+- [ ] Пройти Jekyll build, quality sentinels, browser Chromium tests, accessibility/interaction tests и provider-specific deterministic E2E. _(source line 103)_
+- [ ] Проверить без реальных секретов: malformed response, 400/404 model missing, 401/403 auth, 429, 5xx, timeout, CORS, offline and cancelled request. _(source line 104)_
+- [ ] Проверить, что новая ветка не меняет чужую конфигурацию, историю, секреты или сохранённые настройки молча. _(source line 105)_
+- [ ] После merge проверить main SHA, успешные workflows и опубликованную GitHub Pages версию. _(source line 106)_
+- [ ] Перепроверить каждый пункт этого реестра перед итоговым отчётом; явно перечислить незавершённое и неподтверждённое. _(source line 107)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part I — CODER_PACKET.md: архитектура, обязательные контракты, фазы 0–8
+- [ ] Фазы 0–4: gateway/trace, scoped RAG FTS5/evidence/citations и tool safety имеют foundations/prototypes; experimental server-memory graph/temporal/conflict layer retired by owner 2026-11-07. _(source line 117)_
+- [ ] Фазы 5–6: подключить настоящий voice runtime и native ASR/VAD/TTS только после лицензий и воспроизводимого hardware benchmark. _(source line 118)_
+- [ ] Фазы 7–8: подключить реальную telemetry timeline, authenticated UI API и cloud integration только после backend contract/security review. _(source line 119)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part III — ACCEPTED_IMPROVEMENTS.md и связанные артефакты
+- [ ] На каждое изменение статуса дополнить eval-отчёт командой, результатом, sample size, SHA и rollback; обновить PROJECT_STATE.yaml, EVALS.md, LOOP.md, DECISIONS.md и соответствующий отчёт. _(source line 169)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part IV — EVALS.md, DECISIONS.md, LOOP.md, INTEL.md, license/latency/infra/domain gates
+- [ ] Прогнать python -m compileall -q gateway, python -m pytest -q gateway/tests, python gateway/evals/run_six_layer_eval.py и лицензионный CI gate на текущем состоянии ветки. _(source line 174)_
+- [ ] Проверить provenance каждого реально поставляемого артефакта: точный источник, применимая лицензия модели/голоса, SHA-256. TBD/непроверенные hashes не могут отмечаться как ship-enabled. _(source line 175)_
+- [ ] Измерить на целевом хосте cold/warm p50/p95/p99, RTF, RAM/PSS, аудиодропы, CER/WER и regression sample counts до любых performance claims. _(source line 176)_
+- [ ] Развёртывание VPS, DNS, OAuth secrets и создание billable infrastructure не выполнять без актуального account access/проверенных параметров и отдельного согласованного действия. _(source line 177)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Gate перед финальным ответом
+- [ ] Пересверить весь этот To do и таблицу ID с текущим HEAD после завершения всех workflows; подробный аудит четырёх частей манифеста — `docs/V016_IMPLEMENTATION_CHECKLIST.md` (81 пункт, §§0–40). _(source line 191)_
+- [ ] Указать раздельно: фактически внедрено, проверено CI, подтверждено live, измерено benchmark, осталось prototype/deferred/blocked. _(source line 192)_
+- [ ] Не объединять PR и не сообщать о публикации до зелёных релевантных workflow и проверки merge result. _(source line 193)_
+
+### docs/USER_REQUEST_CHECKLIST.md — I. Следующие продуктовые вертикали
+- [ ] Первый месяц не создавать платные ресурсы автоматически: GitHub Pages + уже имеющееся железо + Ollama локально; free-tier API считать квотируемым и внешним, не гарантированно бесплатным. _(source line 202)_
+- [ ] Оценить одну маленькую helper-модель для классификации, извлечения фактов, кратких сводок и чернового ранжирования. Главная модель остаётся для планирования, сложного reasoning и синтеза. Сравнить качество, latency и RAM перед включением. _(source line 203)_
+- [ ] Добавить генерацию изображений отдельным модулем после выбора реального backend (локальный ComfyUI/API или явно выбранный внешний провайдер), проверки точной модели/лицензии/VRAM и mock E2E. _(source line 204)_
+- [ ] Не добавлять скрытый refusal-фильтр поверх выбранной модели; не обещать «никогда не отказывает»: поведение checkpoint и правила внешнего API не контролируются приложением. _(source line 205)_
+- [ ] Перед переходом на платный сервер сравнить baseline с измерениями p50/p95, RAM, качества, устойчивости, квот и месячной стоимости; менять endpoint/model config без смены контракта UI. _(source line 206)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — 2026-10-24 owner quickstart and chat ergonomics
+- [ ] Real voice capture/ASR/TTS, image/video pipelines and complete document ingestion remain separate unimplemented work; see `docs/IMPLEMENTATION_ROADMAP_RU.md` and the original V-016 evidence ledger. _(source line 213)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — 2026-10-24 project navigation and composer
+- [ ] Real device verification: touch long-press/cancel, mobile keyboard focus/viewport reset, screen reader flow, and large file handling. _(source line 225)_
+- [ ] Implement real file intake pipeline for PDF/DOCX/XLSX/OCR/audio/video metadata before claiming all formats are supported. _(source line 226)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — local helper memory suggestions (2026-10-27)
+- [ ] Live inference, selected/installed VPS model, output quality, RAM and latency remain unverified. _(source line 235)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — reconciliation of the older mobile and interface request (2026-10-27)
+- [ ] Next bounded slice: edge-aware chat-row/popover placement and compact header order/project label/clock polish. Keep these separate from provider/project export-import cleanup and per-chat settings audit. _(source line 243)_
+- [ ] Run native iPhone Safari/keyboard/touch verification separately; passing Chromium viewport simulation is not proof of native behavior. _(source line 244)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — autonomous agent orchestration research (2026-10-28)
+- [ ] Reconcile current main and open PRs before code changes; audit actual runtime paths rather than relying on module names. _(source line 251)_
+- [ ] Implement task contract/state machine and tests in a bounded PR. _(source line 252)_
+- [ ] Select and verify a real sandbox before allowing arbitrary command/code execution. _(source line 253)_
+- [ ] Add adversarial/golden evaluations, crash/restart and idempotency tests; measure target-host RAM/latency. _(source line 254)_
+- [ ] Update PROJECT_STATE.yaml and EVALS.md only with verified implementation/test evidence. Research/documentation completion does not mean runtime implementation. _(source line 255)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — voice model landing and VPS owner steps (2026-10-28)
+- [ ] After PR #75 exact-head CI passes and the code is merged, deploy that exact code revision to the VPS; GitHub Pages deployment alone does not update the private gateway. _(source line 259)_
+- [ ] On the VPS, inspect OS/architecture/RAM/disk before installing Python 3.12+, ffmpeg/ffprobe, whisper.cpp, Piper and selected local model artifacts. _(source line 260)_
+- [ ] Download only upstream-verified, license-reviewed artifacts; record exact source/version/license/SHA-256. For Piper, verify matching `.onnx` + `.onnx.json`; do not auto-download models from user requests. _(source line 261)_
+- [ ] Configure `/etc/alandi-gateway.env` with `0600` permissions; keep ASR/TTS flags false until binaries, models and authenticated capabilities are checked. Then enable one feature at a time and restart the service. _(source line 262)_
+- [ ] Validate the real microphone → editable transcript → explicit send → same-chat response → local TTS playback/voice choice/Stop path on the target device; record RAM, latency and speech quality. _(source line 263)_
+- [ ] Never share secrets or full env files in chat. SSH/VPS access is not available through the current GitHub integration, so server-side installation must be executed by the owner using the runbook. _(source line 264)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — consolidated interface cleanup, 2026-10-30
+- [ ] Native iPhone Safari keyboard, safe-area, touch and accessibility checks remain manual gates. Chromium geometry assertions do not establish native iOS behavior. _(source line 271)_
+- [ ] Live aLandi gateway, third-party provider credentials, external connectors, independent agent teams and production voice transport are not verified by these UI changes. _(source line 272)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — sidebar hierarchy and preferences, 2026-10-30
+- [ ] Native iPhone Safari keyboard, safe-area, focus, touch and screen-reader behavior remain unverified. Live gateway, provider credentials, connector sync, independent agent teams and voice transport remain separate runtime/infrastructure gates. _(source line 278)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — orthogonal chat settings and Research Studio, 2026-10-30
+- [ ] Native iPhone Safari behavior and live gateway/provider execution remain separate manual/runtime gates. _(source line 284)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — small-model evaluation and legacy branch reconciliation, 2026-10-30
+- [ ] Run a real target-host comparison with identical model artifact/digest/license, quantization, context, hardware and repetitions. Record RAM/PSS, cold/warm latency, p50/p95, tokens/s where available and human-rated RU/EN/TH task quality. _(source line 290)_
+- [ ] Keep the main model responsible for planning, complex reasoning and synthesis. Evaluate at most one optional helper for bounded extraction/classification/summarization; helper remains off by default and cannot authorize tools or approve side effects. _(source line 291)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — V1 landing and interface finalization, 2026-10-30
+- [ ] Native iPhone Safari, keyboard, safe-area, screen-reader and touch verification remain manual gates. _(source line 302)_
+- [ ] Issue #111 remains open for owner-only ruleset, VPS/hardware, live gateway/model, RAG corpus, voice/device and sandbox gates. CI alone cannot close it. _(source line 303)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Owner override — 2026-11-07
+- [ ] **Stop control styling.** Retain the contextual ability to stop an active generation, using a neutral compact control; final screenshot/accessibility review remains open. _(source line 310)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 1. Общий UI/UX — [~]
+- [ ] Завершить проход по типографике, контрасту, spacing, пустым состояниям, ошибкам и вторичным действиям. _(source line 49)_
+- [ ] Пройти финальный визуальный screenshot-review desktop/mobile после всех изменений. _(source line 50)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 2. Composer и мобильная клавиатура — [~]
+- [ ] Сохранена настраиваемая top/bottom позиция (PR #119/#121 track), но перепроверить её влияние на мобильные viewport и scroll. _(source line 57)_
+- [ ] Нативно проверить iPhone Safari: клавиатура, safe-area, focus, долгий текст, свайпы от края, ориентация экрана. _(source line 58)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 3. Маршруты aLandi и сторонних API — [~]
+- [ ] В PR #121 унаследованный внутренний alandi option остаётся скрытым для миграции/совместимости. Тест должен подтверждать, что он hidden и не попадает в optgroup сторонних API; нельзя требовать его полного отсутствия в HTML. _(source line 65)_
+- [ ] Проверить RU/EN labels, переключение и миграцию сохранённого маршрута на текущем head. _(source line 66)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 4. Подписи, placeholder и inline validation — [~]
+- [ ] Завершить единый язык placeholder/error/help для внешних API, Cloudflare и Tavily; постоянный текст оставлять только там, где он несёт важную privacy/security информацию. _(source line 73)_
+- [ ] Проверить ошибки invalid URL, неверной модели, пустого ключа, CORS, HTTP 401/5xx и корректность redaction секретов. _(source line 74)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 5. System prompt и случайное редактирование — [x]
+- [ ] В итоговом визуальном проходе подтвердить заметность pencil/edit, focus и возврат в readonly. _(source line 82)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 6. Инструкции сторонних провайдеров — [~]
+- [ ] Удалить повторяющиеся provider explanations, но оставить короткие честные privacy notices там, где данные уходят внешнему оператору. _(source line 88)_
+- [ ] Сверить каждую ссылку/инструкцию с актуальным upstream, не выдумывать endpoint или модельный ID. _(source line 89)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 7. Tools и Tavily — [~]
+- [ ] Автоматическая проверка/индикатор ключа должна быть подтверждена реальным вызовом, не только непустым полем. _(source line 95)_
+- [ ] Проверить paste, сохранение, удаление, неверный ключ, публичные fallback источники, privacy copy. _(source line 96)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 8. Статус собственного gateway — [~]
+- [ ] Проверить race/stale response, /healthz, model completion, timeout, CORS и очистку ключа на exact head. _(source line 103)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 9. Окна и закреплённые действия — [~]
+- [ ] Проверить Escape, focus return, screen reader name, scroll lock и background interaction. _(source line 111)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 10. Скроллинг и длинные чаты — [~]
+- [ ] Проверить потоковую генерацию, вложенные скроллы, длинные сообщения/вложения, чат-список и модальные окна. _(source line 116)_
+- [ ] Проверить экран 320px, динамическую клавиатуру и scroll restoration на iOS Safari. _(source line 117)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 11. Дополнительные настройки — [x]
+- [ ] Завершить аудит всех secondary controls на дубли/устаревшие toggle. _(source line 125)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 12. Тема, язык, анимации — [~]
+- [ ] Проверить полную RU/EN копию, светлую тему модалок, статусов, подсказок и Roadmap. _(source line 133)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 13. Каталог моделей и provider state — [~]
+- [ ] Проверить сохранение выбранной модели при refresh, invalid catalog, устаревший fingerprint, auth failure и provider switch. _(source line 139)_
+- [ ] Live provider smoke остаётся опциональным и требует явного согласия; mock E2E не выдавать за доступность реального аккаунта. _(source line 140)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 14. Project settings — [~]
+- [ ] В PR #121 E2E должен подтвердить modal close, persistence, создание и переключение проекта после текущих исправлений. _(source line 147)_
+- [ ] Реальный multi-device sync/source indexing не входит в V1; не изображать его включённым. _(source line 148)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 18. Финальный release gate — [~]
+- [ ] PR #121 был красным: duplicate settings close selectors, invalid regex in integrity sentinel и один неверный assertion around settings probe. Исправления внесены; повторный exact-head CI нужен. _(source line 169)_
+- [ ] Выполнить native iPhone Safari/keyboard/touch test вручную. _(source line 171)_
+- [ ] Пересверить PR/Issues. Issue #111 остаётся открытым до реальных owner-only gates (ruleset/main governance, VPS, hardware/model, voice/device, licensed data corpus); не закрывать только ради нулевой очереди. _(source line 172)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 2. Лендинг — обязательная структура V1
+- [ ] Усилить copy: «бесплатный статический интерфейс» не означает «бесплатный inference», hosted AI endpoint не предоставляется. _(source line 182)_
+- [ ] Добавить открываемый Roadmap с маркером 1nv3nt10n 1n PrOc3ss… только у направлений, которые ещё разрабатываются/планируются. _(source line 183)_
+- [ ] Browser E2E на структуру/CTA, метаданные, отсутствие пустых ссылок, responsive 320/360/390/768/1024/1440px, Roadmap details и reduced-motion есть; добавлен тест pause/resume ticker (commit b213c8a); ожидается exact-head Chromium run. _(source line 184)_
+- [ ] E2E проверяет lang/title/description/canonical/CTA/непустые ссылки; Jekyll build проходит в текущем CI; фактический published Pages path требует успешного exact-head smoke после merge. _(source line 185)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Публичная точка входа и root app
+- [ ] Screenshot review 320/360/390/768/1024/1440 px: root header, sidebar, composer, settings/function/project dialogs, line lengths, section rhythm and contrast. _(source line 14)_
+- [ ] Native keyboard/screen-reader pass for the public root app; DOM/E2E assertions are not a VoiceOver certification. _(source line 15)_
+- [ ] Verify the deployed root revision marker and critical navigation on the actual published Pages URL after the next UI change. _(source line 16)_
+- [ ] Keep the dark/light app themes and reduced-motion behavior consistent; do not add a separate landing theme or duplicate route. _(source line 17)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Корневое приложение — визуальная иерархия
+- [ ] Общий screenshot review desktop/mobile после последнего PR #121. _(source line 21)_
+- [ ] aServi cloud fields now reference their inline error messages with aria-describedby; URL validation, connection progress/status and success copy follow RU/EN. Required URL/model/key errors now appear in field order, focus the first missing field, clear when corrected and localize the checking state; focused RU/EN regressions added. Remaining forms and empty/error states still need a full pass. _(source line 22)_
+- [ ] Полная RU/EN проверка микротекстов, подсказок, статусов, светлой темы модалок и пустых состояний; aServi required fields and project create/edit name validation now have localized inline errors and focus recovery. Broader panel/form copy review remains open. _(source line 23)_
+- [ ] Проверить pencil/edit state у system prompt и возврат в readonly. _(source line 24)_
+- [ ] Проверить touch targets (проектная цель 44×44 CSS px) и отсутствие конкурирующих controls. _(source line 25)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Popovers, menus, dialogs
+- [ ] Chat/project action menus and composer popovers now size internal scroll areas to the live visual viewport; composer popovers move focus into the active menu, trap Tab/Shift+Tab and restore the trigger on Escape/scrim dismissal. Focused short-viewport regressions are added. Four-edge placement and real iPhone keyboard still need verification; nested project-choice scrolling now has overscroll containment and E2E coverage. _(source line 29)_
+- [ ] Settings, project-create, project-settings and message-viewer dialogs: Escape, focus return and Tab/Shift+Tab containment are implemented; focused E2E coverage exists, execution pending. Other dialog/menu patterns, scroll lock and background inert still need review. _(source line 30)_
+- [ ] Проверить короткий viewport, открытую iPhone keyboard и safe-area на реальном Safari. _(source line 32)_
+- [ ] Native Popover API / CSS Anchor Positioning рассматривать только как progressive enhancement после support matrix; сохранить существующий JS fallback. Не мигрировать ради моды. _(source line 33)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Sidebar, проекты, чаты
+- [ ] Проверить, что общий импорт/экспорт не дублируется в sidebar и project settings; chat actions остаются в chat menu, project bundle — в project settings. _(source line 38)_
+- [ ] Project/chat navigation truncates long names within flex rows while retaining the full value in `title`; long project lists scroll internally. `renderChatList()` preserves scroll offset and restores focused controls; when a chat row disappears it moves focus to the current/first remaining chat. Chat-row menu actions that rerender the list return focus to a stable row trigger; keyboard traversal, Escape and outside-click focus restoration are covered. Added 320px no-overflow, 30-project, 40-chat scroll/focus, menu Tab/Shift+Tab/Escape, clone and delete-cancel focus regressions. Native mobile scroll, VoiceOver and full keyboard traversal remain open; Playwright execution is pending. _(source line 39)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Research / functions / agents
+- [ ] Release-contract sentinel correction: PR #174 changes the published marker list to require the approved menu and forbid only retired Research Studio, legacy provider selection and removed sidebar controls. _(source line 44)_
+- [ ] Web search is opt-in by default: fresh chats and legacy/imported records without an explicit saved preference stay model-only; saved per-chat `normal`/`more` choices are preserved. RU regression added; E2E execution and the broader mode-combination matrix remain open. _(source line 45)_
+- [ ] Развести семантику web search breadth, offline mode и multi-agent orchestration в copy и UI. _(source line 46)_
+- [ ] В roadmap/agent panels сохранять чёткое различие между blueprint, sequential pipeline и независимым agent runtime. _(source line 48)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Мобильность и доступность
+- [ ] Composer placeholder uses `…` at <=340px, `Текст`/`Type` at <=360px, `Текст…`/`Type…` at <=420px, and full localized text above; horizontal padding is 4px only at <=360px. E2E covers 320/340/360/390/420/768 px (execution pending). _(source line 51)_
+- [ ] Chromium responsive matrix 320/360/390/768/1024/1440 и no-overflow tests. _(source line 52)_
+- [ ] Native iPhone Safari: visual viewport, клавиатура, safe-area, edge swipe, touchcancel, rotation, scroll restoration. _(source line 53)_
+- [ ] VoiceOver: headings, dialogs, menus, status text, message actions, focus visibility. _(source line 54)_
+- [ ] User `reduced` now disables the infinite prompt-edit pulse and voice-menu entrance animation; OS reduced-motion rules already cover ticker/dots and global timing. Full transitions/scroll and native OS-preference interaction still need manual review. _(source line 55)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — 3. Исторический первый polish patch
+- [ ] Native keyboard/screen-reader confirmation. _(source line 71)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Fast regression path (2026-11-17)
+- [ ] Added `scripts/check_a11y_surface.py`; a source scan of current `index.md` finds 5 visible form controls with names, 28 buttons with a non-empty name source, and all 8 runtime-localized field IDs in `fieldTexts`. This is a structural heuristic, not WCAG/screen-reader certification; the committed script still needs execution from a real checkout. _(source line 84)_
+- [ ] Added a Lightpanda JavaScript/DOM smoke for Functions → Skills and localized accessible names. It is a fast functional candidate, not a visual browser: Lightpanda does not render layout. Its compatibility and timing are **not yet verified on aLandi**. _(source line 85)_
+- [ ] Run the fast gate and Lightpanda smoke in a real repository checkout; compare elapsed time and coverage against Chromium on the same commit. _(source line 86)_
+- [ ] Keep Chromium as a manual-only check for viewport geometry, CSS reflow, overflow and screenshots; do not infer those properties from DOM-only tests. _(source line 87)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — 5. Change log
+- [ ] Provider settings: aLandi aServi is a first-party section, not a third-party provider option; aServi excludes both peer sections, and no silent cross-provider fallback is allowed. PR #169 implements; exact-head CI and live check pending. _(source line 107)_
+
+### docs/LANDING_STACK_IMPROVEMENT_BACKLOG_RU.md — Приоритетный backlog
+- [ ] LANDING-001 — зафиксировать baseline размера HTML/CSS/JS, critical rendering, LCP/INP/CLS и загрузки ключевых assets на опубликованном сайте. _(source line 38)_
+- [ ] LANDING-002 — аудит доступности: keyboard-only, focus order, dialogs/popovers, screen-reader semantics, reduced motion, contrast and touch targets. _(source line 39)_
+- [ ] LANDING-003 — аудит responsive поведения и реального iPhone Safari: visual viewport, keyboard, safe areas, rotation and zoom. _(source line 40)_
+- [ ] LANDING-004 — аудит JS lifecycle: event listener cleanup, duplicate handlers, async race conditions, stale state, cancellation and memory leaks. _(source line 41)_
+- [ ] LANDING-005 — аудит resilience: offline/slow network, retry/backoff, timeout, abort, provider 4xx/5xx, malformed/partial responses and error recovery. _(source line 42)_
+- [ ] LANDING-006 — аудит client storage: migration, quota errors, import/export losslessness, corruption recovery, scoped deletion and backup/restore. _(source line 43)_
+- [ ] LANDING-007 — audit security/privacy in current boundaries: CSP/SRI, DOM injection, URL handling, secret exposure, logging, CORS/SSRF and data retention. _(source line 44)_
+- [ ] LANDING-008 — SEO/metadata/semantic HTML, canonical URL, social preview, sitemap/robots and crawl behavior without adding a framework. _(source line 45)_
+- [ ] LANDING-009 — deterministic Jekyll/Actions build, cache correctness, immutable action pins, lockfile and provenance. _(source line 46)_
+- [ ] LANDING-010 — reduce duplicated code/assets and dead paths only when exact reference and regression evidence prove safe removal. _(source line 47)_
+- [ ] LANDING-011 — inspect current CSS/JS payload and optimize critical path only if measured; preserve visual behavior. _(source line 48)_
+- [ ] LANDING-012 — expand Playwright coverage for critical user flows and failure states; avoid brittle/vacuous assertions. _(source line 49)_
+- [ ] LANDING-013 — verify browser compatibility and graceful degradation for current supported browsers. _(source line 50)_
+- [ ] LANDING-014 — audit i18n: RU/EN/TH labels, formatting, font fallback, transliteration of user-entered names only where required. _(source line 51)_
+- [ ] LANDING-015 — review dependency freshness and security advisories within the existing dependency policy; do not blindly upgrade. _(source line 52)_
+- [ ] LANDING-016 — inspect build/release observability and published Pages smoke; do not claim post-merge deploy from PR CI alone. _(source line 53)_
+- [ ] LANDING-017 — reconcile historical landing UX requests with current code and master registry; preserve original task IDs and evidence. _(source line 54)_
+- [ ] LANDING-018 — test graceful operation when optional gateway/voice/research capabilities are unavailable or disabled. _(source line 55)_
+
+### docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md — 7. Tasks
+- [ ] LSV-001 — compare browser File System Access support across target browsers and native mobile. _(source line 116)_
+- [ ] LSV-002 — define reference/attachment/local-copy consent and storage state machine. _(source line 117)_
+- [ ] LSV-003 — prototype IndexedDB handle persistence and permission revalidation; no background watcher. _(source line 118)_
+- [ ] LSV-004 — define local Source Vault schema, quotas, deletion lineage and export. _(source line 119)_
+- [ ] LSV-005 — threat model file parsing, archive bombs, path traversal, symlinks and malicious PDFs. _(source line 120)_
+- [ ] LSV-006 — evaluate Docling against existing parser on a representative RU/EN/TH corpus. _(source line 121)_
+- [ ] LSV-007 — review doc-parse license, dependency tree, maintenance and adapter isolation. _(source line 122)_
+- [ ] LSV-008 — evaluate screenshot-to-code in a no-execution sandbox with golden screenshot tests. _(source line 123)_
+- [ ] LSV-009 — define video frame sampling, subtitle/transcript and provenance contracts. _(source line 124)_
+- [ ] LSV-010 — benchmark ComfyUI/Wan 2.2 5B only on suitable GPU hardware; no target VPS assumption. _(source line 125)_
+- [ ] LSV-011 — implement material-to-Skill draft with evidence mapping and human approval. _(source line 126)_
+- [ ] LSV-012 — implement Agent blueprint conversion as a separate artifact type. _(source line 127)_
+- [ ] LSV-013 — create upstream archive watchlist and preservation policy. _(source line 128)_
+- [ ] LSV-014 — no downloads, mirrors, dependencies or runtime activation without owner approval. _(source line 129)_
+
+### docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md — 6. Proposed tasks
+- [ ] SF-001 — define versioned SkillManifest and schema aligned with Agent Skills spec. _(source line 92)_
+- [ ] SF-002 — source adapter contract and immutable source provenance. _(source line 93)_
+- [ ] SF-003 — create-from-material pipeline with evidence span preservation. _(source line 94)_
+- [ ] SF-004 — import/export package validator and license inventory. _(source line 95)_
+- [ ] SF-005 — prompt-injection/secrets/malicious-script scanner. _(source line 96)_
+- [ ] SF-006 — generated eval suite and skill quality rubric. _(source line 97)_
+- [ ] SF-007 — human approval, immutable versions and rollback. _(source line 98)_
+- [ ] AB-001 — AgentBlueprint schema separated from SkillManifest. _(source line 99)_
+- [ ] AB-002 — permission intersection and explicit user approvals. _(source line 100)_
+- [ ] AB-003 — UI builder for roles, skills, model policy, data scope and budgets. _(source line 101)_
+- [ ] AB-004 — blueprint dry-run/evaluation with no side effects. _(source line 102)_
+- [ ] AB-005 — promote blueprint only after runtime, isolation and exact-head tests exist. _(source line 103)_
+
+### docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md — 9. Task ledger
+- [ ] DR2-001 — восстановить ранее предоставленные владельцем research links и provenance. _(source line 151)_
+- [ ] DR2-003 — проверить actual search/research UI и Gateway code; разделить implemented/planned. _(source line 153)_
+- [ ] DR2-004 — аудит source ingestion, local storage, index and citation lineage. _(source line 154)_
+- [ ] DR2-005 — проверить browser File System Access, OPFS and IndexedDB на целевых браузерах. _(source line 155)_
+- [ ] DR2-006 — оценить local companion/desktop connectors and threat model. _(source line 156)_
+- [ ] DR2-007 — сравнить notebook/research workspace проекты и source adapters по первоисточникам. _(source line 157)_
+- [ ] DR2-008 — сравнить hybrid lexical/vector retrieval с SQLite FTS5 до добавления vector store. _(source line 158)_
+- [ ] DR2-009 — определить claim/evidence schema and citation-validation golden set. _(source line 159)_
+- [ ] DR2-010 — специфицировать resumable 12-stage Research run: deadline, cancellation, idempotency, bounded concurrency. _(source line 160)_
+- [ ] DR2-011 — RU/EN/TH research golden set, source freshness and contradiction tests. _(source line 161)_
+- [ ] DR2-012 — аудит memory recall, scope isolation, stale facts, conflicts, deletion and long-session capacity. _(source line 162)_
+- [ ] DR2-013 — оценить local memory/index size and performance на target devices; определить практические пределы. _(source line 163)_
+- [ ] DR2-014 — data-flow режимов local-only / mixed / remote-with-consent. _(source line 164)_
+- [ ] DR2-015 — policy matrix: model refusals vs content policy vs platform security vs tool permissions. _(source line 165)_
+- [ ] DR2-016 — false-positive/false-refusal and tool-authorization tests; no hidden adapter censorship. _(source line 166)_
+- [ ] DR2-017 — image-generation candidates: ComfyUI/local GPU vs hosted APIs, licenses, cost, region, privacy. _(source line 167)_
+- [ ] DR2-018 — video-generation candidates and async job APIs; не использовать retired endpoints. _(source line 168)_
+- [ ] DR2-019 — AI coding assistants/agents and isolated coding sandboxes. _(source line 169)_
+- [ ] DR2-020 — source inventory, decisions, risk register and staged implementation roadmap. _(source line 170)_
+- [ ] DR2-021 — подготовить отдельные минимальные implementation PR после owner review; никаких production dependencies в этом PR. _(source line 171)_
+
+### docs/VOICE_2_RESEARCH_RU.md — 6. Work plan / task ledger
+- [ ] VOICE-TRACK-003 — собрать ранее найденные/предоставленные владельцем источники и пометить provenance; часть исходных scratch/source URLs ещё требует сверки. _(source line 111)_
+- [ ] VOICE-TRACK-004 — провести независимый поиск по официальным upstream/papers/model cards/standards в категориях ASR, TTS, real-time audio, diarization, transliteration и multilingual normalization. **Progress:** первый проход выполнен по 6 поисковым направлениям (50 result slots до дедупликации); отдельный первичный-source отчёт создан в [VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md](VOICE_2_EXTERNAL_RESEARCH_2026-10-31_RU.md). Полный sweep и проверка оставшихся лицензий продолжаются. _(source line 112)_
+- [ ] VOICE-TRACK-005 — проверить точные лицензии кода, весов, голосов, phonemizers, datasets и redistribution obligations. _(source line 113)_
+- [ ] VOICE-TRACK-006 — сверить current code/tests and voice UI against every existing acceptance item; report precise implemented/partial/missing matrix. _(source line 114)_
+- [ ] VOICE-TRACK-007 — составить воспроизводимый RU/EN/TH benchmark harness and golden-set governance. _(source line 115)_
+- [ ] VOICE-TRACK-008 — сравнить 2–3 лучших кандидата на одинаковом наборе и target hardware; никаких model switches до measured win. _(source line 116)_
+- [ ] VOICE-TRACK-009 — подготовить Voice 2.0 architecture/API contracts and phased implementation slices. _(source line 117)_
+- [ ] VOICE-TRACK-010 — независимая security/privacy review и explicit owner approval перед runtime changes. _(source line 118)_
+
+### docs/VOICE_2_RESEARCH_RU.md — Task ledger extension
+- [ ] **AUDIO-GEN-001…009** — use the detailed task ledger in `LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md`; no download or runtime activation without owner approval. _(source line 156)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — P1 — required next implementation slices
+- [ ] Add a formal safety-first prompt composer (safety/workspace/project/profile/user), with prompt-injection regression tests. _(source line 153)_
+- [ ] Add a privacy-only/local-only routing policy that blocks remote APIs and makes refusal explicit. _(source line 154)_
+- [ ] Add route/router error tests for Grok/xAI, Kilo keyless route, 401/403/429/5xx, CORS failures, abort and malformed bodies. _(source line 155)_
+- [ ] Complete RU/EN translation of settings help, errors, traces, project controls and all interactive labels. _(source line 156)_
+- [ ] Audit keyboard navigation, contrast, mobile composer movement, safe-area and reduced-motion support. _(source line 157)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — P2 — V-016 engineering blockers; do not advertise as production
+- [ ] Implement and test deterministic artifact-manifest hashing + complete INTEL triad gate. _(source line 160)_
+- [ ] Implement typed risk-aware router and route-regret evaluation corpus. _(source line 161)_
+- [ ] Implement ALBF binary framing with CRC/truncation/overflow/interrupt tests. _(source line 162)_
+- [ ] Implement native audio capture/inference adapters and measure e2e p50/p95 + PSS on the target 8 GB CPU host. _(source line 163)_
+- [ ] Resolve every model/voice license/hash before packaging any weights. _(source line 164)_
+- [ ] Harden cPocket rollback/TTL/cancellation races; do not enable speculative side-effect tools. _(source line 165)_
+- [ ] Add crypto-erasure semantics and prove logical vs physical deletion guarantees. _(source line 166)_
+- [ ] Add scratch-file offload, secure document ingestion, exact page/offset/hash citations and retrieval benchmarks. _(source line 167)_
+- [ ] Keep CLI/browser runtime blocked until real sandbox/SSRF/approval escape tests pass. _(source line 168)_
+- [ ] Implement 12-state research workflow and claim-to-evidence citation validation. _(source line 169)_
+- [ ] Implement candidate-lessons pipeline with golden tests and rollback; no automatic weight training. _(source line 170)_
+- [ ] Implement optional connectors only after encrypted token storage, scope review, revoke and index cleanup. _(source line 171)_
+- [ ] Keep infrastructure and hardware targets as documentation until the required access and measurement environment exist. _(source line 172)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement: product work after the original V-016 checklist (not part of its original 81 items)
+- [ ] **AI-AGENT-004 — Small helper model:** design plus synthetic RU/EN/TH response/latency smoke harness (`gateway/evals/run_local_model_benchmark.py`); Gateway Tests passed on PR #123 code head. Target-host quality/RAM/PSS/cold-warm benchmark and model selection remain pending. No general helper/subagent dispatch is wired into runtime. _(source line 186)_
+- [ ] **AI-IMAGE-001 — Image generation:** no working image-generation UI/runtime exists yet. Select local ComfyUI or explicit external provider, verify exact checkpoint/license/hash/VRAM and add request-to-image E2E before marking implemented. _(source line 187)_
+- [ ] **AI-OPS-001 — Free-first month:** no automatic paid resource provisioning. Use existing hardware and optional free-tier APIs with explicit quota/privacy caveats; paid hosting only after benchmark and owner decision. _(source line 188)_
+- [ ] **AI-MODEL-001 — Local-model autonomy:** no hidden application-level refusal filter is planned. Actual refusals remain checkpoint/provider-dependent; do not claim guaranteed zero refusals. _(source line 189)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — legacy mobile and interface request, 2026-10-29
+- [ ] Native iPhone Safari, software keyboard, edge-swipe and touchcancel behavior remain unverified. Do not mark complete based only on Chromium. _(source line 198)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — consolidated interface closure, 2026-10-30
+- [ ] Native iPhone Safari keyboard/safe-area/focus and real touch interaction remain unverified. Provider credentials, live gateway, connector OAuth/sync, independent agent processes and full audio transport remain infrastructure/runtime gates rather than UI acceptance claims. _(source line 206)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — sidebar hierarchy and preference synchronization, 2026-10-30
+- [ ] Real iPhone Safari keyboard/touch/accessibility behavior remains unverified; Chromium tests cover DOM order, live status updates and cross-surface preference synchronization only. _(source line 213)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — orthogonal chat settings, 2026-10-30
+- [ ] Exact-head tests must pass for Quick+Expanded, Thorough+Standard, Thorough+Off, RU/EN, per-chat persistence and Research Studio non-mutation before merge. _(source line 218)_
+- [ ] Native iPhone Safari and live gateway/provider behavior remain unverified. _(source line 219)_
+
+### Retired by owner
+### docs/USER_REQUEST_CHECKLIST.md — D. Чаты, проекты, инструкции и память
+- [x] **RETIRED BY OWNER 2026-11-07:** server-memory graph API and browser bridge are removed from the product. Browser-local project notes remain; conversation delta sync and RAG are separate and preserved. Existing server DB files are not deleted by code; live host is unverified. _(source line 62)_
+- [x] **RETIRED BY OWNER 2026-11-07:** scoped FTS5 `search_nodes()` belonged to the removed server-memory graph. RAG retains its independent scoped FTS5 store. _(source line 68)_
+- [x] **RETIRED BY OWNER 2026-11-07:** temporal/conflict/recursive-delete tests belonged to the removed server-memory graph prototypes; do not rebuild them as a hidden backend memory subsystem. _(source line 70)_
+
+### docs/USER_REQUEST_CHECKLIST.md — I. Следующие продуктовые вертикали
+- [x] **RETIRED BY OWNER 2026-11-07:** PR #29's browser-to-server project memory bridge, API actions and settings removed; project notes remain browser-local. _(source line 198)_
+- [x] **RETIRED BY OWNER 2026-11-07:** per-chat server-memory toggle and retrieval path removed; do not confuse this with local project notes or conversation delta sync. _(source line 199)_
+- [x] **RETIRED BY OWNER 2026-11-07:** do not configure old graph/global-memory flags; API code is removed. Existing server SQLite files/backups remain untouched pending a separate owner decision. _(source line 201)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — P1 — required next implementation slices
+- [x] RETIRED BY OWNER 2026-11-07: backend server-memory graph and browser bridge removed in PR #169. Its two-project graph isolation/deletion/global-opt-in test scope is obsolete; preserve independent browser-local memory and RAG scope tests. _(source line 152)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement: product work after the original V-016 checklist (not part of its original 81 items)
+- [x] **AI-MEM-006 — RETIRED BY OWNER 2026-11-07:** server graph API, feature flags, storage and browser bridge were removed in the current PR #169 implementation. PR #27/#29 and their CI results remain historical evidence only; do not enable or restore this capability. _(source line 184)_
+- [x] **AI-MEM-007 — RETIRED BY OWNER 2026-11-07:** per-chat server-memory retrieval gate and UI state removed with the graph bridge. Browser-local project notes remain; conversation delta sync and independent scoped RAG are separate and preserved. _(source line 185)_
 ## 5. Completed archive — читать в последнюю очередь
 
 Следующие строки были отмечены [x] в старых реестрах. Это исторические отметки; не считать их автоматически подтверждёнными на текущем SHA. Не возвращать в работу без нового требования или контр-evidence.
@@ -1023,3 +1443,239 @@
 
 ---
 Детальные технические документы, схемы и research сохраняются как спецификации/источники. У них нет права менять порядок работ без обновления этого файла. Все новые owner requirements добавляются сюда; никаких параллельных backlog не создавать.
+
+### Дополнительные исторические [x] отметки из актуальных source checklists
+### docs/USER_REQUEST_CHECKLIST.md — A. База, управление и непрерывность
+- [x] PR #20 с базовыми контрактами памяти, инструментария, происхождения источников и governance объединён; CI прошёл. _(source line 10)_
+- [x] Создана ветка для облачной настройки/UX: `feat/alandi-cloud-settings-ux`. _(source line 11)_
+- [x] PRs #21–#29 merged with required PR-head gates passing. PR #32 then merged at `31eecce8203073dbc8e0e46b3ac338f64788d59b`; all six PR-head jobs passed, including Chromium regression, integrity/security/context sentinels, Jekyll build and published Pages browser smoke. Added safe structured Markdown fallback when CDN renderer libraries are unavailable. Gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`. Live gateway/VPS and separate post-merge deployment remain unverified. _(source line 12)_
+- [x] Проведён аудит V-016 §0–40 и начальной инженерной фиксации; создан подробный 81-пунктный ledger в `docs/V016_IMPLEMENTATION_CHECKLIST.md`. Аудит завершён, но многие runtime-функции ещё не реализованы/не подтверждены. _(source line 13)_
+
+### docs/USER_REQUEST_CHECKLIST.md — B. Первичное облако aLandi и API-провайдеры
+- [x] Зафиксировано продуктовое правило: aLandi Cloud — единственный главный облачный блок; Kilo остаётся обычным альтернативным провайдером в общем списке, без отдельной главной кнопки. _(source line 18)_
+- [x] Собственное облако aLandi — единственная кнопка/главная карточка в верхней части настроек; Kilo и остальные альтернативы расположены только в общем списке сторонних провайдеров. _(source line 19)_
+- [x] Проверено: async-проверка не подтверждает другой провайдер/модель/ключ после их смены; legacy-проверка aLandi не перезаписывает отдельно изменённую главную облачную карточку. Deterministic race E2E прошли в PR #22 (HEAD `bd8fdddd…`) и post-merge Quality Sentinel прошёл на main `7fac23ce…`. _(source line 28)_
+- [x] All-provider smoke workflow требует явного подтверждения (default false) и поддерживает per-provider model overrides; PR #25 quality/provenance CI passed. Live workflow не запускался из этой сессии; доступность аккаунтов не утверждается. _(source line 35)_
+
+### docs/USER_REQUEST_CHECKLIST.md — D. Чаты, проекты, инструкции и память
+- [x] Historical PR #27 Gateway/provenance/Quality/Pages evidence retained. Its server-memory graph API is now retired by owner; do not enable or restore it. _(source line 69)_
+
+### docs/USER_REQUEST_CHECKLIST.md — E. Инструменты, маршрутизация, веб-поиск и отказы
+- [x] Ограниченный fallback web_search на открытые источники реализован и прошёл Chromium E2E без Tavily-ключа. Недоступные источники пропускаются; ссылки берутся из реальных ответов. Доступность API всё ещё зависит от CORS/сети. _(source line 79)_
+
+### docs/USER_REQUEST_CHECKLIST.md — F. V-016: зависимости, аудио, память, бюджеты и лицензии
+- [x] Детерминированный state hash реализован и проверен CI: сортированные пути и SHA-256 содержимого, исключение типовых секретов/генерируемых каталогов, `index.md` включён. Это не подпись и не доказательство безопасности. _(source line 88)_
+- [x] cPocket hardening merged in PR #28; gateway contract/security tests passed on post-merge main `e424d353418cad62981eb269b4082d2925592708`. Cap 128 cleanup registrations per lease; cleanup continues after RuntimeError/CancelledError and rollback is tested for exactly-once behavior. Target-runtime resource/FD soak and live voice integration remain unverified. _(source line 94)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part I — CODER_PACKET.md: архитектура, обязательные контракты, фазы 0–8
+- [x] Прочитаны разделы 1–8: канонические источники, non-negotiable contracts, текущая архитектура, план фаз 0–8, voice latency, model/license policy, eval/release gates и non-goals. _(source line 115)_
+- [x] Зафиксированы ограничения: не выдавать prototype за live, не обещать p95 без измерения, no fake sandbox, no fake citation checks, tool approval/SSRF, scoped deletion, локальный аудиотракт и отсутствие автоматического cloud provisioning. _(source line 116)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part III — ACCEPTED_IMPROVEMENTS.md и связанные артефакты
+- [x] Сверены все строки реестра accepted improvements с идентификаторами в PROJECT_STATE.yaml; статус каждой строки сохранён отдельно, а не слит в одно «готово». _(source line 167)_
+- [x] Различены реализованные модули, prototypes, документационные контракты, deferred items и блокеры. Макет или unit primitive не приравниваются к production runtime. _(source line 168)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Part IV — EVALS.md, DECISIONS.md, LOOP.md, INTEL.md, license/latency/infra/domain gates
+- [x] Проверены eval registry, решения D-001…D-006, bounded engineering loop, source/licensing register, latency contract, infrastructure upgrade и domain setup. _(source line 172)_
+- [x] Voice performance, 8-GB profile, OTel exporter, native audio path, real sandbox, full LazyGraphRAG, external approval UI и live VPS обозначены как не подтверждённые/не развёрнутые. _(source line 173)_
+
+### docs/USER_REQUEST_CHECKLIST.md — I. Следующие продуктовые вертикали
+- [x] PR #29 head checks passed: Quality/Chromium, provenance and published Pages smoke. Post-merge main Quality/Chromium, provenance and Pages deployment passed at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; gateway contract/security tests passed on unchanged base `e424d353418cad62981eb269b4082d2925592708`. _(source line 200)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — 2026-10-24 owner quickstart and chat ergonomics
+- [x] Added owner-first setup sequence: `docs/START_HERE_RU.md`, linked from detailed VPS guide. It distinguishes existing VPS diagnostics from new Vultr setup and gates tunnel/client setup on local health/auth/completion/cache checks. _(source line 209)_
+- [x] Added evidence-based subsystem roadmap: `docs/IMPLEMENTATION_ROADMAP_RU.md`, ordered P0 client UX → voice message → live voice → document/RAG → image/video → agent teams → memory/security → provider operations/governance. _(source line 210)_
+- [x] PR #33 merged at `05f4c2454c279cc21dcbf08c83ff3c3025838257`; PR #34 merged at `e3463f9b048dfda742b8158faf054c617defda9a`; PR #35 merged at `23add2547a69df877b4baf213957827aa2e8e561`. PR-head run #418 passed context, integrity, security, Jekyll, 48 Chromium E2E tests and published-site browser smoke; separate license/provenance and dead-code gates passed. Post-merge main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` also passed Quality workflow #420, 48 Chromium E2E tests, live-site smoke, Pages deployment #122 and provenance gate #159. Real-device keyboard/accessibility remain follow-up. _(source line 211)_
+- [x] Replace prompt-based rename/project chooser with accessible in-app dialog/select; Chromium E2E covers rename and moving between projects. [ ] Real-device mobile keyboard open/close, focus, persistence and project delete/move accessibility follow-up. _(source line 212)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — 2026-10-24 project navigation and composer
+- [x] PR #35: Projects at top, collapsed by default; each project expands to its own chat list; top-level Chats is expanded and contains only unassigned/personal chats. Covered by Chromium E2E. _(source line 217)_
+- [x] New personal chat from Chats; create a project-scoped chat from that project's expanded group; per-row menu includes rename, clone, move/detach, clear history, delete. Covered by Chromium E2E. _(source line 218)_
+- [x] Move global memory controls and project facts under collapsed project settings; persisted project memory scope selects project-only vs project-and-global. Implemented; UI/browser checks pass. _(source line 219)_
+- [x] Add composer + chooser for photo/video vs unrestricted multi-file picker. Known text formats and images are processed; video sends sampled frames. Other binary formats are selected but currently shown as unsupported and block sending until a parser/ingestion endpoint is implemented. Chromium E2E passes. _(source line 220)_
+- [x] Add ◎ request-context selector for up to five projects. Context is scoped by chat ID, bounded, added to the next request only, and cleared after successful send. Selected project context must not mutate the chat's own project. Chromium E2E passes. _(source line 221)_
+- [x] Voice chooser opens after press-and-hold, not a short tap. Long-press and short-tap behavior pass Chromium E2E; real-device touch/cancel still needs verification. Live recording, ASR, TTS and audio transcript remain unimplemented. _(source line 222)_
+- [x] aLandi is a dedicated first-party primary-route card; third-party providers stay in advanced settings. Quality sentinel and Chromium E2E pass. _(source line 223)_
+- [x] PR #35 was merged at `23add2547a69df877b4baf213957827aa2e8e561`; PR-head run #418 passed all quality gates, 48 Chromium E2E tests and published-site browser smoke. [x] Post-merge main checkpoint `4fb39df2cb0c23c907fc69b52c1ebf2e05e6024e` passed Quality workflow #420, live-site Chromium smoke, Pages deployment #122 and provenance gate #159. _(source line 224)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — local helper memory suggestions (2026-10-27)
+- [x] Added a manual, bounded local-model flow to propose compact project-memory facts. PR #69 merged at `4c9096999fbb3e1265150c420b136066c555285b`. _(source line 231)_
+- [x] Kept it disabled when `ALANDI_HELPER_MODEL` is blank; only the operator-configured local Ollama tag can be used; the route shares inference concurrency and asks Ollama to unload after the request. _(source line 232)_
+- [x] Filtered common secret-like input/output patterns and require an explicit click for every saved candidate. A regression fix handles prefixed names such as `ALANDI_API_KEY`. _(source line 233)_
+- [x] Exact PR-head Gateway run #40539476154, Quality/Chromium/published-site smoke #40539476242, and provenance #40539476214 passed. _(source line 234)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — reconciliation of the older mobile and interface request (2026-10-27)
+- [x] Compared the full owner message with current `main`, the implementation roadmap, existing browser tests, and visible UI/source identifiers. The audit separates already implemented behavior from partial work and unimplemented interaction design in `docs/LEGACY_UX_REQUEST_AUDIT_RU.md`. _(source line 239)_
+- [x] PR #71 (`fix/mobile-composer-docking-20261027`) merged: composer stays at the bottom in empty and populated chats, textarea height follows `visualViewport`, and Chromium viewport regression passes. Native iPhone Safari remains unverified. _(source line 240)_
+- [x] PR #114 merged at `25bfe66b5454e45fb5f6cef9dd86ae3c0ef1c5e5`: empty global system prompt by default, obsolete Gemini reset removed, quality sentinel aligned with the opt-in prompt contract, and history budgeting reserves serialization headroom. Exact-head Quality/Chromium/published-site smoke passed. _(source line 241)_
+- [x] PR #115 merged at `ed2c4c7ee3a67c7a0cf5b541c1ab6206609dd32c`: composer popover scrim, modal backdrop blur respecting reduced-transparency, inert first outside tap for toolbar/language/chat-row menus; exact-head Chromium and published-site smoke passed. _(source line 242)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — autonomous agent orchestration research (2026-10-28)
+- [x] Reviewed additional upstream open-source patterns for orchestration, durable workflows, policy-as-code, sandboxing, agent evaluations, memory, protocols and observability; recorded source links and limitations in `docs/AGENT_ORCHESTRATION_RESEARCH_RU.md`. _(source line 249)_
+- [x] Owner-approved design direction recorded in D-016 and AI-AGENT-005: explicit task state machine, least-capability executor, fail-closed policy gate, action-bound approval, independent verifier, durable journal/recovery, bounded retries and eval-gated helper model. _(source line 250)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — voice model landing and VPS owner steps (2026-10-28)
+- [x] Added a VPS deployment runbook to `docs/VOICE_IMPLEMENTATION_PLAN_RU.md`: model install, voice/model hash and license review, feature-flag sequencing, private gateway binding, smoke checks, and release acceptance. _(source line 258)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — consolidated interface cleanup, 2026-10-30
+- [x] PR #118 merged at `4bde19249b1ac05ccf55c2499a8ee08a27b9a198`: chat export/import actions live in each chat menu; chat import merges rather than replaces existing history, deduplicates IDs, validates settings and bounds imported data. Project bundle import/export remains in project settings. _(source line 269)_
+- [x] PR #119 merged: persisted top/bottom composer preference; aLandi Cloud and third-party provider routes share one clear selector; redundant primary-route action and connector hints were removed; the staged research workflow is described truthfully; project-first quick actions and per-project memory scope are persisted. _(source line 270)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — sidebar hierarchy and preferences, 2026-10-30
+- [x] PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`: memory controls have their own first sidebar section; project/chat navigation and status lines follow; Research Studio is below chats; theme/language controls are pinned at the sidebar bottom and language is synchronized with Settings. _(source line 277)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — orthogonal chat settings and Research Studio, 2026-10-30
+- [x] PR #121 merged at `f4d880f`: separates work effort from web-search scope; clarifies the structured workflow and task-profile permissions; removes duplicated Research Studio selectors and makes Studio use active chat settings without mutating them; localizes the settings summary, removes the duplicate Research entry point and raises primary mobile hit areas to 44px. _(source line 282)_
+- [x] Exact-head Chromium/Quality on PR #121 passed the orthogonal-settings, per-chat, RU/EN and Research Studio non-mutation coverage. _(source line 283)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — small-model evaluation and legacy branch reconciliation, 2026-10-30
+- [x] Recovered a bounded synthetic local-model smoke harness: `gateway/evals/run_local_model_benchmark.py` plus `gateway/tests/test_local_model_benchmark.py`. Gateway Tests passed on the exact PR #123 code head. It uses fixed RU/EN/TH prompts, bounded requests/time/response size, environment-only API key and refuses redirects; target-host evaluation remains pending. _(source line 289)_
+- [x] Chronological branch audit: current provider separation supersedes the legacy `self-hosted/free-cloud` selector; legacy project tools are deferred pending current permission/scope/approval contracts; the 64-role architecture document already exists in main and describes logical roles, not separate model processes. _(source line 292)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Supplement — V1 landing and interface finalization, 2026-10-30
+- [x] Created the dedicated living release checklist: [V1_UI_FINALIZATION_RU.md](V1_UI_FINALIZATION_RU.md). It preserves the owner's 18 UI directions, adds landing-specific gates, states the V1/free-static-UI boundary and distinguishes implementation from verification. _(source line 296)_
+- [x] Audited current ChatGPT/OpenAI UI patterns and official Apple, W3C, GOV.UK, NN/G and MDN accessibility/design guidance; recorded what is adopted and what is deliberately not copied in the V1 checklist. _(source line 297)_
+- [x] Landing copy now distinguishes a free static interface from inference/API/hosting cost; public hosted AI endpoint is not provided by GitHub Pages. _(source line 298)_
+- [x] Added staged roadmap disclosures; the "1nv3nt10n 1n PrOc3ss…" ticker is decorative, appears only for unfinished directions, is hidden from assistive technology and respects reduced-motion. _(source line 299)_
+- [x] PR #121 merged: duplicate settings close action removed; integrity provider-group assertion uses deterministic parsing; Research Studio E2E excludes the expected provider connectivity probe from user-send count. _(source line 300)_
+- [x] Landing and in-app roadmap E2E coverage passed on PR #121 exact head. Post-merge Pages deployment and public root + /landing/ exact-SHA Chromium checks passed on PR #173 merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`; the remaining PR #174 failure is a stale release-contract sentinel, not a site failure. _(source line 301)_
+
+### docs/USER_REQUEST_CHECKLIST.md — Owner override — 2026-11-07
+- [x] **Research Studio retired.** PR #169 removed the complete product surface; post-merge public root/landing Chromium verified the absence on exact main SHA. Do not restore it. _(source line 307)_
+- [x] **Owner override D-022 (2026-11-08) supersedes the previous menu prohibition:** restore only three truthful Functions entries — Agents/structured analysis, Deep Research, and Skills/task profile. PR #169 implements the menu and post-merge public Chromium verified it. Integrations/connectors remain absent until real capability registry/status/permission contracts exist. PR #174 corrects the stale release-contract assertion. _(source line 308)_
+- [x] **First-party routing is separate.** aLandi aServi is a dedicated settings section, never a third-party provider option. PR #169 implements the exclusivity rule; PR #173 and post-merge public Chromium checks passed. No silent auto-fallback between aServi and external providers. _(source line 309)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 1. Общий UI/UX — [~]
+- [x] Сохранить индивидуальный визуальный язык aLandi и не переписывать интерфейс на новый framework. _(source line 46)_
+- [x] Развести память, проекты, чаты и настройки в отдельные зоны sidebar (PR #120). _(source line 47)_
+- [x] Свести частые параметры запроса к короткой сводке и независимым настройкам (PR #121, ожидает финальной проверки). _(source line 48)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 2. Composer и мобильная клавиатура — [~]
+- [x] Composer остаётся нижним flex-элементом и не центрируется фиксированным позиционированием (PR #71). _(source line 55)_
+- [x] Chromium E2E покрывает новый чат и resize viewport. _(source line 56)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 3. Маршруты aLandi и сторонних API — [~]
+- [x] Собственная карточка «Мой сервер» отделена от списка внешних провайдеров. _(source line 63)_
+- [x] Внешний picker сгруппирован; Kilo — обычный альтернативный провайдер. _(source line 64)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 4. Подписи, placeholder и inline validation — [~]
+- [x] URL/модель/ключ собственного сервера представлены компактными полями с placeholder. _(source line 71)_
+- [x] Ошибки трёх серверных полей имеют отдельные элементы. _(source line 72)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 5. System prompt и случайное редактирование — [x]
+- [x] Глобальный пользовательский prompt пуст по умолчанию; legacy built-in prompt мигрирует в пустое значение (PR #114). _(source line 79)_
+- [x] Сохранён явный режим редактирования; prompt не подменяет системные правила приложения. _(source line 80)_
+- [x] Старый restore Gemini defaults удалён. _(source line 81)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 6. Инструкции сторонних провайдеров — [~]
+- [x] Обычный провайдерный поток общий; Kilo не выделен в отдельную особую настройку. _(source line 87)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 7. Tools и Tavily — [~]
+- [x] Ключ Tavily находится в свёрнутом разделе инструментов/веб-поиска, отдельно от ключей провайдеров. _(source line 94)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 8. Статус собственного gateway — [~]
+- [x] Проверка требует реального model completion и health-check; изменение параметров сбрасывает connected state. _(source line 101)_
+- [x] Автопроверка ограничена debounce/single-flight и не должна принимать HTTP 200 с proxy text за успех.- [~] В PR #121 убрана постоянная ручная кнопка проверки; поля/лампа должны отражать валидированное соединение. _(source line 102)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 9. Окна и закреплённые действия — [~]
+- [x] Основные settings/project/research/function окна имеют отдельные закрытия. _(source line 108)_
+- [x] Дублирующий data-action="close-settings" в header удалён; exact-head Chromium/Quality PR #121 passed. _(source line 109)_
+- [x] Settings header с Save/X и нижние actions закреплены через sticky positioning; exact-head Chromium/Quality PR #121 passed. Короткий viewport, открытая iPhone keyboard и safe-area остаются ручной проверкой. _(source line 110)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 10. Скроллинг и длинные чаты — [~]
+- [x] Есть jump-to-latest, full message viewer и popover scrim/outside-tap behavior (PR #115 + предшествующие UI slices). _(source line 115)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 11. Дополнительные настройки — [x]
+- [x] Редкие параметры свёрнуты в «Дополнительные настройки». _(source line 122)_
+- [x] Язык, motion, composer position и провайдеры сгруппированы отдельно от основной server card. _(source line 123)_
+- [x] Отдельные настройки функций и проекта открываются контекстными модалками. _(source line 124)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 12. Тема, язык, анимации — [~]
+- [x] Базовые theme/language state синхронизируются между header/sidebar/settings (PR #120/#121). _(source line 130)_
+- [x] Есть reduced-motion стили для существующих анимаций. _(source line 131)_
+- [x] Landing roadmap ticker запускается только в раскрытом пункте и поддерживает явную паузу/возобновление; [x] prefers-reduced-motion оставляет читаемый статичный текст. App ticker и пользовательский motion=off/reduced требуют exact-head проверки. _(source line 132)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 13. Каталог моделей и provider state — [~]
+- [x] Каталоги могут обновляться и фильтровать text model choices; credentials разнесены по provider. _(source line 138)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 14. Project settings — [~]
+- [x] Создание/редактирование проекта вынесено в отдельное окно; настройки memory scope сохраняются. _(source line 145)_
+- [x] Проект, чаты и проектная память имеют разграниченные browser-local scopes. _(source line 146)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 18. Финальный release gate — [~]
+- [x] Основной код имеет Quality sentinels, Jekyll, Chromium E2E, published-site smoke и отдельные gateway/provenance workflows. _(source line 168)_
+- [x] PR #173 merge SHA `bf039f887e29137b627b06fc2bb107c2793d6b69`, Pages #42410162803 и публичные root + /landing/ exact-SHA Chromium checks подтверждены. [ ] Исправить stale release-contract sentinel в PR #174 и повторно проверить после merge. _(source line 170)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 2. Лендинг — обязательная структура V1
+- [x] Отдельный permalink /landing/; корневой URL приложения не заменяется. _(source line 178)_
+- [x] Hero с CTA на рабочую среду и runbook. _(source line 179)_
+- [x] Карточки возможностей и отдельная схема browser → tunnel → gateway → Ollama. _(source line 180)_
+- [x] Статусы voice/docs/self-hosted и multi-user boundaries не выдаются за готовые. _(source line 181)_
+
+### docs/V1_UI_FINALIZATION_RU.md — 8.8 Иконки действий сообщений
+- [x] Реализован icon-first вариант для copy/open/speak с aria-label/title и 44×44 CSS px touch targets; в полном просмотре добавлены copy/speak actions, а для пользовательского сообщения озвучивание скрывается. Exact-head Quality #42349078380 passed (Chromium + Jekyll + sentinels) on code/test SHA 350c01513ec6dc147cd5b26e7b8e3bfa17a26d0e; this SHA is the pre-status-update implementation checkpoint. _(source line 372)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Публичная точка входа и root app
+- [x] Контракт маршрутизации обновлён: единственная публичная продуктовая поверхность — root app; `/landing/` и `/assets/css/landing.css` возвращают 404. Не восстанавливать отдельный статический лендинг без нового решения владельца. _(source line 12)_
+- [x] Pages build + deploy завершились успешно на main SHA `0f1b3cfdef9a25198c6435a64f886db4f6fbd510` (run `44016571123`); live metadata with cache bypass reports the same `alandi-build-revision`, and `/landing/` returns HTTP 404. _(source line 13)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Корневое приложение — визуальная иерархия
+- [x] PR #117/#120: header hierarchy, project label, clock polish, sidebar grouping, memory/project statuses, synchronized theme/language. _(source line 20)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Popovers, menus, dialogs
+- [x] PR #117: chat-row menu placement viewport-safe; PR #115: scrim и inert first outside tap. _(source line 28)_
+- [x] Settings Save/Close остаются sticky; добавлены начальный focus на Close, Tab/Shift+Tab trap, Escape close и возврат фокуса к открывшему control (runtime E2E добавлен, запуск ещё pending). _(source line 31)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Sidebar, проекты, чаты
+- [x] PR #120: порядок памяти → проекты → чаты и компактные статусы. _(source line 36)_
+- [x] PR #118/#119: chat import/export и project-first actions. _(source line 37)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Research / functions / agents
+- [x] Owner override 2026-11-08 (D-022): Research Studio remains retired; PR #169 removed the modal, wiring and entrypoints. Post-merge public root/landing Chromium verified the absence on exact main SHA. _(source line 42)_
+- [x] Functions menu: D-022 owner override supersedes the original three-entry subset. Four entries are present (Agents, Deep Research, Skills, Connectors); the Connectors panel truthfully reports that no registry is configured and does not claim to query live status, scopes or actions. A real registry/permission contract remains a separate implementation gate. _(source line 43)_
+- [x] Connectors empty state now explicitly says that no registry is configured and no connection status, permissions or actions are queried; removed decorative ticker that could imply integration progress. RU/EN regression added; execution pending. _(source line 47)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — 3. Исторический первый polish patch
+- [x] Добавлен checkbox Pause control на каждый из трёх landing roadmap ticker. _(source line 67)_
+- [x] Pause toggles animation state using CSS only; no new JavaScript or runtime dependency. _(source line 68)_
+- [x] Added Playwright test for pause/resume and retained reduced-motion test. _(source line 69)_
+- [x] Exact-head Chromium/Quality passed on PR #121, including landing pause/resume and reduced-motion regression coverage. _(source line 70)_
+
+### docs/LANDING_UX_POLISH_BACKLOG_RU.md — Fast regression path (2026-11-17)
+- [x] Quality workflow is manual-only; expensive static analysis, full Chromium and live Pages release verification are opt-in. The GitHub Pages publishing mechanism is unchanged. _(source line 82)_
+- [x] Added a dependency-free local gate: `bash scripts/fast-check.sh` (integrity, security, context, immutable-action parser, state-freshness unit tests, source accessibility check, syntax and diff checks). _(source line 83)_
+
+### docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md — 9. Task ledger
+- [x] DR2-002 — инвентаризировать repository research, memory, local-source and multimodal docs. _(source line 152)_
+
+### docs/VOICE_2_RESEARCH_RU.md — 6. Work plan / task ledger
+- [x] VOICE-TRACK-001 — создать изолированную research-ветку от main. _(source line 109)_
+- [x] VOICE-TRACK-002 — перечитать существующие voice plans, research synthesis, language matrix, latency contract and implementation checklist. _(source line 110)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — P0 — post-merge verification through PR #29; live gateway remains a separate manual gate
+- [x] Confirmed merged PR #21 contains UI, project, quality-sentinel and E2E test updates. _(source line 141)_
+- [x] All Independent Quality Sentinels passed on PR head `acce1d7ce5ac6eb37251fe5d899a392150b82e9e`. _(source line 142)_
+- [x] Chromium E2E passed, including cloud-primary route, keyless web search, project scope/export/deletion and mobile voice swipe. _(source line 143)_
+- [x] Reviewed the changed-file diff and added regression coverage for auth, route, scope and recovery paths. _(source line 144)_
+- [x] PR #21 description records Kilo as an explicit alternate and project support as browser-local. _(source line 145)_
+- [x] Merged only after PR-head quality, Chromium E2E, Lite Gateway and provenance gates passed. _(source line 146)_
+- [x] PR #28 merged; gateway contract/security tests, provenance, quality and Pages checks passed on post-merge main `e424d353418cad62981eb269b4082d2925592708`. _(source line 147)_
+- [x] PR #29 merged at `55248f81585c52d7cc7ba7cfc08158a291a761ca`; PR-head and post-merge Quality/Chromium, provenance and Pages browser smoke passed; Pages deployment succeeded. _(source line 148)_
+- [x] Memory bridge merge state and all available workflow results reconciled. No live gateway/VPS, real provider smoke or target-hardware result is claimed. _(source line 149)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — legacy mobile and interface request, 2026-10-29
+- [x] PR #71: stable bottom composer for empty/populated chats and visualViewport-aware textarea; native iPhone Safari remains a separate manual gate. _(source line 194)_
+- [x] PR #114: optional global user system prompt empty by default; obsolete Gemini reset removed; legacy default migrates to empty; context history budget reserves serialization/provider overhead. _(source line 195)_
+- [x] PR #115: dim/blur scrim for attachment/context/voice popovers; modal backdrop blur respects reduced-transparency; first outside tap closes composer popover or toolbar/language/chat-row menu without activating underlying controls. Exact-head Chromium and published-site smoke passed. _(source line 196)_
+- [x] PR #120 merged at `2bda22229cba3576628f92c821bb6e1562d8abc5`: dedicated memory section, ordered project/chat navigation, live status lines, Research Studio placement and synchronized sidebar theme/language preferences. _(source line 197)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — consolidated interface closure, 2026-10-30
+- [x] PR #118 merged: chat-scoped import/export, merge-with-existing-history behavior, ID collision handling, validation and size/count bounds; exact-head quality and browser gates passed. _(source line 203)_
+- [x] PR #119 merged: UX-21–UX-25 delivered, including persisted composer position, clear provider route grouping, request-context boundaries, truthful staged-workflow wording, project-first actions and persisted project memory scope. _(source line 204)_
+- [x] PR #120 merged: sidebar hierarchy, memory status, Research Studio placement and synchronized theme/language controls delivered. _(source line 205)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — sidebar hierarchy and preference synchronization, 2026-10-30
+- [x] PR #120 merged: UX-26 and UX-27 delivered with dedicated memory controls, live status lines, Research Studio placement and synchronized theme/language preferences. _(source line 212)_
+
+### docs/V016_IMPLEMENTATION_CHECKLIST.md — Supplement — orthogonal chat settings, 2026-10-30
+- [x] PR #121 merged at `f4d880f`: effort controls only execution budget; web-search scope controls only availability/result breadth; structured workflow and task profile are separate; Research Studio uses current chat settings without mutation; exact-head Chromium/Quality passed. Native iPhone/VoiceOver remains manual. _(source line 217)_
