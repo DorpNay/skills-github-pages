@@ -485,6 +485,34 @@ test('composer text attachment validation and unsupported-file warning localize 
 
 
 
+
+test('additional Settings controls, privacy copy and transfer actions localize in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#additionalSettings > summary').click();
+
+  await expect(page.locator('#uiMotion option[value="auto"]')).toHaveText('Авто');
+  await expect(page.locator('#uiMotion option[value="reduced"]')).toHaveText('Уменьшить');
+  await expect(page.locator('#composerPosition option[value="top"]')).toHaveText('Сверху, под панелью режимов');
+  await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Свои правила для всех запросов');
+  await expect(page.locator('#editSystemPrompt')).toHaveAccessibleName('Редактировать системный промпт');
+  await expect(page.locator('#allowCrossProviderFallback').locator('xpath=..')).toContainText('Разрешить резерв у другого провайдера');
+  await expect(page.locator('#allowCrossProviderFallback').locator('xpath=..')).toContainText('текст запроса и контекст могут передаваться другому сервису');
+  await expect(page.locator('[data-action="export-settings-profile"]')).toHaveText('Скачать профиль настроек');
+  await expect(page.locator('[data-action="import-settings-profile"]')).toHaveText('Импорт профиля');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#uiMotion option[value="auto"]')).toHaveText('Auto');
+  await expect(page.locator('#uiMotion option[value="reduced"]')).toHaveText('Reduce');
+  await expect(page.locator('#composerPosition option[value="top"]')).toHaveText('Top, below mode controls');
+  await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your rules for all requests');
+  await expect(page.locator('#editSystemPrompt')).toHaveAccessibleName('Edit system prompt');
+  await expect(page.locator('#allowCrossProviderFallback').locator('xpath=..')).toContainText('Allow fallback to another provider');
+  await expect(page.locator('#allowCrossProviderFallback').locator('xpath=..')).toContainText('your prompt and context may be sent to another service');
+  await expect(page.locator('[data-action="export-settings-profile"]')).toHaveText('Download settings profile');
+  await expect(page.locator('[data-action="import-settings-profile"]')).toHaveText('Import profile');
+});
+
 test('third-party provider settings labels and controls localize in RU and EN', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();

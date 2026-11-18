@@ -124,3 +124,5 @@
 | 2026-11-18 | Provider Settings now localizes Cloudflare ID/Base URL/model validation and save confirmation; Cloudflare Account ID is staged until all required validation passes, preventing an invalid form from persisting it. Pollinations PKCE setup errors localize RU/EN. Added EN validation/no-partial-write regression. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Third-party provider settings now localize provider selection, model search/catalog labels, docs links, Cloudflare account label/help, API key/Base URL/model placeholders, Pollinations controls and connection buttons in RU/EN. Added provider-panel localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Additional Settings now localize motion and composer position, system-prompt placeholder/edit accessible name, cross-provider fallback privacy warning, settings export/import actions and profile privacy note in RU/EN. Added focused settings localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
