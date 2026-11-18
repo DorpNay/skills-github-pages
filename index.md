@@ -5007,8 +5007,14 @@ let agentRuntimeRefreshPromise = null;
       const actionMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
       if (!toolbarMenus.length && !actionMenus.length) return;
       if (event.target.closest('#searchModeMenu, #functionsMenu, #languageMenu, .chat-row-menu')) return;
+      const actionMenuTrigger=actionMenus[0]?.querySelector('summary')||null;
       toolbarMenus.forEach(menu => { menu.open = false; });
       actionMenus.forEach(menu => { menu.open = false; });
+      if(actionMenuTrigger){
+        requestAnimationFrame(()=>{
+          if(actionMenuTrigger.isConnected&&!actionMenuTrigger.closest('[inert]'))actionMenuTrigger.focus({preventScroll:true});
+        });
+      }
       event.preventDefault();
       event.stopImmediatePropagation();
     }, true);

@@ -615,6 +615,7 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#chatRowMenuSidebarScrim')).toBeVisible();
   await page.locator('#chatRowMenuSidebarScrim').click({ position: { x: 12, y: 12 } });
   await expect(menu).not.toHaveAttribute('open', '');
+  await expect(menu.locator('summary')).toBeFocused();
   await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'false');
 
   await menu.locator('summary').click();
@@ -622,6 +623,7 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#chatRowMenuPageScrim')).toBeVisible();
   await page.locator('#chatRowMenuPageScrim').click({ position: { x: 350, y: 40 } });
   await expect(menu).not.toHaveAttribute('open', '');
+  await expect(menu.locator('summary')).toBeFocused();
   await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
