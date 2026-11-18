@@ -637,9 +637,9 @@ permalink: /
         <div class="p-3"><section id="cloudSettingsCard" class="cloud-card rounded-2xl border p-4 space-y-3" aria-labelledby="cloudCardTitle">
         <div class="flex items-center justify-between gap-3"><div class="min-w-0 flex-1"><p class="text-lg uppercase tracking-[.18em] text-cyan-300 font-extrabold leading-none">aLandi aServi</p><h3 id="cloudCardTitle" data-i18n="cloudCardTitle" class="text-2xl font-bold mt-2">Мой сервер</h3></div><span class="cloud-status-indicator" id="cloudStatusDot" data-state="disconnected" aria-hidden="true"></span></div>
         <div class="grid grid-cols-1 gap-2">
-          <input id="cloudBaseUrl" type="url" autocomplete="url" aria-label="URL моего сервера" aria-describedby="cloudBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
-          <input id="cloudModel" type="text" autocomplete="off" aria-label="Модель моего сервера" aria-describedby="cloudModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
-          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" aria-label="Ключ доступа к серверу" aria-describedby="cloudApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
+          <input id="cloudBaseUrl" type="url" autocomplete="url" required aria-label="URL моего сервера" aria-describedby="cloudBaseUrlError" class="w-full p-3 rounded-xl border text-sm" placeholder="URL моего сервера · https://…/v1"><p id="cloudBaseUrlError" class="field-error hidden" role="alert"></p>
+          <input id="cloudModel" type="text" autocomplete="off" required aria-label="Модель моего сервера" aria-describedby="cloudModelError" class="w-full p-3 rounded-xl border text-sm" placeholder="Модель gateway · точный ID"><p id="cloudModelError" class="field-error hidden" role="alert"></p>
+          <div class="cloud-key-row flex gap-2"><input id="cloudApiKey" type="password" autocomplete="off" required aria-label="Ключ доступа к серверу" aria-describedby="cloudApiKeyError" class="min-w-0 flex-1 p-3 rounded-xl border text-sm" placeholder="Ключ доступа"><button type="button" data-action="paste-aservi-key" class="rounded-xl border px-3 text-xs" title="Вставить ключ">↓</button></div><p id="cloudApiKeyError" class="field-error hidden" role="alert"></p>
         </div>
         <button type="button" data-action="connect-alandi-aservi" data-i18n="cloudConnect" class="w-full rounded-xl border border-cyan-700 bg-cyan-950/50 px-3 py-2.5 text-sm font-semibold text-cyan-100">Проверить и подключить</button>
         <p id="cloudStatus" class="cloud-status-copy text-[10px]" data-state="disconnected" role="status" aria-live="polite">Не подключено</p>
@@ -3979,13 +3979,21 @@ permalink: /
       if(cloudAutoConnectTimer){clearTimeout(cloudAutoConnectTimer);cloudAutoConnectTimer=null;}
       if(isTestingProviderConnection)return;
       const {baseUrl,model,key}=getCloudSettings();
+      const english=getUiLanguage()==='en';
       const cloudSettingsStillCurrent=()=>{const current=getCloudSettings();return current.baseUrl===baseUrl&&current.model===model&&current.key===key;};
-      if(!baseUrl||!model||!key){setCloudStatus('disconnected');return;}
-      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');return;}
+      const requiredFields=[
+        ['cloudBaseUrl',baseUrl,english?'Enter your server URL.':'Укажи URL своего сервера.'],
+        ['cloudModel',model,english?'Enter the exact model ID.':'Укажи точный ID модели.'],
+        ['cloudApiKey',key,english?'Enter your server access key.':'Укажи ключ доступа к серверу.']
+      ];
+      requiredFields.forEach(([id,value,message])=>setCloudFieldError(id,value?'':message));
+      const firstMissing=requiredFields.find(([,value])=>!value);
+      if(firstMissing){setCloudStatus('disconnected',english?'Complete the required fields to connect.':'Заполни обязательные поля для подключения.');$(firstMissing[0]).focus({preventScroll:true});return;}
+      const formatError=validateCloudBaseUrl(baseUrl);if(formatError){setCloudFieldError('cloudBaseUrl',formatError);setCloudStatus('disconnected');$('cloudBaseUrl').focus({preventScroll:true});return;}
       setCloudFieldError('cloudBaseUrl');setCloudFieldError('cloudModel');setCloudFieldError('cloudApiKey');
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="connect-alandi-aservi"]');
-      if(button){button.disabled=true;button.textContent='Проверяю…';}
+      if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=english?'Checking…':'Проверяю…';}
       setCloudStatus('checking');
       const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
       try{
@@ -4030,7 +4038,7 @@ permalink: /
         setCloudFieldError('cloudApiKey',getUiLanguage()==='en'?'Connection failed. Check server URL and key.':'Не удалось подтвердить соединение. Проверь URL сервера и ключ.');
       }finally{
         clearTimeout(timer);isTestingProviderConnection=false;
-        if(button){button.disabled=false;button.textContent=getUiLanguage()==='en'?'Check and connect':'Проверить и подключить';}
+        if(button){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=getUiLanguage()==='en'?'Check and connect':'Проверить и подключить';}
       }
     }
     async function pasteIntoField(id){
@@ -7463,6 +7471,18 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     });
     $('memoryInput').addEventListener('keydown', (event) => {
       if (event.key === 'Enter') { event.preventDefault(); document.querySelector('[data-action="save-memory"]').click(); }
+    });
+    ['cloudBaseUrl','cloudModel','cloudApiKey'].forEach(id=>{
+      $(id).addEventListener('input',()=>{
+        const field=$(id);if(field.getAttribute('aria-invalid')!=='true')return;
+        const value=field.value.trim(),english=getUiLanguage()==='en';
+        const error=id==='cloudBaseUrl'
+          ? (value?validateCloudBaseUrl(value):(english?'Enter your server URL.':'Укажи URL своего сервера.'))
+          : id==='cloudModel'
+            ? (value?'':(english?'Enter the exact model ID.':'Укажи точный ID модели.'))
+            : (value?'':(english?'Enter your server access key.':'Укажи ключ доступа к серверу.'));
+        setCloudFieldError(id,error);
+      });
     });
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});
     $('chatActionModal').addEventListener('click',event=>{if(event.target===$('chatActionModal'))closeChatActionDialog();});

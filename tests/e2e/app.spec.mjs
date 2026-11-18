@@ -2227,6 +2227,43 @@ test('aServi URL validation is localized and announced by its field', async ({ p
   await expect(page.locator('#cloudStatus')).toHaveText('Disconnected');
 });
 
+
+test('aServi connection validates required fields in order and clears corrected errors', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  const connect = page.locator('[data-action="connect-alandi-aservi"]');
+
+  await connect.click();
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Укажи URL своего сервера.');
+  await expect(page.locator('#cloudBaseUrl')).toBeFocused();
+
+  await page.locator('#cloudBaseUrl').fill('https://gateway.example.test/v1');
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'false');
+  await connect.click();
+  await expect(page.locator('#cloudModel')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudModelError')).toHaveText('Укажи точный ID модели.');
+  await expect(page.locator('#cloudModel')).toBeFocused();
+
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await expect(page.locator('#cloudModel')).toHaveAttribute('aria-invalid', 'false');
+  await connect.click();
+  await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudApiKeyError')).toHaveText('Укажи ключ доступа к серверу.');
+  await expect(page.locator('#cloudApiKey')).toBeFocused();
+  await expect(page.locator('#cloudStatus')).toContainText('Заполни обязательные поля');
+});
+
+test('aServi required field validation is localized in English', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudBaseUrlError')).toHaveText('Enter your server URL.');
+  await expect(page.locator('#cloudBaseUrl')).toBeFocused();
+  await expect(page.locator('#cloudStatus')).toContainText('Complete the required fields');
+});
+
 test('voice mode menu opens with one tap and keeps gateway setup explicit', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
