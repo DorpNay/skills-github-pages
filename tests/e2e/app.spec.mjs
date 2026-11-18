@@ -3470,6 +3470,10 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(modal).toBeVisible();
   await expect(page.locator('#agentFunctionSettings')).toBeVisible();
   await expect(page.locator('#researchFunctionSettings')).toBeHidden();
+  await expect(page.locator('#agentRuntimeGroupTitle')).toHaveText('Доступность AgentRun');
+  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Шаблон команды');
+  await expect(page.locator('#skillProfileGroupTitle')).toHaveText('Профиль задачи');
+  await expect(page.locator('#skillOutputGroupTitle')).toHaveText('Цель и формат результата');
   await modal.locator('[data-action="close-function-panel"]').first().click();
   await expect(modal).toBeHidden();
 
@@ -3503,6 +3507,8 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await summary.click();
   await expect(menu.locator('[data-function="agents"]')).toHaveAccessibleName(/Agents/);
   await menu.locator('[data-function="agents"]').click();
+  await expect(page.locator('#agentRuntimeGroupTitle')).toHaveText('AgentRun availability');
+  await expect(page.locator('#agentBlueprintGroupTitle')).toHaveText('Team blueprint');
   await expect(closePanel).toHaveAccessibleName('Close');
   await closePanel.click();
   await expect(modal).toBeHidden();

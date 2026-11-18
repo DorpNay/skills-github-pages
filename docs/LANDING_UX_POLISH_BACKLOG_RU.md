@@ -87,6 +87,7 @@
 - [ ] Keep Chromium as a manual-only check for viewport geometry, CSS reflow, overflow and screenshots; do not infer those properties from DOM-only tests.
 
 ## 5. Change log
+| 2026-11-18 | Functions IA: separate AgentRun availability from saved team blueprint; separate chat-scoped Skill profile from goal/output preferences. RU/EN labels and focused E2E assertions added; no runtime or V1 scope expansion. | `index.md`; `tests/e2e/app.spec.mjs`; `NOW.md` |
 | 2026-11-18 | Settings IA: split existing Additional settings into four purpose-labelled groups; Project Settings now separates chat/project context, project profile, project memory and project data while retaining the existing Sources disclosure. RU/EN behavior verified by live browser on published exact main `de8cccb`; Pages and Graphify both SUCCESS on that SHA. Playwright regression authored but not executed. | `index.md`; `tests/e2e/app.spec.mjs`; `NOW.md` |
 | Date | Change | Evidence |
 | 2026-11-17 | Connectors panel now explicitly reports an unconfigured registry and does not imply live connection checks; decorative progress ticker removed. RU/EN E2E added; runtime execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
