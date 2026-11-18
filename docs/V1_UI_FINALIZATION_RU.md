@@ -252,6 +252,7 @@ PR #122 добавил только эксплуатационную надёж�
 - GitHub — [Publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site); branch/folder source and Actions deployment are explicit publishing choices.
 
 ## 7. Change log
+| 2026-11-18 | Storage failure/rollback feedback for chat and project persistence now localizes RU/EN; added English quota-failure regression for rollback and mode restoration. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Fixed Agent blueprint persistence by allowing the bounded scenario, role preset, custom scenario and custom roles fields in the shared chat mutation contract. Added custom blueprint reload regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Fixed custom Skill profile persistence by adding its bounded name/instructions/output fields to the shared chat mutation allowlist; localized the apply confirmation. Added apply→reload persistence regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Project create/edit forms now mark the project name required, expose localized inline errors, focus the invalid field, and clear the error as the name is corrected. Added create→edit validation/focus Playwright regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |

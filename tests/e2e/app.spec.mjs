@@ -3758,6 +3758,29 @@ test('settings profile import rolls back provider keys when chat persistence fai
   expect(after).toEqual(before);
 });
 
+
+test('chat storage failure feedback is localized in English and state is rolled back', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__failChatWrites = false;
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (window.__failChatWrites && key === 'ai_chats_v87') {
+        throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+      }
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  const before = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
+  await page.evaluate(() => { window.__failChatWrites = true; });
+  await page.locator('#modeDeep').click();
+  await expect(page.locator('#toast')).toContainText('Chat history was not confirmed in browser storage');
+  expect(await page.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(before);
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'false');
+});
+
 test('chat mode setters restore chat and mirrored storage when quota blocks persistence', async ({ page }) => {
   await page.addInitScript(() => {
     window.__failChatWrites = false;

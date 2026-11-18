@@ -1205,13 +1205,14 @@ permalink: /
         toastHideTimer = setTimeout(() => node.classList.add('hidden'), 180);
       }, 2400);
     }
+    function storageMessage(ru,en){return getUiLanguage()==='en'?en:ru;}
     function safeSet(key, value) {
       try { localStorage.setItem(key, value); return true; }
       catch (error) {
         console.error('Не удалось сохранить localStorage:', error);
         if (!storageWarningShown) {
           storageWarningShown = true;
-          showToast('Не удалось сохранить данные. Экспортируйте историю и освободите место.', 'error');
+          showToast(storageMessage('Не удалось сохранить данные. Экспортируйте историю и освободите место.','Could not save data. Export your chat history and free browser storage.'), 'error');
         }
         return false;
       }
@@ -1315,17 +1316,17 @@ permalink: /
     }
     function persistChats() {
       if (chatStorageCorruptNotBackedUp) {
-        showToast('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.', 'error');
+        showToast(storageMessage('Повреждённая история не была перезаписана: не удалось создать резервную копию. Освободите место в браузере и перезагрузите страницу.','The corrupted chat history was not overwritten because its recovery backup could not be saved. Free browser storage and reload.'), 'error');
         return false;
       }
       let previousChatsRaw;
       try { previousChatsRaw = localStorage.getItem(STORAGE.chats); }
-      catch (error) { showToast('Не удалось прочитать прежнюю историю; запись отменена.', 'error'); return false; }
+      catch (error) { showToast(storageMessage('Не удалось прочитать прежнюю историю; запись отменена.','Could not read the previous chat history; the write was cancelled.'), 'error'); return false; }
       const savedChats = safeSet(STORAGE.chats, JSON.stringify(chats));
       const savedCurrent = savedChats && safeSet(STORAGE.current, currentChatId);
       if (!savedChats || !savedCurrent) {
-        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
-        showToast('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.', 'error');
+        if (savedChats && !restoreStorageValue(STORAGE.chats, previousChatsRaw)) showToast(storageMessage('Не удалось откатить частичную запись истории. Не очищай данные сайта; сначала экспортируй доступные данные.','Could not roll back the partial chat-history write. Do not clear site data; export any available data first.'), 'error');
+        showToast(storageMessage('История не подтверждена браузерным хранилищем. Запись откатили там, где это удалось; сразу экспортируй чаты и проверь место/разрешения сайта.','Chat history was not confirmed in browser storage. The write was rolled back where possible; export chats and check site storage and permissions.'), 'error');
         return false;
       }
       scheduleStorageHealthCheck();
@@ -1360,7 +1361,7 @@ permalink: /
       try {
         previousMirrors = mirroredWrites.map(([key]) => ({ key, value: localStorage.getItem(key) }));
       } catch (error) {
-        showToast('Не удалось прочитать прежние настройки браузера; изменение отменено.', 'error');
+        showToast(storageMessage('Не удалось прочитать прежние настройки браузера; изменение отменено.','Could not read the previous browser settings; the change was cancelled.'), 'error');
         return false;
       }
       const restoreFields = () => {
@@ -1374,7 +1375,7 @@ permalink: /
         for (let index = attempted.length - 1; index >= 0; index -= 1) {
           if (!restoreStorageValue(attempted[index].key, attempted[index].value)) restored = false;
         }
-        if (!restored) showToast('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.', 'error');
+        if (!restored) showToast(storageMessage('Не все прежние настройки удалось восстановить. Не очищай данные сайта; сначала экспортируй доступные данные.','Not all previous settings could be restored. Do not clear site data; export any available data first.'), 'error');
         return restored;
       };
       for (const [key, value] of updateEntries) {
@@ -2273,7 +2274,7 @@ permalink: /
     }
     function persistProjects(){
       if (projectStorageCorruptNotBackedUp) {
-        showToast('Повреждённые данные проектов не перезаписываются: резервная копия не сохранилась. Освободи место и перезагрузи страницу.', 'error');
+        showToast(storageMessage('Повреждённые данные проектов не перезаписываются: резервная копия не сохранилась. Освободи место и перезагрузи страницу.','Corrupted project data was not overwritten because its recovery backup could not be saved. Free browser storage and reload.'), 'error');
         return false;
       }
       return safeSet(STORAGE.projects, JSON.stringify(projects));
@@ -2281,10 +2282,10 @@ permalink: /
     function persistProjectsAndChats() {
       let previousProjectsRaw;
       try { previousProjectsRaw = localStorage.getItem(STORAGE.projects); }
-      catch (error) { showToast('Не удалось прочитать прежние проекты; операция отменена.', 'error'); return false; }
+      catch (error) { showToast(storageMessage('Не удалось прочитать прежние проекты; операция отменена.','Could not read the previous projects; the operation was cancelled.'), 'error'); return false; }
       if (!persistProjects()) return false;
       if (persistChats()) return true;
-      if (!restoreStorageValue(STORAGE.projects, previousProjectsRaw)) showToast('Не удалось откатить запись проектов после ошибки истории. Проверь резервные копии и не очищай данные сайта.', 'error');
+      if (!restoreStorageValue(STORAGE.projects, previousProjectsRaw)) showToast(storageMessage('Не удалось откатить запись проектов после ошибки истории. Проверь резервные копии и не очищай данные сайта.','Could not roll back project storage after the chat-history write failed. Check backups and do not clear site data.'), 'error');
       return false;
     }
     let selectedProjectForSettingsId=null;
