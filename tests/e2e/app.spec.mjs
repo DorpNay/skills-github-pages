@@ -486,6 +486,31 @@ test('composer text attachment validation and unsupported-file warning localize 
 
 
 
+
+test('Research and Agent function panels update their dynamic copy when language changes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="research"]').click();
+  await expect(page.locator('#deepResearchMethodSelect option[value="none"]')).toHaveText('Обычный ответ');
+  await expect(page.locator('#deepResearchMethodSelect option[value="multi_step_evidence_report"]')).toHaveText('Многоэтапный отчёт с доказательствами');
+
+  await page.locator('#uiLanguage').evaluate(element => {
+    element.value = 'en';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#deepResearchMethodSelect option[value="none"]')).toHaveText('Direct chat');
+  await expect(page.locator('#deepResearchMethodSelect option[value="multi_step_evidence_report"]')).toHaveText('Multi-step evidence report');
+  await expect(page.locator('[data-action="select-processing-mode"]')).toHaveText('Enable “Thorough” mode');
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('label[for="agentRuntimeProfile"]')).toContainText('Worker profile');
+  await expect(page.locator('label[for="agentRuntimeModel"]')).toContainText('Allowed model');
+  await expect(page.locator('#agentRuntimeEvents')).toHaveAttribute('aria-label', 'AgentRun events');
+  await expect(page.locator('#agentRuntimeProfile option[value=""]')).toHaveText('Unavailable');
+});
+
 test('additional Settings controls, privacy copy and transfer actions localize in RU and EN', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').click();

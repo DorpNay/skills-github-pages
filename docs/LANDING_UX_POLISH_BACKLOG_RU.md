@@ -126,3 +126,5 @@
 | 2026-11-18 | Third-party provider settings now localize provider selection, model search/catalog labels, docs links, Cloudflare account label/help, API key/Base URL/model placeholders, Pollinations controls and connection buttons in RU/EN. Added provider-panel localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Additional Settings now localize motion and composer position, system-prompt placeholder/edit accessible name, cross-provider fallback privacy warning, settings export/import actions and profile privacy note in RU/EN. Added focused settings localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Functions panels now refresh dynamic Research method options/summaries and AgentRun profile/model labels, empty options and event accessible name when language changes while the panel is open. Added RU→EN live-switch regression. | `index.md`; `tests/e2e/app.spec.mjs` |

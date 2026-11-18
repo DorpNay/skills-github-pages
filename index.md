@@ -1726,6 +1726,7 @@ permalink: /
       setOptions('skillOutputSelect',en?['Summary','Checklist','Step by step','Table','Report','Custom option']:['Краткое резюме','Чек-лист','Пошагово','Таблица','Отчёт','Свой вариант']);
       setOptions('agentTeamScenario',en?['General','Research','Software','Product','Due diligence','Custom option']:['Общий','Исследование','Разработка','Продукт','Due diligence','Свой вариант']);
       setOptions('agentRolePreset',en?['Balanced','Research team','Software team','Product team','Custom option']:['Сбалансированные','Исследовательская команда','Разработка ПО','Продуктовая команда','Свой вариант']);
+      setOptions('deepResearchMethodSelect',en?['Direct chat','Multi-step evidence report']:['Обычный ответ','Многоэтапный отчёт с доказательствами']);
       setOptions('uiLanguage',['RU','EN']);
       setOptions('uiMotion',en?['Auto','Reduce motion','Off']:['Авто','Уменьшить','Выкл.']);
       setOptions('composerPosition',en?['Bottom','Top']:['Снизу','Сверху']);
@@ -1766,6 +1767,8 @@ permalink: /
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Open voice modes':'Нажми, чтобы открыть режимы голоса';voice.setAttribute('aria-label',lang==='en'?'Open voice modes':'Открыть режимы голоса');}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
+      if(!$('agentFunctionSettings').classList.contains('hidden'))setAgentRuntimeCopy();
+      if(!$('researchFunctionSettings').classList.contains('hidden'))renderResearchConfiguration();
     }
     window.addEventListener('resize',syncComposerPlaceholder,{passive:true});
     function updateHomeThemeButton(){
@@ -4436,6 +4439,14 @@ let agentRuntimeRefreshPromise = null;
       $('agentRuntimeCapabilities').textContent=english
         ? 'One Gateway worker · concurrency 1 · no tools, web, shell or filesystem access.'
         : 'Один worker на Gateway · concurrency 1 · без инструментов, веб-доступа, shell и доступа к файлам.';
+      const profileLabel=$('agentRuntimeProfile').closest('label'),modelLabel=$('agentRuntimeModel').closest('label');
+      if(profileLabel?.firstChild?.nodeType===Node.TEXT_NODE)profileLabel.firstChild.textContent=english?'Worker profile ':'Профиль worker ';
+      if(modelLabel?.firstChild?.nodeType===Node.TEXT_NODE)modelLabel.firstChild.textContent=english?'Allowed model ':'Разрешённая модель ';
+      for(const id of ['agentRuntimeProfile','agentRuntimeModel']){
+        const emptyOption=$(id).querySelector('option[value=""]');
+        if(emptyOption)emptyOption.textContent=english?'Unavailable':'Недоступно';
+      }
+      $('agentRuntimeEvents').setAttribute('aria-label',english?'AgentRun events':'События AgentRun');
       $('agentRuntimePromptLabel').firstChild.textContent=english
         ? 'Task prompt — sent to the selected AgentRun strategy'
         : 'Текст задания — передаётся выбранной стратегии AgentRun';

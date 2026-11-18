@@ -1287,3 +1287,6 @@ def script_lang(s: str) -> str:
 
 
 - [2026-11-18] S-147 | IMPLEMENTED / E2E PENDING — ADDITIONAL SETTINGS RU/EN PARITY | Parent main `9a13bede9489de695eeaf6427026c3a5c9ba5e5b`. Localized motion/composer controls, system prompt placeholder and edit accessible name, cross-provider fallback disclosure, settings export/import buttons and profile privacy note. Added RU/EN Playwright regression for controls and disclosure text. Updated existing UX backlog and V1 checklist; privacy semantics and fallback behavior unchanged. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue remaining Settings and Functions static copy, then consolidate current checkpoint.
+
+
+- [2026-11-18] S-148 | IMPLEMENTED / E2E PENDING — LIVE RU/EN SWITCH INSIDE FUNCTIONS PANELS | Parent main `e9c66ed291c7bc47e43afb101f12f8724401c0dd`. Language changes now refresh Research method options/summaries and AgentRun worker/model labels, unavailable options and event-list accessible name without closing the panel or resetting the Agent blueprint inputs. Added RU→EN Playwright regression for Research and Agent panels. Updated existing UX backlog and V1 checklist; runtime behavior unchanged. | IMPLEMENTED; Playwright not run; exact-head CI pending. | Next: continue Functions panel accessibility/copy and reconcile current checkpoint.
