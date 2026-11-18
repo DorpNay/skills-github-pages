@@ -29,12 +29,16 @@ const suites = {
         matches(new RegExp('id="' + id + '"'), 'Missing required UI element #' + id);
       }
       assert.ok(source.includes('<details id="functionsMenu"'), 'The owner-approved Functions menu must exist.');
-      assert.ok(source.includes('data-function="agents"'), 'Functions must expose structured analysis.');
-      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Functions must expose Deep Research as a Thorough-mode shortcut.');
+      assert.ok(source.includes('data-function="agents"'), 'Functions must expose the AgentRun panel.');
       assert.ok(source.includes('data-function="skills"'), 'Functions must expose task profiles/Skills.');
       const functionsMenu = source.match(/<details id="functionsMenu"[\s\S]*?<\/details>/)?.[0] || '';
       const menuEntries = [...functionsMenu.matchAll(/data-function="(research|agents|skills|connectors)"/g)].map(match => match[1]);
       assert.deepEqual(menuEntries, ['research', 'agents', 'skills', 'connectors'], 'Functions must expose the four owner-required panels in canonical order.');
+      const researchPanel = source.match(/<section id="researchFunctionSettings"[\s\S]*?<\/section>/)?.[0] || '';
+      assert.ok(researchPanel.includes('id="deepResearchMethodSelect"'), 'Research must expose a real method selector.');
+      assert.ok(researchPanel.includes('id="researchMethodRoadmapDetails"'), 'Research must distinguish future methods from active procedures.');
+      assert.equal(researchPanel.includes('data-action="select-processing-mode"'), false, 'Research must not duplicate the global effort controls.');
+      assert.equal(researchPanel.includes('data-action="open-search-mode-settings"'), false, 'Research must not duplicate the global web-access controls.');
       const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\s\S]*?<\/section>/)?.[0] || '';
       assert.ok(connectorPanel, 'Connectors must open an independent panel.');
       assert.ok(connectorPanel.includes('functionConnectorsDescription'), 'Connectors must explain the current connection state.');
@@ -242,7 +246,8 @@ const suites = {
       assert.ok(!source.includes("mode === 'fast' && index > 0 && !extendedSearch"), 'Fast-mode tool limits must not depend on search scope.');
       assert.equal(source.includes('researchStudio'), false, 'Retired Research Studio source and UI must be absent.');
       assert.equal(source.includes('open-research-studio'), false, 'Retired Research Studio actions must be absent.');
-      assert.ok(source.includes('data-action="select-processing-mode" data-processing-mode="deep"'), 'Deep Research must set Thorough mode through a bounded UI action.');
+      assert.equal(source.includes('researchModeSummary'), false, 'Deep Research must not render duplicate Quick/Thorough controls.');
+      assert.equal(source.includes('researchSearchModeSummary'), false, 'Deep Research must not render duplicate web-access controls.');
       assert.equal(source.includes('serverMemory'), false, 'Retired Server Memory experiment code and copy must be absent.');
       assert.equal(source.includes('serverProjectMemory'), false, 'Retired server project-memory flags must be absent.');
       assert.equal(source.includes('/memory/graph/'), false, 'The static app must not call the retired server-memory graph API.');

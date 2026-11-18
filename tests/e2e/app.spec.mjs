@@ -3730,27 +3730,35 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect.poll(() => modal.evaluate(element => getComputedStyle(element).backdropFilter)).toBe('blur(4px)');
   const researchPanel = page.locator('#researchFunctionSettings');
   await expect(researchPanel).toBeVisible();
-  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Quick|Быстро/);
-  await expect(researchPanel.locator('#researchSearchModeSummary')).toContainText(/Web: off|Веб: выкл./);
-  await expect(researchPanel.locator('#researchWorkflowSummary')).toContainText(/Direct|Прямой/);
+  await expect(researchPanel.locator('#researchMethodActiveCard')).toBeVisible();
+  await expect(researchPanel.locator('#deepResearchMethodSelect')).toHaveValue('none');
+  await expect(researchPanel.locator('#researchMethodStatus')).toContainText(/normal direct flow|обычный прямой режим/i);
+  await expect(researchPanel.locator('[data-action="select-processing-mode"]')).toHaveCount(0);
+  await expect(researchPanel.locator('[data-action="open-search-mode-settings"]')).toHaveCount(0);
+  await expect(researchPanel.locator('#researchModeSummary, #researchSearchModeSummary')).toHaveCount(0);
+  await expect(researchPanel.locator('#modeFast, #modeDeep, #searchModeSummary')).toHaveCount(0);
 
-  await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
-  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
-  await expect(researchPanel.locator('#researchModeSummary')).toContainText(/Thorough|Тщательно/);
+  const roadmap = researchPanel.locator('#researchMethodRoadmapDetails');
+  await expect(roadmap).toBeVisible();
+  await expect(roadmap).not.toHaveAttribute('open', '');
+  await roadmap.locator('summary').click();
+  for (const method of ['Comparative research','Literature review','Claim and fact checking','Source quality and freshness audit','Technical due diligence']) {
+    await expect(roadmap).toContainText(method);
+  }
+  await expect(roadmap.locator('button, input, select, textarea')).toHaveCount(0);
 
-  await researchPanel.locator('[data-action="open-search-mode-settings"]').click();
-  await expect(modal).toBeHidden();
-  const searchMenu = page.locator('#searchModeMenu');
-  await expect(searchMenu).toHaveAttribute('open', '');
-  await expect(page.locator('#searchModeSummary')).toBeFocused();
-  await page.locator('#searchModeSummary').click();
-  await expect(searchMenu).not.toHaveAttribute('open', '');
+  await researchPanel.locator('#deepResearchMethodSelect').selectOption('multi_step_evidence_report');
+  await expect(researchPanel.locator('#researchMethodStatus')).toContainText(/Selected for this chat|Метод выбран для этого чата/i);
+  await expect.poll(() => page.evaluate(() => {
+    const chats=JSON.parse(localStorage.getItem('ai_chats_v87')||'[]');
+    return chats.find(chat=>chat.id===localStorage.getItem('ai_current_chat_v87'))?.deepResearchMethod;
+  })).toBe('multi_step_evidence_report');
+  await researchPanel.locator('#deepResearchMethodSelect').selectOption('none');
+  await expect(researchPanel.locator('#researchMethodStatus')).toContainText(/normal direct flow|обычный прямой режим/i);
 
-  // Opening Search settings closes the Research panel. Reopen it before
-  // exercising its close control; do not click a hidden, stale panel element.
-  await summary.click();
-  await menu.locator('[data-function="research"]').click();
-  await expect(modal).toBeVisible();
+  await expect(page.locator('#modeFast')).toBeVisible();
+  await expect(page.locator('#modeDeep')).toBeVisible();
+  await expect(page.locator('#searchModeSummary')).toBeVisible();
   await modal.locator('[data-action="close-function-panel"]').first().click();
   await expect(modal).toBeHidden();
   await expect(summary).toBeFocused();
