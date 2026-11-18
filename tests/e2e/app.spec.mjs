@@ -4951,6 +4951,45 @@ test('custom skill fields expose localized accessible names', async ({ page }) =
   }
 });
 
+
+test('custom Skill profile persists its bounded fields to the active chat', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await page.locator('#skillPresetSelect').selectOption('custom');
+  await page.locator('#customSkillName').fill('Release reviewer');
+  await page.locator('#customSkillInstructions').fill('Review only the supplied release diff. Flag correctness and security risks.');
+  await page.locator('#customSkillOutput').fill('Findings, evidence, severity, next action.');
+  await page.locator('[data-action="apply-skill-quiz"]').click();
+
+  const saved = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    const id = localStorage.getItem('ai_current_chat_v87');
+    const chat = chats.find(item => item.id === id);
+    return chat && {
+      skillPreset: chat.skillPreset,
+      customSkillName: chat.customSkillName,
+      customSkillInstructions: chat.customSkillInstructions,
+      customSkillOutput: chat.customSkillOutput
+    };
+  });
+  expect(saved).toEqual({
+    skillPreset: 'custom',
+    customSkillName: 'Release reviewer',
+    customSkillInstructions: 'Review only the supplied release diff. Flag correctness and security risks.',
+    customSkillOutput: 'Findings, evidence, severity, next action.'
+  });
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await expect(page.locator('#skillPresetSelect')).toHaveValue('custom');
+  await expect(page.locator('#customSkillName')).toHaveValue('Release reviewer');
+  await expect(page.locator('#customSkillInstructions')).toHaveValue('Review only the supplied release diff. Flag correctness and security risks.');
+  await expect(page.locator('#customSkillOutput')).toHaveValue('Findings, evidence, severity, next action.');
+  await expect(page.locator('#skillConfigSummary')).toContainText('Release reviewer');
+});
+
 test('Connectors panel truthfully reports an unconfigured registry in RU and EN', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#functionsMenu > summary').click();

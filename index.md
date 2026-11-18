@@ -1344,7 +1344,8 @@ permalink: /
       if (!chat || typeof chat !== 'object' || !updates || typeof updates !== 'object' || Array.isArray(updates)) return false;
       const allowedUpdateKeys = new Set([
         'searchMode', 'deepResearchMethod', 'multiAgentEnabled', 'skillPreset', 'skillGoal',
-        'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy', 'executionMode'
+        'processingMode', 'skillOutputMode', 'agentTeamSize', 'agentRuntimeStrategy', 'executionMode',
+        'customSkillName', 'customSkillInstructions', 'customSkillOutput'
       ]);
       const updateEntries = Object.entries(updates);
       // Mutations originate from bounded UI handlers; reject unknown keys (including prototype keys).
@@ -4141,7 +4142,7 @@ permalink: /
         customSkillOutput: $('customSkillOutput').value.slice(0,500)
       };
       if(!persistChatMutation(chat,updates)){renderSkillConfiguration();updateModeUI();return;}
-      renderSkillConfiguration();updateModeUI();showToast('Профиль навыка применён к этому чату.');
+      renderSkillConfiguration();updateModeUI();showToast(getUiLanguage()==='en'?'Skill profile applied to this chat.':'Профиль навыка применён к этому чату.');
     }
     function renderAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);
