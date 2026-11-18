@@ -114,3 +114,5 @@
 | 2026-11-18 | Fixed Agent blueprint persistence contract: custom scenario, role preset, scenario text and custom roles are now accepted by the bounded chat mutation allowlist. Added apply/change→reload Playwright regression for custom blueprint fields. | `index.md`; `tests/e2e/app.spec.mjs` |
 
 | 2026-11-18 | Storage failure and rollback messages for chat/project persistence now localize RU/EN through a shared text helper; added an English quota-failure regression that checks rollback and mode restoration. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Project-create modal now localizes its title, close accessible name, field labels/placeholders, memory-scope label/options and submit action in RU/EN. Added a focused localization regression. | `index.md`; `tests/e2e/app.spec.mjs` |

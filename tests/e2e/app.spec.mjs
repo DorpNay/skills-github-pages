@@ -452,6 +452,33 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
 });
 
 
+
+test('project create modal labels, options and close name are localized in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const openCreate = async () => {
+    await page.locator('[data-action="toggle-sidebar"]').click();
+    await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  };
+  await openCreate();
+  await expect(page.locator('#projectCreateModalTitle')).toHaveText('Создать проект');
+  await expect(page.locator('label[for="projectCreateNameInput"]')).toHaveText('Название проекта');
+  await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('placeholder', 'Название проекта');
+  await expect(page.locator('label[for="projectCreateInstructionsInput"]')).toHaveText('Инструкции проекта');
+  await expect(page.locator('#projectCreateMemoryScopeSelect option[value="project-and-global"]')).toHaveText('Память проекта + общая память (если разрешена)');
+  await expect(page.locator('#projectCreateModal [data-action="close-project-create"]')).toHaveAccessibleName('Закрыть создание проекта');
+  await page.locator('#projectCreateModal [data-action="close-project-create"]').click();
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await openCreate();
+  await expect(page.locator('#projectCreateModalTitle')).toHaveText('Create project');
+  await expect(page.locator('label[for="projectCreateNameInput"]')).toHaveText('Project name');
+  await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('placeholder', 'Project name');
+  await expect(page.locator('label[for="projectCreateInstructionsInput"]')).toHaveText('Project instructions');
+  await expect(page.locator('#projectCreateMemoryScopeSelect option[value="project-and-global"]')).toHaveText('Project memory + shared memory (if allowed)');
+  await expect(page.locator('#projectCreateModal [data-action="close-project-create"]')).toHaveAccessibleName('Close project creation');
+  await expect(page.locator('#projectCreateModal [data-action="create-project"]')).toHaveText('＋ Create project');
+});
+
 test('project create and edit forms announce required names and clear corrected errors', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();

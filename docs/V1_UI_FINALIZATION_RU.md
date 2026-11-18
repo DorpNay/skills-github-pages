@@ -243,6 +243,8 @@ PR #122 добавил только эксплуатационную надёж�
 - Apple — [Human Interface Guidelines: Sidebars](https://developer.apple.com/design/human-interface-guidelines/sidebars), updated 2026-06-08; sidebars for top-level collections, responsive compact alternatives.
 - Nielsen Norman Group — [Progressive Disclosure](https://www.nngroup.com/articles/progressive-disclosure/); reduce initial complexity, reveal rare controls on demand.
 - W3C — [WCAG 2.2 Target Size (Enhanced)](https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced); 44×44 CSS px at AAA, with exceptions.
+- W3C — [WCAG 2.2 Error Identification (3.3.1)](https://www.w3.org/WAI/WCAG22/Understanding/error-identification) and [Error Suggestion (3.3.3)](https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion); required/invalid fields need text descriptions and known correction guidance.
+- W3C — [SCR32](https://www.w3.org/WAI/WCAG21/Techniques/client-side-script/SCR32.html); client-side validation can insert field-associated error text into the DOM.
 - GOV.UK Design System — [Error message](https://design-system.service.gov.uk/components/error-message/); specific correction guidance.
 - MDN — [VisualViewport](https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport); mobile keyboard can shrink the visual viewport independently of the layout viewport.
 - MDN — [prefers-reduced-motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion); honor OS motion preferences and remove non-essential continuous animation.
@@ -252,6 +254,7 @@ PR #122 добавил только эксплуатационную надёж�
 - GitHub — [Publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site); branch/folder source and Actions deployment are explicit publishing choices.
 
 ## 7. Change log
+| 2026-11-18 | Project-create modal labels, placeholders, memory-scope options and accessible close name now localize RU/EN; source register adds W3C WCAG 3.3.1/3.3.3 and SCR32 as the basis for required-field error patterns. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Storage failure/rollback feedback for chat and project persistence now localizes RU/EN; added English quota-failure regression for rollback and mode restoration. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Fixed Agent blueprint persistence by allowing the bounded scenario, role preset, custom scenario and custom roles fields in the shared chat mutation contract. Added custom blueprint reload regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | Fixed custom Skill profile persistence by adding its bounded name/instructions/output fields to the shared chat mutation allowlist; localized the apply confirmation. Added apply→reload persistence regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
