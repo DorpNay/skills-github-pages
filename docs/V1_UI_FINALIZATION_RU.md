@@ -252,6 +252,7 @@ PR #122 добавил только эксплуатационную надёж�
 - GitHub — [Publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site); branch/folder source and Actions deployment are explicit publishing choices.
 
 ## 7. Change log
+| 2026-11-18 | Project create/edit forms now mark the project name required, expose localized inline errors, focus the invalid field, and clear the error as the name is corrected. Added create→edit validation/focus Playwright regression. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 | 2026-11-18 | aServi connection form now exposes required URL/model/key semantics, validates missing fields in order, focuses the first missing field, clears corrected errors on input, and localizes checking/required-state copy; button exposes `aria-busy`. RU/EN E2E added. | `index.md`; `tests/e2e/app.spec.mjs`; execution pending |
 
 | Date | Change | Evidence |

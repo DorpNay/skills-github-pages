@@ -564,7 +564,8 @@ permalink: /
               <section id="projectProfileGroup" class="settings-group rounded-xl border border-gray-700 p-3 space-y-2" aria-labelledby="projectProfileGroupTitle">
                 <h3 id="projectProfileGroupTitle" class="text-sm font-semibold" data-i18n="projectProfileGroup">Профиль проекта</h3>
                         <label for="projectNameInput" class="block text-[11px] text-gray-400" data-i18n="projectNameLabel">Название</label>
-              <input id="projectNameInput" type="text" maxlength="100" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
+              <input id="projectNameInput" type="text" maxlength="100" required aria-describedby="projectNameError" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs" placeholder="Название проекта">
+              <p id="projectNameError" class="field-error hidden" role="alert"></p>
               <label for="projectInstructionsInput" class="block text-[11px] text-gray-400" data-i18n="projectInstructionsLabel">Инструкции проекта</label>
               <textarea id="projectInstructionsInput" rows="3" maxlength="6000" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs resize-y" placeholder="Цель, стиль, ограничения и критерии результата"></textarea>
               <button id="saveProjectSubmit" type="button" data-action="save-project" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg py-2 text-xs" data-i18n="saveProject">Сохранить изменения</button>
@@ -619,7 +620,7 @@ permalink: /
         <button type="button" data-action="close-project-create" aria-label="Закрыть создание проекта" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gray-700 text-sm text-gray-300">✕</button>
       </header>
       <div class="space-y-3">
-        <div><label for="projectCreateNameInput" class="mb-1 block text-xs text-gray-300">Название проекта</label><input id="projectCreateNameInput" type="text" maxlength="100" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Название проекта" autocomplete="off"></div>
+        <div><label for="projectCreateNameInput" class="mb-1 block text-xs text-gray-300">Название проекта</label><input id="projectCreateNameInput" type="text" maxlength="100" required aria-describedby="projectCreateNameError" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Название проекта" autocomplete="off"><p id="projectCreateNameError" class="field-error hidden" role="alert"></p></div>
         <div><label for="projectCreateInstructionsInput" class="mb-1 block text-xs text-gray-300">Инструкции проекта</label><textarea id="projectCreateInstructionsInput" rows="4" maxlength="6000" class="w-full resize-y rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm" placeholder="Цель, стиль, ограничения и критерии результата"></textarea></div>
         <div><label for="projectCreateMemoryScopeSelect" class="mb-1 block text-xs text-gray-300">Область памяти</label><select id="projectCreateMemoryScopeSelect" class="w-full rounded-lg border border-gray-700 bg-gray-900 p-3 text-sm"><option value="project-only">Только память проекта</option><option value="project-and-global">Память проекта + общая память (если разрешена)</option></select></div>
         <button type="button" data-action="create-project" class="w-full rounded-xl border border-cyan-700 bg-cyan-950/60 py-3 text-sm font-semibold text-cyan-100">Создать проект</button>
@@ -2565,9 +2566,15 @@ permalink: /
       renderRequestProjectChoices();
       updateActiveChatHeader(chat);
     }
+    function setProjectNameError(id,message=''){
+      const field=$(id),error=$(id+'Error');if(!field)return;
+      const text=String(message||'');field.dataset.state=text?'error':'';field.setAttribute('aria-invalid',String(Boolean(text)));
+      if(error){error.textContent=text;error.classList.toggle('hidden',!text);}
+    }
     function createProject(){
-      const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100);
-      if(!name){input.focus();showToast(getUiLanguage()==='en'?'Enter a project name first.':'Сначала введи название проекта.','error');return;}
+      const input=$('projectCreateNameInput'),name=input.value.trim().slice(0,100),english=getUiLanguage()==='en';
+      if(!name){setProjectNameError('projectCreateNameInput',english?'Enter a project name.':'Укажи название проекта.');input.focus({preventScroll:true});return;}
+      setProjectNameError('projectCreateNameInput');
       if(projects.length>=200){showToast('Достигнут предел локальных проектов (200).','error');return;}
       const previousProjects=projects.slice(),previousChats=chats.slice(),previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
@@ -2585,8 +2592,9 @@ permalink: /
     function saveProject(){
       const project=getProjectForChat();
       if(!project){showToast(getUiLanguage()==='en'?'Select a project in the Projects list or create one.':'Выбери проект в списке или создай новый.','error');return;}
-      const name=$('projectNameInput').value.trim().slice(0,100);
-      if(!name){showToast('Название проекта не может быть пустым.','error');return;}
+      const name=$('projectNameInput').value.trim().slice(0,100),english=getUiLanguage()==='en';
+      if(!name){setProjectNameError('projectNameInput',english?'Enter a project name.':'Укажи название проекта.');$('projectNameInput').focus({preventScroll:true});return;}
+      setProjectNameError('projectNameInput');
       const previous={name:project.name,instructions:project.instructions,memoryScope:project.memoryScope,updatedAt:project.updatedAt};
       project.name=name;project.instructions=$('projectInstructionsInput').value.trim().slice(0,6000);project.memoryScope=$('projectMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only';project.updatedAt=new Date().toISOString();
       if(!persistProjects()){safeAssignOwn(project,previous);renderProjectUI();return;}
@@ -7482,6 +7490,13 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             ? (value?'':(english?'Enter the exact model ID.':'Укажи точный ID модели.'))
             : (value?'':(english?'Enter your server access key.':'Укажи ключ доступа к серверу.'));
         setCloudFieldError(id,error);
+      });
+    });
+    [['projectCreateNameInput','projectCreateName'],['projectNameInput','projectName']].forEach(([id])=>{
+      $(id).addEventListener('input',()=>{
+        const field=$(id);if(field.getAttribute('aria-invalid')!=='true')return;
+        const english=getUiLanguage()==='en',value=field.value.trim();
+        setProjectNameError(id,value?'':(english?'Enter a project name.':'Укажи название проекта.'));
       });
     });
     $('chatActionForm').addEventListener('submit',event=>{event.preventDefault();saveChatActionDialog();});

@@ -451,6 +451,38 @@ test('aServi and third-party settings are separate mutually exclusive modes', as
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_api_provider'))).toBe('alandi');
 });
 
+
+test('project create and edit forms announce required names and clear corrected errors', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#projectCreateNameError')).toHaveText('Укажи название проекта.');
+  await expect(page.locator('#projectCreateNameInput')).toBeFocused();
+
+  await page.locator('#projectCreateNameInput').fill('Validation project');
+  await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('aria-invalid', 'false');
+  await expect(page.locator('#projectCreateNameError')).toBeHidden();
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const projectRow = page.locator('#projectNavigationList .project-nav-item').first();
+  await projectRow.locator('.project-row-menu summary').click();
+  await projectRow.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectNameInput')).toHaveValue('Validation project');
+  await page.locator('#projectNameInput').fill('');
+  await page.locator('#projectSettingsModal [data-action="save-project"]').click();
+  await expect(page.locator('#projectNameInput')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#projectNameError')).toHaveText('Укажи название проекта.');
+  await expect(page.locator('#projectNameInput')).toBeFocused();
+
+  await page.locator('#projectNameInput').fill('Updated validation project');
+  await expect(page.locator('#projectNameInput')).toHaveAttribute('aria-invalid', 'false');
+  await expect(page.locator('#projectNameError')).toBeHidden();
+});
+
 test('project quick actions open a separate create form and persist the chosen memory scope', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();

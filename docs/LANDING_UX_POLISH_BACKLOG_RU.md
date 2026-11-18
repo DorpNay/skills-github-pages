@@ -20,7 +20,7 @@
 - [x] PR #117/#120: header hierarchy, project label, clock polish, sidebar grouping, memory/project statuses, synchronized theme/language.
 - [~] Общий screenshot review desktop/mobile после последнего PR #121.
 - [~] aServi cloud fields now reference their inline error messages with aria-describedby; URL validation, connection progress/status and success copy follow RU/EN. Required URL/model/key errors now appear in field order, focus the first missing field, clear when corrected and localize the checking state; focused RU/EN regressions added. Remaining forms and empty/error states still need a full pass.
-- [ ] Полная RU/EN проверка микротекстов, подсказок, статусов, светлой темы модалок и пустых состояний.
+- [~] Полная RU/EN проверка микротекстов, подсказок, статусов, светлой темы модалок и пустых состояний; aServi required fields and project create/edit name validation now have localized inline errors and focus recovery. Broader panel/form copy review remains open.
 - [ ] Проверить pencil/edit state у system prompt и возврат в readonly.
 - [ ] Проверить touch targets (проектная цель 44×44 CSS px) и отсутствие конкурирующих controls.
 
@@ -106,3 +106,5 @@
 
 - [~] Provider settings: aLandi aServi is a first-party section, not a third-party provider option; aServi excludes both peer sections, and no silent cross-provider fallback is allowed. PR #169 implements; exact-head CI and live check pending.
 | 2026-11-18 | aServi connection form now exposes required URL/model/key semantics, validates missing fields in order, focuses the first missing field, clears corrected errors on input, and localizes checking/required-state copy; button exposes `aria-busy`. RU/EN E2E added; execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
+
+| 2026-11-18 | Project create/edit forms now mark the project name required, expose localized inline errors, focus the invalid field, and clear the error as the name is corrected. Added a create→edit validation/focus Playwright regression; execution pending. | `index.md`; `tests/e2e/app.spec.mjs` |
