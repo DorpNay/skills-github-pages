@@ -97,5 +97,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 - IMPLEMENTED в main: P0.25 root control system — общий keyboard focus для ссылок/disclosures/selects, forced-colors, aria-invalid/disabled/busy состояния, единая тема toolbar/composer, pressed mode states, Send/Stop semantics, sidebar focus, mobile 44px controls и safe-area toast. Root controls regression расширен до modeDeep/Functions/execution-mode; responsive sweep измеряет toolbar bounds, добавлен Tab-order тест toolbar → composer → sidebar; execution pending.
 - IMPLEMENTED: jump-to-latest и поля Project Settings повышены с 42 до 44px; добавлены геометрические assertions. Root controls regression также проверяет 44×44 видимого Stop control (без имитации реального stream/abort).
-- Live parent перед пакетом: `a56bb935e999e9fc8bc07965505ae30835bcb544`; open PRs 0; issues #186, #111. Доступный GitHub tool surface не предоставляет workflow_dispatch; exact-head CI для нового commit не заявлять.
+- VERIFIED exact HEAD `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d`: Pages build/deploy #44450998348 SUCCESS; Graphify #44450998692 SUCCESS. Playwright E2E не запускался: Quality Sentinels требует workflow_dispatch, такого action в текущем GitHub connector нет.
+- Open PRs 0; issues #186 (unrelated GitHub Skills exercise), #111 (owner release gates).
 - Следующий пакет: закрыть RU/EN dynamic UI gaps и провести targeted dead/duplicate control audit; затем продолжить P0 acceptance.

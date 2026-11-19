@@ -132,7 +132,7 @@
 - [~] 26. 320/360/390px visual regression: root overflow sweep covers 8 widths and now measures toolbar/header/composer bounds; composer row wrapping is separately tested at 320/360px. Browser execution pending.
 - [~] 27. 640/768px breakpoint regression: root overflow + toolbar bounds cover both widths; detailed density/label clipping review remains.
 - [~] 28. Added explicit Tab-order regression across mode toolbar → composer → sidebar; browser execution pending.
-- [ ] 29. RU/EN validation and status copy remain semantically equivalent after localization.
+- [~] 29. Existing RU/EN tests cover dynamic research/agent panels, composer validation, provider and project forms; full root status-copy parity remains.
 - [ ] 30. Real iOS Safari/VoiceOver and Windows forced-colors manual verification.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
@@ -2041,3 +2041,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — iOS-safe Project Settings typography (this commit).** Removed a misleading 14px declaration; the shared <=640px `!important` form rule keeps editable controls at 16px. Playwright asserts computed 16px and 44px minimum height at 320/390px.
 
 - **IMPLEMENTED — root keyboard and toolbar bounds regression (this commit).** Responsive sweep measures toolbar edges at all eight widths; root focus/44px coverage includes modeDeep, Functions and execution-mode toggle; added a real Tab-order walk across toolbar → composer → sidebar. Browser execution pending.
+
+- **VERIFIED — exact-HEAD Pages + Graphify:** `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d`; Pages build/deploy #44450998348 SUCCESS; Graphify #44450998692 SUCCESS. Playwright E2E was not run; Quality Sentinels requires manual workflow_dispatch, which is not exposed by the current GitHub connector.
