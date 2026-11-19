@@ -101,6 +101,40 @@
 - [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
 - [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
 
+
+### P0.25 — Root controls, toolbar and form-state consistency (IMPLEMENTED; browser acceptance pending)
+
+- [~] 1. Unified visible keyboard focus for buttons, links, inputs, selects, disclosures and explicit role=button controls.
+- [~] 2. Theme-token focus treatment respects light/dark and forced-colors system mode.
+- [~] 3. Disabled buttons and aria-disabled controls no longer retain active visual affordances.
+- [~] 4. Busy controls expose a progress cursor without inventing a loading indicator.
+- [~] 5. aria-invalid fields use semantic danger border and restrained error halo.
+- [~] 6. Inline field errors share readable size, spacing and semantic color.
+- [~] 7. Disabled form fields use consistent muted surface and cursor.
+- [~] 8. Labels and placeholders use theme-aware muted text without changing copy.
+- [~] 9. Mode toolbar uses shared surface/border tokens.
+- [~] 10. Fast/Thorough pressed state is visually explicit and semantically distinct.
+- [~] 11. Toolbar disclosures align content, use bounded scroll and stable scrollbar space.
+- [~] 12. Toolbar options have keyboard-focus treatment and predictable minimum row height.
+- [~] 13. Composer surface and border align with the shared theme.
+- [~] 14. Composer tools have consistent alignment and compact desktop sizing.
+- [~] 15. Draft field has theme-aware text, border and placeholder states.
+- [~] 16. Send and Stop use distinct primary/destructive semantic treatments.
+- [~] 17. Sidebar section and row-menu triggers share the focus language.
+- [~] 18. Focus within project/chat rows is visibly discoverable.
+- [~] 19. Settings disclosure rows have consistent minimum height and focus containment.
+- [~] 20. Toast placement respects mobile safe-area and composer clearance.
+- [~] 21. Mobile toolbar controls and menu options preserve 44px targets.
+- [~] 22. Mobile composer controls and input preserve 44px targets.
+- [~] 23. Mobile sidebar section/menu triggers preserve 44px targets.
+- [~] 24. Reduced-motion removes active press translation.
+- [~] 25. Forced-colors mode uses system highlight/mark colors for focus and invalid fields.
+- [ ] 26. 320/360/390px visual regression for toolbar row wrapping and no horizontal overflow.
+- [ ] 27. 640/768px breakpoint regression for toolbar density and label clipping.
+- [ ] 28. Keyboard-only traversal across toolbar → composer → sidebar has no focus loss.
+- [ ] 29. RU/EN validation and status copy remain semantically equivalent after localization.
+- [ ] 30. Real iOS Safari/VoiceOver and Windows forced-colors manual verification.
+
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
 - [ ] P1.1 aCodingi — отдельная same-origin workspace page/route; сохранить нынешний /workspace/ функционал и интегрировать в общий shell/project/chat identity.

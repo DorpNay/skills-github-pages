@@ -6098,3 +6098,39 @@ test('long project navigation stays internally scrollable without hiding the cha
   await expect(page.locator('#chatSection #chatNavToggle')).toBeVisible();
   await expect(page.locator('#sidebar')).toHaveJSProperty('scrollTop', 0);
 });
+
+
+test('root controls expose visible keyboard focus and consistent mobile touch geometry', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  for (const selector of ['#uiLanguage', '#searchModeSummary', '#modeFast', '#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn']) {
+    const control = page.locator(selector);
+    await expect(control, selector).toBeVisible();
+    await control.focus();
+    const focus = await control.evaluate(element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return { outlineStyle: style.outlineStyle, outlineWidth: parseFloat(style.outlineWidth), width: rect.width, height: rect.height };
+    });
+    expect(focus.outlineStyle, selector + ' focus style').toBe('solid');
+    expect(focus.outlineWidth, selector + ' focus width').toBeGreaterThanOrEqual(2);
+    expect(focus.width, selector + ' touch width').toBeGreaterThanOrEqual(44);
+    expect(focus.height, selector + ' touch height').toBeGreaterThanOrEqual(44);
+  }
+
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  const invalidName = page.locator('#projectCreateNameInput');
+  await expect(invalidName).toHaveAttribute('aria-invalid', 'true');
+  const invalidStyle = await invalidName.evaluate(element => ({
+    border: getComputedStyle(element).borderTopColor,
+    danger: getComputedStyle(document.documentElement).getPropertyValue('--ui-danger').trim()
+  }));
+  expect(invalidStyle.border).not.toBe('');
+  expect(invalidStyle.danger).not.toBe('');
+  await expect(page.locator('#projectCreateNameError')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+});

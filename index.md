@@ -627,7 +627,89 @@ permalink: /
       .composer-popover,
       .context-popover { animation:none!important;transition:none!important; }
     }
-  </style>
+  
+    /* Root control system: shared semantic states, keyboard focus and responsive density. */
+    :where(button,a,input,textarea,select,summary,[role="button"],[tabindex]:not([tabindex="-1"])):focus-visible {
+      outline:2px solid var(--ui-tiffany)!important;outline-offset:2px;
+    }
+    :where(button,a,summary,[role="button"]) { touch-action:manipulation; }
+    button:not(:disabled):active,[role="button"]:not([aria-disabled="true"]):active { transform:translateY(1px); }
+    button:disabled,[role="button"][aria-disabled="true"] { opacity:.48;cursor:not-allowed;filter:none;transform:none; }
+    [aria-busy="true"] { cursor:progress; }
+    input[aria-invalid="true"],textarea[aria-invalid="true"],select[aria-invalid="true"] {
+      border-color:var(--ui-danger)!important;
+      box-shadow:0 0 0 1px color-mix(in srgb,var(--ui-danger) 24%,transparent)!important;
+    }
+    .field-error:not(.hidden) { display:block;margin-top:4px;color:var(--ui-danger)!important;font-size:11px;line-height:1.4; }
+    :where(label) { color:var(--ui-text-muted); }
+    :where(input,textarea,select) { accent-color:var(--ui-tiffany); }
+    :where(input,textarea,select):disabled {
+      opacity:.58;cursor:not-allowed;
+      background-color:color-mix(in srgb,var(--ui-surface-raised) 70%,var(--ui-bg))!important;
+    }
+    #modeToolbar { background:var(--ui-surface)!important;border-color:var(--ui-border)!important;color:var(--ui-text); }
+    #modeToolbar [role="group"] { border:1px solid var(--ui-border);background:var(--ui-bg)!important; }
+    #modeToolbar [role="group"] > button {
+      min-height:36px;border:1px solid transparent;color:var(--ui-text-muted);line-height:1.25;
+    }
+    #modeToolbar [role="group"] > button[aria-pressed="true"] {
+      background:var(--ui-primary)!important;color:#fff!important;
+      border-color:color-mix(in srgb,var(--ui-primary) 78%,white);
+      box-shadow:0 2px 10px color-mix(in srgb,var(--ui-primary) 20%,transparent);
+    }
+    #modeToolbar .toolbar-menu > summary {
+      min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:6px;
+      border-color:var(--ui-border);background:var(--ui-surface-raised);color:var(--ui-text);
+    }
+    #modeToolbar .toolbar-menu-panel { max-height:min(56dvh,460px);overscroll-behavior:contain;scrollbar-gutter:stable; }
+    #modeToolbar .toolbar-menu-option { min-height:42px;border:1px solid transparent; }
+    #modeToolbar .toolbar-menu-option:focus-visible { background:var(--ui-tiffany-soft);border-color:var(--ui-tiffany); }
+    #composerFooter { background:color-mix(in srgb,var(--ui-surface) 96%,transparent)!important;border-color:var(--ui-border)!important; }
+    #inputArea .composer-tool { min-width:40px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto; }
+    #inputArea #userInput { min-width:0;border-color:var(--ui-border);background:var(--ui-bg);color:var(--ui-text); }
+    #inputArea #userInput::placeholder { color:var(--ui-text-muted);opacity:.78; }
+    #inputArea #sendBtn {
+      border:1px solid color-mix(in srgb,var(--ui-primary) 70%,var(--ui-border));
+      background:var(--ui-primary);color:#fff;font-weight:700;
+    }
+    #inputArea #sendBtn:disabled { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
+    #inputArea #stopBtn:not(.hidden) {
+      border:1px solid color-mix(in srgb,var(--ui-danger) 50%,var(--ui-border));
+      background:color-mix(in srgb,var(--ui-danger) 12%,var(--ui-surface));color:var(--ui-danger);
+    }
+    #sidebar .sidebar-section-toggle:focus-visible,#sidebar .sidebar-section-create:focus-visible,
+    #sidebar .project-nav-settings:focus-visible,#sidebar .chat-row-menu summary:focus-visible {
+      outline-color:var(--ui-tiffany)!important;outline-offset:2px;
+    }
+    #chatList .chat-row:focus-within,#projectNavigationList .project-nav-item:focus-within {
+      border-color:color-mix(in srgb,var(--ui-tiffany) 40%,var(--ui-border));
+    }
+    #settingsModal .settings-subpanel > summary { min-height:42px;display:flex;align-items:center;gap:8px; }
+    #settingsModal .settings-subpanel > summary:focus-visible { outline-offset:-3px;border-radius:10px; }
+    .toast { padding:10px 14px; }
+    .toast.toast-error { border-color:var(--ui-danger); }
+    @media (max-width:640px) {
+      #modeToolbar { padding:6px 8px!important; }
+      #modeToolbar > div { min-width:0; }
+      #modeToolbar [role="group"] > button,#modeToolbar .toolbar-menu > summary,#modeToolbar .toolbar-menu-option { min-height:44px; }
+      #modeToolbar .toolbar-menu-panel { max-height:min(52dvh,400px); }
+      #inputArea .composer-tool,#inputArea #sendBtn,#inputArea #stopBtn { min-width:44px;min-height:44px; }
+      #inputArea #userInput { min-height:44px;font-size:16px!important; }
+      #sidebar .sidebar-section-toggle,#sidebar .sidebar-section-create,
+      #sidebar .project-row-menu summary,#sidebar .chat-row-menu summary { min-height:44px; }
+      #settingsModal .settings-subpanel > summary { min-height:48px; }
+      .toast { bottom:calc(env(safe-area-inset-bottom) + 5.8rem);max-width:calc(100vw - 24px); }
+    }
+    @media (forced-colors:active) {
+      :where(button,a,input,textarea,select,summary,[role="button"]):focus-visible { outline:2px solid Highlight!important;outline-offset:2px; }
+      input[aria-invalid="true"],textarea[aria-invalid="true"],select[aria-invalid="true"] { border:2px solid Mark!important; }
+      #modeToolbar [role="group"] > button[aria-pressed="true"] { outline:1px solid Highlight;outline-offset:-2px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      button:not(:disabled):active,[role="button"]:not([aria-disabled="true"]):active { transform:none; }
+    }
+
+</style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
   <aside id="sidebar" role="navigation" aria-label="Проекты и чаты" aria-hidden="true" inert class="fixed inset-y-0 left-0 z-50 w-72 max-w-[88vw] bg-gray-950 border-r border-gray-800 -translate-x-full transition-transform duration-300 flex flex-col overflow-y-auto overscroll-contain">
