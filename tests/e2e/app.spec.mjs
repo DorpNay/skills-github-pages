@@ -3878,6 +3878,7 @@ test('root app reflows without document-level horizontal overflow from 320 to 14
       document: document.documentElement.scrollWidth,
       body: document.body.scrollWidth,
       header: (() => { const rect = document.querySelector('.app-header')?.getBoundingClientRect(); return rect ? { left: rect.left, right: rect.right, width: rect.width } : null; })(),
+      toolbar: (() => { const rect = document.querySelector('#modeToolbar')?.getBoundingClientRect(); return rect ? { left: rect.left, right: rect.right, width: rect.width } : null; })(),
       composer: (() => { const rect = document.querySelector('#composerFooter')?.getBoundingClientRect(); return rect ? { left: rect.left, right: rect.right, width: rect.width } : null; })()
     }));
     expect(metrics.document, 'document width at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
@@ -3886,6 +3887,8 @@ test('root app reflows without document-level horizontal overflow from 320 to 14
     expect(metrics.header?.right ?? Infinity, 'header right edge at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
     expect(metrics.composer?.left ?? -Infinity, 'composer left edge at ' + width + 'px').toBeGreaterThanOrEqual(-1);
     expect(metrics.composer?.right ?? Infinity, 'composer right edge at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.toolbar?.left ?? -Infinity, 'toolbar left edge at ' + width + 'px').toBeGreaterThanOrEqual(-1);
+    expect(metrics.toolbar?.right ?? Infinity, 'toolbar right edge at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
   }
 });
 
@@ -6112,11 +6115,30 @@ test('long project navigation stays internally scrollable without hiding the cha
 });
 
 
+test('keyboard Tab order traverses toolbar, composer and sidebar without losing focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const rootSequence = ['#modeFast', '#modeDeep', '#searchModeSummary', '#functionsMenuSummary', '#contextPickerButton', '#executionModeToggle', '#attachTextButton', '#voiceUnavailableButton', '#userInput', '#sendBtn'];
+  await page.locator(rootSequence[0]).focus();
+  for (const selector of rootSequence.slice(1)) {
+    await page.keyboard.press('Tab');
+    await expect(page.locator(selector), 'Tab should focus ' + selector).toBeFocused();
+  }
+
+  await ensureSidebarOpen(page);
+  const sidebarSequence = ['#projectNavToggle', '#projectPanel [data-action="open-project-create"]', '#chatNavToggle', '#chatSection [data-action="new-chat"]'];
+  await page.locator(sidebarSequence[0]).focus();
+  for (const selector of sidebarSequence.slice(1)) {
+    await page.keyboard.press('Tab');
+    await expect(page.locator(selector), 'Sidebar Tab should focus ' + selector).toBeFocused();
+  }
+});
+
 test('root controls expose visible keyboard focus and consistent mobile touch geometry', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
 
-  for (const selector of ['#uiLanguage', '#searchModeSummary', '#modeFast', '#contextPickerButton', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn']) {
+  for (const selector of ['#uiLanguage', '#modeFast', '#modeDeep', '#searchModeSummary', '#functionsMenuSummary', '#contextPickerButton', '#executionModeToggle', '#attachTextButton', '#voiceUnavailableButton', '#sendBtn']) {
     const control = page.locator(selector);
     await expect(control, selector).toBeVisible();
     await control.focus();

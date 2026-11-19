@@ -129,9 +129,9 @@
 - [~] 23. Mobile sidebar section/menu triggers preserve 44px targets.
 - [~] 24. Reduced-motion removes active press translation.
 - [~] 25. Forced-colors mode uses system highlight/mark colors for focus and invalid fields.
-- [ ] 26. 320/360/390px visual regression for toolbar row wrapping and no horizontal overflow.
-- [ ] 27. 640/768px breakpoint regression for toolbar density and label clipping.
-- [ ] 28. Keyboard-only traversal across toolbar → composer → sidebar has no focus loss.
+- [~] 26. 320/360/390px visual regression: root overflow sweep covers 8 widths and now measures toolbar/header/composer bounds; composer row wrapping is separately tested at 320/360px. Browser execution pending.
+- [~] 27. 640/768px breakpoint regression: root overflow + toolbar bounds cover both widths; detailed density/label clipping review remains.
+- [~] 28. Added explicit Tab-order regression across mode toolbar → composer → sidebar; browser execution pending.
 - [ ] 29. RU/EN validation and status copy remain semantically equivalent after localization.
 - [ ] 30. Real iOS Safari/VoiceOver and Windows forced-colors manual verification.
 
@@ -2039,3 +2039,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — visible Stop target regression (this commit).** The root control test now temporarily exposes the Stop control and asserts its 44×44 mobile target; this verifies styling/geometry, not the live streaming/abort transition.
 
 - **IMPLEMENTED — iOS-safe Project Settings typography (this commit).** Removed a misleading 14px declaration; the shared <=640px `!important` form rule keeps editable controls at 16px. Playwright asserts computed 16px and 44px minimum height at 320/390px.
+
+- **IMPLEMENTED — root keyboard and toolbar bounds regression (this commit).** Responsive sweep measures toolbar edges at all eight widths; root focus/44px coverage includes modeDeep, Functions and execution-mode toggle; added a real Tab-order walk across toolbar → composer → sidebar. Browser execution pending.
