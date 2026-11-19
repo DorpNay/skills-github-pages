@@ -1969,6 +1969,7 @@ Reviewed primary upstream references for the current root-app UI package:
 ## RU/EN dictionary integrity — 2026-11-19
 
 - `UI_TEXT.ru` and `UI_TEXT.en` are plain JavaScript object literals. Duplicate keys silently keep the last value and can hide stale copy. The current static markup uses `data-i18n`, `data-i18n-aria-label`, `data-i18n-placeholder` and `data-i18n-title`; each key must exist in both dictionaries. A Playwright static-source regression now enforces uniqueness and coverage.
+
 ## Root UI design-system references — 2026-11-19
 
 Targeted Exa search and primary-source review for the unfinished root-app visual system and interaction consistency:
@@ -1979,3 +1980,9 @@ Targeted Exa search and primary-source review for the unfinished root-app visual
 - **W3C WCAG 2.2 — Reflow (SC 1.4.10, AA):** https://www.w3.org/WAI/WCAG22/Understanding/reflow.html — reviewed 2026-11-19. Vertical-reading content must reflow at an equivalent 320 CSS px width without loss of information/functionality or two-dimensional scrolling, except for inherently two-dimensional content.
 
 **aLandi application / decision:** use these sources as acceptance guidance, not as permission to clone or add a design-system dependency. P0.5 should consolidate the existing visual language into a restrained token set (semantic surfaces/status colors, typography, spacing, radii and motion), then migrate components incrementally. Preserve the current 16px mobile editable-field rule and 44px product touch-target baseline; the latter is intentionally stronger than WCAG 2.2 AA's minimum target-size criterion. Dialog focus containment and 320px reflow remain behavior/geometry gates, not visual-only checks.
+## Graphify PR #187 — exact-head navigation artifact — 2026-11-19
+
+- **Run:** Graphify Code-Only Architecture Pilot #1446, run ID 44460739224; exact head `d5899bd89ffaffc3a0d223b08646ae42f78812a9`; result SUCCESS. Artifact ZIP SHA-256: `cb6dde9eb75e2cc6f7bfade932b7a3f5537b316f9adc652e2bf3e254f07678c6`.
+- **Coverage:** 107 code files found; 100/107 uncached files produced AST symbols (93%). 123 documentation files were intentionally skipped by code-only mode; 11 code files yielded no symbols. Initial AST graph: 1,722 nodes / 5,006 edges / 87 communities. Deterministic UI bridge output: 744 CSS selector records, 520 DOM selector records, 130 matched selector pairs, 174 exact CSS-DOM matches, 376 ambiguous matches, 390 DOM selectors without CSS, 48 CSS selectors without DOM, and zero JS selector-reference/class-mutation records.
+- **Limits:** graph report's community/god-node summary remained at the pre-bridge 1,722-node graph while query traversal used the 2,939-node post-bridge graph; treat GRAPH_REPORT.md as stale for post-bridge coverage. Twelve focused queries plus the private-memory route trace were capped around 700 tokens each and most were truncated. The artifact is navigation evidence only, not a complete call graph, CSS/DOM audit, test result or runtime proof. No model/semantic calls were used.
+- **Disposition:** useful for finding the monolithic `index-inline.js` surface and navigation entry points; do not make architecture or UI-coverage claims from ambiguous selector matches or truncated neighborhoods. Regenerate a consistent report with a larger/narrower query budget before relying on a particular relationship.
