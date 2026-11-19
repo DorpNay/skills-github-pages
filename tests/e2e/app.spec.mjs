@@ -3625,6 +3625,38 @@ test('composer placeholder stays compact and localized on narrow mobile widths',
 });
 
 
+test('narrow mobile composer gives the draft a usable second row', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  for (const width of [320, 360]) {
+    await page.setViewportSize({ width, height: 740 });
+    const metrics = await page.evaluate(() => {
+      const ids = ['contextPickerButton', 'executionModeToggle', 'attachTextButton', 'voiceUnavailableButton', 'userInput', 'sendBtn'];
+      const rects = Object.fromEntries(ids.map(id => {
+        const rect = document.getElementById(id).getBoundingClientRect();
+        return [id, { x: rect.x, y: rect.y, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height }];
+      }));
+      const tools = ids.slice(0, 4).map(id => rects[id]);
+      return {
+        rects,
+        toolsShareRow: tools.every(rect => Math.abs(rect.y - tools[0].y) < 2),
+        inputBelowTools: rects.userInput.y >= tools[0].bottom,
+        sendSharesInputRow: Math.abs(rects.sendBtn.y - rects.userInput.y) < 2,
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth
+      };
+    });
+    expect(metrics.toolsShareRow, `composer tools should share a row at ${width}px`).toBe(true);
+    expect(metrics.inputBelowTools, `draft input should move below tools at ${width}px`).toBe(true);
+    expect(metrics.sendSharesInputRow, `send should stay beside the draft at ${width}px`).toBe(true);
+    expect(metrics.rects.userInput.width, `draft width at ${width}px`).toBeGreaterThanOrEqual(200);
+    for (const id of ['contextPickerButton', 'executionModeToggle', 'attachTextButton', 'voiceUnavailableButton', 'sendBtn']) {
+      expect(metrics.rects[id].width, `${id} hit target width at ${width}px`).toBeGreaterThanOrEqual(44);
+      expect(metrics.rects[id].height, `${id} hit target height at ${width}px`).toBeGreaterThanOrEqual(44);
+    }
+    expect(metrics.documentWidth, `no horizontal overflow at ${width}px`).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  }
+});
+
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

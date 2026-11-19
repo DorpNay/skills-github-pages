@@ -214,6 +214,14 @@ permalink: /
       body textarea,
       body select:not(.header-language-select) { font-size:16px!important; }
     }
+
+    /* Keep the narrow-phone composer usable without shrinking touch targets. */
+    @media (max-width:380px) {
+      #inputArea { flex-wrap:wrap;align-items:stretch;column-gap:6px;row-gap:6px; }
+      #inputArea .composer-tool { order:0;flex:0 0 44px; }
+      #inputArea #userInput { order:1;flex:1 1 calc(100% - 50px);width:calc(100% - 50px);min-width:0; }
+      #inputArea #sendBtn,#inputArea #stopBtn { order:2;flex:0 0 44px; }
+    }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
 
     .project-nav-heading { color:var(--ui-text);background:var(--ui-surface-raised);border:1px solid var(--ui-border); }
