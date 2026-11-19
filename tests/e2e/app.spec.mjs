@@ -4823,6 +4823,50 @@ test('readability preferences persist and maintain semantic text contrast in bot
   expect(applied.contrast).toBe('high');
 });
 
+test('mobile settings, function and chat-action dialogs stay inside a short viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const assertSurface = async (modal, surface, label) => {
+    await expect(modal, label + ' modal').toBeVisible();
+    const metrics = await surface.evaluate(element => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom,
+        maxHeight: parseFloat(style.maxHeight), overflowY: style.overflowY,
+        scrollHeight: element.scrollHeight, clientHeight: element.clientHeight };
+    });
+    expect(metrics.left, label + ' left').toBeGreaterThanOrEqual(0);
+    expect(metrics.right, label + ' right').toBeLessThanOrEqual(321);
+    expect(metrics.top, label + ' top').toBeGreaterThanOrEqual(0);
+    expect(metrics.bottom, label + ' bottom').toBeLessThanOrEqual(569);
+    expect(metrics.maxHeight, label + ' max-height').toBeLessThanOrEqual(552);
+    expect(metrics.overflowY, label + ' internal scrolling').toBe('auto');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), label + ' root width').toBe(true);
+  };
+
+  const settings = page.locator('#settingsModal');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await assertSurface(settings, settings.locator(':scope > .settings-surface'), 'settings');
+  await page.keyboard.press('Escape');
+  await expect(settings).toBeHidden();
+
+  const functions = page.locator('#functionPanelModal');
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await assertSurface(functions, functions.locator(':scope > .function-panel-surface'), 'functions');
+  await page.locator('#functionPanelModal [data-action="close-function-panel"]').click();
+  await expect(functions).toBeHidden();
+
+  await ensureSidebarOpen(page);
+  const chatRow = page.locator('#chatList .chat-row').first();
+  await chatRow.locator('.chat-row-menu summary').click();
+  await chatRow.locator('[data-action="chat-rename"]').click();
+  const chatAction = page.locator('#chatActionModal');
+  await assertSurface(chatAction, chatAction.locator(':scope > .chat-action-dialog'), 'chat action');
+  await chatAction.locator('[data-action="chat-action-cancel"]').first().click();
+  await expect(chatAction).toBeHidden();
+});
+
 test('settings and function panels close on backdrop click without leaving a stale overlay', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
 

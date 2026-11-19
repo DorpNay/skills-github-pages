@@ -445,6 +445,23 @@ permalink: /
       #inputArea { gap:.4rem!important; }
       #sendBtn,#stopBtn { padding:.7rem .8rem!important; }
     }
+    @media (max-width:639px) {
+      #projectCreateModal,#settingsModal,#messageViewerModal,#chatActionModal,#functionPanelModal,#traceModal {
+        padding-top:max(env(safe-area-inset-top),.5rem)!important;
+        padding-right:.5rem!important;
+        padding-bottom:max(env(safe-area-inset-bottom),.5rem)!important;
+        padding-left:.5rem!important;
+      }
+      #projectCreateModal > section,
+      #settingsModal > .settings-surface,
+      #messageViewerModal > section,
+      #chatActionModal > .chat-action-dialog,
+      #functionPanelModal > .function-panel-surface,
+      #traceModal > div {
+        max-height:calc(100dvh - max(env(safe-area-inset-top),.5rem) - max(env(safe-area-inset-bottom),.5rem))!important;
+      }
+      #chatActionModal > .chat-action-dialog { overflow-y:auto;overscroll-behavior:contain; }
+    }
       .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
     .message-actions button,.message-viewer-actions button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px;border:1px solid var(--ui-border);border-radius:12px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:18px;line-height:1}
     .message-actions button:hover,.message-viewer-actions button:hover{color:var(--ui-tiffany);border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft)}
