@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "repository": "DorpNay/skills-github-pages",
-  "captured_at": "2026-11-17",
+  "captured_at": "2026-11-19",
   "checkpoint": {
-    "main_sha": "d3520e0eee70ee9a2b6a3f887e0008c3b6cfe3dc",
-    "main_commit_subject": "docs: synchronize root orienter checkpoint SHA",
-    "main_commit_date": "2026-11-17T03:05:53Z",
+    "main_sha": "484c3b9b4570e110f8bc4584bab322c80c37803c",
+    "main_commit_subject": "docs: record locale audit and exact release checkpoint",
+    "main_commit_date": "2026-11-19T04:12:23Z",
     "last_functional_checkpoint_sha": "c7ac7ab976ae5333010b72370b6f1fec28c9c655",
     "last_functional_milestone": "Project Sources manager implements scoped upload/extraction/index/catalog/preview/delete with SHA-256 deduplication; original bytes are not retained. Quality 44006105936 passed 143 built-app Chromium tests + 1 published-site smoke; Graphify 44006105833 and Pages 44006104480 passed. Gateway 44004983557 passed on backend f69a999; no backend changes after.",
     "main_quality_run": 44006105936,
@@ -14,7 +14,9 @@
     "functional_parent_quality_run": 44006105936,
     "functional_parent_graphify_run": 44006105833,
     "functional_parent_pages_run": 44006104480,
-    "open_pull_requests": [],
+    "open_pull_requests": [
+      187
+    ],
     "open_issues": [
       111,
       186
@@ -245,8 +247,8 @@
     "pr158_compare": "Merged at d83eea8ef1552b19e2f7220cbe2c3f0e9c91049c; exact-head Quality #42349540173 passed; exact-main root title Quality #42349853526 remains in progress.",
     "pr166_head": "683ec28310a68dc0126a715a04f3ddc613e817b6",
     "pr166_compare": "Merged PR #166 at main SHA c4f23e03f563d03213eb87002863da630fc8b833; §8.17 message readability controls are included in published root app. Exact-head Quality #42368514164 and Graphify #42368514210 passed; post-merge main Quality #42372746360 and Pages #42372745873 passed.",
-    "active_ui_pr": 174,
-    "open_prs": "1 live open PR #174; current PR excluded from freshness snapshot; no other open PRs.",
+    "active_ui_pr": 187,
+    "open_prs": "1 live open PR #187; current PR is included in the live snapshot; no other open PRs.",
     "open_prs_at_checkpoint": 0,
     "last_volley": "V-2026-11-16-AGENT-UI-ORIENT-001",
     "owner_priority_task": "LANDING-V2-2026-001",
@@ -266,7 +268,7 @@
     "main_gateway_status": "SUCCESS across Python 3.12/13/14."
   },
   "interpretation": {
-    "last_main_commit_is_documentation_only": false,
+    "last_main_commit_is_documentation_only": true,
     "live_vps_gateway_device_and_model_runtime_verified": false,
     "queue_policy": "Direct main only, zero open PRs; #111 is the aLandi release-gate issue. #186 is a GitHub Skills Pages exercise created by github-actions[bot], not aLandi product scope. Owner authorizes direct main commits and automatic Pages publication for LANDING-V2-2026-001.",
     "pr_check_policy": "No new PRs under explicit owner directive; direct commits to main are authorized. Automatic GitHub Pages deployment on main pushes is authorized for LANDING-V2-2026-001 only.",

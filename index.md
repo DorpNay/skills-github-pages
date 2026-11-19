@@ -910,7 +910,7 @@ permalink: /
         <button type="button" data-action="connect-pollinations" data-i18n="pollinationsConnect" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
         <button type="button" data-action="disconnect-pollinations" data-i18n="pollinationsDisconnect" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
-      <div class="flex gap-2"><button type="button" data-action="test-connection" data-i18n="testProviderConnection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" data-i18n="clearProviderKey" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" data-i18n="testProviderConnection" aria-busy="false" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" data-i18n="clearProviderKey" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
              <input type="text" id="modelName" data-i18n-aria-label="modelNameLabel" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" data-i18n-placeholder="modelNamePlaceholder" placeholder="ID модели"></div>
       </details>
       <details id="additionalSettings" class="settings-subpanel rounded-xl border border-gray-700">
@@ -1937,7 +1937,7 @@ permalink: /
       ru:{
         settingsTitle:'⚙️ Настройки',sidebarTitle:'💬 Проекты и чаты',sidebarMenuOpenAria:'Открыть меню',sidebarMenuCloseAria:'Закрыть меню',chatsTitle:'Чаты',newChat:'＋ Новый чат',clearChat:'🗑 Очистить чат',newPersonalChat:'＋ Новый личный чат',
         memoryLabel:'🧠 Долгосрочная память',memoryMenuTitle:'🧠 Память',globalMemoryTitle:'🌐 Общая память',personalMemoryTitle:'🔒 Личная память',memoryPlaceholder:'Факт, который нужно запомнить',exportChats:'Экспорт',importChats:'Импорт',
-        appearanceTitle:'Внешний вид',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',motionAuto:'Авто',motionReduced:'Уменьшить',motionOff:'Выкл.',apiKeyLabel:'Ключ API',systemPromptPlaceholder:'Свои правила для всех запросов',editSystemPromptAria:'Редактировать системный промпт',crossProviderFallbackTitle:'Разрешить резерв у другого провайдера',crossProviderFallbackWarning:'По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.',crossProviderFallbackStorageNotice:'Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.',exportSettingsProfile:'Скачать профиль настроек',importSettingsProfile:'Импорт профиля',settingsProfilePrivacyNote:'Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.',downloadRecoveryBackup:'Скачать резервную копию истории',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',providerSelectPlaceholder:'Выберите стороннего провайдера',customProviderOption:'Свой OpenAI-совместимый API',modelCatalogDefaultStatus:'Встроенный каталог моделей.',refreshAllCatalogs:'Обновить все',providerDocsLinkLabel:'Открыть страницу API-ключа',providerSetupLinkLabel:'Инструкция по подключению',cloudflareAccountLabel:'Cloudflare Account ID (32 шестнадцатеричных символа)',cloudflareAccountPlaceholder:'Account ID из Cloudflare Dashboard',cloudflareAccountHelp:'Адрес соберётся автоматически. Нужен Workers AI Read token; Account ID не секрет.',apiKeyPlaceholder:'Ключ API',pasteProviderKey:'Вставить ключ',pollinationsAuthHelp:'Используй App Key pk_ и OAuth PKCE. Временный sk_ хранится только в sessionStorage этой вкладки.',pollinationsConnect:'Подключить аккаунт Pollinations · PKCE',pollinationsDisconnect:'Завершить сессию Pollinations',testProviderConnection:'Проверить соединение и модель',clearProviderKey:'Удалить ключ',modelNamePlaceholder:'ID модели',
+        appearanceTitle:'Внешний вид',languageRussian:'Русский',languageEnglish:'English',themeLabel:'Тема',motionLabel:'Анимации',motionAuto:'Авто',motionReduced:'Уменьшить',motionOff:'Выкл.',apiKeyLabel:'Ключ API',systemPromptPlaceholder:'Свои правила для всех запросов',editSystemPromptAria:'Редактировать системный промпт',crossProviderFallbackTitle:'Разрешить резерв у другого провайдера',crossProviderFallbackWarning:'По умолчанию выключено. При включении текст запроса и контекст могут передаваться другому сервису. Сначала система пробует модели выбранного провайдера.',crossProviderFallbackStorageNotice:'Ключи хранятся в этом браузере. Резервный провайдер может получить текст запроса и контекст.',exportSettingsProfile:'Скачать профиль настроек',importSettingsProfile:'Импорт профиля',settingsProfilePrivacyNote:'Профиль переносит настройки, но намеренно не содержит API-ключи и токены. Импорт не меняет уже сохранённые секреты.',downloadRecoveryBackup:'Скачать резервную копию истории',projectSettingsAction:'⚙ Настройки проекта',composerPositionLabel:'Положение поля ввода',composerBottom:'Снизу',composerTop:'Сверху, под панелью режимов',cloudCardTitle:'Мой сервер',cloudCardCopy:'',cloudBaseUrl:'URL моего сервера',cloudModel:'Модель моего сервера',cloudApiKey:'Ключ доступа к серверу',cloudConnect:'Проверить и подключить',providerLabel:'Сторонний API',providerSelectPlaceholder:'Выберите стороннего провайдера',customProviderOption:'Свой OpenAI-совместимый API',modelCatalogDefaultStatus:'Встроенный каталог моделей.',refreshAllCatalogs:'Обновить все',providerDocsLinkLabel:'Открыть страницу API-ключа',providerSetupLinkLabel:'Инструкция по подключению',cloudflareAccountLabel:'Cloudflare Account ID (32 шестнадцатеричных символа)',cloudflareAccountPlaceholder:'Account ID из Cloudflare Dashboard',cloudflareAccountHelp:'Адрес соберётся автоматически. Нужен Workers AI Read token; Account ID не секрет.',apiKeyPlaceholder:'Ключ API',pasteProviderKey:'Вставить ключ',pollinationsAuthHelp:'Используй App Key pk_ и OAuth PKCE. Временный sk_ хранится только в sessionStorage этой вкладки.',pollinationsConnect:'Подключить аккаунт Pollinations · PKCE',pollinationsDisconnect:'Завершить сессию Pollinations',testProviderConnection:'Проверить соединение и модель',providerProbeNeedsPollinationsOAuth:'Сначала подключи Pollinations через OAuth PKCE.',providerProbeNeedsApiKey:'Для проверки нужен API-ключ выбранного провайдера.',providerProbeNeedsModel:'Укажи модель для проверки.',providerProbeInvalidUrl:'Укажи корректный Base URL.',providerProbeRequiresHttps:'Для удалённого API нужен HTTPS.',providerProbeCheckingButton:'Проверяю…',providerProbeCheckingModel:'Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.',providerProbeCheckingConnection:'Проверяю подключение…',providerProbeNoCompatibleResponse:'API ответил, но совместимый ответ модели не распознан.',providerProbeModelUnconfirmed:'Не удалось подтвердить модель: ',providerProbeNoResponse:'нет совместимого ответа',providerProbeFailedToast:'Проверка провайдера не пройдена.',providerProbeSettingsChanged:'Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.',providerProbeModelConnected:'Зелёный — модель {model} успешно ответила; соединение подтверждено.',providerProbeModelSelected:'Подобрана доступная модель: {model}',providerProbeSuccess:'Провайдер и модель прошли проверку.',providerProbeCatchPrefix:'Проверка не удалась: ',providerProbeNetworkFailed:'Проверка не удалась: сеть, CORS или формат ответа.',providerProbeButtonLabel:'Проверить соединение и модель',providerProbeGatewayHealth:'Модель ответила. Проверяю health-check gateway…',providerProbeKiloConnected:'Kilo Auto Free отвечает; ключ не требуется.',providerProbeKiloNeedsCheck:'Kilo Auto Free не требует ключа. Нажми «Проверить соединение», чтобы подтвердить доступность.',providerProbePollinationsNeedsOAuth:'App Key задан. Подключи Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.',providerProbeNoSavedKey:'Ключ не сохранён для выбранного провайдера.',providerProbeSessionNotConnected:'Ключ задан, но сеанс провайдера ещё не подключён.',providerProbeVerified:'Зелёный — последняя проверка именно этой модели и текущего ключа прошла успешно.',providerProbePending:'Янтарный — ключ задан, но его текущая версия ещё не подтверждена.',providerProbeRedactedKey:'[скрытый ключ]',clearProviderKey:'Удалить ключ',modelNamePlaceholder:'ID модели',
         modelSearchLabel:'Поиск по каталогу моделей',modelPresetLabel:'Быстрый выбор модели · список обновляется из API',
         baseUrlLabel:'Base URL (без /chat/completions)',modelNameLabel:'Модель',systemPromptLabel:'Системный промпт',
         legacySettings:'Дополнительные настройки',settingsAppearanceGroup:'Внешний вид и доступность',settingsBehaviorGroup:'Поведение и инструкции',settingsPrivacyGroup:'Приватность и резервирование',settingsTransferGroup:'Перенос настроек',composerPlaceholder:'Напиши сообщение...',
@@ -1961,7 +1961,7 @@ permalink: /
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',sidebarMenuOpenAria:'Open navigation',sidebarMenuCloseAria:'Close navigation',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
         memoryLabel:'🧠 Long-term memory',memoryMenuTitle:'🧠 Memory',globalMemoryTitle:'🌐 Global Memory',personalMemoryTitle:'🔒 Personal Memory',memoryPlaceholder:'A fact to remember',exportChats:'Export',importChats:'Import',
-        appearanceTitle:'Appearance',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',motionAuto:'Auto',motionReduced:'Reduce',motionOff:'Off',apiKeyLabel:'API key',systemPromptPlaceholder:'Your rules for all requests',editSystemPromptAria:'Edit system prompt',crossProviderFallbackTitle:'Allow fallback to another provider',crossProviderFallbackWarning:'Off by default. When enabled, your prompt and context may be sent to another service. The selected provider’s models are tried first.',crossProviderFallbackStorageNotice:'Keys are stored in this browser. A fallback provider may receive your prompt and context.',exportSettingsProfile:'Download settings profile',importSettingsProfile:'Import profile',settingsProfilePrivacyNote:'The profile transfers settings but intentionally excludes API keys and tokens. Import does not change secrets already stored.',downloadRecoveryBackup:'Download chat history backup',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',providerSelectPlaceholder:'Choose a third-party provider',customProviderOption:'Custom OpenAI-compatible API',modelCatalogDefaultStatus:'Built-in model catalog.',refreshAllCatalogs:'Refresh all',providerDocsLinkLabel:'Open API key page',providerSetupLinkLabel:'Setup instructions',cloudflareAccountLabel:'Cloudflare Account ID (32 hexadecimal characters)',cloudflareAccountPlaceholder:'Account ID from Cloudflare Dashboard',cloudflareAccountHelp:'The endpoint is generated automatically. A Workers AI Read token is required; the Account ID is not a secret.',apiKeyPlaceholder:'API key',pasteProviderKey:'Paste key',pollinationsAuthHelp:'Use a Pollinations App Key (pk_) and OAuth PKCE. The temporary sk_ token is stored only in this tab’s sessionStorage.',pollinationsConnect:'Connect Pollinations account · PKCE',pollinationsDisconnect:'End Pollinations session',testProviderConnection:'Test connection and model',clearProviderKey:'Delete key',modelNamePlaceholder:'Model ID',
+        appearanceTitle:'Appearance',languageRussian:'Russian',languageEnglish:'English',themeLabel:'Theme',motionLabel:'Motion',motionAuto:'Auto',motionReduced:'Reduce',motionOff:'Off',apiKeyLabel:'API key',systemPromptPlaceholder:'Your rules for all requests',editSystemPromptAria:'Edit system prompt',crossProviderFallbackTitle:'Allow fallback to another provider',crossProviderFallbackWarning:'Off by default. When enabled, your prompt and context may be sent to another service. The selected provider’s models are tried first.',crossProviderFallbackStorageNotice:'Keys are stored in this browser. A fallback provider may receive your prompt and context.',exportSettingsProfile:'Download settings profile',importSettingsProfile:'Import profile',settingsProfilePrivacyNote:'The profile transfers settings but intentionally excludes API keys and tokens. Import does not change secrets already stored.',downloadRecoveryBackup:'Download chat history backup',projectSettingsAction:'⚙ Project settings',composerPositionLabel:'Composer position',composerBottom:'Bottom',composerTop:'Top, below mode controls',cloudCardTitle:'My server',cloudCardCopy:'',cloudBaseUrl:'My server URL',cloudModel:'My server model',cloudApiKey:'Server access key',cloudConnect:'Check and connect',providerLabel:'Third-party API',providerSelectPlaceholder:'Choose a third-party provider',customProviderOption:'Custom OpenAI-compatible API',modelCatalogDefaultStatus:'Built-in model catalog.',refreshAllCatalogs:'Refresh all',providerDocsLinkLabel:'Open API key page',providerSetupLinkLabel:'Setup instructions',cloudflareAccountLabel:'Cloudflare Account ID (32 hexadecimal characters)',cloudflareAccountPlaceholder:'Account ID from Cloudflare Dashboard',cloudflareAccountHelp:'The endpoint is generated automatically. A Workers AI Read token is required; the Account ID is not a secret.',apiKeyPlaceholder:'API key',pasteProviderKey:'Paste key',pollinationsAuthHelp:'Use a Pollinations App Key (pk_) and OAuth PKCE. The temporary sk_ token is stored only in this tab’s sessionStorage.',pollinationsConnect:'Connect Pollinations account · PKCE',pollinationsDisconnect:'End Pollinations session',testProviderConnection:'Test connection and model',providerProbeNeedsPollinationsOAuth:'Connect Pollinations with OAuth PKCE first.',providerProbeNeedsApiKey:'An API key is required to test this provider.',providerProbeNeedsModel:'Enter a model ID to test.',providerProbeInvalidUrl:'Enter a valid Base URL.',providerProbeRequiresHttps:'Remote APIs must use HTTPS.',providerProbeCheckingButton:'Checking…',providerProbeCheckingModel:'Checking the model. A retry is attempted only when the API explicitly reports that the model ID is unavailable.',providerProbeCheckingConnection:'Checking connection…',providerProbeNoCompatibleResponse:'The API responded, but its model response was not recognized as compatible.',providerProbeModelUnconfirmed:'Could not confirm the model: ',providerProbeNoResponse:'no compatible response',providerProbeFailedToast:'Provider/model check failed.',providerProbeSettingsChanged:'Settings changed during the check. The result was not saved; run the check again.',providerProbeModelConnected:'Connected — model {model} responded successfully; connection confirmed.',providerProbeModelSelected:'Selected an available model: {model}',providerProbeSuccess:'Provider and model check passed.',providerProbeCatchPrefix:'Connection check failed: ',providerProbeNetworkFailed:'Connection check failed: network, CORS, or response format.',providerProbeButtonLabel:'Test connection and model',providerProbeGatewayHealth:'Model responded. Checking gateway health…',providerProbeKiloConnected:'Kilo Auto Free is responding; no key is required.',providerProbeKiloNeedsCheck:'Kilo Auto Free does not require a key. Select Test connection to confirm availability.',providerProbePollinationsNeedsOAuth:'An App Key is set. Connect Pollinations with OAuth PKCE; the temporary access token is not stored in localStorage.',providerProbeNoSavedKey:'No key is saved for the selected provider.',providerProbeSessionNotConnected:'A key is set, but the provider session is not connected.',providerProbeVerified:'Verified — the current key and selected model passed the last check.',providerProbePending:'A key is set, but its current value has not been verified.',providerProbeRedactedKey:'[redacted key]',clearProviderKey:'Delete key',modelNamePlaceholder:'Model ID',
         modelSearchLabel:'Search model catalog',modelPresetLabel:'Quick model pick · list loads from API',
         baseUrlLabel:'Base URL (without /chat/completions)',modelNameLabel:'Model',systemPromptLabel:'System prompt',
         legacySettings:'Additional settings',settingsAppearanceGroup:'Appearance & accessibility',settingsBehaviorGroup:'Behavior & instructions',settingsPrivacyGroup:'Privacy & fallback',settingsTransferGroup:'Settings transfer',composerPlaceholder:'Write a message...',
@@ -4242,29 +4242,31 @@ permalink: /
       return false;
     }
     async function refreshApiKeyLamp(){
+      const copy=()=>UI_TEXT[getUiLanguage()];
       const provider=currentProvider();
       const inputKey=$('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'';
       const baseUrl=$('baseUrl').value.trim().replace(/\/+$/,''),model=$('modelName').value.trim();
       if(provider==='kilo'&&!inputKey){
         let marker=null;try{marker=JSON.parse(safeGet('ai_provider_connection_kilo')||'null');}catch(_){}
-        if(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model)updateApiKeyLamp('connected','Kilo Auto Free отвечает; ключ не требуется.');
-        else updateApiKeyLamp('pending','Kilo Auto Free не требует ключа. Нажми «Проверить соединение», чтобы подтвердить доступность.');
+        if(marker?.ok&&marker.baseUrl===baseUrl&&marker.model===model)updateApiKeyLamp('connected',copy().providerProbeKiloConnected);
+        else updateApiKeyLamp('pending',copy().providerProbeKiloNeedsCheck);
         return;
       }
-      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE; временный access token не сохраняется в localStorage.');return;}
-      if(!inputKey){updateApiKeyLamp('empty',getUiLanguage()==='en'?'No key is saved for the selected provider.':'Ключ не сохранён для выбранного провайдера.');return;}
+      if(provider==='pollinations'&&inputKey&&!getProviderRequestKey('pollinations')){updateApiKeyLamp('pending',copy().providerProbePollinationsNeedsOAuth);return;}
+      if(!inputKey){updateApiKeyLamp('empty',copy().providerProbeNoSavedKey);return;}
       const verificationKey=provider==='pollinations'?getProviderRequestKey(provider):inputKey;
-      if(!verificationKey){updateApiKeyLamp('pending','Ключ задан, но сеанс провайдера ещё не подключён.');return;}
+      if(!verificationKey){updateApiKeyLamp('pending',copy().providerProbeSessionNotConnected);return;}
       let v=null;try{v=JSON.parse(safeGet('ai_provider_connection_'+provider)||'null');}catch(_){}
       const fingerprint=await providerKeyFingerprint(verificationKey);
       const currentProviderKey=provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||safeGet(providerKeyStorage(provider))||(provider==='gemini'?safeGet(STORAGE.apiKey):'')||'');
       if(provider!==currentProvider()||baseUrl!==$('baseUrl').value.trim().replace(/\/+$/,'')||model!==$('modelName').value.trim()||verificationKey!==currentProviderKey)return;
       if(fingerprint&&v&&v.keyFingerprint===fingerprint&&v.baseUrl===baseUrl&&v.model===model&&v.ok)
-        updateApiKeyLamp('connected','Зелёный — последняя проверка именно этой модели и текущего ключа прошла успешно.');
-      else updateApiKeyLamp('pending','Янтарный — ключ задан, но его текущая версия ещё не подтверждена.');
+        updateApiKeyLamp('connected',copy().providerProbeVerified);
+      else updateApiKeyLamp('pending',copy().providerProbePending);
     }
     async function testProviderConnection(){
       if(isTestingProviderConnection)return;
+      const copy=()=>UI_TEXT[getUiLanguage()];
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider))),model=$('modelName').value.trim();
       const initialKeyInput=$('apiKey').value.trim();
       const initialCloudSettings=provider==='alandi'?getCloudSettings():null;
@@ -4284,17 +4286,17 @@ permalink: /
           &&key===liveEffectiveKey;
       };
       if(!key&&provider!=='kilo'){
-        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE, затем повтори проверку.');showToast('Сначала подключи Pollinations через OAuth PKCE.','error');return;}
-        updateApiKeyLamp('error','Сначала вставь API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
+        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending',copy().providerProbePollinationsNeedsOAuth);showToast(copy().providerProbeNeedsPollinationsOAuth,'error');return;}
+        updateApiKeyLamp('error',copy().providerProbeNeedsApiKey);showToast(copy().providerProbeNeedsApiKey,'error');return;
       }
-      if(!model){updateApiKeyLamp('error','Укажи модель для проверки.');return;}
-      let parsed;try{parsed=new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Укажи корректный Base URL.');return;}
-      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error','Для удалённого API нужен HTTPS.');return;}
+      if(!model){updateApiKeyLamp('error',copy().providerProbeNeedsModel);return;}
+      let parsed;try{parsed=new URL(baseUrl);}catch(_){updateApiKeyLamp('error',copy().providerProbeInvalidUrl);return;}
+      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error',copy().providerProbeRequiresHttps);return;}
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="test-connection"]');
-      if(button){button.disabled=true;button.textContent=getUiLanguage()==='en'?'Checking…':'Проверяю…';}
-      updateApiKeyLamp('pending','Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
-      showStatus('Проверяю подключение…');
+      if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=copy().providerProbeCheckingButton;}
+      updateApiKeyLamp('pending',copy().providerProbeCheckingModel);
+      showStatus(copy().providerProbeCheckingConnection);
       let result=null,lastError=null;
       const probe=async candidateModel=>{
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
@@ -4303,12 +4305,12 @@ permalink: /
           const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers,body:JSON.stringify({model:candidateModel,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
           const raw=await response.text();let payload=null;try{payload=JSON.parse(raw);}catch(_){}
           if(!response.ok){
-            const detail=String(payload?.error?.message||payload?.message||raw||'').slice(0,240).replaceAll(key||'\u0000','[скрытый ключ]');
+            const detail=String(payload?.error?.message||payload?.message||raw||'').slice(0,240).replaceAll(key||'\u0000',copy().providerProbeRedactedKey);
             const error=new Error('HTTP '+response.status+(detail?': '+detail:''));error.status=response.status;error.details=detail;
             error.modelUnavailable=[400,404].includes(response.status)&&/(model|deployment)/i.test(detail)&&/(not found|unknown|invalid model|does not exist|unsupported model|not available|no such model|not accessible|no route found)/i.test(detail);
             throw error;
           }
-          if(!isUsableProbeResponse(payload,raw))throw new Error('API ответил, но совместимый ответ модели не распознан.');
+          if(!isUsableProbeResponse(payload,raw))throw new Error(copy().providerProbeNoCompatibleResponse);
           return {candidateModel,payload,raw};
         }finally{clearTimeout(timer);}
       };
@@ -4330,15 +4332,14 @@ permalink: /
             if(provider==='alandi')void refreshCloudStatus();
             return;
           }
-
           safeSet('ai_provider_connection_'+provider,'');
-          updateApiKeyLamp('error','Не удалось подтвердить модель: '+String(lastError?.message||'нет совместимого ответа').slice(0,240));
-          showToast('Проверка провайдера не пройдена.','error');return;
+          updateApiKeyLamp('error',copy().providerProbeModelUnconfirmed+String(lastError?.message||copy().providerProbeNoResponse).slice(0,240));
+          showToast(copy().providerProbeFailedToast,'error');return;
         }
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
           if(provider==='alandi')void refreshCloudStatus();
-          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          showToast(copy().providerProbeSettingsChanged,'error');
           return;
         }
         const fingerprint=await providerKeyFingerprint(key);
@@ -4346,7 +4347,7 @@ permalink: /
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
           if(provider==='alandi')void refreshCloudStatus();
-          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          showToast(copy().providerProbeSettingsChanged,'error');
           return;
         }
         $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
@@ -4356,11 +4357,11 @@ permalink: /
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
           // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
-          setCloudStatus('checking',getUiLanguage()==='en'?'Model responded. Checking gateway health…':'Модель ответила. Проверяю health-check gateway…');
+          setCloudStatus('checking',copy().providerProbeGatewayHealth);
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
-        updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
-        showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
+        updateApiKeyLamp('connected',copy().providerProbeModelConnected.replace('{model}',result.candidateModel));
+        showToast(result.candidateModel!==model?copy().providerProbeModelSelected.replace('{model}',result.candidateModel):copy().providerProbeSuccess);
         await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
       }catch(error){
         if(!isProviderProbeContextCurrent()){
@@ -4369,11 +4370,11 @@ permalink: /
           return;
         }
         safeSet('ai_provider_connection_'+provider,'');
-        updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
-        showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
+        updateApiKeyLamp('error',copy().providerProbeCatchPrefix+String(error?.message||error).slice(0,220));
+        showToast(copy().providerProbeNetworkFailed,'error');
       }finally{
         isTestingProviderConnection=false;
-        if(button){button.disabled=false;button.textContent='Проверить соединение и модель';}
+        if(button){button.disabled=false;button.setAttribute('aria-busy','false');button.textContent=copy().providerProbeButtonLabel;}
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
     }
