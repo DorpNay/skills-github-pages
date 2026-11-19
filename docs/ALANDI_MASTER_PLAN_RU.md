@@ -211,7 +211,7 @@
 - [~] 10. Static audit found no raw alert() calls; all remaining confirm() paths use the active locale or projectSourcesText dictionary.
 - [ ] 11. Audit thrown errors shown to users for locale-safe messages.
 - [ ] 12. Audit async Gateway failure/status messages for locale refresh.
-- [ ] 13. Audit provider test/connect/disconnect failure feedback.
+- [~] 13. Provider test diagnostics now use the active RU/EN dictionary, redact echoed credentials, and expose `aria-busy` during the probe; focused RU/EN E2E covers HTTP 401, key redaction and button recovery. Exact-head CI pending.
 - [ ] 14. Audit project CRUD and import/export feedback.
 - [ ] 15. Audit memory CRUD and helper suggestions feedback.
 - [ ] 16. Audit chat CRUD and dialog validation.
