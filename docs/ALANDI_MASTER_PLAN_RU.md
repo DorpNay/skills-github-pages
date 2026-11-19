@@ -39,7 +39,7 @@
 - [x] P0.2 Создание: Create Project и Create Chat размещены компактными `＋`-действиями прямо в заголовках секций, с локализуемыми accessible names (commit `3f20322f`).
 - [~] P0.3 Collapsible Projects: collapse gives the freed height to Chats; expanded list has internal scroll cap. Focus/scroll/selection persistence needs browser acceptance (commit `3f20322f`; E2E added, not run).
 - [~] P0.4 Project Settings: FACT — form is already grouped by Context, Profile, Memory, Sources and Data; no rebuild needed. Mobile density, actions, save/cancel/migrations and duplicate audit remain.
-- [ ] P0.5 Единая визуальная система: провести аудит существующих `--ui-*` tokens и hard-coded CSS; закрепить общий контракт typography scale/line-height, spacing, radius, elevation, semantic colors, focus, motion и interactive states. Применять поэтапно к root surfaces/controls, сохраняя 16px mobile inputs, 44px touch policy, contrast и reduced-motion; не делать массовую замену без visual regression.
+- [~] P0.5 Единая визуальная система: добавлен общий token layer для typography, line-height, spacing, radius, elevation, focus geometry, touch target и motion; toast, cloud card/status, popovers, toolbar panel и dialogs переведены на shared semantic tokens. Playwright token contract для dark/light добавлен; runtime visual acceptance и полный перевод остальных hard-coded styles остаются открытыми.
 - [~] P0.6 Mobile: primary sidebar navigation and nested project/chat actions already target 44px; this package extends the same minimum to chat/project menus, toolbar, attachment/context/voice choices and attachment removal. Responsive visual acceptance and real-device pass remain open.
 - [~] P0.7 Responsive: диапазон 320–1440px, portrait/landscape and root overflow regression added; mobile dialog safe-area padding/internal-scroll rules and 320×568 settings/functions/chat-action geometry test added. Keyboard/VisualViewport and native-device acceptance remain open.
 - [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions disclosures close on Escape and outside click with focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
@@ -54,7 +54,7 @@
 - [ ] P0.17 Theme/motion/accessibility: light/dark, prefers-reduced-motion и user override, keyboard-only, visible focus, contrast, names/landmarks/live regions.
 - [ ] P0.18 Remove deadwood: trace controls, handlers, duplicated state, stale flags and payload only after consumer/dynamic-reference/import/export/migration/regression review. The current Vulture report does not cover inline client JS in built `index.md`; do not treat its output as a complete JS dead-code audit. Add a separate report-only AST pass after the Jekyll build; no automatic deletion.
 - [ ] P0.19 Performance / quality tooling: measure payload/startup/render/network and expand the advisory audit only where coverage is proven. For inline JS, extract script blocks from generated Jekyll HTML, parse AST, trace markup/global/dynamic event consumers and emit confidence + rationale. Keep Python and JS reports separate; include fixtures for dynamic handlers; report-only until false-positive rate is measured. Do not add a broad dependency or auto-delete code.
-- [ ] P0.20 Final UI acceptance: focused checks per package; finish visual/browser matrix, publication marker and root routes; native iPhone Safari/VoiceOver is a separate manual gate. Current main `484c3b9` has Pages deployment #44456706267 SUCCESS, but no Quality/Chromium run is attached to that exact SHA. PR #187 Chromium was incomplete and is not evidence about main; keep baseline and PR results separate.
+- [ ] P0.20 Final UI acceptance: focused checks per package; finish visual/browser matrix, publication marker and root routes; native iPhone Safari/VoiceOver is a separate manual gate. Pages #44456706267 succeeded on base `484c3b9`; the subsequent visual-token commits require fresh exact-HEAD build/check evidence. No Quality/Chromium run is attached to the current main SHA. PR #187 Chromium was incomplete and is not evidence about main; keep baseline and PR results separate.
 
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
 
@@ -2308,6 +2308,12 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **Architecture drift assertions (P0.12/P2/P3 docs packages):** source-backed checks for default `executionMode`, default `deepResearchMethod`, allowed AgentRun strategies, default host flag, runtime route names, context builder and result-return path. Assertions must fail only on explicit contract drift, not wording changes in long prose.
 - **Routing invariant (P2/P3):** Direct, Deep Research and AgentRun are distinct execution paths; one request must not trigger two engines. Preserve current AgentRun-vs-Deep-Research exclusion and test it.
 - **Preservation rule:** do not delete `runMultiAgentResearch`, ToolDAG, `validator.py`, approval gates, AgentRun state/task journal, Team Blueprint or helper route merely because they share orchestration vocabulary. Require consumer graph, migration and regression evidence first.
+
+### 7.6 Implementation progress — root visual-system foundation (2026-11-19)
+
+- **IMPLEMENTED:** main commits `ab90ff5` and `7545395` add shared typography/line-height/spacing/radius/elevation/focus/touch/motion tokens and apply theme-semantic values to toast, cloud status/card, composer/toolbar popovers and dialogs.
+- **IMPLEMENTED:** main commit `67a50f6` adds a Playwright contract test for token presence and dark/light semantic differences.
+- **NOT VERIFIED:** the new Playwright test has not been executed; visual review on actual browser/device and full P0.5 coverage remain open. This is a foundation slice, not completion of the unified visual system.
 
 ### 7.5 Execution order and gates
 
