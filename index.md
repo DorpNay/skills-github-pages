@@ -27,7 +27,7 @@ permalink: /
     .ambient-control[aria-pressed="true"] { color: #fef3c7; border-color: rgb(251 191 36 / 50%); box-shadow: inset 0 0 14px rgb(251 191 36 / 8%), 0 0 14px rgb(251 191 36 / 8%); }
     .api-key-row { display: flex; align-items: center; gap: .55rem; border: 1px solid #344158; border-radius: .7rem; padding: .35rem .55rem; background: rgb(6 12 22 / 82%); transition: border-color .2s ease, box-shadow .2s ease; }
     .api-key-row #apiKey { min-width: 0; flex: 1; border: 0; box-shadow: none; background: transparent; padding: .4rem .1rem; }
-    .api-key-row:focus-within { border-color: #7dd3fc; box-shadow: 0 0 0 1px rgb(125 211 252 / 12%); }
+    .api-key-row:focus-within { border-color:var(--ui-tiffany);box-shadow:0 0 0 1px color-mix(in srgb,var(--ui-tiffany) 12%,transparent); }
     .api-key-row[data-state="pending"] { border-color: rgb(251 191 36 / 52%); box-shadow: inset 0 0 20px rgb(251 191 36 / 5%), 0 0 16px rgb(251 191 36 / 8%); }
     .api-key-row[data-state="connected"] { border-color: rgb(74 222 128 / 65%); box-shadow: inset 0 0 22px rgb(74 222 128 / 7%), 0 0 18px rgb(74 222 128 / 11%); }
     .api-key-row[data-state="error"] { border-color: rgb(248 113 113 / 72%); box-shadow: inset 0 0 20px rgb(248 113 113 / 5%), 0 0 15px rgb(248 113 113 / 10%); }
@@ -48,8 +48,8 @@ permalink: /
     .settings-header-actions button { display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:.45rem .65rem;border:1px solid var(--ui-border);border-radius:10px;font-size:11px;white-space:nowrap; }
     .settings-header-actions [data-action="save-settings"] { background:var(--ui-primary);color:#fff;border-color:transparent;font-weight:750; }
     .settings-header-actions [data-action="close-settings"] { background:var(--ui-surface-raised);color:var(--ui-text-muted); }
-    .cloud-card input[data-state="connected"] { border-color:#35d39a!important;box-shadow:0 0 0 1px rgb(53 211 154 / 14%),0 0 13px rgb(53 211 154 / 8%); }
-    .cloud-card input[data-state="error"] { border-color:#ff737a!important;box-shadow:0 0 0 1px rgb(255 115 122 / 14%); }
+    .cloud-card input[data-state="connected"] { border-color:var(--ui-success)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--ui-success) 14%,transparent),0 0 13px color-mix(in srgb,var(--ui-success) 8%,transparent); }
+    .cloud-card input[data-state="error"] { border-color:var(--ui-danger)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--ui-danger) 14%,transparent); }
     .field-error { margin-top:-.35rem;font-size:var(--ui-font-size-xs);line-height:var(--ui-line-tight);color:var(--ui-danger); }
     #settingsModal .field-error { color:var(--ui-danger)!important; }
     #settingsModal .cloud-status-copy { color:var(--ui-danger)!important; }
@@ -64,7 +64,7 @@ permalink: /
     #statusText { color: var(--ui-info); }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100dvh; min-height: 0; overflow: hidden; }
     button, input, textarea { font: inherit; }
-    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline:var(--ui-focus-width) solid var(--ui-tiffany);outline-offset:var(--ui-focus-offset); }
     .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
     body.composer-at-top #composerFooter { order: 1; padding-top: max(env(safe-area-inset-top), .5rem); padding-bottom: .5rem; }
     body.composer-at-top #chatBox { order: 2; }
@@ -380,7 +380,7 @@ permalink: /
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
     #sidebar .bg-gray-900 { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #settingsModal label, #settingsModal p { color:var(--ui-text-muted)!important; }
-    :where(button,input,textarea,select,summary,a[href],[role="button"],[tabindex]):focus-visible { outline:2px solid var(--ui-tiffany)!important; outline-offset:2px; }
+    :where(button,input,textarea,select,summary,a[href],[role="button"],[tabindex]):focus-visible { outline:var(--ui-focus-width) solid var(--ui-tiffany)!important;outline-offset:var(--ui-focus-offset); }
     button { transition:color var(--motion-fast) var(--motion-ease),background-color var(--motion-fast) var(--motion-ease),border-color var(--motion-fast) var(--motion-ease),opacity var(--motion-fast) var(--motion-ease),transform var(--motion-fast) var(--motion-ease); }
     button:active:not(:disabled) { transform:translateY(1px); }
     .motion-accent { position:relative; isolation:isolate; overflow:hidden; }
@@ -502,7 +502,7 @@ permalink: /
     #functionPanelModal .function-panel-notice-warning { border-color:color-mix(in srgb,var(--ui-warning) 34%,var(--ui-border));background:color-mix(in srgb,var(--ui-warning) 8%,var(--ui-surface)); }
     #functionPanelModal .function-panel-notice-title { color:var(--ui-warning); }
     #functionPanelModal .function-panel-field { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
-    #functionPanelModal .function-panel-field:focus { border-color:var(--ui-tiffany)!important;box-shadow:0 0 0 2px var(--ui-tiffany-soft)!important; }
+    #functionPanelModal .function-panel-field:focus { border-color:var(--ui-tiffany)!important;box-shadow:0 0 0 var(--ui-focus-width) var(--ui-tiffany-soft)!important; }
     @media (prefers-reduced-transparency:reduce) { #functionPanelModal .function-panel-surface { box-shadow:0 12px 36px rgb(0 0 0 / 18%); } }
     .header-icon { display:inline-flex;align-items:center;justify-content:center;min-width:var(--ui-control-touch);min-height:var(--ui-control-touch);padding:.35rem;border:1px solid var(--ui-border);border-radius:var(--ui-radius-sm);font-size:var(--ui-control-icon);line-height:1; }
     .header-preferences { display:flex;align-items:center;gap:4px;flex:0 0 auto; }
@@ -634,7 +634,7 @@ permalink: /
   
     /* Root control system: shared semantic states, keyboard focus and responsive density. */
     :where(button,a,input,textarea,select,summary,[role="button"],[tabindex]:not([tabindex="-1"])):focus-visible {
-      outline:2px solid var(--ui-tiffany)!important;outline-offset:2px;
+      outline:var(--ui-focus-width) solid var(--ui-tiffany)!important;outline-offset:var(--ui-focus-offset);
     }
     :where(button,a,summary,[role="button"]) { touch-action:manipulation; }
     button:not(:disabled):active,[role="button"]:not([aria-disabled="true"]):active { transform:translateY(1px); }
