@@ -95,3 +95,5 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Следующий пакет: добрать action-handler audit, localize remaining error/confirm paths, add active request-context/move-chat/attachment parity tests; затем выполнить доступный Chromium/Quality path.
 
 - IMPLEMENTED в main: locale-triggered re-render теперь восстанавливает фокус в project navigation, request-context checkboxes и remove-attachment controls; chat list уже восстанавливает фокус/scroll. Добавлен focused Playwright regression на project/chat/context focus restoration; browser execution pending.
+
+- IMPLEMENTED в main: P0.31–P0.32 — localized confirmations/errors for personal/shared memory, current chat clear, last-chat delete, chat import, project memory limits and memory gateway restrictions. Raw memory-save and chat-import exception text no longer shown to users; added Playwright regression for personal/shared memory confirmation language. Browser execution pending.

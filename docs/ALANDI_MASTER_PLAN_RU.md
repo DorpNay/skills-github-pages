@@ -286,6 +286,63 @@
 - [ ] 29. Add locale persistence across reload regression.
 - [ ] 30. Add language change during Project Settings edit regression.
 
+
+### P0.31 — Memory, project and chat feedback parity (PARTIAL)
+
+- [~] 1. Localize project memory 500-item limit feedback.
+- [~] 2. Localize project-delete empty-selection feedback.
+- [~] 3. Localize personal-memory promotion confirmation.
+- [~] 4. Localize personal-memory promotion success toast.
+- [~] 5. Localize missing personal-memory item error.
+- [~] 6. Localize current-chat history-clear confirmation.
+- [~] 7. Localize chat title reset after clearing history.
+- [~] 8. Replace last-chat delete alert with localized non-blocking error toast.
+- [~] 9. Localize chat import file-size rejection.
+- [~] 10. Localize imported chat fallback title.
+- [~] 11. Replace raw chat-import error text with safe localized user feedback.
+- [~] 12. Replace raw personal-memory storage error alert with safe localized feedback.
+- [~] 13. Localize personal-memory gateway-only guard.
+- [~] 14. Localize synthetic private-memory command/assistant transcript.
+- [~] 15. Localize shared-memory command confirmation.
+- [~] 16. Localize synthetic shared-memory command/assistant transcript.
+- [ ] 17. Localize project import structural validation errors.
+- [ ] 18. Localize project import size/count limits.
+- [ ] 19. Localize project export/import completion toasts.
+- [ ] 20. Localize project source upload/delete error status.
+- [ ] 21. Localize shared-memory promotion errors from IndexedDB.
+- [ ] 22. Localize memory list loading failures.
+- [ ] 23. Localize chat rename/move failure feedback.
+- [ ] 24. Localize chat import collision/limit details.
+- [ ] 25. Verify all memory/project/chat prompts in RU and EN with native browser dialogs.
+
+### P0.32 — Safety and privacy feedback clarity (PARTIAL)
+
+- [~] 1. Keep shared-memory confirmation explicit about third-party provider exposure.
+- [~] 2. Keep personal-memory promotion explicit that the local copy remains.
+- [~] 3. Keep personal-memory command explicit that no shared-memory copy is created.
+- [~] 4. Keep shared-memory command explicit that personal memory is unchanged.
+- [~] 5. Avoid displaying raw internal memory storage exception text.
+- [~] 6. Avoid displaying raw chat import exception text.
+- [ ] 7. Audit all confirmations before sending private/project data externally.
+- [ ] 8. Audit every path that transfers personal memory into shared scope.
+- [ ] 9. Audit all third-party provider exposure warnings for accurate scope.
+- [ ] 10. Audit project memory inheritance and global memory toggles.
+- [ ] 11. Audit file import error messages for path/content disclosure.
+- [ ] 12. Audit provider errors for API key/token redaction.
+- [ ] 13. Audit Gateway errors for URL/authorization redaction.
+- [ ] 14. Audit voice/transcription errors for media/body redaction.
+- [ ] 15. Audit AgentRun errors for prompt/task content redaction.
+- [ ] 16. Audit trace export errors for source/private data redaction.
+- [ ] 17. Confirm confirmations never silently default to approval.
+- [ ] 18. Confirm cancel paths leave persisted data unchanged.
+- [ ] 19. Confirm local-only memory does not enter third-party requests.
+- [ ] 20. Confirm shared memory only enters requests when explicit scope is enabled.
+- [ ] 21. Confirm imported bundles cannot overwrite current state on failed validation.
+- [ ] 22. Confirm failure feedback does not mutate or clear the user's draft.
+- [ ] 23. Confirm toast/alert copy does not expose raw secrets or private content.
+- [ ] 24. Verify all privacy prompts in both locales.
+- [ ] 25. Verify user-data export/restore messages distinguish complete vs partial recovery.
+
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
 - [ ] P1.1 aCodingi — отдельная same-origin workspace page/route; сохранить нынешний /workspace/ функционал и интегрировать в общий shell/project/chat identity.

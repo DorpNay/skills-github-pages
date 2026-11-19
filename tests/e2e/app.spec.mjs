@@ -6289,3 +6289,28 @@ test('locale refresh preserves focus in rebuilt project, chat and request-contex
   });
   await expect(page.locator('#requestProjectChecks input[data-request-project-id]').first()).toBeFocused();
 });
+
+test('personal and shared memory confirmations use the active locale', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#memoryToolsDetails').evaluate(element => { element.open = true; });
+  await page.locator('#personalMemoryDetails').evaluate(element => { element.open = true; });
+  await page.locator('#memoryInput').fill('Locale privacy regression fact');
+  await page.locator('[data-action="save-memory"]').click();
+  const personalItem = page.locator('#memoryBox .memory-item').first();
+  await expect(personalItem).toBeVisible();
+
+  await page.locator('#uiLanguage').selectOption('en');
+  const promoteDialogPromise = page.waitForEvent('dialog');
+  await personalItem.locator('[data-action="promote-memory"]').click();
+  const promoteDialog = await promoteDialogPromise;
+  expect(promoteDialog.message()).toContain('Move only this item to shared memory');
+  await promoteDialog.dismiss();
+
+  await page.locator('#globalMemoryDetails').evaluate(element => { element.open = true; });
+  await page.locator('#sharedMemoryInput').fill('Locale shared memory fact');
+  await page.locator('[data-action="save-shared-memory"]').click();
+  const sharedDialog = await page.waitForEvent('dialog');
+  expect(sharedDialog.message()).toContain('Save this fact to SHARED memory');
+  await sharedDialog.dismiss();
+});

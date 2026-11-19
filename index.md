@@ -2863,7 +2863,7 @@ permalink: /
     function addHelperMemorySuggestion(index){
       const project=getProjectForChat(),candidate=helperMemorySuggestions[index];
       if(!project||project.id!==helperMemorySuggestionsProjectId||typeof candidate!=='string')return;
-      if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      if(project.memory.length>=500){showToast(getUiLanguage()==='en'?'Project memory limit reached (500 items).':'Достигнут предел памяти проекта (500 записей).','error');return;}
       const normalized=candidate.toLocaleLowerCase().replace(/\s+/g,' ').trim();
       if(project.memory.some(item=>String(item?.text||'').toLocaleLowerCase().replace(/\s+/g,' ').trim()===normalized)){
         helperMemorySuggestions.splice(index,1);renderHelperMemorySuggestions();
@@ -2995,7 +2995,7 @@ permalink: /
       const project=getProjectForChat(),input=$('projectMemoryInput'),text=input.value.trim().slice(0,600);
       if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       if(!text){input.focus();return;}
-      if(project.memory.length>=500){showToast('Достигнут предел памяти проекта (500 записей).','error');return;}
+      if(project.memory.length>=500){showToast(getUiLanguage()==='en'?'Project memory limit reached (500 items).':'Достигнут предел памяти проекта (500 записей).','error');return;}
       const previousMemory=project.memory.slice(),previousUpdatedAt=project.updatedAt;
       project.memory.push({id:projectIdNew(),text,createdAt:new Date().toISOString()});project.updatedAt=new Date().toISOString();
       if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;renderProjectUI();return;}
@@ -3009,7 +3009,7 @@ permalink: /
       renderProjectUI();
     }
     function deleteCurrentProject(){
-      const project=getProjectForChat();if(!project){showToast('Сначала выбери проект.','error');return;}
+      const project=getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
       const count=chats.filter(c=>c.projectId===project.id).length;
       const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
       if(!confirm(msg))return;
@@ -3292,10 +3292,11 @@ permalink: /
     }
     async function promotePrivateMemory(id) {
       const fact = (await MemoryDB.getAll()).find(item => item.id === id);
-      if (!fact) throw new Error('Личный факт не найден. Обнови список памяти.');
-      if (!confirm('Перенести только этот факт в общую память? Он может попасть внешнему провайдеру, если включено использование общей памяти. Личная копия останется локальной.')) return;
+      const english=getUiLanguage()==='en';
+      if (!fact) throw new Error(english?'Personal memory item not found. Refresh the memory list.':'Личный факт не найден. Обнови список памяти.');
+      if (!confirm(english?'Move only this item to shared memory? It may be sent to third-party providers when shared memory is enabled. The personal copy will remain local.':'Перенести только этот факт в общую память? Он может попасть внешнему провайдеру, если включено использование общей памяти. Личная копия останется локальной.')) return;
       await SharedMemoryDB.add(fact.fact, fact.id);
-      showToast('Выбранный факт добавлен в общую память. Личная копия сохранена.');
+      showToast(english?'Selected item added to shared memory. The personal copy was kept.':'Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
       const previousChats = chats;
@@ -6463,18 +6464,18 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         const sharedCommand=text.match(/^(?:сохрани в общую память|добавь в общую память)\s*[:,-]?\s*(.{1,500})$/i);
         if(privateCommand) {
           if(selectedProvider!=='alandi') {
-            showToast('Личная память доступна только через aLandi gateway. Команда не отправлена провайдеру.','error');
+            showToast(getUiLanguage()==='en'?'Personal memory is available only through the aLandi Gateway. The command was not sent to the provider.':'Личная память доступна только через aLandi gateway. Команда не отправлена провайдеру.','error');
             return;
           }
           await MemoryDB.add(privateCommand[1].trim());
           activeChatForPrivacy.privateMemoryUsed=true;
-          activeChatForPrivacy.messages.push({role:'user',content:'[Команда сохранения в личную память; содержимое не дублируется в истории чата.]'},{role:'assistant',content:'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
+          activeChatForPrivacy.messages.push({role:'user',content:getUiLanguage()==='en'?'[Personal-memory save command; the value is not duplicated in chat history.]':'[Команда сохранения в личную память; содержимое не дублируется в истории чата.]'},{role:'assistant',content:getUiLanguage()==='en'?'Saved the requested item to the local model’s personal memory. It was not added to shared memory.':'Сохранил указанный факт в личную память локальной модели. Он не добавлен в общую память.'});
           input.value=''; updateState([...chats]); return;
         }
         if(sharedCommand) {
-          if(!confirm('Сохранить этот факт в ОБЩУЮ память? При включённом использовании общей памяти он может передаваться сторонним провайдерам.')) return;
+          if(!confirm(getUiLanguage()==='en'?'Save this item to SHARED memory? It may be sent to third-party providers when shared memory is enabled.':'Сохранить этот факт в ОБЩУЮ память? При включённом использовании общей памяти он может передаваться сторонним провайдерам.')) return;
           await SharedMemoryDB.add(sharedCommand[1].trim());
-          activeChatForPrivacy.messages.push({role:'user',content:'[Команда сохранения факта в общую память; значение не дублируется в истории чата.]'},{role:'assistant',content:'Сохранил указанный факт в общую память. Личная память не изменена.'});
+          activeChatForPrivacy.messages.push({role:'user',content:getUiLanguage()==='en'?'[Shared-memory save command; the value is not duplicated in chat history.]':'[Команда сохранения факта в общую память; значение не дублируется в истории чата.]'},{role:'assistant',content:getUiLanguage()==='en'?'Saved the requested item to shared memory. Personal memory was not changed.':'Сохранил указанный факт в общую память. Личная память не изменена.'});
           input.value=''; updateState([...chats]); return;
         }
       }
@@ -6657,10 +6658,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       if(!updateState([...chats],currentChatId)){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
     }
     function clearCurrentChat() {
-      if (!confirm('Очистить историю текущего чата?')) return;
+      const english=getUiLanguage()==='en';
+      if (!confirm(english?'Clear the current chat history?':'Очистить историю текущего чата?')) return;
       if (activeChatId === currentChatId) stopGeneration();
       const chat = getCurrentChat(),previousMessages=chat.messages,previousTitle=chat.title;
-      chat.messages = []; chat.title = 'Новый чат';
+      chat.messages = []; chat.title = english?'New chat':'Новый чат';
       if(!updateState([...chats])){chat.messages=previousMessages;chat.title=previousTitle;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});}
       toggleSidebar(false);
     }
@@ -6677,7 +6679,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       });
     }
     function deleteChat(id) {
-      if (chats.length <= 1) { alert('Нельзя удалить единственный чат.'); return; }
+      if (chats.length <= 1) { showToast(getUiLanguage()==='en'?'The only chat cannot be deleted.':'Нельзя удалить единственный чат.','error'); return; }
       if (activeChatId === id) stopGeneration();
       const next = chats.filter((chat) => chat.id !== id);
       updateState(next, currentChatId === id ? next[0].id : currentChatId);
@@ -6756,7 +6758,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const file = event.target.files?.[0];
       event.target.value = '';
       if (!file) return;
-      if (file.size > 15 * 1024 * 1024) { alert('Файл слишком большой (лимит 15 МБ).'); return; }
+      if (file.size > 15 * 1024 * 1024) { showToast(getUiLanguage()==='en'?'File is too large (15 MB limit).':'Файл слишком большой (лимит 15 МБ).','error'); return; }
       try {
         const imported = JSON.parse(await file.text());
         if (!Array.isArray(imported) || !imported.length || imported.length > 500 ||
@@ -6768,7 +6770,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
          if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
         const seen = new Set(chats.map(chat=>chat.id));
         const clean = imported.map((chat) => ({
-          id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : 'Импортированный чат',
+          id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : (getUiLanguage()==='en'?'Imported chat':'Импортированный чат'),
           projectId: typeof chat.projectId==='string'&&projects.some(project=>project.id===chat.projectId)?chat.projectId:null,
           projectMemoryEnabled: chat.projectMemoryEnabled===true,
           
@@ -6789,7 +6791,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         if(!updateState([...clean,...chats], clean[0].id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});throw new Error('Хранилище не подтвердило импорт; исходная история восстановлена.');}
         toggleSidebar(false);
         showToast(getUiLanguage()==='en'?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
-      } catch (error) { showToast(`Ошибка импорта: ${error.message}`, 'error'); }
+      } catch (error) { console.error('Chat import failed:',error);showToast(getUiLanguage()==='en'?'Could not import chats. Check the file format, limits and browser storage.':'Не удалось импортировать чаты. Проверь формат файла, ограничения и доступность хранилища.','error'); }
     }
 
     async function copyText(text) {
@@ -7753,7 +7755,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             const input = $('memoryInput'); const fact = input.value.trim();
             if (!fact) { input.focus(); break; }
             try { await MemoryDB.add(fact); input.value = ''; }
-            catch (error) { alert(error.message); }
+            catch (error) { console.error('Personal memory save failed:',error);showToast(getUiLanguage()==='en'?'Could not save the personal memory item. Check browser storage.':'Не удалось сохранить личный факт. Проверь хранилище браузера.','error'); }
             break;
           }
           case 'delete-memory':
