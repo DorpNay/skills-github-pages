@@ -3831,6 +3831,30 @@ test('mobile text-entry controls use 16px without disabling user zoom', async ({
   }
 });
 
+test('toolbar disclosure menus close on Escape and outside click without activating the underlying control', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#modeDeep').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+
+  for (const id of ['searchModeMenu', 'functionsMenu']) {
+    const menu = page.locator('#' + id);
+    const trigger = menu.locator('summary').first();
+
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(menu).toHaveAttribute('open', '');
+    await page.keyboard.press('Escape');
+    await expect(menu).not.toHaveAttribute('open', '');
+    await expect(trigger).toBeFocused();
+
+    await trigger.click();
+    await expect(menu).toHaveAttribute('open', '');
+    await page.locator('#modeFast').click();
+    await expect(menu).not.toHaveAttribute('open', '');
+    await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  }
+});
+
 test('Functions menu exposes four truthful independent panels with blurred backdrop', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

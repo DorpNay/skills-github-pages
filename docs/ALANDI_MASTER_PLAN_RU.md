@@ -42,7 +42,7 @@
 - [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
 - [~] P0.6 Mobile: primary sidebar navigation and nested project/chat action controls use 44×44px touch targets; responsive and nested-menu geometry regressions are added but not run. The rest of root app still needs full mobile visual and real-device acceptance.
 - [ ] P0.7 Responsive: диапазон 320–1440px, portrait/landscape, keyboard/VisualViewport, no horizontal overflow, длинные строки и сообщения.
-- [~] P0.8 Menus/dialogs: FACT — primary Settings/Functions/Project dialogs already have focus lifecycle and keyboard/outside-close in code/E2E. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
+- [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions/Language disclosures now share Escape close + focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [~] P0.9 Chat row actions: rename/move/clone/delete/clear/export/import handlers exist; existing E2E covers move dialog, clear, clone, delete-cancel, keyboard and focus. Added a focused rename + selected-chat export regression test; import/export bundle behavior was delivered historically (PR #118). Still run the full browser suite and verify mobile/desktop menu geometry, touch and active-item persistence.
 - [~] P0.10 Composer: narrow-phone layout keeps the four utility controls in a first row and draft + send/stop in a usable second row at <=380px. Added 320/360px geometry regression plus nested attachment/context/voice menu and attachment-removal target coverage; browser execution pending. Remaining: empty/populated/long draft, stop/cancel/retry/regenerate and native keyboard reposition.
 - [~] P0.11 Forms: project create/edit and aServi required URL/model/key validation, localized errors, `aria-invalid`/`aria-describedby`, first-invalid focus and corrected-error clearing already exist with E2E coverage. Remaining: cross-form required/validation/error/success/busy/disabled/offline matrix, consistent first-invalid focus, safe retry/clear and no false connected states.
@@ -77,7 +77,7 @@
 14. [ ] Attachment popover actions have 44px mobile hit targets and bounded scrolling.
 15. [ ] Request-context project rows are fully tappable and do not mutate the active chat project.
 16. [ ] Voice mode choices have 44px mobile hit targets and truthful availability copy.
-17. [ ] Escape/outside dismissal closes only the active popover and returns focus to its trigger.
+17. [~] Escape/outside dismissal closes only the active popover and returns focus to its trigger; toolbar disclosures now close on Escape, composer popovers have Escape handling, but the full cross-menu matrix remains unverified.
 18. [ ] Attachment removal is reachable at 44px on touch screens and does not submit the draft.
 
 **Sidebar and navigation**
@@ -87,7 +87,7 @@
 22. [ ] Project and chat nested action-menu entries meet the 44px mobile target.
 23. [ ] Long project/chat lists scroll independently without hiding the other section.
 24. [ ] Collapsing Projects returns usable height to Chats and preserves selection/scroll.
-25. [ ] Menu Escape/outside click does not activate the control underneath and restores focus.
+25. [~] Menu Escape/outside click does not activate the control underneath and restores focus; toolbar disclosure Escape handling is implemented and a regression test is added, awaiting Chromium.
 
 **Dialogs, forms and accessibility**
 26. [ ] Settings/Functions/Project/Chat dialogs contain keyboard focus, close on Escape and restore a logical opener.
@@ -1964,3 +1964,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — responsive root viewport sweep (this commit).** Added a document/body/header/composer horizontal-overflow regression for 320, 360, 390, 640, 768, 1024, 1280 and 1440 CSS px. It is a browser test, not a native device test.
 - **SPECIFIED — 30-point landing acceptance matrix.** Thirty explicit responsive, composer, navigation, dialog, form, localization and accessibility gates now live under P0.21. None is considered VERIFIED until executed with recorded environment and exact SHA.
 - **NOT RUN — browser/device acceptance:** the new nested-menu and viewport sweep tests, along with earlier 320/360/390px regressions, have not yet run in Chromium; no native iPhone Safari/VoiceOver check was performed.
+
+- **IMPLEMENTED — toolbar disclosure Escape behavior (this commit).** Search, Functions and Language toolbar disclosures now share one Escape close path and restore focus to their own summary. Added Playwright coverage for Search/Functions Escape and first outside click not activating the underlying processing-mode control. Browser execution pending.

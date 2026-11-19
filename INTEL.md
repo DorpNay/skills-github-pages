@@ -1926,3 +1926,10 @@ Reviewed primary upstream references for the current root-app UI package:
 - **Lane D — verification/record:** GitHub Actions exact-HEAD checks and deployment marker, then update NOW/master/INTEL. Do not equate Pages deployment with Chromium E2E or native-device acceptance.
 - Parallelize independent reads, research and browser runs. Serialize dependent edits/commits on the latest exact main SHA. Do not launch overlapping writes to the same files or start a replacement browser run after a non-retryable timeout; continue polling the original run ID.
 
+
+## Native disclosure keyboard behavior — 2026-11-19
+
+- **W3C WAI-ARIA Authoring Practices — Disclosure pattern:** https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/ (reviewed 2026-11-19). Native disclosure activation uses Enter/Space and exposes expanded/collapsed state. Escape-close is an additional aLandi menu policy, not a mandatory APG disclosure key.
+- **MDN — HTML details element:** https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/details (reviewed 2026-11-19). The boolean open attribute controls visibility and summary labels the disclosure; keep native details semantics rather than presenting it as an ARIA menu.
+- **Playwright — Keyboard API:** https://playwright.dev/docs/api/class-keyboard (reviewed 2026-11-19). keyboard.press('Enter'/'Escape') supports deterministic keyboard regression; this does not prove native assistive-technology behavior.
+
