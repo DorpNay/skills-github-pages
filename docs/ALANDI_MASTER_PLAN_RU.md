@@ -59,42 +59,44 @@
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
 
 **Mobile and responsive geometry**
-1. [ ] 320 CSS px: root document/body do not overflow horizontally; header/composer bounding boxes stay within viewport.
-2. [ ] 360 CSS px: header, chat surface and composer stay within viewport.
-3. [ ] 390 CSS px: sidebar and primary chat actions remain usable.
-4. [ ] 640 CSS px: mobile/tablet breakpoint transition has no clipped controls.
-5. [ ] 768 CSS px: tablet layout preserves hierarchy and usable content width.
-6. [ ] 1024 CSS px: desktop/tablet transition has no overlapping panels.
-7. [ ] 1280 CSS px: desktop sidebar, toolbar and composer remain aligned.
-8. [ ] 1440 CSS px: wide layout does not stretch text or detach primary actions.
+
+`[~]` means implementation or focused regression exists but browser/device acceptance is still pending; none of these 30 points is fully VERIFIED by the matrix alone.
+1. [~] 320 CSS px: root/body overflow and header/composer bounds have Playwright coverage; browser execution pending.
+2. [~] 360 CSS px: root/body overflow and header/composer bounds have Playwright coverage; browser execution pending.
+3. [~] 390 CSS px: sidebar/nav/menu 44px geometry tests exist; full surface audit pending.
+4. [~] 640 CSS px: root overflow sweep covers breakpoint width; all control bounds pending.
+5. [~] 768 CSS px: root overflow sweep covers tablet width; visual hierarchy acceptance pending.
+6. [~] 1024 CSS px: root overflow sweep covers width; overlap/visual hierarchy acceptance pending.
+7. [~] 1280 CSS px: root overflow sweep covers width; detailed alignment acceptance pending.
+8. [~] 1440 CSS px: root overflow sweep covers width; typography/measure acceptance pending.
 9. [~] Landscape 844×390: Playwright checks root overflow plus header/toolbar/composer left-right bounds, textarea target height and Send visibility; browser execution pending.
-10. [ ] Keyboard/VisualViewport simulation: composer and popovers reposition without obscuring the focused control; native iOS keyboard remains a manual gate.
+10. [~] Composer resize and short-viewport popover tests exist; real OSK/VisualViewport offset simulation and native iOS keyboard remain open.
 
 **Composer and menus**
-11. [ ] Context, execution, attachment and voice controls keep their row and 44px mobile hit targets.
-12. [ ] Draft input retains at least 200px usable width at 320/360px.
-13. [ ] Send and visible Stop controls remain reachable and correctly sized.
+11. [~] Composer row geometry and 44px control tests exist at 320/360px; browser execution pending.
+12. [~] Narrow composer regression asserts >=200px draft width at 320/360px; browser execution pending.
+13. [~] Send target geometry is asserted; visible Stop state while streaming still needs a bounded browser scenario.
 14. [~] Attachment, project/chat, Functions and context/voice menu actions plus attachment removal have Playwright 44px target coverage; width and height are now both measured. Bounded scrolling remains.
-15. [ ] Request-context project rows are fully tappable and do not mutate the active chat project.
-16. [ ] Voice mode choices have 44px mobile hit targets and truthful availability copy.
+15. [~] Request context scope and active-chat project isolation have E2E coverage; touch/scroll acceptance pending.
+16. [~] Voice menu copy and 44px action-target regression added; browser execution pending.
 17. [~] Escape/outside dismissal closes only the active popover and returns focus to its trigger; Search/Functions disclosures close on Escape and outside click, composer popovers have Escape handling; outside-click focus return added, but the full cross-menu matrix remains unverified.
-18. [ ] Attachment removal is reachable at 44px on touch screens and does not submit the draft.
+18. [~] Attachment removal width/height and draft preservation have regression coverage; browser execution pending.
 
 **Sidebar and navigation**
-19. [ ] Sidebar open/close, overlay and horizontal swipe preserve vertical list scrolling.
-20. [ ] Projects/Chats disclosure and Create actions meet the 44px mobile target.
-21. [ ] Project and chat selection rows remain at least 44px on 320/360/390px.
-22. [ ] Project and chat nested action-menu entries meet the 44px mobile target.
-23. [ ] Long project/chat lists scroll independently without hiding the other section.
-24. [ ] Collapsing Projects returns usable height to Chats and preserves selection/scroll.
+19. [~] Sidebar swipe, overlay and close controls have E2E coverage; browser execution pending.
+20. [~] Projects/Chats disclosure and Create touch targets have 44px geometry coverage; browser execution pending.
+21. [~] Project/chat row targets have 320/360/390px coverage; browser execution pending.
+22. [~] Nested project/chat action entries have 44px width+height coverage; browser execution pending.
+23. [~] Long navigation list internal-scroll tests exist; browser execution pending.
+24. [~] Projects collapse/Chats height and state preservation have regression coverage; browser execution pending.
 25. [~] Menu Escape/outside click does not activate the control underneath and restores focus; toolbar disclosure Escape handling is implemented and a regression test is added, awaiting Chromium.
 
 **Dialogs, forms and accessibility**
 26. [~] Settings/Project/Chat focus lifecycle already has tests; added Functions + Chat Action Tab/Shift+Tab wrap, Escape close and invoker restoration regression. Chromium execution pending.
-27. [ ] Project create/edit validation is textual, localized, associated with its field and focuses the first invalid field.
-28. [ ] aServi URL/model/key validation is localized, sequential, associated and clears corrected errors.
-29. [ ] RU/EN, dark/light, high contrast and reduced-motion states preserve labels, focus and semantic status.
-30. [ ] Keyboard-only and screen-reader smoke covers landmarks, accessible names, live status, error announcements and no hidden/false connected states; native VoiceOver remains a manual gate.
+27. [~] Project create/edit tests assert textual RU errors, aria-invalid, aria-describedby→role=alert and first-invalid focus; full EN/browser pass pending.
+28. [~] aServi URL/model/key tests assert sequential textual errors, aria-describedby→role=alert and corrected-error clearing; browser execution pending.
+29. [~] RU/EN, both themes, contrast and reduced-motion have existing focused tests; full cross-surface matrix pending.
+30. [~] Keyboard traversal, accessible names, status/error roles and focus behavior have E2E coverage; screen-reader and native VoiceOver remain manual gates.
 
 - [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
 - [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
@@ -1995,3 +1997,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — sticky mobile panel headers (this commit).** Functions and Trace panel headers remain visible while their long content scrolls; the short-viewport dialog regression asserts the Functions header is sticky. Browser execution pending.
 
 - **IMPLEMENTED — Functions/Chat Action modal focus regression (this commit).** Playwright now exercises Tab/Shift+Tab wrapping, Escape closure and return focus to each invoking control for both dialogs. Browser execution pending.
+
+- **IMPLEMENTED — 30-point acceptance status reconciliation (this commit).** Items with code/test coverage are marked PARTIAL `[~]`; all 30 remain open until Chromium/native-device evidence. The matrix explicitly distinguishes Playwright emulation from real mobile OSK/VoiceOver.

@@ -1952,3 +1952,11 @@ Reviewed primary upstream references for the current root-app UI package:
 
 - Outside click on Search/Functions disclosure now closes it and restores focus to its own summary on the next animation frame, while preventing activation of the underlying control. Native `details` semantics remain intact.
 - Current DOM has no Language disclosure; language selection is a native select. Avoid stale selector references.
+
+## Mobile safe-area and viewport sizing — 2026-11-19
+
+- **MDN — CSS env() function:** https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/env — `safe-area-inset-top/right/bottom/left` are user-agent values; they can be zero on unobstructed rectangular viewports and positive around non-rectangular display edges or occupied viewport regions. Use a fallback value and retain content inside the resulting safe rectangle.
+- **MDN — CSS length / viewport-percentage units:** https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length — `dvh` tracks the dynamic viewport as browser UI expands/retracts; `svh` is the stable small viewport; `vh` currently maps to the large viewport and may extend under expanded browser chrome. `dvh` can resize during scrolling, so avoid expensive layout work on every change.
+- **MDN — Viewport concepts:** https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/CSSOM_view/Viewport_concepts — layout and visual viewports differ; an on-screen keyboard, pinch zoom or browser chrome can shrink the visual viewport while the layout viewport remains unchanged. `100dvh` is not a substitute for listening to `visualViewport` when the keyboard changes the visible region.
+
+**Current aLandi application:** modal max-heights subtract safe-area insets; composer/popovers also read `window.visualViewport`. Playwright viewport resizing is a deterministic approximation only; native iOS/Android keyboard and notch verification remain separate.
