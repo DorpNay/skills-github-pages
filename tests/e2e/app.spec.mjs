@@ -6487,3 +6487,56 @@ test('project bundle parser failures never expose raw exception text', async ({ 
   await expect(page.locator('#toast')).toContainText('The selected file is not valid JSON.');
   await expect(page.locator('#toast')).not.toContainText('Unexpected token');
 });
+
+test('project source failures are localized and never expose Gateway diagnostics', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-key');
+  });
+  const corsHeaders = {
+    'access-control-allow-origin': '*',
+    'access-control-allow-headers': 'authorization,content-type',
+    'access-control-allow-methods': 'GET,POST,DELETE,OPTIONS'
+  };
+  await page.route('https://gateway.example.test/v1/**', async route => {
+    const request = route.request(), url = new URL(request.url());
+    if (request.method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers: corsHeaders });
+      return;
+    }
+    if (url.pathname === '/v1/capabilities') {
+      await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({
+        documents: { extraction: true }, rag: { enabled: true }
+      }) });
+      return;
+    }
+    if (url.pathname === '/v1/documents/extract') {
+      await route.fulfill({ status: 502, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({
+        detail: 'upstream failure echoed credential e2e-gateway-key'
+      }) });
+      return;
+    }
+    await route.fulfill({ status: 200, headers: corsHeaders, contentType: 'application/json', body: JSON.stringify({ documents: [], count: 0 }) });
+  });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Localized source errors');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  const projectId = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(item => item.name === 'Localized source errors')?.id || '');
+  await openProjectSettingsForId(page, projectId);
+  await page.locator('#projectSourcesDetails > summary').click();
+  await page.locator('[data-action="select-project-source-file"]').click();
+  await page.locator('#projectSourceFileInput').setInputFiles({
+    name: 'private-notes.txt', mimeType: 'text/plain', buffer: Buffer.from('private source fixture')
+  });
+  await expect(page.locator('#projectSourcesStatus')).toContainText('Не удалось обработать источник');
+  await expect(page.locator('#projectSourcesStatus')).not.toContainText('e2e-gateway-key');
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('[data-action="select-project-source-file"]').click();
+  await page.locator('#projectSourceFileInput').setInputFiles({
+    name: 'private-notes.txt', mimeType: 'text/plain', buffer: Buffer.from('private source fixture')
+  });
+  await expect(page.locator('#projectSourcesStatus')).toContainText('Could not process the source');
+  await expect(page.locator('#projectSourcesStatus')).not.toContainText('e2e-gateway-key');
+});
