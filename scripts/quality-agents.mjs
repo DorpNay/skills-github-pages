@@ -45,7 +45,7 @@ const suites = {
       assert.ok(agentPanel.includes('id="agentTopologyRoadmapDetails"'), 'Agents must distinguish planned topologies from current runtime.');
       assert.ok(agentPanel.includes('data-i18n="agentTopologySubagents"'), 'Chat-directed subagents must be explicit as a planned capability.');
       assert.equal(agentPanel.includes('roadmap-ticker'), false, 'Do not display an animated placeholder as agent progress.');
-      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\\s\\S]*?<\\/section>/)?.[0] || '';
+      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\s\S]*?<\/section>/)?.[0] || '';
       assert.ok(connectorPanel, 'Connectors must open an independent panel.');
       assert.ok(connectorPanel.includes('functionConnectorsDescription'), 'Connectors must explain the current connection state.');
       assert.equal(/<(?:button|input|select|textarea)\b/i.test(connectorPanel), false, 'Do not show fake connector actions before a real registry and permissions exist.');
