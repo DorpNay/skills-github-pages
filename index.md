@@ -2132,6 +2132,11 @@ permalink: /
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Open voice modes':'Нажми, чтобы открыть режимы голоса';voice.setAttribute('aria-label',lang==='en'?'Open voice modes':'Открыть режимы голоса');}
       updateOfflineUI();updateModeUI();updateHomeThemeButton();
       renderProjectNavigation();renderChatList();renderDraftAttachments();renderRequestProjectChoices();
+      // Rebuilt locale-sensitive content must not desynchronize disclosure semantics.
+      for(const [triggerId,menuId] of [['attachTextButton','attachmentMenu'],['contextPickerButton','requestContextMenu'],['voiceUnavailableButton','voiceMenu']]){
+        const trigger=$(triggerId),menu=$(menuId);
+        if(trigger&&menu)trigger.setAttribute('aria-expanded',String(!menu.classList.contains('hidden')));
+      }
       updateMemoryStatusLine();refreshLocalizedChatSurface();refreshChatActionDialogLanguage();
       refreshAgentRuntimeEventLanguage();
       if(!$('skillFunctionSettings').classList.contains('hidden'))renderSkillConfiguration();

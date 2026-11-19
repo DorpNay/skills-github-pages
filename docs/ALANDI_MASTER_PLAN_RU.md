@@ -190,12 +190,12 @@
 - [ ] 17. Verify message action keyboard focus survives in-place relabeling.
 - [ ] 18. Verify long project/chat names remain clipped without horizontal overflow.
 - [ ] 19. Verify five-project request context cap in both locales.
-- [ ] 20. Verify no duplicate change handlers after repeated context-menu refresh.
-- [ ] 21. Verify no duplicate project/chat rows after 10 repeated locale switches.
+- [~] 20. Verify no duplicate change handlers after repeated context-menu refresh; added 10-cycle RU/EN regression for composer disclosures and their single Escape-close path.
+- [~] 21. Verify no duplicate project/chat rows after 10 repeated locale switches; added 10-cycle locale idempotency regression, runtime execution pending.
 - [ ] 22. Verify no state loss across chat switch while locale is changed.
-- [ ] 23. Verify open menu state and aria-expanded remain consistent after locale change.
+- [~] 23. Synchronize `aria-expanded` from actual menu visibility after locale refresh; regression covers attachment, request-context and voice disclosures.
 - [ ] 24. Verify browser history/deep-link state remain unchanged by locale.
-- [ ] 25. Verify composer draft and selected attachments remain unchanged after 10 RU/EN toggles.
+- [~] 25. Added 10-cycle RU/EN regression preserving composer draft, unsupported attachment, localized remove label and keyboard focus.
 
 ### P0.28 — UI action feedback localization (PARTIAL)
 
@@ -279,7 +279,7 @@
 - [ ] 22. Add 320px locale overflow regression.
 - [ ] 23. Add 768px locale wrapping regression.
 - [ ] 24. Add 1440px locale wrapping regression.
-- [ ] 25. Add 10-cycle RU/EN idempotency regression.
+- [~] 25. Added 10-cycle RU/EN idempotency regression for composer draft, attachment focus and disclosure state; browser execution pending.
 - [ ] 26. Add active stream locale-change regression without aborting generation.
 - [ ] 27. Add native iOS Safari/VoiceOver language-change check.
 - [ ] 28. Add Windows forced-colors language-change check.

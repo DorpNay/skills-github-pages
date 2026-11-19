@@ -6408,3 +6408,45 @@ test('system reduced-motion preference is honored in automatic mode and high con
   expect(focus.color).not.toBe('rgba(0, 0, 0, 0)');
   expect(focus.style).toBe('solid');
 });
+
+test('locale refresh keeps composer draft, attachment focus and disclosure state idempotent', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const draft = 'Preserve this composer draft across repeated locale changes.';
+  await page.locator('#userInput').fill(draft);
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'locale-attachment.bin', mimeType: 'application/octet-stream',
+    buffer: Buffer.from('unsupported locale attachment fixture')
+  });
+  const remove = page.locator('#draftAttachments [data-action="remove-draft-attachment"]');
+  await expect(remove).toHaveAccessibleName('Убрать вложение locale-attachment.bin');
+  await remove.focus();
+
+  for (let cycle = 0; cycle < 10; cycle += 1) {
+    const language = cycle % 2 === 0 ? 'en' : 'ru';
+    await page.locator('#uiLanguage').selectOption(language);
+    await expect(page.locator('#userInput')).toHaveValue(draft);
+    await expect(page.locator('#draftAttachments')).toContainText('locale-attachment.bin');
+    await expect(page.locator('#draftAttachments [data-action="remove-draft-attachment"]')).toBeFocused();
+    await expect(page.locator('#draftAttachments [data-action="remove-draft-attachment"]'))
+      .toHaveAccessibleName(language === 'en' ? 'Remove attachment locale-attachment.bin' : 'Убрать вложение locale-attachment.bin');
+  }
+
+  const disclosures = [
+    { trigger: '#attachTextButton', menu: '#attachmentMenu' },
+    { trigger: '#contextPickerButton', menu: '#requestContextMenu' },
+    { trigger: '#voiceUnavailableButton', menu: '#voiceMenu' }
+  ];
+  for (const { trigger, menu } of disclosures) {
+    await page.locator(trigger).click();
+    await expect(page.locator(menu)).toBeVisible();
+    await expect(page.locator(trigger)).toHaveAttribute('aria-expanded', 'true');
+    await page.locator('#uiLanguage').selectOption('en');
+    await expect(page.locator(menu)).toBeVisible();
+    await expect(page.locator(trigger)).toHaveAttribute('aria-expanded', 'true');
+    await page.keyboard.press('Escape');
+    await expect(page.locator(menu)).toBeHidden();
+    await expect(page.locator(trigger)).toHaveAttribute('aria-expanded', 'false');
+  }
+  await expect(page.locator('#userInput')).toHaveValue(draft);
+  await expect(page.locator('#draftAttachments')).toContainText('locale-attachment.bin');
+});
