@@ -6394,11 +6394,15 @@ test('system reduced-motion preference is honored in automatic mode and high con
   expect(autoMotion).toBe('0.01ms');
 
   await page.locator('#readingContrast').selectOption('high');
-  const focus = await page.locator('#readingContrast').evaluate(element => {
-    element.focus();
+  const contrastControl = page.locator('#readingContrast');
+  await contrastControl.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  const focus = await contrastControl.evaluate(element => {
     const style = getComputedStyle(element);
-    return { width: style.outlineWidth, offset: style.outlineOffset, style: style.outlineStyle, color: style.outlineColor };
+    return { matchesFocusVisible: element.matches(':focus-visible'), width: style.outlineWidth, offset: style.outlineOffset, style: style.outlineStyle, color: style.outlineColor };
   });
+  expect(focus.matchesFocusVisible).toBe(true);
   expect(focus.width).toBe('3px');
   expect(focus.offset).toBe('3px');
   expect(focus.color).not.toBe('rgba(0, 0, 0, 0)');
