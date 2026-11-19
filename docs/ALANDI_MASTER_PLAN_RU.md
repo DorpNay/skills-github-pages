@@ -297,9 +297,9 @@
 - [~] 6. Localize current-chat history-clear confirmation.
 - [~] 7. Localize chat title reset after clearing history.
 - [~] 8. Replace last-chat delete alert with localized non-blocking error toast.
-- [~] 9. Localize chat import file-size rejection.
+- [~] 9. Localize chat import file-size, JSON/shape, message-count and local-chat limit feedback in RU/EN.
 - [~] 10. Localize imported chat fallback title.
-- [~] 11. Replace raw chat-import error text with safe localized user feedback.
+- [~] 11. Replace raw chat-import error text with safe localized user feedback; parser/storage exceptions now map to bounded localized messages.
 - [~] 12. Replace raw personal-memory storage error alert with safe localized feedback.
 - [~] 13. Localize personal-memory gateway-only guard.
 - [~] 14. Localize synthetic private-memory command/assistant transcript.
@@ -312,7 +312,7 @@
 - [ ] 21. Localize shared-memory promotion errors from IndexedDB.
 - [ ] 22. Localize memory list loading failures.
 - [ ] 23. Localize chat rename/move failure feedback.
-- [ ] 24. Localize chat import collision/limit details.
+- [~] 24. Localize chat import collision/limit details; format, count and collision-safe append behavior now have explicit feedback.
 - [~] 25. Added Playwright coverage for EN personal/shared-memory confirmation copy; RU dialog and project/chat prompt matrix still pending.
 
 ### P0.32 — Safety and privacy feedback clarity (PARTIAL)
