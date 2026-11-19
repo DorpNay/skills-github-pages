@@ -98,9 +98,9 @@ permalink: /
     button, a, input, textarea, select { transition: background-color .14s ease, border-color .14s ease, box-shadow .14s ease, color .14s ease; }
     button:hover:not(:disabled) { filter: brightness(1.06); }
     input:focus, textarea:focus, select:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgb(96 165 250 / 12%); }
-    .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); z-index: 100; max-width: min(92vw, 30rem); padding: var(--ui-space-3) var(--ui-space-4); border: var(--ui-border-width) solid rgb(96 165 250 / 40%); border-radius: var(--ui-radius-md); background: rgb(15 23 42 / 96%); color: #e5efff; font-size: var(--ui-font-size-sm); line-height: var(--ui-line-normal); text-align: center; box-shadow: var(--ui-shadow-card); opacity: 0; transform: translate(-50%, .5rem); pointer-events: none; transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); backdrop-filter: blur(8px); }
+    .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); z-index: 100; max-width: min(92vw, 30rem); padding: var(--ui-space-3) var(--ui-space-4); border: var(--ui-border-width) solid var(--ui-border); border-radius: var(--ui-radius-md); background: color-mix(in srgb,var(--ui-surface-raised) 96%,transparent); color: var(--ui-text); font-size: var(--ui-font-size-sm); line-height: var(--ui-line-normal); text-align: center; box-shadow: var(--ui-shadow-card); opacity: 0; transform: translate(-50%, .5rem); pointer-events: none; transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); backdrop-filter: blur(8px); }
     .toast.toast-visible { opacity: 1; transform: translate(-50%, 0); }
-    .toast.toast-error { border-color: rgb(248 113 113 / 55%); color: #fecaca; }
+    .toast.toast-error { border-color:color-mix(in srgb,var(--ui-danger) 55%,var(--ui-border));color:var(--ui-danger); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
     /* aLandi AI — Obsidian Studio / Clean Light + restrained Tiffany Motion. */
@@ -141,11 +141,11 @@ permalink: /
     .settings-subpanel { background:color-mix(in srgb,var(--ui-surface-raised) 86%,transparent); overflow:hidden; }
     .settings-subpanel > summary::marker { color:var(--ui-tiffany); }
     .settings-subpanel[open] > summary { border-bottom:1px solid var(--ui-border); background:var(--ui-tiffany-soft); }
-    .cloud-card { background:radial-gradient(ellipse at 95% 0%,rgba(104,232,208,.13),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:rgba(104,232,208,.34)!important; box-shadow:0 18px 45px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.04); }
+    .cloud-card { background:radial-gradient(ellipse at 95% 0%,var(--ui-tiffany-soft),transparent 48%),linear-gradient(140deg,var(--ui-surface-raised),var(--ui-surface)); border-color:color-mix(in srgb,var(--ui-tiffany) 34%,var(--ui-border))!important; box-shadow:var(--ui-shadow-card),inset 0 1px rgba(255,255,255,.04); }
     .cloud-card input { background:var(--ui-bg)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important; }
-    .cloud-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 5px rgba(239,68,68,.12),0 0 16px rgba(239,68,68,.45); }
-    .cloud-status-indicator[data-state="connected"] { background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.12),0 0 18px rgba(34,197,94,.65); }
-    .cloud-status-indicator[data-state="checking"] { background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.12),0 0 18px rgba(245,158,11,.45); }
+    .cloud-status-indicator { width:12px;height:12px;flex:0 0 12px;margin-top:7px;border-radius:50%;background:var(--ui-danger);box-shadow:0 0 0 5px color-mix(in srgb,var(--ui-danger) 12%,transparent),0 0 16px color-mix(in srgb,var(--ui-danger) 45%,transparent); }
+    .cloud-status-indicator[data-state="connected"] { background:var(--ui-success);box-shadow:0 0 0 5px color-mix(in srgb,var(--ui-success) 12%,transparent),0 0 18px color-mix(in srgb,var(--ui-success) 55%,transparent); }
+    .cloud-status-indicator[data-state="checking"] { background:var(--ui-warning);box-shadow:0 0 0 5px color-mix(in srgb,var(--ui-warning) 12%,transparent),0 0 18px color-mix(in srgb,var(--ui-warning) 45%,transparent); }
     .cloud-status-copy { color:var(--ui-danger); }
     .cloud-status-copy[data-state="connected"] { color:var(--ui-success); }
     .cloud-status-copy[data-state="checking"] { color:var(--ui-warning); }
