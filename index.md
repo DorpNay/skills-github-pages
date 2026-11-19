@@ -573,10 +573,7 @@ permalink: /
       }
       #projectSettingsModal input:not([type="checkbox"]),
       #projectSettingsModal textarea,
-      #projectSettingsModal select {
-        min-height:44px;
-        font-size:14px;
-      }
+      #projectSettingsModal select { min-height:44px; }
       #projectSettingsModal textarea { min-height:88px; }
       #projectSettingsModal button { min-height:40px; }
       #projectSettingsModal details > summary { min-height:44px; }

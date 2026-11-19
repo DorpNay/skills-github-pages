@@ -1960,3 +1960,8 @@ Reviewed primary upstream references for the current root-app UI package:
 - **MDN — Viewport concepts:** https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/CSSOM_view/Viewport_concepts — layout and visual viewports differ; an on-screen keyboard, pinch zoom or browser chrome can shrink the visual viewport while the layout viewport remains unchanged. `100dvh` is not a substitute for listening to `visualViewport` when the keyboard changes the visible region.
 
 **Current aLandi application:** modal max-heights subtract safe-area insets; composer/popovers also read `window.visualViewport`. Playwright viewport resizing is a deterministic approximation only; native iOS/Android keyboard and notch verification remain separate.
+
+## iOS input typography — 2026-11-19
+
+- Keep mobile editable controls at 16 CSS px to avoid automatic focus zoom in iOS Safari. Use compact spacing, row density and grouping for visual compactness; do not reduce the input font size to achieve it.
+- Project Settings inherits the shared <=640px 16px form rule (`!important`). The earlier local 14px declaration was overridden at runtime; it has been removed to avoid misleading cascade intent. Playwright now asserts exact computed 16px and 44px minimum field height at 320px and 390px.

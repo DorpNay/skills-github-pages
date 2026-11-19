@@ -826,7 +826,7 @@ test('mobile Project Settings uses a safe-area full-height sheet with compact re
     expect(metrics.borderRadius).toBe('0px');
     expect(metrics.overflowY).toBe('auto');
     expect(metrics.headerPosition).toBe('sticky');
-    expect(metrics.fields.every(field => field.fontSize >= 14 && field.height >= 44), JSON.stringify(metrics.fields)).toBe(true);
+    expect(metrics.fields.every(field => field.fontSize === 16 && field.height >= 44), JSON.stringify(metrics.fields)).toBe(true);
     expect(metrics.summaries.every(height => height >= 44), JSON.stringify(metrics.summaries)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }

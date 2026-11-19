@@ -42,7 +42,7 @@
 - [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
 - [~] P0.6 Mobile: primary sidebar navigation and nested project/chat actions already target 44px; this package extends the same minimum to chat/project menus, toolbar, attachment/context/voice choices and attachment removal. Responsive visual acceptance and real-device pass remain open.
 - [~] P0.7 Responsive: диапазон 320–1440px, portrait/landscape and root overflow regression added; mobile dialog safe-area padding/internal-scroll rules and 320×568 settings/functions/chat-action geometry test added. Keyboard/VisualViewport and native-device acceptance remain open.
-- [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions/Language disclosures now share Escape close + focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
+- [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions disclosures close on Escape and outside click with focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [~] P0.9 Chat row actions: rename/move/clone/delete/clear/export/import handlers exist; existing E2E covers move dialog, clear, clone, delete-cancel, keyboard and focus. Added a focused rename + selected-chat export regression test; import/export bundle behavior was delivered historically (PR #118). Still run the full browser suite and verify mobile/desktop menu geometry, touch and active-item persistence.
 - [~] P0.10 Composer: narrow-phone layout keeps the four utility controls in a first row and draft + send/stop in a usable second row at <=380px. Added 320/360px geometry regression plus nested attachment/context/voice menu and attachment-removal target coverage; browser execution pending. Remaining: empty/populated/long draft, stop/cancel/retry/regenerate and native keyboard reposition.
 - [~] P0.11 Forms: project create/edit and aServi required URL/model/key validation, localized errors, `aria-invalid`/`aria-describedby`, first-invalid focus and corrected-error clearing already exist with E2E coverage. Remaining: cross-form required/validation/error/success/busy/disabled/offline matrix, consistent first-invalid focus, safe retry/clear and no false connected states.
@@ -99,7 +99,7 @@
 30. [~] Keyboard traversal, accessible names, status/error roles and focus behavior have E2E coverage; screen-reader and native VoiceOver remain manual gates.
 
 - [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus, attachment removal and jump-to-latest; Project Settings inputs/selects also use 44px minimum height. Menu spacing tightened and reduced-motion transitions disabled. Browser execution remains separate.
-- [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
+- [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 16px fields (avoids iOS focus auto-zoom) and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
 
 
 ### P0.25 — Root controls, toolbar and form-state consistency (IMPLEMENTED; browser acceptance pending)
@@ -2023,7 +2023,7 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 - **VERIFIED — exact-HEAD Pages + Graphify:** `fef43b55237c1106c02880914bc6a81681cfe0f4`; Pages build/deploy #44448700108 SUCCESS; Graphify #44448701548 SUCCESS. Chromium E2E not run.
 
-- **IMPLEMENTED — Project Settings mobile sheet acceptance (this commit).** Added 320/390px Playwright checks for full-height bounds, zero radius, sticky header, internal scrolling, 14px/42px fields, 44px disclosures and no horizontal overflow. CSS implementation landed in `e3c7a850`; browser execution pending.
+- **IMPLEMENTED — Project Settings mobile sheet acceptance (this commit).** Added 320/390px Playwright checks for full-height bounds, zero radius, sticky header, internal scrolling, 16px/44px fields, 44px disclosures and no horizontal overflow. CSS implementation landed in `e3c7a850`; browser execution pending.
 - **IMPLEMENTED — attachment popover dismissal acceptance (this commit).** Added Escape and outside-click checks for scrim/aria-expanded/focus return while preserving the unsent draft. Browser execution pending.
 
 - **IMPLEMENTED — mobile modal safe-area sizing (this commit).** Project Create, Settings, Message Viewer, Chat Action, Functions and Trace surfaces now share safe-area-aware viewport padding and max-height; Chat Action has bounded internal scrolling. Added 320×568 geometry/scroll regression for Settings, Functions and Chat Action. Browser execution pending.
@@ -2037,3 +2037,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — remaining 42px touch-target exceptions (this commit).** Jump-to-latest and Project Settings inputs/selects now meet the 44px internal baseline; their E2E geometry assertions enforce the target. Browser execution pending.
 
 - **IMPLEMENTED — visible Stop target regression (this commit).** The root control test now temporarily exposes the Stop control and asserts its 44×44 mobile target; this verifies styling/geometry, not the live streaming/abort transition.
+
+- **IMPLEMENTED — iOS-safe Project Settings typography (this commit).** Removed a misleading 14px declaration; the shared <=640px `!important` form rule keeps editable controls at 16px. Playwright asserts computed 16px and 44px minimum height at 320/390px.
