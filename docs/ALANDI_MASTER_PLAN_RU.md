@@ -97,6 +97,7 @@
 30. [ ] Keyboard-only and screen-reader smoke covers landmarks, accessible names, live status, error announcements and no hidden/false connected states; native VoiceOver remains a manual gate.
 
 - [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
+- [x] P0.23 Project Settings mobile workspace: narrow-screen project settings become a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; desktop layout remains unchanged.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 

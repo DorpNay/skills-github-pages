@@ -513,6 +513,55 @@ permalink: /
       #inputArea #stopBtn.hidden { display:none!important; }
     }
 
+    /* aLandi-project-settings-mobile-sheet */
+    @media (max-width:640px) {
+      #projectSettingsModal {
+        align-items:stretch;
+        padding:0;
+        padding-top:env(safe-area-inset-top,0px);
+        padding-bottom:env(safe-area-inset-bottom,0px);
+      }
+      #projectSettingsModal > section {
+        width:100%;
+        max-width:none;
+        height:100%;
+        max-height:100%;
+        min-height:0;
+        border-radius:0;
+        border-left:0;
+        border-right:0;
+        padding:10px 12px 14px;
+        overscroll-behavior:contain;
+      }
+      #projectSettingsModal > section > header {
+        top:0;
+        margin:-10px -12px 10px;
+        padding:calc(8px + env(safe-area-inset-top,0px)) 12px 9px;
+        min-height:52px;
+      }
+      #projectSettingsModal .settings-group {
+        padding:10px;
+        gap:8px;
+      }
+      #projectSettingsModal .settings-group h3 {
+        font-size:13px;
+        line-height:1.35;
+      }
+      #projectSettingsModal input:not([type="checkbox"]),
+      #projectSettingsModal textarea,
+      #projectSettingsModal select {
+        min-height:42px;
+        font-size:14px;
+      }
+      #projectSettingsModal textarea { min-height:88px; }
+      #projectSettingsModal button { min-height:40px; }
+      #projectSettingsModal details > summary { min-height:44px; }
+    }
+    @media (max-width:380px) {
+      #projectSettingsModal > section { padding-inline:9px; }
+      #projectSettingsModal > section > header { margin-inline:-9px;padding-inline:9px; }
+      #projectSettingsModal .settings-group { padding:8px; }
+    }
     /* aLandi mobile interaction layer: compact visual density, generous hit area. */
     @media (max-width:640px) {
       .chat-row-menu-panel button,
