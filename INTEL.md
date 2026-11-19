@@ -1887,3 +1887,16 @@ Exact upstream HEADs and declared license/capability evidence are recorded in [I
 ## 2026-11-14 — OpenShell sandbox candidate refresh
 
 OpenShell v0.1.8 (2026-11-10) is the current pinned sandbox candidate for Coder. Its tag commit is GitHub-signature verified and the release is Apache-2.0. The acquisition workflow stages only Ubuntu 24.04 x86_64 assets as a temporary Actions artifact with fixed SHA-256 and package/archive checks. It does not install or enable arbitrary shell. The owner host must first be checked for OS, architecture, Docker/Podman/VM support, kernel and resources. v0.1.8 migration caveats: symlink policy paths in writable workspaces fail closed; non-Authorization credential placement needs explicit metadata; Python SDK moved to ai-openshell/sdk-python. OpenHands v1.38.0 was rechecked but is not selected as a primary runtime; its unsandboxed mode grants host filesystem access.
+
+## Landing UI source verification — 2026-11-19
+
+These primary sources informed the responsive/mobile navigation acceptance. They are design and test references, not evidence that aLandi itself passes the criteria.
+
+- **W3C — WCAG 2.2 Recommendation:** https://www.w3.org/TR/WCAG22/ (reviewed 2026-11-19). SC 1.4.10 Reflow (AA) sets the 320 CSS px vertical-content baseline without two-dimensional scrolling except for inherently two-dimensional content. SC 2.5.8 Target Size (Minimum, AA) uses 24×24 CSS px with defined exceptions; SC 2.5.5 Target Size (Enhanced, AAA) uses 44×44 CSS px. aLandi keeps 44×44 as its stronger mobile interaction baseline; do not mislabel it as the AA minimum.
+- **W3C WAI — Understanding Reflow:** https://www.w3.org/WAI/WCAG22/Understanding/reflow.html (reviewed 2026-11-19). Use 320 CSS px as a deterministic narrow-layout acceptance width; check information/functionality and avoid page-level horizontal overflow.
+- **W3C WAI — Understanding Target Size (Minimum):** https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum (reviewed 2026-11-19). Apply the 24px AA criterion with spacing/equivalent-control exceptions; aLandi's 44px target policy is deliberately stricter for touch usability.
+- **Playwright — Emulation:** https://playwright.dev/docs/emulation (reviewed 2026-11-19). Viewport, screen size, user agent and touch can be emulated for repeatable browser tests; this does not replace real iOS Safari or assistive-technology verification.
+- **MDN — VisualViewport:** https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport (reviewed 2026-11-19). Mobile visual viewport can shrink or move independently of the layout viewport, including when the on-screen keyboard appears. Prefer progressive event handling and geometry tests over assuming one resize sequence.
+- **MDN — VirtualKeyboard API:** https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API (reviewed 2026-11-19). Marked limited availability; do not make it a required layout dependency. Keep browser-managed keyboard behavior and VisualViewport fallback.
+
+**Current application of sources:** mobile project/chat row controls were raised from 40px to 44px and a Playwright bounding-box regression was added. The code/test are IMPLEMENTED only after the commit lands on main; test execution and native-device acceptance remain separate verification gates.

@@ -426,6 +426,45 @@ test('project creation closes on Escape and restores focus to a visible control'
   await expect(page.locator('#appSidebarToggle')).toBeFocused();
 });
 
+test('mobile project and chat navigation controls meet the 44px touch target', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Mobile target project');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+
+  const projectNavigation = page.locator('#projectNavigationList');
+  if (await projectNavigation.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
+  const chatNavigation = page.locator('#chatNavigationContent');
+  if (await chatNavigation.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#chatNavToggle').click();
+  }
+
+  const controls = [
+    ['project select', page.locator('#projectNavigationList .project-nav-item .project-nav-select').first()],
+    ['project actions', page.locator('#projectNavigationList .project-row-menu summary.project-nav-settings').first()],
+    ['chat select', page.locator('#chatList .chat-row [data-action="switch-chat"]').first()],
+    ['chat actions', page.locator('#chatList .chat-row .chat-row-menu summary').first()]
+  ];
+  for (const [label, control] of controls) {
+    await expect(control, label).toBeVisible();
+    const rect = await control.boundingBox();
+    expect(rect?.width || 0, label + ' width').toBeGreaterThanOrEqual(44);
+    expect(rect?.height || 0, label + ' height').toBeGreaterThanOrEqual(44);
+  }
+
+  const sidebarWidth = await page.locator('#sidebar').evaluate(element => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth
+  }));
+  expect(sidebarWidth.scrollWidth).toBeLessThanOrEqual(sidebarWidth.clientWidth + 1);
+});
+
 test('mobile sidebar and modal close controls meet the 44px touch target', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

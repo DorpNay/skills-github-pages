@@ -333,11 +333,11 @@ permalink: /
       #sidebar .sidebar-main-section { margin:5px 8px;padding:6px;gap:4px; }
       #sidebar .sidebar-section-create { flex-basis:44px;width:44px;min-width:44px;height:44px;min-height:44px; }
       #sidebar #projectNavToggle,#sidebar #chatNavToggle { min-height:40px; }
-      #projectNavigationList .project-nav-select { min-height:40px; }
+      #projectNavigationList .project-nav-select { min-height:44px; }
       #projectNavigationList .project-row-menu summary.project-nav-settings { flex-basis:44px;width:44px;height:44px; }
       #chatList .chat-row { min-height:44px;padding:2px 5px; }
-      #chatList .chat-row > [data-action="switch-chat"] { min-height:40px; }
-      #chatList .chat-row .chat-row-menu summary { width:40px;height:40px; }
+      #chatList .chat-row > [data-action="switch-chat"] { min-height:44px; }
+      #chatList .chat-row .chat-row-menu summary { width:44px;height:44px; }
     }
     .project-create-row { color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
     .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
