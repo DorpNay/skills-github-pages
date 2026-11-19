@@ -40,7 +40,7 @@
 - [~] P0.3 Collapsible Projects: collapse gives the freed height to Chats; expanded list has internal scroll cap. Focus/scroll/selection persistence needs browser acceptance (commit `3f20322f`; E2E added, not run).
 - [~] P0.4 Project Settings: FACT — form is already grouped by Context, Profile, Memory, Sources and Data; no rebuild needed. Mobile density, actions, save/cancel/migrations and duplicate audit remain.
 - [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
-- [~] P0.6 Mobile: primary sidebar navigation and nested project/chat action controls use 44×44px touch targets; responsive and nested-menu geometry regressions are added but not run. The rest of root app still needs full mobile visual and real-device acceptance.
+- [~] P0.6 Mobile: primary sidebar navigation and nested project/chat actions already target 44px; this package extends the same minimum to chat/project menus, toolbar, attachment/context/voice choices and attachment removal. Responsive visual acceptance and real-device pass remain open.
 - [ ] P0.7 Responsive: диапазон 320–1440px, portrait/landscape, keyboard/VisualViewport, no horizontal overflow, длинные строки и сообщения.
 - [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions/Language disclosures now share Escape close + focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [~] P0.9 Chat row actions: rename/move/clone/delete/clear/export/import handlers exist; existing E2E covers move dialog, clear, clone, delete-cancel, keyboard and focus. Added a focused rename + selected-chat export regression test; import/export bundle behavior was delivered historically (PR #118). Still run the full browser suite and verify mobile/desktop menu geometry, touch and active-item persistence.
@@ -95,6 +95,8 @@
 28. [ ] aServi URL/model/key validation is localized, sequential, associated and clears corrected errors.
 29. [ ] RU/EN, dark/light, high contrast and reduced-motion states preserve labels, focus and semantic status.
 30. [ ] Keyboard-only and screen-reader smoke covers landmarks, accessible names, live status, error announcements and no hidden/false connected states; native VoiceOver remains a manual gate.
+
+- [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 

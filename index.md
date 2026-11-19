@@ -512,6 +512,48 @@ permalink: /
     @media (max-width:640px) {
       #inputArea #stopBtn.hidden { display:none!important; }
     }
+
+    /* aLandi mobile interaction layer: compact visual density, generous hit area. */
+    @media (max-width:640px) {
+      .chat-row-menu-panel button,
+      .project-row-menu-panel button,
+      .toolbar-menu-option,
+      .composer-popover-option,
+      .voice-menu-option,
+      .request-project-choice {
+        min-height:44px;
+      }
+      .request-project-choice { align-items:center; }
+      .draft-attachment-remove {
+        display:grid;place-items:center;
+        min-width:44px;min-height:44px;padding:0;
+      }
+      .chat-row-menu-panel button,
+      .project-row-menu-panel button,
+      .toolbar-menu-option { padding-inline:12px; }
+      .composer-popover-option { gap:9px;padding:10px 12px; }
+      .voice-menu-option { gap:10px;padding:10px 12px; }
+      .request-project-choice { gap:10px;padding:9px 10px; }
+      .chat-row-menu-panel,
+      .project-row-menu-panel,
+      .toolbar-menu-panel,
+      .composer-popover,
+      .context-popover { max-width:calc(100vw - 16px); }
+    }
+    @media (max-width:380px) {
+      .chat-row-menu-panel button,
+      .project-row-menu-panel button,
+      .toolbar-menu-option { font-size:12px; }
+      .composer-popover-option strong,
+      .voice-menu-option strong { font-size:12px; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      .chat-row-menu-panel,
+      .project-row-menu-panel,
+      .toolbar-menu-panel,
+      .composer-popover,
+      .context-popover { animation:none!important;transition:none!important; }
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col">
