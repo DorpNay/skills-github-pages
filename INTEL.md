@@ -1969,3 +1969,13 @@ Reviewed primary upstream references for the current root-app UI package:
 ## RU/EN dictionary integrity — 2026-11-19
 
 - `UI_TEXT.ru` and `UI_TEXT.en` are plain JavaScript object literals. Duplicate keys silently keep the last value and can hide stale copy. The current static markup uses `data-i18n`, `data-i18n-aria-label`, `data-i18n-placeholder` and `data-i18n-title`; each key must exist in both dictionaries. A Playwright static-source regression now enforces uniqueness and coverage.
+## Root UI design-system references — 2026-11-19
+
+Targeted Exa search and primary-source review for the unfinished root-app visual system and interaction consistency:
+
+- **U.S. Web Design System — Design tokens:** https://designsystem.digital.gov/design-tokens/ — reviewed 2026-11-19. USWDS uses curated, discrete token palettes for typography, spacing, color, line height and measure rather than arbitrary per-component values. Use the principle of a small, named design vocabulary; do not import the USWDS Sass/framework into the existing vanilla HTML/CSS app.
+- **U.S. Web Design System — Typography:** https://designsystem.digital.gov/components/typography/ — reviewed 2026-11-19. Recommends at least 16px effective size for most body text, generally 45–90 characters per line, and line-height of at least 1.5 for longer text. Treat these as design guidance, not a universal WCAG conformance claim; short UI labels and specialized metadata have different needs.
+- **W3C WAI-ARIA APG — Modal Dialog Pattern:** https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ — reviewed 2026-11-19. Modal background is inert; Tab/Shift+Tab remain inside; Escape closes; focus enters on open and normally returns to the invoker on close. Keep aria-modal=true only when outside interaction is actually blocked.
+- **W3C WCAG 2.2 — Reflow (SC 1.4.10, AA):** https://www.w3.org/WAI/WCAG22/Understanding/reflow.html — reviewed 2026-11-19. Vertical-reading content must reflow at an equivalent 320 CSS px width without loss of information/functionality or two-dimensional scrolling, except for inherently two-dimensional content.
+
+**aLandi application / decision:** use these sources as acceptance guidance, not as permission to clone or add a design-system dependency. P0.5 should consolidate the existing visual language into a restrained token set (semantic surfaces/status colors, typography, spacing, radii and motion), then migrate components incrementally. Preserve the current 16px mobile editable-field rule and 44px product touch-target baseline; the latter is intentionally stronger than WCAG 2.2 AA's minimum target-size criterion. Dialog focus containment and 320px reflow remain behavior/geometry gates, not visual-only checks.
