@@ -84,16 +84,12 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
 ## Последний проверенный checkpoint
-- Parent HEAD перед этим сокращением: `e34b72c38d8fe7c752b2aca4b9f38f8c16d42160`. Сразу после commit перечитать live main SHA и Actions.
-- На parent HEAD Pages/Graphify были `in_progress`; предыдущий verified exact HEAD `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d` имел Pages #44450998348 SUCCESS и Graphify #44450998692 SUCCESS.
-- Open PRs: 0; открытые issues #111 (owner release gates) и #186 (unrelated GitHub Skills exercise) — перепроверить live.
-- Следующий пакет: закрыть dynamic RU/EN state parity, dead/duplicate controls audit, затем запустить доступный Chromium/Quality path и закрывать 30-point gates по evidence.
-
-- IMPLEMENTED в main: P0.26–P0.30 — runtime RU/EN refresh для открытых Skills/Agents, AgentRun tasks/events, sidebar/chat list, project UI, attachments/context choices, active chat action labels, provider metadata и open chat rename dialog. Добавлены 2 Playwright regression tests: open-panel/draft locale switching и DOM integrity/accessibility-name inventory. Tests authored; browser execution pending.
-- Static audit на parent `815ab3db849cd365b7c7a7146c69878e01b1dd57`: 260 static IDs, 0 duplicates; 77 static `data-action` nodes, all native `button`; 69 unique action names; `chat-action-save` handled by form submit. Это статический аудит, не runtime verification.
-- Исправлены RU-only dynamic strings в request-project descriptions, tool-call/retry/research-trace labels, selected memory confirmations/toasts, Pollinations disconnect, system-prompt editing и trace-link feedback.
-- Следующий пакет: добрать action-handler audit, localize remaining error/confirm paths, add active request-context/move-chat/attachment parity tests; затем выполнить доступный Chromium/Quality path.
-
-- IMPLEMENTED в main: locale-triggered re-render теперь восстанавливает фокус в project navigation, request-context checkboxes и remove-attachment controls; chat list уже восстанавливает фокус/scroll. Добавлен focused Playwright regression на project/chat/context focus restoration; browser execution pending.
-
-- IMPLEMENTED в main: P0.31–P0.32 — localized confirmations/errors for personal/shared memory, current chat clear, last-chat delete, chat import, project memory limits and memory gateway restrictions. Raw memory-save and chat-import exception text no longer shown to users; added Playwright regression for personal/shared memory confirmation language. Browser execution pending.
+- **Live main HEAD:** `4bb57a78bd905be07a87b6f33963c6520f884fd9`; open PRs: 0; open issues: #111 (owner release gates), #186 (unrelated GitHub Skills exercise).
+- **Pages:** deployment #681 SUCCESS; live public page metadata `alandi-build-revision` exactly equals `4bb57a78bd905be07a87b6f33963c6520f884fd9`.
+- **Graphify:** #1444 SUCCESS on exact HEAD.
+- **Quality Sentinels:** no run on current HEAD; public workflow history latest #3109 failed on older `9ecf623` (Nov 17). GitHub connector cannot dispatch this workflow; no exact-head Quality/Chromium claim.
+- **Browser tests:** 4 new Playwright tests authored; 160 total in `tests/e2e/app.spec.mjs`. They have NOT been executed in Chromium. Native iOS Safari/VoiceOver also NOT VERIFIED.
+- **Static audit on exact HEAD:** 260 markup IDs, 0 duplicates; 77 static `data-action` controls, all native buttons; 69 unique static actions + 13 generated actions, no unmapped actions; 294 RU keys / 302 EN keys; 199 referenced markup keys, none missing in either dictionary.
+- **IMPLEMENTED:** commits `57b4d8b`, `babdefb`, `4bb57a7` cover live RU/EN runtime refresh, focus restoration in rebuilt surfaces, and localized memory/chat feedback. P0.26–P0.32 add 185 acceptance points; implementation/verification status is tracked item-by-item in the master plan.
+- **OPEN:** remaining provider/attachment/voice/Gateway feedback localization; active move-chat/context/attachment/message metadata regressions; Quality/Chromium execution and native-device checks.
+- **NEXT:** continue root UI with the remaining high-frequency provider and attachment feedback, then complete the focused RU/EN behavior tests. Do not start studio routes before root UI acceptance.

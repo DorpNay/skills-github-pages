@@ -232,8 +232,8 @@
 - [~] 3. Chat action save remains a form submit, not a click-only pseudo-action.
 - [~] 4. Dynamic menu actions remain delegated through one action dispatcher.
 - [~] 5. Static inventory found 77 data-action nodes across 69 unique action names.
-- [ ] 6. Inventory all 69 distinct action names against dispatcher/submit/change handlers.
-- [ ] 7. Confirm no orphaned action names remain in markup/generated templates.
+- [~] 6. Static audit matched all 69 static action names and 13 generated action names to dispatcher cases/submit path; runtime behavior still pending.
+- [~] 7. Static audit found no orphaned static or generated action names.
 - [ ] 8. Confirm no duplicate delegated listeners are installed on locale changes.
 - [ ] 9. Confirm destructive actions have clear confirmation or reversible undo.
 - [ ] 10. Confirm async actions have pending/disabled feedback.
@@ -313,7 +313,7 @@
 - [ ] 22. Localize memory list loading failures.
 - [ ] 23. Localize chat rename/move failure feedback.
 - [ ] 24. Localize chat import collision/limit details.
-- [ ] 25. Verify all memory/project/chat prompts in RU and EN with native browser dialogs.
+- [~] 25. Added Playwright coverage for EN personal/shared-memory confirmation copy; RU dialog and project/chat prompt matrix still pending.
 
 ### P0.32 — Safety and privacy feedback clarity (PARTIAL)
 

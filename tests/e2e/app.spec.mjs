@@ -6262,6 +6262,8 @@ test('locale refresh preserves focus in rebuilt project, chat and request-contex
   await page.locator('#projectCreateNameInput').fill('Locale focus project');
   await page.locator('#projectCreateModal [data-action="create-project"]').click();
 
+  const projectNavToggle = page.locator('#projectNavToggle');
+  if (await projectNavToggle.getAttribute('aria-expanded') === 'false') await projectNavToggle.click();
   const projectSelect = page.locator('#projectNavigationList .project-nav-select').first();
   await projectSelect.focus();
   await page.locator('#uiLanguage').evaluate(element => {
@@ -6270,6 +6272,8 @@ test('locale refresh preserves focus in rebuilt project, chat and request-contex
   });
   await expect(page.locator('#projectNavigationList .project-nav-select').first()).toBeFocused();
 
+  const chatNavToggle = page.locator('[data-action="toggle-chat-navigation"]');
+  if (await chatNavToggle.getAttribute('aria-expanded') === 'false') await chatNavToggle.click();
   const chatTrigger = page.locator('#chatList .chat-row-menu summary').first();
   if (await chatTrigger.count()) {
     await chatTrigger.focus();
@@ -6301,6 +6305,7 @@ test('personal and shared memory confirmations use the active locale', async ({ 
   await expect(personalItem).toBeVisible();
 
   await page.locator('#uiLanguage').selectOption('en');
+  await personalItem.locator('summary').click();
   const promoteDialogPromise = page.waitForEvent('dialog');
   await personalItem.locator('[data-action="promote-memory"]').click();
   const promoteDialog = await promoteDialogPromise;
@@ -6309,8 +6314,9 @@ test('personal and shared memory confirmations use the active locale', async ({ 
 
   await page.locator('#globalMemoryDetails').evaluate(element => { element.open = true; });
   await page.locator('#sharedMemoryInput').fill('Locale shared memory fact');
+  const sharedDialogPromise = page.waitForEvent('dialog');
   await page.locator('[data-action="save-shared-memory"]').click();
-  const sharedDialog = await page.waitForEvent('dialog');
+  const sharedDialog = await sharedDialogPromise;
   expect(sharedDialog.message()).toContain('Save this fact to SHARED memory');
   await sharedDialog.dismiss();
 });
