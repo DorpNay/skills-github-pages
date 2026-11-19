@@ -1969,3 +1969,15 @@ Reviewed primary upstream references for the current root-app UI package:
 ## RU/EN dictionary integrity — 2026-11-19
 
 - `UI_TEXT.ru` and `UI_TEXT.en` are plain JavaScript object literals. Duplicate keys silently keep the last value and can hide stale copy. The current static markup uses `data-i18n`, `data-i18n-aria-label`, `data-i18n-placeholder` and `data-i18n-title`; each key must exist in both dictionaries. A Playwright static-source regression now enforces uniqueness and coverage.
+
+
+## Engineering audit source review — 2026-11-19
+
+These references support the proposed migration and analysis techniques; they do not authorize a vendor adoption or prove aLandi implementation.
+
+- **LaunchDarkly — Performing multi-stage migrations with migration flags:** https://launchdarkly.com/docs/guides/flags/migrations (reviewed 2026-11-19). The documented migration stages distinguish the authoritative read source from write destinations: old-only, dual-write with old authority, shadow reads, new authority while retaining rollback writes, ramp-down, then new-only. Applied here as an architectural pattern for `multiAgentEnabled` → `deepResearchMethod`; no LaunchDarkly SDK, account, dependency or feature flag service is proposed.
+- **Knip — Entry Files:** https://knip.dev/explanations/entry-files (reviewed 2026-11-19). Knip builds reachability from entry files; more complete entry coverage yields a more complete graph. The generated Jekyll HTML / inline scripts need an explicit extraction/entry strategy before a module-oriented JS analyzer can reason about browser consumers.
+- **Knip — How Knip works:** https://knip.dev/explanations/how-knip-works (reviewed 2026-11-19). The report is only as complete as its entry graph; missing entries can cascade into false unused findings. A report-only inline-script audit must therefore preserve HTML/global/dynamic event consumers and show uncertainty rather than auto-delete.
+- **Knip — Configuration / Compilers:** https://knip.dev/reference/configuration (reviewed 2026-11-19). Custom compilers are available for non-standard file formats and are configured in JavaScript/TypeScript config; evaluate extraction of built HTML into deterministic JS inputs before adopting a compiler or Knip in this repository. No package installation is proposed.
+
+**Repository-specific application:** `.github/workflows/dead-code-check.yml` currently runs Vulture only on `gateway observability`; `index.md` is not in its trigger filter. The planned JS pass is separate, report-only, and must be validated against fixtures for dynamic browser references before it influences cleanup.
