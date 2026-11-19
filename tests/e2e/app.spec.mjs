@@ -6397,9 +6397,10 @@ test('system reduced-motion preference is honored in automatic mode and high con
   const focus = await page.locator('#readingContrast').evaluate(element => {
     element.focus();
     const style = getComputedStyle(element);
-    return { width: style.outlineWidth, offset: style.outlineOffset, style: style.outlineStyle };
+    return { width: style.outlineWidth, offset: style.outlineOffset, style: style.outlineStyle, color: style.outlineColor };
   });
   expect(focus.width).toBe('3px');
   expect(focus.offset).toBe('3px');
+  expect(focus.color).not.toBe('rgba(0, 0, 0, 0)');
   expect(focus.style).toBe('solid');
 });

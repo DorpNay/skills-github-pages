@@ -638,7 +638,7 @@ permalink: /
     :where(button,a,input,textarea,select,summary,[role="button"],[tabindex]:not([tabindex="-1"])):focus-visible {
       outline:var(--ui-focus-width) solid var(--ui-tiffany)!important;outline-offset:var(--ui-focus-offset);
     }
-    html[data-reading-contrast="high"] :where(button,input,textarea,select,summary,[role="button"]):focus-visible { outline-width:3px!important;outline-offset:3px!important; }
+    html[data-reading-contrast="high"] :where(button,input,textarea,select,summary,[role="button"]):focus-visible { outline:3px solid var(--ui-tiffany)!important;outline-offset:3px!important; }
     html[data-reading-contrast="high"] :is(button,input,textarea,select,summary,[role="button"]) { border-color:color-mix(in srgb,var(--ui-text) 45%,var(--ui-border))!important; }
     html[data-reading-contrast="high"] .assistant-content a { text-decoration-thickness:.12em;text-underline-offset:.18em; }
     :where(button,a,summary,[role="button"]) { touch-action:manipulation; }
