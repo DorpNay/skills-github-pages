@@ -90,7 +90,7 @@
 25. [~] Menu Escape/outside click does not activate the control underneath and restores focus; toolbar disclosure Escape handling is implemented and a regression test is added, awaiting Chromium.
 
 **Dialogs, forms and accessibility**
-26. [ ] Settings/Functions/Project/Chat dialogs contain keyboard focus, close on Escape and restore a logical opener.
+26. [~] Settings/Project/Chat focus lifecycle already has tests; added Functions + Chat Action Tab/Shift+Tab wrap, Escape close and invoker restoration regression. Chromium execution pending.
 27. [ ] Project create/edit validation is textual, localized, associated with its field and focuses the first invalid field.
 28. [ ] aServi URL/model/key validation is localized, sequential, associated and clears corrected errors.
 29. [ ] RU/EN, dark/light, high contrast and reduced-motion states preserve labels, focus and semantic status.
@@ -1993,3 +1993,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — mobile modal safe-area sizing (this commit).** Project Create, Settings, Message Viewer, Chat Action, Functions and Trace surfaces now share safe-area-aware viewport padding and max-height; Chat Action has bounded internal scrolling. Added 320×568 geometry/scroll regression for Settings, Functions and Chat Action. Browser execution pending.
 
 - **IMPLEMENTED — sticky mobile panel headers (this commit).** Functions and Trace panel headers remain visible while their long content scrolls; the short-viewport dialog regression asserts the Functions header is sticky. Browser execution pending.
+
+- **IMPLEMENTED — Functions/Chat Action modal focus regression (this commit).** Playwright now exercises Tab/Shift+Tab wrapping, Escape closure and return focus to each invoking control for both dialogs. Browser execution pending.

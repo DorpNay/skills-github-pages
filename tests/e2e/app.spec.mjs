@@ -4890,6 +4890,48 @@ test('settings and function panels close on backdrop click without leaving a sta
 });
 
 
+test('Functions and chat-action dialogs trap focus and restore their invoking controls', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const functionsTrigger = page.locator('#functionsMenuSummary');
+  await functionsTrigger.click();
+  await page.locator('#functionsMenu [data-function="research"]').click();
+  const functionsModal = page.locator('#functionPanelModal');
+  await expect(functionsModal).toBeVisible();
+  const functionFocusables = functionsModal.locator('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const firstFunctionControl = functionFocusables.first();
+  const lastFunctionControl = functionFocusables.last();
+  await firstFunctionControl.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(lastFunctionControl).toBeFocused();
+  await lastFunctionControl.focus();
+  await page.keyboard.press('Tab');
+  await expect(firstFunctionControl).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(functionsModal).toBeHidden();
+  await expect(functionsTrigger).toBeFocused();
+
+  await ensureSidebarOpen(page);
+  const chatRow = page.locator('#chatList .chat-row').first();
+  const chatMenuTrigger = chatRow.locator('.chat-row-menu summary');
+  await chatMenuTrigger.click();
+  await chatRow.locator('[data-action="chat-rename"]').click();
+  const chatActionModal = page.locator('#chatActionModal');
+  await expect(chatActionModal).toBeVisible();
+  const chatActionFocusables = chatActionModal.locator('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const firstChatActionControl = chatActionFocusables.first();
+  const lastChatActionControl = chatActionFocusables.last();
+  await firstChatActionControl.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(lastChatActionControl).toBeFocused();
+  await lastChatActionControl.focus();
+  await page.keyboard.press('Tab');
+  await expect(firstChatActionControl).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(chatActionModal).toBeHidden();
+  await expect(chatMenuTrigger).toBeFocused();
+});
+
 test('settings modal traps keyboard focus and restores its opener', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const opener = page.locator('[data-action="toggle-settings"]');
