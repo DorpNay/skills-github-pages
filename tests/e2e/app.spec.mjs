@@ -1203,6 +1203,51 @@ test('switching providers explains an empty API key field inline', async ({ page
   await expect(page.locator('#apiKeyStatus')).toHaveText('Ключ не сохранён для выбранного провайдера.');
 });
 
+for (const language of ['ru', 'en']) {
+  test('provider probe diagnostics are localized and redact credentials (' + language + ')', async ({ page }) => {
+    let releaseProbe, markProbeStarted;
+    const probeStarted = new Promise(resolve => { markProbeStarted = resolve; });
+    const probeGate = new Promise(resolve => { releaseProbe = resolve; });
+    await page.route('https://api.example.test/v1/chat/completions', async route => {
+      markProbeStarted();
+      await probeGate;
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: { message: 'invalid credential e2e-provider-secret' } })
+      });
+    });
+    await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('[data-action="toggle-settings"]').click();
+    if (!(await page.locator('#legacyProviderSettings').evaluate(element => element.open))) {
+      await page.locator('#legacyProviderSettings > summary').click();
+    }
+    await page.locator('#providerPreset').selectOption('custom');
+    await page.locator('#baseUrl').fill('https://api.example.test/v1');
+    await page.locator('#modelName').fill('e2e-provider-model');
+    await page.locator('#apiKey').fill('e2e-provider-secret');
+    await page.locator('[data-action="save-settings"]').click();
+
+    const button = page.locator('[data-action="test-connection"]');
+    await button.click();
+    await probeStarted;
+    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toHaveText(language === 'en' ? 'Checking…' : 'Проверяю…');
+
+    releaseProbe();
+    const expectedPrefix = language === 'en' ? 'Could not confirm the model: HTTP 401' : 'Не удалось подтвердить модель: HTTP 401';
+    await expect(page.locator('#apiKeyStatus')).toContainText(expectedPrefix);
+    await expect(page.locator('#apiKeyStatus')).toContainText(language === 'en' ? '[redacted key]' : '[скрытый ключ]');
+    await expect(page.locator('#apiKeyStatus')).not.toContainText('e2e-provider-secret');
+    await expect(page.locator('#toast')).toContainText(language === 'en' ? 'Provider/model check failed.' : 'Проверка провайдера не пройдена.');
+    await expect(button).toBeEnabled();
+    await expect(button).toHaveAttribute('aria-busy', 'false');
+    await expect(button).toHaveText(language === 'en' ? 'Test connection and model' : 'Проверить соединение и модель');
+  });
+}
+
 test('catalog remains usable when the saved model is missing from the live provider list', async ({ page }) => {
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
     status: 200, contentType: 'application/json',
