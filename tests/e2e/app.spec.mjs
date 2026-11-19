@@ -445,6 +445,12 @@ test('mobile project and chat navigation controls meet the 44px touch target', a
   }
 
   const controls = [
+    ['Projects section toggle', page.locator('#projectNavToggle')],
+    ['Chats section toggle', page.locator('#chatNavToggle')],
+    ['Create Project', page.locator('#projectPanel [data-action="open-project-create"]')],
+    ['Create Chat', page.locator('#chatSection [data-action="new-chat"]')],
+    ['Unassigned chats filter', page.locator('#projectlessNavButton')],
+    ['Memory disclosure', page.locator('#memoryToolsDetails > summary')],
     ['project select', page.locator('#projectNavigationList .project-nav-item .project-nav-select').first()],
     ['project actions', page.locator('#projectNavigationList .project-row-menu summary.project-nav-settings').first()],
     ['chat select', page.locator('#chatList .chat-row [data-action="switch-chat"]').first()],

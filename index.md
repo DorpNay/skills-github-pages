@@ -332,7 +332,11 @@ permalink: /
       .memory-item-actions button { min-height:44px; }
       #sidebar .sidebar-main-section { margin:5px 8px;padding:6px;gap:4px; }
       #sidebar .sidebar-section-create { flex-basis:44px;width:44px;min-width:44px;height:44px;min-height:44px; }
-      #sidebar #projectNavToggle,#sidebar #chatNavToggle { min-height:40px; }
+      #sidebar #projectNavToggle,#sidebar #chatNavToggle { min-height:44px; }
+      #sidebar .chat-scope-back,#sidebar .project-nav-unassigned { display:flex;align-items:center;min-height:44px; }
+      #sidebar .project-nav-unassigned { gap:8px;padding-inline:10px; }
+      #sidebar #memoryToolsDetails > summary,.memory-group-summary,.memory-item-summary { min-height:44px; }
+      #sidebar #memoryToolsDetails > summary { display:flex;align-items:center; }
       #projectNavigationList .project-nav-select { min-height:44px; }
       #projectNavigationList .project-row-menu summary.project-nav-settings { flex-basis:44px;width:44px;height:44px; }
       #chatList .chat-row { min-height:44px;padding:2px 5px; }

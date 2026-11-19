@@ -1900,3 +1900,5 @@ These primary sources informed the responsive/mobile navigation acceptance. They
 - **MDN — VirtualKeyboard API:** https://developer.mozilla.org/en-US/docs/Web/API/VirtualKeyboard_API (reviewed 2026-11-19). Marked limited availability; do not make it a required layout dependency. Keep browser-managed keyboard behavior and VisualViewport fallback.
 
 **Current application of sources:** mobile project/chat row controls were raised from 40px to 44px and a Playwright bounding-box regression was added. The code/test are IMPLEMENTED only after the commit lands on main; test execution and native-device acceptance remain separate verification gates.
+
+- **aLandi mobile navigation follow-up — 2026-11-19:** the 44px baseline is applied to the complete primary sidebar path (Projects/Chats expanders, Create Project/Chat, unassigned filter, Memory disclosure, project/chat selection and row-action menus), not only row controls. Automated geometry coverage spans 320/360/390 CSS px; no test-pass claim until Chromium execution.
