@@ -6320,3 +6320,40 @@ test('personal and shared memory confirmations use the active locale', async ({ 
   expect(sharedDialog.message()).toContain('Save this fact to SHARED memory');
   await sharedDialog.dismiss();
 });
+
+
+test('shared visual tokens cover typography, spacing, shape, elevation and both themes', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const tokens = await page.evaluate(() => {
+    const root = document.documentElement;
+    const read = () => {
+      const style = getComputedStyle(root);
+      return {
+        background: style.getPropertyValue('--ui-bg').trim(),
+        fontFamily: style.getPropertyValue('--ui-font-family').trim(),
+        fontSize: style.getPropertyValue('--ui-font-size-sm').trim(),
+        lineHeight: style.getPropertyValue('--ui-line-normal').trim(),
+        spacing: style.getPropertyValue('--ui-space-4').trim(),
+        radius: style.getPropertyValue('--ui-radius-sm').trim(),
+        shadow: style.getPropertyValue('--ui-shadow-overlay').trim(),
+        focusWidth: style.getPropertyValue('--ui-focus-width').trim(),
+        touchTarget: style.getPropertyValue('--ui-touch-target').trim()
+      };
+    };
+    root.dataset.theme = 'dark';
+    const dark = read();
+    root.dataset.theme = 'light';
+    const light = read();
+    return { dark, light };
+  });
+
+  for (const theme of [tokens.dark, tokens.light]) {
+    for (const key of ['background', 'fontFamily', 'fontSize', 'lineHeight', 'spacing', 'radius', 'shadow', 'focusWidth', 'touchTarget']) {
+      expect(theme[key], key + ' token must be defined').not.toBe('');
+    }
+    expect(theme.fontFamily).toContain('system-ui');
+    expect(theme.touchTarget).toBe('44px');
+  }
+  expect(tokens.dark.background).not.toBe(tokens.light.background);
+  expect(tokens.dark.shadow).not.toBe(tokens.light.shadow);
+});
