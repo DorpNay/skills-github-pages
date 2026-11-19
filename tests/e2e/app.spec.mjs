@@ -6540,3 +6540,27 @@ test('project source failures are localized and never expose Gateway diagnostics
   await expect(page.locator('#projectSourcesStatus')).toContainText('Could not process the source');
   await expect(page.locator('#projectSourcesStatus')).not.toContainText('e2e-gateway-key');
 });
+
+test('chat import validation feedback is localized and leaves existing history unchanged', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => ({
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  for (const [language, expected] of [
+    ['ru', 'Файл не является корректным экспортом чатов aLandi.'],
+    ['en', 'The file is not a valid aLandi chat export.']
+  ]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('#importFile').setInputFiles({
+      name: 'invalid-chats.json', mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify({ not: 'a chat export' }))
+    });
+    await expect(page.locator('#toast')).toContainText(expected);
+    const after = await page.evaluate(() => ({
+      chats: localStorage.getItem('ai_chats_v87'),
+      current: localStorage.getItem('ai_current_chat_v87')
+    }));
+    expect(after).toEqual(before);
+  }
+});
