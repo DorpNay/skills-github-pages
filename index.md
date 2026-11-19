@@ -3047,6 +3047,7 @@ permalink: /
       const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memoryScope:project.memoryScope||'project-only',memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
       const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      showToast(getUiLanguage()==='en'?'Project bundle exported.':'Пакет проекта экспортирован.');
     }
     function sanitizeImportedProjectChat(chat,projectId){
       return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,projectMemoryEnabled:false,
@@ -3054,22 +3055,41 @@ permalink: /
     }
     async function importProjectBundle(event){
       const file=event.target.files?.[0];event.target.value='';if(!file)return;
-      if(file.size>15*1024*1024){showToast('Файл проекта больше 15 МБ.','error');return;}
+      const en=getUiLanguage()==='en';
+      const copy={
+        tooLarge:en?'Project bundle exceeds the 15 MiB file limit.':'Пакет проекта превышает лимит 15 МиБ.',
+        invalidJson:en?'The selected file is not valid JSON.':'Выбранный файл не содержит корректный JSON.',
+        format:en?'The project bundle format or version is not supported.':'Формат или версия пакета проекта не поддерживается.',
+        name:en?'The project name must not be empty.':'Название проекта не может быть пустым.',
+        projectLimit:en?'The 200-project limit has been reached. Delete an unused project before importing.':'Достигнут предел в 200 проектов. Перед импортом удали ненужный проект.',
+        chatLimit:en?'The bundle contains more than 500 chats.':'Пакет содержит больше 500 чатов.',
+        chatShape:en?'The bundle contains an invalid chat record.':'Пакет содержит некорректную запись чата.',
+        messageLimit:en?'The bundle contains more than 50,000 messages. Split the export into smaller bundles.':'Пакет содержит больше 50 000 сообщений. Раздели экспорт на несколько пакетов.',
+        localChatLimit:en?'Import would exceed the 1,000 local chat limit.':'Импорт превысит безопасный лимит локальных чатов (1000).',
+        storage:en?'The project could not be saved. Existing projects and chats were restored.':'Не удалось сохранить проект. Исходные проекты и чаты восстановлены.',
+        failed:en?'Project import failed. Check that the file is a valid aLandi project bundle.':'Импорт проекта не выполнен. Проверь, что файл является корректным пакетом aLandi.'
+      };
+      const reject=code=>{throw new Error(code);};
+      if(file.size>15*1024*1024){showToast(copy.tooLarge,'error');return;}
       try{
-        const bundle=JSON.parse(await file.text());
-        if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats)||bundle.chats.length>500)throw new Error('Неверный формат пакета проекта.');
-        if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');
-        const totalMessages=bundle.chats.reduce((total,chat)=>total+(Array.isArray(chat?.messages)?chat.messages.length:0),0);
-         const importedChats=bundle.chats.filter(chat=>chat&&typeof chat==='object'&&Array.isArray(chat.messages)).map(chat=>sanitizeImportedProjectChat(chat,''));
-         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Пакет проекта содержит больше 50 000 сообщений; раздели экспорт на несколько пакетов.');
-        if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');
+        let bundle;
+        try{bundle=JSON.parse(await file.text());}catch(_){reject('invalidJson');}
+        if(bundle?.format!=='alandi-project-bundle'||bundle?.version!==1||!bundle.project||typeof bundle.project.name!=='string'||!Array.isArray(bundle.chats))reject('format');
+        if(!bundle.project.name.trim())reject('name');
+        if(bundle.chats.length>500)reject('chatLimit');
+        if(bundle.chats.some(chat=>!chat||typeof chat!=='object'||Array.isArray(chat)||!Array.isArray(chat.messages)))reject('chatShape');
+        if(projects.length>=200)reject('projectLimit');
+        const totalMessages=bundle.chats.reduce((total,chat)=>total+chat.messages.length,0);
+        if(totalMessages>MAX_IMPORTED_MESSAGES)reject('messageLimit');
+        const importedChats=bundle.chats.map(chat=>sanitizeImportedProjectChat(chat,''));
+        if(chats.length+importedChats.length>1000)reject('localChatLimit');
         const now=new Date().toISOString();
-        const baseName=bundle.project.name.trim().slice(0,78)||'Импортированный проект';
-        const suffix=getUiLanguage()==='en'?' (imported)':' (импорт)';
+        const baseName=bundle.project.name.trim().slice(0,78);
+        const suffix=en?' (imported)':' (импорт)';
         let importedName=(baseName+suffix).slice(0,100),serial=2;
         while(projects.some(item=>item.name.toLocaleLowerCase()===importedName.toLocaleLowerCase())){
-          const numbered=(getUiLanguage()==='en'?' (imported '+serial+')':' (импорт '+serial+')');
-          importedName=(baseName.slice(0,100-numbered.length)+numbered);serial++;
+          const numbered=en?' (imported '+serial+')':' (импорт '+serial+')';
+          importedName=baseName.slice(0,100-numbered.length)+numbered;serial++;
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
         const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
@@ -3078,10 +3098,16 @@ permalink: /
         const seen=new Set(chats.map(chat=>chat.id));
         for(const chat of importedChats){if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);chat.projectId=target.id;}
         chats=[...importedChats,...chats];currentChatId=chats[0]?.id||currentChatId;
-        if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();renderActiveChat();throw new Error('Хранилище не подтвердило запись проекта и чатов; исходные данные восстановлены.');}
+        if(!persistProjectsAndChats()){
+          projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;
+          renderProjectUI();renderChatList();renderActiveChat();reject('storage');
+        }
         renderProjectUI();renderChatList();renderActiveChat();$('projectManagerDetails').open=true;
-        showToast(getUiLanguage()==='en'?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
-      }catch(error){showToast('Импорт проекта не выполнен: '+String(error.message||error).slice(0,180),'error');}
+        showToast(en?'Imported '+importedChats.length+' chats into '+target.name+'.':'Импортировано чатов в проект «'+target.name+'»: '+importedChats.length+'.');
+      }catch(error){
+        const code=String(error?.message||'');
+        showToast((en?'Project import failed: ':'Импорт проекта не выполнен: ')+(copy[code]||copy.failed),'error');
+      }
     }
     function bindPositionedActionMenu(menu,trigger,panel) {
       const positionMenu=()=>{
