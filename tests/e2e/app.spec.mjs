@@ -818,7 +818,7 @@ test('mobile Project Settings uses a safe-area full-height sheet with compact re
     expect(metrics.borderRadius).toBe('0px');
     expect(metrics.overflowY).toBe('auto');
     expect(metrics.headerPosition).toBe('sticky');
-    expect(metrics.fields.every(field => field.fontSize >= 14 && field.height >= 42), JSON.stringify(metrics.fields)).toBe(true);
+    expect(metrics.fields.every(field => field.fontSize >= 14 && field.height >= 44), JSON.stringify(metrics.fields)).toBe(true);
     expect(metrics.summaries.every(height => height >= 44), JSON.stringify(metrics.summaries)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
@@ -3579,8 +3579,12 @@ test('mobile messages expose full text and retain a jump-to-latest control', asy
   await expect(page.locator('#toast')).toContainText('Сообщение скопировано');
 
   await page.locator('#chatBox').evaluate(el => { el.scrollTop = 0; el.dispatchEvent(new Event('scroll')); });
-  await expect(page.locator('#jumpToLatest')).toBeVisible();
-  await page.locator('#jumpToLatest').click();
+  const jumpToLatest = page.locator('#jumpToLatest');
+  await expect(jumpToLatest).toBeVisible();
+  const jumpTarget = await jumpToLatest.boundingBox();
+  expect(jumpTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(jumpTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  await jumpToLatest.click();
   await expect.poll(() => page.locator('#chatBox').evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight), { timeout: 8000 }).toBeLessThan(8);
   await expect(page.locator('#jumpToLatest')).toBeHidden();
 });

@@ -98,7 +98,7 @@
 29. [~] RU/EN, both themes, contrast and reduced-motion have existing focused tests; full cross-surface matrix pending.
 30. [~] Keyboard traversal, accessible names, status/error roles and focus behavior have E2E coverage; screen-reader and native VoiceOver remain manual gates.
 
-- [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
+- [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus, attachment removal and jump-to-latest; Project Settings inputs/selects also use 44px minimum height. Menu spacing tightened and reduced-motion transitions disabled. Browser execution remains separate.
 - [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
 
 
@@ -2033,3 +2033,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — Functions/Chat Action modal focus regression (this commit).** Playwright now exercises Tab/Shift+Tab wrapping, Escape closure and return focus to each invoking control for both dialogs. Browser execution pending.
 
 - **IMPLEMENTED — 30-point acceptance status reconciliation (this commit).** Items with code/test coverage are marked PARTIAL `[~]`; all 30 remain open until Chromium/native-device evidence. The matrix explicitly distinguishes Playwright emulation from real mobile OSK/VoiceOver.
+
+- **IMPLEMENTED — remaining 42px touch-target exceptions (this commit).** Jump-to-latest and Project Settings inputs/selects now meet the 44px internal baseline; their E2E geometry assertions enforce the target. Browser execution pending.

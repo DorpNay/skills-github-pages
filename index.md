@@ -477,7 +477,7 @@ permalink: /
     .message-viewer-content{min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;overflow-wrap:anywhere;white-space:normal;padding:8px 4px 16px;line-height:1.65;font-size:14px;color:var(--ui-text)}
     .message-viewer-content pre,.message-viewer-content table{max-width:100%;overflow:auto}
     .message-viewer-content .plain-message{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;-webkit-user-select:text}
-    .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:42px;min-height:42px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
+    .jump-to-latest{position:fixed;z-index:35;right:14px;bottom:max(calc(env(safe-area-inset-bottom) + 6.5rem),6.5rem);min-width:44px;min-height:44px;border-radius:14px;border:1px solid color-mix(in srgb,var(--ui-tiffany) 42%,var(--ui-border));background:var(--ui-surface-raised);color:var(--ui-tiffany);font-size:24px;box-shadow:0 5px 22px rgb(0 0 0 / 24%)}
     :root { --ui-control-compact:32px; --ui-control-standard:40px; --ui-control-touch:44px; --ui-control-gap:8px; --ui-control-font:12px; --ui-control-icon:18px; }
     /* Shared Functions panel primitives: theme-aware surfaces, actions and truthful states. */
     #functionPanelModal .function-panel-surface { background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-lg);color:var(--ui-text);box-shadow:0 24px 72px rgb(0 0 0 / 28%); }
@@ -574,7 +574,7 @@ permalink: /
       #projectSettingsModal input:not([type="checkbox"]),
       #projectSettingsModal textarea,
       #projectSettingsModal select {
-        min-height:42px;
+        min-height:44px;
         font-size:14px;
       }
       #projectSettingsModal textarea { min-height:88px; }
