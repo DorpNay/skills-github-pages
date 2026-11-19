@@ -1947,3 +1947,8 @@ Reviewed primary upstream references for the current root-app UI package:
 - TinyFish run `9b55917e-a96d-4849-be99-c213a82a95c4` returned a static-DOM representation only. It explicitly could not set viewport, execute JavaScript, read `window.innerWidth`, or call `getBoundingClientRect`. Do not use that tool mode for responsive pixel acceptance. Its report that the revision meta was absent is not evidence of an app defect because it could not inspect the live rendered DOM; use the Jekyll artifact check and Playwright live-site workflow.
 - TinyFish keyboard run `60646830-6785-4667-a831-37b1ac003db2` yielded partial observations only; do not promote unvisited menu/form flows to pass/fail.
 - GitHub `quality-sentinels.yml` provides real Chromium E2E behind `workflow_dispatch` input `run_chromium=true`. The currently available GitHub connector exposes fetch/rerun functions but no workflow-dispatch operation; do not pretend the manual workflow was started. Pages/Graphify success does not imply Chromium tests passed.
+
+## Toolbar disclosure focus return — 2026-11-19
+
+- Outside click on Search/Functions disclosure now closes it and restores focus to its own summary on the next animation frame, while preventing activation of the underlying control. Native `details` semantics remain intact.
+- Current DOM has no Language disclosure; language selection is a native select. Avoid stale selector references.

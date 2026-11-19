@@ -5129,16 +5129,18 @@ let agentRuntimeRefreshPromise = null;
       $('functionsMenuSummary')?.focus();
     }
     document.addEventListener('click', (event) => {
-      const toolbarMenus = ['searchModeMenu','functionsMenu','languageMenu'].map(id => $(id)).filter(menu => menu?.open);
+      const toolbarMenus = ['searchModeMenu','functionsMenu'].map(id => $(id)).filter(menu => menu?.open);
       const actionMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
       if (!toolbarMenus.length && !actionMenus.length) return;
       if (event.target.closest('#searchModeMenu, #functionsMenu, #languageMenu, .chat-row-menu')) return;
       const actionMenuTrigger=actionMenus[0]?.querySelector('summary')||null;
+      const toolbarMenuTrigger=toolbarMenus[0]?.querySelector('summary')||null;
       toolbarMenus.forEach(menu => { menu.open = false; });
       actionMenus.forEach(menu => { menu.open = false; });
-      if(actionMenuTrigger){
+      const focusTarget=actionMenuTrigger||toolbarMenuTrigger;
+      if(focusTarget){
         requestAnimationFrame(()=>{
-          if(actionMenuTrigger.isConnected&&!actionMenuTrigger.closest('[inert]'))actionMenuTrigger.focus({preventScroll:true});
+          if(focusTarget.isConnected&&!focusTarget.closest('[inert]'))focusTarget.focus({preventScroll:true});
         });
       }
       event.preventDefault();

@@ -77,7 +77,7 @@
 14. [~] Attachment, project/chat, Functions and context/voice menu actions plus attachment removal have Playwright 44px target coverage; width and height are now both measured. Bounded scrolling remains.
 15. [ ] Request-context project rows are fully tappable and do not mutate the active chat project.
 16. [ ] Voice mode choices have 44px mobile hit targets and truthful availability copy.
-17. [~] Escape/outside dismissal closes only the active popover and returns focus to its trigger; toolbar disclosures now close on Escape, composer popovers have Escape handling, but the full cross-menu matrix remains unverified.
+17. [~] Escape/outside dismissal closes only the active popover and returns focus to its trigger; Search/Functions disclosures close on Escape and outside click, composer popovers have Escape handling; outside-click focus return added, but the full cross-menu matrix remains unverified.
 18. [ ] Attachment removal is reachable at 44px on touch screens and does not submit the draft.
 
 **Sidebar and navigation**
@@ -1979,3 +1979,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **PARTIAL KEYBOARD OBSERVATION:** TinyFish run `60646830-6785-4667-a831-37b1ac003db2` observed sidebar and Settings Escape closure/focus return; project actions, Functions outside click, Voice menu and Create Project validation were not reached. Existing Playwright tests cover several of those paths; no browser pass is claimed.
 
 - **IMPLEMENTED — stronger geometry assertions (this commit).** Nested menu/action acceptance measures both width and height; the eight-width responsive sweep checks left/right bounds for header and composer, and the 844×390 landscape test checks header/toolbar/composer edges rather than width alone. Browser execution pending.
+
+- **IMPLEMENTED — toolbar outside-click focus return (this commit).** Focus target is selected from the active toolbar disclosure; requestAnimationFrame restores focus only while the trigger remains connected and outside inert content. Removed stale Language disclosure selector because the current UI uses a language select.

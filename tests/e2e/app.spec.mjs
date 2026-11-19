@@ -3908,6 +3908,7 @@ test('toolbar disclosure menus close on Escape and outside click without activat
     await expect(menu).toHaveAttribute('open', '');
     await page.locator('#modeFast').click();
     await expect(menu).not.toHaveAttribute('open', '');
+    await expect(trigger).toBeFocused();
     await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   }
 });
