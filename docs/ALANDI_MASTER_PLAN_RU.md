@@ -50,7 +50,7 @@
 - [x] P0.13 Deep Research panel: duplicate Quick/Thorough and web breadth removed; real `multi_step_evidence_report` (sequential stages on one model) remains selectable, other methods are a non-interactive planned catalogue. No fake multi-agent independence (commit `8d88296ffc1ef86a7df0ed9368e897bc40e9d425`).
 - [~] P0.14 Agents panel: runtime separated from saved role blueprint; read-only catalogue includes specialist profiles, chat-directed subagents, parallel teams, review/debate, coding team, swarm/DAG and custom builder as PLANNED. Actual runtime remains one Gateway worker/concurrency=1; independent subagents/agent library/builder are not implemented (commit `4bd7df01…`).
 - [~] P0.15 Live chat status: chat and panel show allowlisted Gateway events and real `occurred_at` timestamps. Full model/tool/source/progress/error/approval/cancel/reconnect semantics still need integration (commit `6f6914f2…`).
-- [~] P0.16 RU/EN: new Research/Agent sections and Create actions are localized RU/EN; full pass over validation/empty/error/loading/disabled and all dynamic panels remains.
+- [~] P0.16 RU/EN: all static `data-i18n*` markup references exist in both dictionaries; duplicate `languageLabel` and project-memory helper keys removed, and a static Playwright guard checks uniqueness/completeness. Dynamic validation/empty/error/loading/disabled state matrix remains.
 - [ ] P0.17 Theme/motion/accessibility: light/dark, prefers-reduced-motion и user override, keyboard-only, visible focus, contrast, names/landmarks/live regions.
 - [ ] P0.18 Remove deadwood: tracing всех controls, handlers, duplicated state, stale flags и ненужного payload; удалить только после поиска всех consumers, migration/import/export и regression contract.
 - [ ] P0.19 Performance: измерить payload/startup/render/network; убирать только доказанные DOM scans, sync work и дублирование, не минифицировать и не добавлять build tooling наугад.
@@ -2043,3 +2043,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — root keyboard and toolbar bounds regression (this commit).** Responsive sweep measures toolbar edges at all eight widths; root focus/44px coverage includes modeDeep, Functions and execution-mode toggle; added a real Tab-order walk across toolbar → composer → sidebar. Browser execution pending.
 
 - **VERIFIED — exact-HEAD Pages + Graphify:** `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d`; Pages build/deploy #44450998348 SUCCESS; Graphify #44450998692 SUCCESS. Playwright E2E was not run; Quality Sentinels requires manual workflow_dispatch, which is not exposed by the current GitHub connector.
+
+- **IMPLEMENTED — RU/EN dictionary integrity (this commit).** Removed duplicate `languageLabel`, `helperMemoryNoProject` and `helperMemoryNoConfig` keys; later explicit copy remains authoritative. Added a static test for duplicate keys and missing markup translations. Browser execution pending.

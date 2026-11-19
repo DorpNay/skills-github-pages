@@ -99,4 +99,5 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - IMPLEMENTED: jump-to-latest и поля Project Settings повышены с 42 до 44px; добавлены геометрические assertions. Root controls regression также проверяет 44×44 видимого Stop control (без имитации реального stream/abort).
 - VERIFIED exact HEAD `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d`: Pages build/deploy #44450998348 SUCCESS; Graphify #44450998692 SUCCESS. Playwright E2E не запускался: Quality Sentinels требует workflow_dispatch, такого action в текущем GitHub connector нет.
 - Open PRs 0; issues #186 (unrelated GitHub Skills exercise), #111 (owner release gates).
-- Следующий пакет: закрыть RU/EN dynamic UI gaps и провести targeted dead/duplicate control audit; затем продолжить P0 acceptance.
+- IMPLEMENTED: static RU/EN dictionary audit removes duplicate keys; Playwright guard checks dictionary uniqueness and complete `data-i18n*` coverage. Execution pending.
+- Следующий пакет: close remaining dynamic RU/EN states and run targeted dead/duplicate control audit; then Chromium acceptance.

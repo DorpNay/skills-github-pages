@@ -5894,6 +5894,29 @@ test('legacy chats and imports without an explicit web-search opt-in stay model-
 });
 
 
+test('UI_TEXT dictionaries have unique RU/EN keys and cover every translated markup attribute', async () => {
+  const source = await readFile('./index.md', 'utf8');
+  const dictionaryStart = source.indexOf('const UI_TEXT={');
+  expect(dictionaryStart).toBeGreaterThanOrEqual(0);
+  const ruStart = source.indexOf('ru:{', dictionaryStart) + 4;
+  const enMarker = source.indexOf('\n      en:{', ruStart);
+  expect(enMarker).toBeGreaterThan(ruStart);
+  const enStart = enMarker + '\n      en:{'.length;
+  const enEnd = source.indexOf('\n      }\n    };', enStart);
+  expect(enEnd).toBeGreaterThan(enStart);
+
+  const collectKeys = body => [...body.matchAll(/(?:^|,)\s*([A-Za-z_$][\w$]*)\s*:/g)].map(match => match[1]);
+  const ruKeys = collectKeys(source.slice(ruStart, enMarker));
+  const enKeys = collectKeys(source.slice(enStart, enEnd));
+  const duplicates = keys => [...new Set(keys.filter((key, index) => keys.indexOf(key) !== index))];
+  expect(duplicates(ruKeys), 'duplicate Russian UI_TEXT keys').toEqual([]);
+  expect(duplicates(enKeys), 'duplicate English UI_TEXT keys').toEqual([]);
+
+  const markupKeys = [...new Set([...source.matchAll(/\bdata-i18n(?:-aria-label|-placeholder|-title)?="([^"]+)"/g)].map(match => match[1]))];
+  expect(markupKeys.filter(key => !ruKeys.includes(key)), 'missing Russian translation keys').toEqual([]);
+  expect(markupKeys.filter(key => !enKeys.includes(key)), 'missing English translation keys').toEqual([]);
+});
+
 test('global settings are grouped by purpose and localized in Russian and English', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-settings"]').first().click();

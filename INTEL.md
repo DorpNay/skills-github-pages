@@ -1965,3 +1965,7 @@ Reviewed primary upstream references for the current root-app UI package:
 
 - Keep mobile editable controls at 16 CSS px to avoid automatic focus zoom in iOS Safari. Use compact spacing, row density and grouping for visual compactness; do not reduce the input font size to achieve it.
 - Project Settings inherits the shared <=640px 16px form rule (`!important`). The earlier local 14px declaration was overridden at runtime; it has been removed to avoid misleading cascade intent. Playwright now asserts exact computed 16px and 44px minimum field height at 320px and 390px.
+
+## RU/EN dictionary integrity — 2026-11-19
+
+- `UI_TEXT.ru` and `UI_TEXT.en` are plain JavaScript object literals. Duplicate keys silently keep the last value and can hide stale copy. The current static markup uses `data-i18n`, `data-i18n-aria-label`, `data-i18n-placeholder` and `data-i18n-title`; each key must exist in both dictionaries. A Playwright static-source regression now enforces uniqueness and coverage.
