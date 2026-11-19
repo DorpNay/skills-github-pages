@@ -405,6 +405,14 @@ test('memory facts expand with scope and provenance; promotion keeps the persona
 test('project creation closes on Escape and restores focus to a visible control', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const stop = page.locator('#stopBtn');
+  await stop.evaluate(element => element.classList.remove('hidden'));
+  await expect(stop).toBeVisible();
+  const stopTarget = await stop.boundingBox();
+  expect(stopTarget?.width || 0).toBeGreaterThanOrEqual(44);
+  expect(stopTarget?.height || 0).toBeGreaterThanOrEqual(44);
+  await stop.evaluate(element => element.classList.add('hidden'));
+
   await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await expect(page.locator('#projectCreateModal')).toBeVisible();

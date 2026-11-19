@@ -75,7 +75,7 @@
 **Composer and menus**
 11. [~] Composer row geometry and 44px control tests exist at 320/360px; browser execution pending.
 12. [~] Narrow composer regression asserts >=200px draft width at 320/360px; browser execution pending.
-13. [~] Send target geometry is asserted; visible Stop state while streaming still needs a bounded browser scenario.
+13. [~] Send target geometry is asserted; visible Stop target is now measured at 44×44, while real streaming/abort state remains a separate scenario.
 14. [~] Attachment, project/chat, Functions and context/voice menu actions plus attachment removal have Playwright 44px target coverage; width and height are now both measured. Bounded scrolling remains.
 15. [~] Request context scope and active-chat project isolation have E2E coverage; touch/scroll acceptance pending.
 16. [~] Voice menu copy and 44px action-target regression added; browser execution pending.
@@ -2035,3 +2035,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — 30-point acceptance status reconciliation (this commit).** Items with code/test coverage are marked PARTIAL `[~]`; all 30 remain open until Chromium/native-device evidence. The matrix explicitly distinguishes Playwright emulation from real mobile OSK/VoiceOver.
 
 - **IMPLEMENTED — remaining 42px touch-target exceptions (this commit).** Jump-to-latest and Project Settings inputs/selects now meet the 44px internal baseline; their E2E geometry assertions enforce the target. Browser execution pending.
+
+- **IMPLEMENTED — visible Stop target regression (this commit).** The root control test now temporarily exposes the Stop control and asserts its 44×44 mobile target; this verifies styling/geometry, not the live streaming/abort transition.

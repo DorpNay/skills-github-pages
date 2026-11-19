@@ -96,6 +96,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Продолжать реализацию root UI крупными пакетами: следующий пакет — единая плотность и responsive-иерархия остальных модальных окон и основных toolbar/chat surfaces; E2E не блокирует пакет, focused acceptance после него.
 
 - IMPLEMENTED в main: P0.25 root control system — общий keyboard focus для ссылок/disclosures/selects, forced-colors, aria-invalid/disabled/busy состояния, единая тема toolbar/composer, pressed mode states, Send/Stop semantics, sidebar focus, mobile 44px controls и safe-area toast. Добавлен focused Playwright regression для 7 control targets + invalid Project Create field; execution pending.
-- IMPLEMENTED: jump-to-latest и поля Project Settings повышены с 42 до 44px; добавлены геометрические assertions.
+- IMPLEMENTED: jump-to-latest и поля Project Settings повышены с 42 до 44px; добавлены геометрические assertions. Root controls regression также проверяет 44×44 видимого Stop control (без имитации реального stream/abort).
 - Live parent перед пакетом: `a56bb935e999e9fc8bc07965505ae30835bcb544`; open PRs 0; issues #186, #111. Доступный GitHub tool surface не предоставляет workflow_dispatch; exact-head CI для нового commit не заявлять.
 - Следующий пакет: закрыть RU/EN dynamic UI gaps и провести targeted dead/duplicate control audit; затем продолжить P0 acceptance.
