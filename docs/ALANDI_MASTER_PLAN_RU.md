@@ -308,7 +308,7 @@
 - [~] 17. Localize project import structural validation errors; format, project-name and chat-shape validation now have RU/EN copy and regression coverage.
 - [~] 18. Localize project import size/count limits; 15 MiB, 200 projects, 500 chats, 50,000 messages and 1,000 local chats have explicit RU/EN feedback.
 - [~] 19. Localize project export/import completion toasts; export and import now announce success in the active locale.
-- [ ] 20. Localize project source upload/delete error status.
+- [~] 20. Localize project source upload/delete/catalog failures and timeouts; raw Gateway diagnostics are no longer shown in status, with RU/EN credential-redaction regression authored.
 - [ ] 21. Localize shared-memory promotion errors from IndexedDB.
 - [ ] 22. Localize memory list loading failures.
 - [ ] 23. Localize chat rename/move failure feedback.
