@@ -16,10 +16,10 @@ project_state:
     pr131_head_at_plan_creation: "597536924ce37b17f8832aa36ea5b928f5584230"
     promotion_gate: "bounded scope, V1 compatibility, no unfinished V2 dependency, failure-path tests, exact-head CI, accessibility review, rollback, evidence-backed decision"
   root_orienter:
-    status: "NOW.md is the sole first-read checkpoint. Functional code/test parent c7ac7ab976ae5333010b72370b6f1fec28c9c655; 0 open PRs; issues #111 and #186 (#186 unrelated). OR-004/OR-005/OR-006 archived; K.5 #1 includes verified Memory IA, voice controls, 16px mobile inputs, header context capsule and project Sources manager. Native iPhone Safari/VoiceOver and compact mobile hierarchy/accessibility remain open."
+    status: "NOW.md is the sole first-read checkpoint. Functional code/test parent c7ac7ab976ae5333010b72370b6f1fec28c9c655; 1 open PR (#187); issues #111 and #186 (#186 unrelated). OR-004/OR-005/OR-006 archived; K.5 #1 includes verified Memory IA, voice controls, 16px mobile inputs, header context capsule and project Sources manager. Native iPhone Safari/VoiceOver and compact mobile hierarchy/accessibility remain open."
     branch: "main"
-    base_main: "d3520e0eee70ee9a2b6a3f887e0008c3b6cfe3dc"
-    open_prs_at_checkpoint: 0
+    base_main: "484c3b9b4570e110f8bc4584bab322c80c37803c"
+    open_prs_at_checkpoint: 1
     open_issues_at_checkpoint: 2
     runtime_boundary: "AgentRun single/team_review/coder_review SQLite DAG and chat route/status remain partial; bounded selected context, same-chat result and collapsible status are present. Plan 2 Deep Research method separation is verified by exact Quality/Chromium. One worker/model slot, serial inference, tools/filesystem/network disabled, host feature-off. Browser Workspace is not a local AI Coder sandbox; offline package is not installed."
     next: "Verify exact-child Freshness/Provenance; then complete native iPhone Safari/VoiceOver and compact mobile hierarchy/navigation/accessibility/forms acceptance. Keep architecture proposals off the landing critical path."
@@ -292,12 +292,12 @@ voice_selection:
   next: "verify post-merge main workflows on the exact current main SHA; owner validates exact installed artifacts, hashes/licenses and compatibility on private VPS; enable document extraction and ASR/TTS only one at a time after checks; test all three voice scenarios on target device"
 
 current_checkpoint:
-  date: "2026-11-17"
-  verified_main: "d3520e0eee70ee9a2b6a3f887e0008c3b6cfe3dc"
+  date: "2026-11-19"
+  verified_main: "484c3b9b4570e110f8bc4584bab322c80c37803c"
   last_main_action: "Project Sources manager implemented: project-scoped upload via Gateway extraction, SHA-256 deduplication, chunk indexing, catalog, bounded first-chunk preview and scoped delete; original file bytes are not retained. Quality #44006105936 SUCCESS (7/7: 143 built-app Chromium + 1 published-site smoke; deployed revision exact), Graphify #44006105833 SUCCESS, Pages #44006104480 SUCCESS. Gateway #44004983557 PASS on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7; no Gateway files changed after it."
   last_functional_checkpoint: "c7ac7ab976ae5333010b72370b6f1fec28c9c655"
   main_quality: "SUCCESS #44006105936 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655; 7/7 jobs, 143 built-app Chromium tests and 1 published-site Chromium smoke; deployed revision matched."
-  main_freshness: "FAILED #44007278149: root_orienter.base_main was stale against snapshot main_sha; repaired in direct child of d3520e0eee70ee9a2b6a3f887e0008c3b6cfe3dc; rerun exact child."
+  main_freshness: "PENDING: state snapshot refreshed to live main 484c3b9b4570e110f8bc4584bab322c80c37803c; exact-head Project State Freshness rerun required."
   main_graphify: "SUCCESS #44006105833 on exact functional SHA c7ac7ab976ae5333010b72370b6f1fec28c9c655."
   main_gateway: "SUCCESS #44004983557 on backend SHA f69a999b23d30eedb0b9157eabccf97e2dfd04c7 across Python 3.12/13/14; no Gateway files changed in the functional descendant."
   main_provenance: "SUCCESS #44007278170 on documentation parent 760fc736be44c361beedcf43e394dc493c823e15; rerun exact child."
