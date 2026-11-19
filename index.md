@@ -6802,43 +6802,58 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       showToast(getUiLanguage()==='en'?'Chat exported.':'Чат экспортирован.');
     }
     async function importChats(event) {
-      const file = event.target.files?.[0];
-      event.target.value = '';
-      if (!file) return;
-      if (file.size > 15 * 1024 * 1024) { showToast(getUiLanguage()==='en'?'File is too large (15 MB limit).':'Файл слишком большой (лимит 15 МБ).','error'); return; }
-      try {
-        const imported = JSON.parse(await file.text());
-        if (!Array.isArray(imported) || !imported.length || imported.length > 500 ||
-            imported.some((chat) => !chat || typeof chat.id !== 'string' || !Array.isArray(chat.messages))) {
-          throw new Error('Структура файла не похожа на экспорт чатов.');
-        }
+      const file=event.target.files?.[0];event.target.value='';if(!file)return;
+      const en=getUiLanguage()==='en';
+      const copy={
+        tooLarge:en?'The chat export exceeds the 15 MiB file limit.':'Экспорт чатов превышает лимит 15 МиБ.',
+        invalidJson:en?'The selected file is not valid JSON.':'Выбранный файл не содержит корректный JSON.',
+        format:en?'The file is not a valid aLandi chat export.':'Файл не является корректным экспортом чатов aLandi.',
+        chatLimit:en?'The export must contain between 1 and 500 chats.':'Экспорт должен содержать от 1 до 500 чатов.',
+        shape:en?'The export contains an invalid chat record.':'Экспорт содержит некорректную запись чата.',
+        messageLimit:en?'The export contains more than 50,000 messages. Split it into smaller files.':'Экспорт содержит больше 50 000 сообщений. Раздели его на несколько файлов.',
+        localLimit:en?'Import would exceed the 1,000 local chat limit. Delete unused chats first.':'Импорт превысит лимит 1000 локальных чатов. Сначала удали ненужные чаты.',
+        storage:en?'Browser storage could not confirm the import; the existing history was restored.':'Хранилище не подтвердило импорт; исходная история восстановлена.',
+        failed:en?'Chat import failed. Check the file format and browser storage.':'Не удалось импортировать чаты. Проверь формат файла и доступность хранилища.'
+      };
+      if(file.size>15*1024*1024){showToast(copy.tooLarge,'error');return;}
+      try{
+        let imported;
+        try{imported=JSON.parse(await file.text());}catch(_){showToast(copy.invalidJson,'error');return;}
+        if(!Array.isArray(imported)||!imported.length)throw new Error('format');
+        if(imported.length>500)throw new Error('chatLimit');
+        if(imported.some(chat=>!chat||typeof chat.id!=='string'||!Array.isArray(chat.messages)))throw new Error('shape');
         const totalMessages=imported.reduce((total,chat)=>total+chat.messages.length,0);
-         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('Файл содержит больше 50 000 сообщений; раздели экспорт на несколько файлов.');
-         if (chats.length + imported.length > 1000) throw new Error('Импорт превысит лимит 1000 чатов. Сначала удали ненужные чаты.');
-        const seen = new Set(chats.map(chat=>chat.id));
-        const clean = imported.map((chat) => ({
-          id: chat.id.slice(0, 128), title: typeof chat.title === 'string' ? chat.title.slice(0, 160) : (getUiLanguage()==='en'?'Imported chat':'Импортированный чат'),
-          projectId: typeof chat.projectId==='string'&&projects.some(project=>project.id===chat.projectId)?chat.projectId:null,
-          projectMemoryEnabled: chat.projectMemoryEnabled===true,
-          
-          processingMode: ['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
-          searchMode: ['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'offline',
-          deepResearchMethod: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod:(chat.multiAgentEnabled===true?'multi_step_evidence_report':'none'),
-          multiAgentEnabled: ['none','multi_step_evidence_report'].includes(chat.deepResearchMethod) ? chat.deepResearchMethod === 'multi_step_evidence_report' : chat.multiAgentEnabled===true,
-          skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',
-          messages: chat.messages.filter((m) => m && ['user', 'assistant', 'tool'].includes(m.role)).slice(0,10000).map((m) => ({
-            role: m.role, content: typeof m.content === 'string' ? m.content.slice(0,30000) : '',
-            ...(typeof m.tool_call_id === 'string' ? { tool_call_id: m.tool_call_id.slice(0,200) } : {}),
-            ...(Array.isArray(m.tool_calls) ? { tool_calls: m.tool_calls.slice(0,100) } : {}), ...(m.error ? { error: true } : {})
+        if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('messageLimit');
+        if(chats.length+imported.length>1000)throw new Error('localLimit');
+        const seen=new Set(chats.map(chat=>chat.id));
+        const clean=imported.map(chat=>({
+          id:chat.id.slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):(en?'Imported chat':'Импортированный чат'),
+          projectId:typeof chat.projectId==='string'&&projects.some(project=>project.id===chat.projectId)?chat.projectId:null,
+          projectMemoryEnabled:chat.projectMemoryEnabled===true,
+          processingMode:['fast','deep'].includes(chat.processingMode)?chat.processingMode:'fast',
+          searchMode:['normal','more','offline'].includes(chat.searchMode)?chat.searchMode:'offline',
+          deepResearchMethod:['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod:(chat.multiAgentEnabled===true?'multi_step_evidence_report':'none'),
+          multiAgentEnabled:['none','multi_step_evidence_report'].includes(chat.deepResearchMethod)?chat.deepResearchMethod==='multi_step_evidence_report':chat.multiAgentEnabled===true,
+          skillPreset:['auto','planning','research','code-review','data-analysis','agent-systems','multimodal'].includes(chat.skillPreset)?chat.skillPreset:'auto',
+          messages:chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({
+            role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',
+            ...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),
+            ...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls.slice(0,100)}:{}),...(m.error?{error:true}:{})
           }))
         }));
-        clean.forEach((chat) => { const original=chat.id;if(seen.has(chat.id)){chat.id=projectIdNew();}seen.add(chat.id); });
-        if (activeController) stopGeneration();
+        clean.forEach(chat=>{if(seen.has(chat.id))chat.id=projectIdNew();seen.add(chat.id);});
+        if(activeController)stopGeneration();
         const previousChats=chats,previousCurrentId=currentChatId;
-        if(!updateState([...clean,...chats], clean[0].id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});throw new Error('Хранилище не подтвердило импорт; исходная история восстановлена.');}
+        if(!updateState([...clean,...chats],clean[0].id)){
+          chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});
+          throw new Error('storage');
+        }
         toggleSidebar(false);
-        showToast(getUiLanguage()==='en'?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
-      } catch (error) { console.error('Chat import failed:',error);showToast(getUiLanguage()==='en'?'Could not import chats. Check the file format, limits and browser storage.':'Не удалось импортировать чаты. Проверь формат файла, ограничения и доступность хранилища.','error'); }
+        showToast(en?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
+      }catch(error){
+        const code=String(error?.message||'');
+        showToast(copy[code]||copy.failed,'error');
+      }
     }
 
     async function copyText(text) {
