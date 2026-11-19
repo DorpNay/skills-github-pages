@@ -97,7 +97,7 @@
 30. [ ] Keyboard-only and screen-reader smoke covers landmarks, accessible names, live status, error announcements and no hidden/false connected states; native VoiceOver remains a manual gate.
 
 - [x] P0.22 Mobile interaction polish: extended 44px minimum hit areas to nested chat/project actions, toolbar choices, attachment/context/voice menus and attachment removal; tightened menu spacing on narrow screens and disabled menu transitions under reduced-motion preference. Commit-backed implementation; browser execution remains separate.
-- [x] P0.23 Project Settings mobile workspace: narrow-screen project settings become a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; desktop layout remains unchanged.
+- [~] P0.23 Project Settings mobile workspace: narrow-screen settings use a safe-area-aware full-height sheet with sticky compact header, reduced group padding, readable 14px fields and bounded internal scrolling; added 320/390px Playwright geometry/field-size regression. Browser execution pending.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
@@ -1986,3 +1986,6 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — toolbar outside-click focus return (this commit).** Focus target is selected from the active toolbar disclosure; requestAnimationFrame restores focus only while the trigger remains connected and outside inert content. Removed stale Language disclosure selector because the current UI uses a language select.
 
 - **VERIFIED — exact-HEAD Pages + Graphify:** `fef43b55237c1106c02880914bc6a81681cfe0f4`; Pages build/deploy #44448700108 SUCCESS; Graphify #44448701548 SUCCESS. Chromium E2E not run.
+
+- **IMPLEMENTED — Project Settings mobile sheet acceptance (this commit).** Added 320/390px Playwright checks for full-height bounds, zero radius, sticky header, internal scrolling, 14px/42px fields, 44px disclosures and no horizontal overflow. CSS implementation landed in `e3c7a850`; browser execution pending.
+- **IMPLEMENTED — attachment popover dismissal acceptance (this commit).** Added Escape and outside-click checks for scrim/aria-expanded/focus return while preserving the unsent draft. Browser execution pending.

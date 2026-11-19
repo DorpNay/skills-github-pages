@@ -772,6 +772,58 @@ test('project create and edit forms announce required names and clear corrected 
   await expect(page.locator('#projectNameError')).toBeHidden();
 });
 
+test('mobile Project Settings uses a safe-area full-height sheet with compact readable fields', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Mobile settings sheet');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const projectRow = page.locator('#projectNavigationList .project-nav-item').first();
+  await projectRow.locator('.project-row-menu summary').click();
+  await projectRow.locator('[data-action="open-project-settings"]').click();
+  const modal = page.locator('#projectSettingsModal');
+  const sheet = modal.locator(':scope > section');
+  await expect(modal).toBeVisible();
+
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    const metrics = await sheet.evaluate(element => {
+      const rect = element.getBoundingClientRect();
+      const header = element.querySelector(':scope > header');
+      const fields = ['#projectNameInput', '#projectInstructionsInput', '#projectMemoryScopeSelect']
+        .map(selector => {
+          const field = element.querySelector(selector);
+          const style = getComputedStyle(field);
+          return { id: field.id, fontSize: parseFloat(style.fontSize), height: field.getBoundingClientRect().height };
+        });
+      const summaries = [...element.querySelectorAll('details > summary')]
+        .filter(summary => summary.getClientRects().length)
+        .map(summary => summary.getBoundingClientRect().height);
+      return {
+        left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, height: rect.height,
+        borderRadius: getComputedStyle(element).borderRadius,
+        overflowY: getComputedStyle(element).overflowY,
+        headerPosition: getComputedStyle(header).position,
+        fields, summaries
+      };
+    });
+    expect(metrics.left, 'sheet left at ' + width + 'px').toBeGreaterThanOrEqual(-1);
+    expect(metrics.right, 'sheet right at ' + width + 'px').toBeLessThanOrEqual(width + 1);
+    expect(metrics.top).toBeGreaterThanOrEqual(-1);
+    expect(metrics.bottom).toBeLessThanOrEqual(845);
+    expect(metrics.height).toBeGreaterThanOrEqual(820);
+    expect(metrics.borderRadius).toBe('0px');
+    expect(metrics.overflowY).toBe('auto');
+    expect(metrics.headerPosition).toBe('sticky');
+    expect(metrics.fields.every(field => field.fontSize >= 14 && field.height >= 42), JSON.stringify(metrics.fields)).toBe(true);
+    expect(metrics.summaries.every(height => height >= 44), JSON.stringify(metrics.summaries)).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+});
+
 test('project quick actions open a separate create form and persist the chosen memory scope', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
@@ -820,14 +872,26 @@ test('composer popover dims the page and the first outside tap only dismisses it
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('#userInput').fill('SCRIM_FIRST_TAP_SENTINEL');
   await page.locator('#attachTextButton').click();
-  await expect(page.locator('#attachmentMenu')).toBeVisible();
+  const trigger = page.locator('#attachTextButton');
+  const menu = page.locator('#attachmentMenu');
+  await expect(menu).toBeVisible();
   await expect(page.locator('#composerPopoverScrim')).toBeVisible();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toBeFocused();
 
+  await trigger.click();
+  await expect(menu).toBeVisible();
   const send = await page.locator('#sendBtn').boundingBox();
   expect(send).not.toBeNull();
   await page.mouse.click(send.x + send.width / 2, send.y + send.height / 2);
   await expect(page.locator('#attachmentMenu')).toBeHidden();
   await expect(page.locator('#composerPopoverScrim')).toBeHidden();
+  await expect(page.locator('#attachTextButton')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#attachTextButton')).toBeFocused();
   await expect(page.locator('#userInput')).toHaveValue('SCRIM_FIRST_TAP_SENTINEL');
   await expect(page.locator('#chatBox')).not.toContainText('SCRIM_FIRST_TAP_SENTINEL');
 });
