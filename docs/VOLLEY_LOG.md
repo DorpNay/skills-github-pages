@@ -1,3 +1,12 @@
+## V-2026-11-19-PR187-CHROMIUM-REGRESSION
+
+- Quality Sentinels #3113 ran on code/test SHA `ef9086431dbe2d847c73b35cb66e81f228367a99`. Integrity, Security, Context, Jekyll and static analysis passed.
+- Chromium scheduled 197 tests with one worker. At least 29 failures surfaced before the 15-minute job was cancelled; the remaining suite did not complete. Failures span existing aServi cache metadata text, RU Deep Research copy, mobile navigation/composer/touch geometry, Functions/settings visibility/focus, AgentRun timeouts/disabled controls and a null-value setter TypeError.
+- The PR's runtime diff is limited to provider probe diagnostics; the reported failures are in other areas. Main-baseline Chromium has not been rerun, so do not attribute them conclusively to either the PR or baseline.
+- Project State Freshness #1354 failed before canonical state refresh. The live queue and snapshot predicates now match; official rerun remains pending because browser automation credits are exhausted.
+- Exact current PR head is documentation-only after the code/test SHA above. No merge or deployment.
+- Next: inspect failing Chromium cases and compare against main baseline; rerun Quality/Freshness on exact current HEAD when authorized browser automation is available.
+
 ## V-2026-11-19-PR187-PROVIDER-DIAGNOSTICS
 
 - Parent/live main exact: `484c3b9b4570e110f8bc4584bab322c80c37803c`; live queue at capture: PR #187, issues #111 and #186. PR head at capture: `ef9086431dbe2d847c73b35cb66e81f228367a99`.
