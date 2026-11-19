@@ -743,6 +743,8 @@ test('project create and edit forms announce required names and clear corrected 
   await page.locator('#projectPanel [data-action="open-project-create"]').click();
   await page.locator('#projectCreateModal [data-action="create-project"]').click();
   await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#projectCreateNameInput')).toHaveAttribute('aria-describedby', 'projectCreateNameError');
+  await expect(page.locator('#projectCreateNameError')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#projectCreateNameError')).toHaveText('Укажи название проекта.');
   await expect(page.locator('#projectCreateNameInput')).toBeFocused();
 
@@ -760,6 +762,8 @@ test('project create and edit forms announce required names and clear corrected 
   await page.locator('#projectNameInput').fill('');
   await page.locator('#projectSettingsModal [data-action="save-project"]').click();
   await expect(page.locator('#projectNameInput')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#projectNameInput')).toHaveAttribute('aria-describedby', 'projectNameError');
+  await expect(page.locator('#projectNameError')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#projectNameError')).toHaveText('Укажи название проекта.');
   await expect(page.locator('#projectNameInput')).toBeFocused();
 
@@ -2552,6 +2556,8 @@ test('aServi connection validates required fields in order and clears corrected 
 
   await connect.click();
   await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-describedby', 'cloudBaseUrlError');
+  await expect(page.locator('#cloudBaseUrlError')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#cloudBaseUrlError')).toHaveText('Укажи URL своего сервера.');
   await expect(page.locator('#cloudBaseUrl')).toBeFocused();
 
@@ -2559,6 +2565,8 @@ test('aServi connection validates required fields in order and clears corrected 
   await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'false');
   await connect.click();
   await expect(page.locator('#cloudModel')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudModel')).toHaveAttribute('aria-describedby', 'cloudModelError');
+  await expect(page.locator('#cloudModelError')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#cloudModelError')).toHaveText('Укажи точный ID модели.');
   await expect(page.locator('#cloudModel')).toBeFocused();
 
@@ -2566,6 +2574,8 @@ test('aServi connection validates required fields in order and clears corrected 
   await expect(page.locator('#cloudModel')).toHaveAttribute('aria-invalid', 'false');
   await connect.click();
   await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cloudApiKey')).toHaveAttribute('aria-describedby', 'cloudApiKeyError');
+  await expect(page.locator('#cloudApiKeyError')).toHaveAttribute('role', 'alert');
   await expect(page.locator('#cloudApiKeyError')).toHaveText('Укажи ключ доступа к серверу.');
   await expect(page.locator('#cloudApiKey')).toBeFocused();
   await expect(page.locator('#cloudStatus')).toContainText('Заполни обязательные поля');

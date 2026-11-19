@@ -1968,3 +1968,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — toolbar disclosure Escape behavior (this commit).** Search, Functions and Language toolbar disclosures now share one Escape close path and restore focus to their own summary. Added Playwright coverage for Search/Functions Escape and first outside click not activating the underlying processing-mode control. Browser execution pending.
 
 - **IMPLEMENTED — landscape mobile acceptance (this commit).** Added an 844×390 Playwright regression for document/body overflow, composer viewport bounds, textarea minimum height and Send reachability. Browser execution remains pending.
+
+- **IMPLEMENTED — form error association assertions (this commit).** Project create/edit and aServi URL/model/key Playwright tests now verify aria-describedby points to the inline error and the error is announced with role=alert, in addition to aria-invalid, text and focus. Browser execution pending.

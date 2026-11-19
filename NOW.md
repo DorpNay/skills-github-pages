@@ -84,5 +84,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Новый пакет: 30-point landing acceptance matrix P0.21; внедрены mobile 44px nested-menu/attachment targets и root overflow regression на 8 ширинах, тесты пока не запускались. Два независимых live-browser прохода (геометрия и keyboard/forms) ожидают результатов.
 - Exact HEAD `3d69c7ae56c6d533d6e54f0febf23ed16b6dcd42`: Pages deploy/build/report checks SUCCESS; это не Chromium E2E. Источники по WCAG 2.2, ARIA Dialog, MDN VisualViewport и Playwright emulation/bounding boxes добавляются в INTEL.
 - IMPLEMENTED в main: отдельный landscape Playwright acceptance для 844×390 проверяет document/body overflow, нижний composer, высоту textarea и видимость Send; execution pending.
+- IMPLEMENTED в main: project create/edit и aServi URL/model/key E2E теперь явно проверяют aria-describedby → inline role=alert error association вместе с aria-invalid и первым invalid focus; запуск Chromium пока не выполнен.
 - Следующий code slice: пройти оставшиеся 30-point acceptance gates через Chromium workflow, затем исправлять только подтверждённые дефекты.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.
