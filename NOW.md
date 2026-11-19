@@ -71,9 +71,10 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - «Dessa» в голосовом запросе — неоднозначный upstream; идентифицировать точно до выбора.
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
-## Последний checkpoint (2026-11-18; не заменяет live проверку)
+## Последний checkpoint (2026-11-19; не заменяет live проверку)
 - IMPLEMENTED в `main`: sidebar Create-действия стоят в заголовках секций, сворачивание Projects отдаёт высоту Chats; Research убрал дубли Quick/Thorough и web breadth; Agents разделяет runtime/role blueprint/planned topologies; AgentRun chat/panel timelines отображают allowlisted Gateway events с реальным `occurred_at`.
 - Exact-HEAD Pages build/deploy и Graphify успешны для четырёх UI commits: `3f20322f` (#643/#1414), `8d88296f` (#644/#1415), `4bd7df01` (#645/#1416), `6f6914f2` (#646/#1417). Это не подтверждает Gateway/VPS, браузерный E2E, native iPhone Safari или VoiceOver.
 - E2E и quality-sentinel assertions обновлены в репозитории, но Chromium/quality workflow в этой сессии не запускались. Не повышать их до VERIFIED.
-- Следующий пакет: остатки P0 — измерить desktop density (целевой ориентир около 2× компактнее без потери читаемости), проверить сохранение focus/scroll/selection в sidebar, полный responsive 320–1440, меню/dialogs, chat-row actions, composer/forms, RU/EN, theme/motion, accessibility и dead-control sweep.
+- Chat-row actions: все семь пунктов меню имеют реальные handlers; удалён один недостижимый вызов после `return`; добавлен Playwright тест rename/export, но он пока не запускался. Исторический PR #118 уже содержит import/export/merge/collision safeguards.
+- Следующий пакет: продолжить P0 — composer geometry/keyboard/attachments/voice menus/stop-retry, затем forms и validation; параллельно закрыть оставшиеся menu/dialog edge cases, responsive 320–1440, density, RU/EN, theme/motion, accessibility и dead-control sweep.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.

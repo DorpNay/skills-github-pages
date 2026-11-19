@@ -2794,7 +2794,6 @@ permalink: /
       menu.append(summary,panel);
       bindPositionedActionMenu(menu,summary,panel);
       item.append(open,menu);return item;
-      syncProjectSourcesControls();
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;

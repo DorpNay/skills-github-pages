@@ -5607,6 +5607,51 @@ test('chat row menu supports keyboard traversal and restores focus after clone a
   await expect(page.locator('#chatList .chat-row')).toHaveCount(4);
 });
 
+
+test('chat row menu renames and exports only the selected chat', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const chats = [
+      { id: 'e2e-rename-export', title: 'Original title', projectId: null, messages: [{ role: 'user', content: 'EXPORT_SENTINEL' }], createdAt: now, updatedAt: now, searchMode: 'offline' },
+      { id: 'e2e-untouched-chat', title: 'Untouched chat', projectId: null, messages: [{ role: 'user', content: 'KEEP_SENTINEL' }], createdAt: now, updatedAt: now, searchMode: 'offline' }
+    ];
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats));
+    localStorage.setItem('ai_current_chat_v87', chats[0].id);
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+
+  const row = page.locator('#chatList .chat-row[data-chat-id="e2e-rename-export"]');
+  await row.locator('.chat-row-menu summary').click();
+  await row.locator('[data-action="chat-rename"]').click();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await expect(page.locator('#chatActionName')).toBeFocused();
+  await page.locator('#chatActionName').fill('Renamed safely');
+  await page.locator('[data-action="chat-action-save"]').click();
+  await expect(page.locator('#chatActionModal')).toBeHidden();
+  await expect(row.locator('[data-action="switch-chat"]')).toHaveText('Renamed safely');
+
+  const persisted = await page.evaluate(() => ({
+    current: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]')
+  }));
+  expect(persisted.current).toBe('e2e-rename-export');
+  expect(persisted.chats.find(chat => chat.id === 'e2e-rename-export')?.title).toBe('Renamed safely');
+  expect(persisted.chats.find(chat => chat.id === 'e2e-untouched-chat')?.messages[0].content).toBe('KEEP_SENTINEL');
+
+  await row.locator('.chat-row-menu summary').click();
+  const downloadPromise = page.waitForEvent('download');
+  await row.locator('[data-action="export-chat"]').click();
+  const download = await downloadPromise;
+  const exported = JSON.parse(await readFile(await download.path(), 'utf8'));
+  expect(exported).toHaveLength(1);
+  expect(exported[0].id).toBe('e2e-rename-export');
+  expect(exported[0].title).toBe('Renamed safely');
+  expect(exported[0].messages[0].content).toBe('EXPORT_SENTINEL');
+  await expect(page.locator('#activeChatTitle')).toHaveText('Renamed safely');
+});
+
 test('long project navigation stays internally scrollable without hiding the chats section', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 480 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
