@@ -59,7 +59,7 @@
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
 
 **Mobile and responsive geometry**
-1. [ ] 320 CSS px: root document/body do not overflow horizontally.
+1. [ ] 320 CSS px: root document/body do not overflow horizontally; header/composer bounding boxes stay within viewport.
 2. [ ] 360 CSS px: header, chat surface and composer stay within viewport.
 3. [ ] 390 CSS px: sidebar and primary chat actions remain usable.
 4. [ ] 640 CSS px: mobile/tablet breakpoint transition has no clipped controls.
@@ -67,14 +67,14 @@
 6. [ ] 1024 CSS px: desktop/tablet transition has no overlapping panels.
 7. [ ] 1280 CSS px: desktop sidebar, toolbar and composer remain aligned.
 8. [ ] 1440 CSS px: wide layout does not stretch text or detach primary actions.
-9. [~] Landscape 844×390: added Playwright check for root overflow, composer bounds, textarea target height and Send visibility; browser execution pending.
+9. [~] Landscape 844×390: Playwright checks root overflow plus header/toolbar/composer left-right bounds, textarea target height and Send visibility; browser execution pending.
 10. [ ] Keyboard/VisualViewport simulation: composer and popovers reposition without obscuring the focused control; native iOS keyboard remains a manual gate.
 
 **Composer and menus**
 11. [ ] Context, execution, attachment and voice controls keep their row and 44px mobile hit targets.
 12. [ ] Draft input retains at least 200px usable width at 320/360px.
 13. [ ] Send and visible Stop controls remain reachable and correctly sized.
-14. [ ] Attachment popover actions have 44px mobile hit targets and bounded scrolling.
+14. [~] Attachment, project/chat, Functions and context/voice menu actions plus attachment removal have Playwright 44px target coverage; width and height are now both measured. Bounded scrolling remains.
 15. [ ] Request-context project rows are fully tappable and do not mutate the active chat project.
 16. [ ] Voice mode choices have 44px mobile hit targets and truthful availability copy.
 17. [~] Escape/outside dismissal closes only the active popover and returns focus to its trigger; toolbar disclosures now close on Escape, composer popovers have Escape handling, but the full cross-menu matrix remains unverified.
@@ -1977,3 +1977,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — landscape mobile regression:** 844×390 test measures document/body overflow, composer bounds, textarea height and Send reachability. Execution pending.
 - **BROWSER TOOL LIMITATION:** TinyFish run `9b55917e-a96d-4849-be99-c213a82a95c4` explicitly reported static DOM only and could not set viewport, execute JavaScript or call `getBoundingClientRect`. Its `alandi-build-revision NOT_FOUND` claim is not treated as a site defect: the source has the revision marker and the Jekyll quality sentinel checks the generated artifact. Use Playwright for actual geometry.
 - **PARTIAL KEYBOARD OBSERVATION:** TinyFish run `60646830-6785-4667-a831-37b1ac003db2` observed sidebar and Settings Escape closure/focus return; project actions, Functions outside click, Voice menu and Create Project validation were not reached. Existing Playwright tests cover several of those paths; no browser pass is claimed.
+
+- **IMPLEMENTED — stronger geometry assertions (this commit).** Nested menu/action acceptance measures both width and height; the eight-width responsive sweep checks left/right bounds for header and composer, and the 844×390 landscape test checks header/toolbar/composer edges rather than width alone. Browser execution pending.

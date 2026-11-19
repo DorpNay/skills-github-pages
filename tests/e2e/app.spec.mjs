@@ -3749,6 +3749,7 @@ test('mobile nested menu and attachment actions meet the 44px touch target', asy
       const target = locator.nth(index);
       await expect(target, label + ' ' + index).toBeVisible();
       const rect = await target.boundingBox();
+      expect(rect?.width || 0, label + ' width ' + index).toBeGreaterThanOrEqual(44);
       expect(rect?.height || 0, label + ' height ' + index).toBeGreaterThanOrEqual(44);
     }
   };
@@ -3800,13 +3801,15 @@ test('root app reflows without document-level horizontal overflow from 320 to 14
       viewport: window.innerWidth,
       document: document.documentElement.scrollWidth,
       body: document.body.scrollWidth,
-      header: document.querySelector('.app-header')?.getBoundingClientRect().width || 0,
-      composer: document.querySelector('#composerFooter')?.getBoundingClientRect().width || 0
+      header: (() => { const rect = document.querySelector('.app-header')?.getBoundingClientRect(); return rect ? { left: rect.left, right: rect.right, width: rect.width } : null; })(),
+      composer: (() => { const rect = document.querySelector('#composerFooter')?.getBoundingClientRect(); return rect ? { left: rect.left, right: rect.right, width: rect.width } : null; })()
     }));
     expect(metrics.document, 'document width at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
     expect(metrics.body, 'body width at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
-    expect(metrics.header, 'header remains within viewport at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
-    expect(metrics.composer, 'composer remains within viewport at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.header?.left ?? -Infinity, 'header left edge at ' + width + 'px').toBeGreaterThanOrEqual(-1);
+    expect(metrics.header?.right ?? Infinity, 'header right edge at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.composer?.left ?? -Infinity, 'composer left edge at ' + width + 'px').toBeGreaterThanOrEqual(-1);
+    expect(metrics.composer?.right ?? Infinity, 'composer right edge at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
   }
 });
 
@@ -3815,6 +3818,8 @@ test('landscape mobile viewport keeps the composer and chat controls reachable',
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const metrics = await page.evaluate(() => {
     const footer = document.querySelector('#composerFooter').getBoundingClientRect();
+    const header = document.querySelector('.app-header').getBoundingClientRect();
+    const toolbar = document.querySelector('#modeToolbar').getBoundingClientRect();
     const input = document.querySelector('#userInput').getBoundingClientRect();
     const send = document.querySelector('#sendBtn').getBoundingClientRect();
     return {
@@ -3822,6 +3827,12 @@ test('landscape mobile viewport keeps the composer and chat controls reachable',
       viewportHeight: window.innerHeight,
       documentWidth: document.documentElement.scrollWidth,
       bodyWidth: document.body.scrollWidth,
+      headerLeft: header.left,
+      headerRight: header.right,
+      toolbarLeft: toolbar.left,
+      toolbarRight: toolbar.right,
+      footerLeft: footer.left,
+      footerRight: footer.right,
       footerTop: footer.top,
       footerBottom: footer.bottom,
       footerHeight: footer.height,
@@ -3831,6 +3842,14 @@ test('landscape mobile viewport keeps the composer and chat controls reachable',
   });
   expect(metrics.documentWidth, 'landscape document should not overflow').toBeLessThanOrEqual(metrics.viewportWidth + 1);
   expect(metrics.bodyWidth, 'landscape body should not overflow').toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  for (const [label, left, right] of [
+    ['header', metrics.headerLeft, metrics.headerRight],
+    ['toolbar', metrics.toolbarLeft, metrics.toolbarRight],
+    ['composer', metrics.footerLeft, metrics.footerRight]
+  ]) {
+    expect(left, 'landscape ' + label + ' left edge').toBeGreaterThanOrEqual(-1);
+    expect(right, 'landscape ' + label + ' right edge').toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  }
   expect(metrics.footerHeight, 'composer should remain rendered').toBeGreaterThan(0);
   expect(metrics.footerTop, 'composer should remain inside the visual page').toBeLessThan(metrics.viewportHeight);
   expect(metrics.footerBottom, 'composer should not extend below the viewport').toBeLessThanOrEqual(metrics.viewportHeight + 1);
