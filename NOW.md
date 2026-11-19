@@ -81,5 +81,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Exact-HEAD Pages build/deploy (#44444338963) и Graphify (#44444339995) завершились SUCCESS на `39730108fee5f99f7cca012381ba2baee206687b`. Это не подтверждает Chromium E2E, native iPhone Safari или VoiceOver.
 - VERIFIED exact HEAD `cc1e9c376955ced48c9c4b7891c4fa3d880a64ab`: Pages build/deploy #44446119751 SUCCESS; Graphify #44446120302 SUCCESS; cache-busted public Pages metadata reports the same SHA. These checks do not execute Chromium E2E.
 - NOT RUN: new 320/360/390px sidebar geometry, composer 320/360px geometry and native disclosure focus-ring Playwright tests; no native iPhone Safari/VoiceOver check.
-- Следующий пакет: выполнить Chromium acceptance для 320/360/390px, composer edge cases (attachments/context/voice/keyboard/stop-retry), forms/validation; затем responsive 320–1440, menu/dialog, density, RU/EN, theme/motion, accessibility и dead-control sweep.
+- Новый пакет: 30-point landing acceptance matrix P0.21; внедрены mobile 44px nested-menu/attachment targets и root overflow regression на 8 ширинах, тесты пока не запускались. Два независимых live-browser прохода (геометрия и keyboard/forms) ожидают результатов.
+- Exact HEAD `3d69c7ae56c6d533d6e54f0febf23ed16b6dcd42`: Pages deploy/build/report checks SUCCESS; это не Chromium E2E. Источники по WCAG 2.2, ARIA Dialog, MDN VisualViewport и Playwright emulation/bounding boxes добавляются в INTEL.
+- Следующий шаг: получить browser evidence, исправить обнаруженные дефекты и выполнить следующий блок 30-point acceptance.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.

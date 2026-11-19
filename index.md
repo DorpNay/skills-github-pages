@@ -354,7 +354,17 @@ permalink: /
     .project-row-menu summary.project-nav-settings { flex:0 0 24px;width:24px;height:24px; }
     .project-nav-settings:hover,.project-row-menu[open] .project-nav-settings { color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
     .project-row-menu-panel button { min-height:40px; }
-    @media (max-width:640px) { .project-row-menu-panel button { min-height:44px; } }
+    @media (max-width:640px) {
+      .project-row-menu-panel button,
+      .chat-row-menu-panel button,
+      .language-menu-panel button,
+      .toolbar-menu-panel .toolbar-menu-option,
+      .composer-popover-option,
+      .voice-menu-option,
+      .request-project-choice { min-height:44px; }
+      .request-project-choice { align-items:center; }
+      .draft-attachment-remove { display:grid;place-items:center;min-width:44px;min-height:44px;padding:0; }
+    }
     #projectCreateModal section { background:var(--ui-surface); }
     #chatBox, #memoryBox { color:var(--ui-text); }
     #sidebar .border-b, #sidebar .border-t, header, footer, #searchStatus { border-color:var(--ui-border)!important; }

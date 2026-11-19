@@ -40,11 +40,11 @@
 - [~] P0.3 Collapsible Projects: collapse gives the freed height to Chats; expanded list has internal scroll cap. Focus/scroll/selection persistence needs browser acceptance (commit `3f20322f`; E2E added, not run).
 - [~] P0.4 Project Settings: FACT — form is already grouped by Context, Profile, Memory, Sources and Data; no rebuild needed. Mobile density, actions, save/cancel/migrations and duplicate audit remain.
 - [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
-- [~] P0.6 Mobile: sidebar/Create and Projects/Chats navigation controls use 44×44px touch targets; a 390px Playwright geometry regression was added but not run. The rest of root app still needs a complete mobile visual pass and real-device check.
+- [~] P0.6 Mobile: primary sidebar navigation and nested project/chat action controls use 44×44px touch targets; responsive and nested-menu geometry regressions are added but not run. The rest of root app still needs full mobile visual and real-device acceptance.
 - [ ] P0.7 Responsive: диапазон 320–1440px, portrait/landscape, keyboard/VisualViewport, no horizontal overflow, длинные строки и сообщения.
 - [~] P0.8 Menus/dialogs: FACT — primary Settings/Functions/Project dialogs already have focus lifecycle and keyboard/outside-close in code/E2E. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [~] P0.9 Chat row actions: rename/move/clone/delete/clear/export/import handlers exist; existing E2E covers move dialog, clear, clone, delete-cancel, keyboard and focus. Added a focused rename + selected-chat export regression test; import/export bundle behavior was delivered historically (PR #118). Still run the full browser suite and verify mobile/desktop menu geometry, touch and active-item persistence.
-- [~] P0.10 Composer: narrow-phone layout now moves the four utility controls to a compact first row and keeps the draft + send/stop on a usable second row at <=380px; 44px hit targets preserved (commit `39730108fee5f99f7cca012381ba2baee206687b`). Added 320/360px geometry regression; browser test not run yet. Remaining: empty/populated/long draft, attachment/context/voice menu edge cases, stop/cancel/retry/regenerate, keyboard reposition and full 320–1440 acceptance.
+- [~] P0.10 Composer: narrow-phone layout keeps the four utility controls in a first row and draft + send/stop in a usable second row at <=380px. Added 320/360px geometry regression plus nested attachment/context/voice menu and attachment-removal target coverage; browser execution pending. Remaining: empty/populated/long draft, stop/cancel/retry/regenerate and native keyboard reposition.
 - [~] P0.11 Forms: project create/edit and aServi required URL/model/key validation, localized errors, `aria-invalid`/`aria-describedby`, first-invalid focus and corrected-error clearing already exist with E2E coverage. Remaining: cross-form required/validation/error/success/busy/disabled/offline matrix, consistent first-invalid focus, safe retry/clear and no false connected states.
 - [~] P0.12 Functions IA: four independent panels exist. Research and Agents now separate active runtime / saved blueprint / planned methods; Skills and Connectors still need contract and visual audit.
 - [x] P0.13 Deep Research panel: duplicate Quick/Thorough and web breadth removed; real `multi_step_evidence_report` (sequential stages on one model) remains selectable, other methods are a non-interactive planned catalogue. No fake multi-agent independence (commit `8d88296ffc1ef86a7df0ed9368e897bc40e9d425`).
@@ -55,6 +55,46 @@
 - [ ] P0.18 Remove deadwood: tracing всех controls, handlers, duplicated state, stale flags и ненужного payload; удалить только после поиска всех consumers, migration/import/export и regression contract.
 - [ ] P0.19 Performance: измерить payload/startup/render/network; убирать только доказанные DOM scans, sync work и дублирование, не минифицировать и не добавлять build tooling наугад.
 - [ ] P0.20 Final UI acceptance: focused checks per package; в конце визуальная/browser matrix, publication marker/root routes; native iPhone Safari/VoiceOver отдельный ручной gate.
+
+### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
+
+**Mobile and responsive geometry**
+1. [ ] 320 CSS px: root document/body do not overflow horizontally.
+2. [ ] 360 CSS px: header, chat surface and composer stay within viewport.
+3. [ ] 390 CSS px: sidebar and primary chat actions remain usable.
+4. [ ] 640 CSS px: mobile/tablet breakpoint transition has no clipped controls.
+5. [ ] 768 CSS px: tablet layout preserves hierarchy and usable content width.
+6. [ ] 1024 CSS px: desktop/tablet transition has no overlapping panels.
+7. [ ] 1280 CSS px: desktop sidebar, toolbar and composer remain aligned.
+8. [ ] 1440 CSS px: wide layout does not stretch text or detach primary actions.
+9. [ ] Landscape 844×390: header, scroll regions and composer remain reachable.
+10. [ ] Keyboard/VisualViewport simulation: composer and popovers reposition without obscuring the focused control; native iOS keyboard remains a manual gate.
+
+**Composer and menus**
+11. [ ] Context, execution, attachment and voice controls keep their row and 44px mobile hit targets.
+12. [ ] Draft input retains at least 200px usable width at 320/360px.
+13. [ ] Send and visible Stop controls remain reachable and correctly sized.
+14. [ ] Attachment popover actions have 44px mobile hit targets and bounded scrolling.
+15. [ ] Request-context project rows are fully tappable and do not mutate the active chat project.
+16. [ ] Voice mode choices have 44px mobile hit targets and truthful availability copy.
+17. [ ] Escape/outside dismissal closes only the active popover and returns focus to its trigger.
+18. [ ] Attachment removal is reachable at 44px on touch screens and does not submit the draft.
+
+**Sidebar and navigation**
+19. [ ] Sidebar open/close, overlay and horizontal swipe preserve vertical list scrolling.
+20. [ ] Projects/Chats disclosure and Create actions meet the 44px mobile target.
+21. [ ] Project and chat selection rows remain at least 44px on 320/360/390px.
+22. [ ] Project and chat nested action-menu entries meet the 44px mobile target.
+23. [ ] Long project/chat lists scroll independently without hiding the other section.
+24. [ ] Collapsing Projects returns usable height to Chats and preserves selection/scroll.
+25. [ ] Menu Escape/outside click does not activate the control underneath and restores focus.
+
+**Dialogs, forms and accessibility**
+26. [ ] Settings/Functions/Project/Chat dialogs contain keyboard focus, close on Escape and restore a logical opener.
+27. [ ] Project create/edit validation is textual, localized, associated with its field and focuses the first invalid field.
+28. [ ] aServi URL/model/key validation is localized, sequential, associated and clears corrected errors.
+29. [ ] RU/EN, dark/light, high contrast and reduced-motion states preserve labels, focus and semantic status.
+30. [ ] Keyboard-only and screen-reader smoke covers landmarks, accessible names, live status, error announcements and no hidden/false connected states; native VoiceOver remains a manual gate.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
@@ -1920,3 +1960,7 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — complete primary sidebar touch target pass (this commit).** At <=640px, Projects/Chats toggles, Create actions, unassigned-chat filter, Memory disclosure, project/chat selection and row-action controls use at least 44px height/width as applicable. Expanded the 320/360/390px regression to measure the full primary navigation set. Browser execution remains pending.
 - **VERIFIED — exact-HEAD Pages + Graphify:** commit `cc1e9c376955ced48c9c4b7891c4fa3d880a64ab`; Pages build/deploy #44446119751 SUCCESS; Graphify #44446120302 SUCCESS. Cache-busted public Pages metadata reports the same build revision.
 - **NOT RUN — browser/device acceptance:** Chromium E2E (including the new 320/360/390px sidebar, narrow composer and keyboard focus tests) was not executed; native iPhone Safari/VoiceOver was not checked. Pages + Graphify do not substitute for those gates.
+- **IMPLEMENTED — nested mobile action targets (this commit).** At <=640px chat-row menu entries, toolbar choices, attachment/context/voice choices and attachment removal use 44px minimum touch targets. Added a Playwright regression that opens these menus, measures every visible action and checks attachment removal.
+- **IMPLEMENTED — responsive root viewport sweep (this commit).** Added a document/body/header/composer horizontal-overflow regression for 320, 360, 390, 640, 768, 1024, 1280 and 1440 CSS px. It is a browser test, not a native device test.
+- **SPECIFIED — 30-point landing acceptance matrix.** Thirty explicit responsive, composer, navigation, dialog, form, localization and accessibility gates now live under P0.21. None is considered VERIFIED until executed with recorded environment and exact SHA.
+- **NOT RUN — browser/device acceptance:** the new nested-menu and viewport sweep tests, along with earlier 320/360/390px regressions, have not yet run in Chromium; no native iPhone Safari/VoiceOver check was performed.

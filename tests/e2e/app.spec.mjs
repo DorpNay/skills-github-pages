@@ -3723,6 +3723,83 @@ test('narrow mobile composer gives the draft a usable second row', async ({ page
   }
 });
 
+test('mobile nested menu and attachment actions meet the 44px touch target', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Nested menu target project');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(page.locator('#projectCreateModal')).toBeHidden();
+
+  const measureTargets = async (label, locator) => {
+    const count = await locator.count();
+    expect(count, label + ' should expose at least one action').toBeGreaterThan(0);
+    for (let index = 0; index < count; index += 1) {
+      const target = locator.nth(index);
+      await expect(target, label + ' ' + index).toBeVisible();
+      const rect = await target.boundingBox();
+      expect(rect?.height || 0, label + ' height ' + index).toBeGreaterThanOrEqual(44);
+    }
+  };
+
+  const projectMenu = page.locator('#projectNavigationList .project-row-menu').first();
+  await projectMenu.locator('summary').click();
+  await measureTargets('project menu actions', projectMenu.locator('.project-row-menu-panel button'));
+  await page.keyboard.press('Escape');
+
+  const chatMenu = page.locator('#chatList .chat-row .chat-row-menu').first();
+  await chatMenu.locator('summary').click();
+  await measureTargets('chat menu actions', chatMenu.locator('.chat-row-menu-panel button'));
+  await page.keyboard.press('Escape');
+
+  await page.locator('#functionsMenuSummary').click();
+  await measureTargets('Functions menu actions', page.locator('#functionsMenu .toolbar-menu-option'));
+  await page.keyboard.press('Escape');
+
+  await page.locator('#attachTextButton').click();
+  await measureTargets('attachment popover actions', page.locator('#attachmentMenu .composer-popover-option'));
+  await page.keyboard.press('Escape');
+
+  await page.locator('#contextPickerButton').click();
+  await measureTargets('request context choices', page.locator('#requestProjectChecks .request-project-choice'));
+  await page.keyboard.press('Escape');
+
+  await page.locator('#voiceUnavailableButton').click();
+  await measureTargets('voice menu actions', page.locator('#voiceMenu .voice-menu-option'));
+  await page.keyboard.press('Escape');
+
+  await page.locator('#textAttachmentInput').setInputFiles({
+    name: 'mobile-note.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('small attachment for touch-target test')
+  });
+  const removeAttachment = page.locator('#draftAttachments .draft-attachment-remove').first();
+  await expect(removeAttachment).toBeVisible();
+  const removeRect = await removeAttachment.boundingBox();
+  expect(removeRect?.width || 0, 'attachment remove width').toBeGreaterThanOrEqual(44);
+  expect(removeRect?.height || 0, 'attachment remove height').toBeGreaterThanOrEqual(44);
+});
+
+test('root app reflows without document-level horizontal overflow from 320 to 1440px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  for (const width of [320, 360, 390, 640, 768, 1024, 1280, 1440]) {
+    await page.setViewportSize({ width, height: width <= 640 ? 844 : 900 });
+    const metrics = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      document: document.documentElement.scrollWidth,
+      body: document.body.scrollWidth,
+      header: document.querySelector('.app-header')?.getBoundingClientRect().width || 0,
+      composer: document.querySelector('#composerFooter')?.getBoundingClientRect().width || 0
+    }));
+    expect(metrics.document, 'document width at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.body, 'body width at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.header, 'header remains within viewport at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.composer, 'composer remains within viewport at ' + width + 'px').toBeLessThanOrEqual(metrics.viewport + 1);
+  }
+});
+
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

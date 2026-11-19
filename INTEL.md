@@ -1902,3 +1902,27 @@ These primary sources informed the responsive/mobile navigation acceptance. They
 **Current application of sources:** mobile project/chat row controls were raised from 40px to 44px and a Playwright bounding-box regression was added. The code/test are IMPLEMENTED only after the commit lands on main; test execution and native-device acceptance remain separate verification gates.
 
 - **aLandi mobile navigation follow-up — 2026-11-19:** the 44px baseline is applied to the complete primary sidebar path (Projects/Chats expanders, Create Project/Chat, unassigned filter, Memory disclosure, project/chat selection and row-action menus), not only row controls. Automated geometry coverage spans 320/360/390 CSS px; no test-pass claim until Chromium execution.
+
+## Responsive landing and accessibility source review — 2026-11-19
+
+Reviewed primary upstream references for the current root-app UI package:
+
+- **W3C ARIA Authoring Practices — Modal Dialog Pattern:** https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ — modal content is inert outside the active dialog; Tab/Shift+Tab stay inside; Escape closes; focus moves into the dialog and normally returns to its invoking control. Use these as behavior requirements, not merely visual styling.
+- **W3C WCAG 2.2 — Reflow (SC 1.4.10, AA):** https://www.w3.org/WAI/WCAG22/Understanding/reflow.html — vertically scrolling content must reflow at an equivalent width of 320 CSS px without loss of information/functionality or two-dimensional scrolling, except for inherently two-dimensional content.
+- **W3C WCAG 2.2 — Target Size Minimum (SC 2.5.8, AA):** https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html — 24×24 CSS px or applicable spacing/equivalent-control exception. aLandi's 44×44 mobile baseline is a stricter product usability target, not the AA minimum.
+- **W3C WCAG 2.2 — Error Identification (SC 3.3.1, A):** https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html — detected input errors must be identified and described in text; color alone is insufficient. Keep inline error text programmatically associated with its field and focus the first invalid field on submit.
+- **MDN — VisualViewport:** https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport — mobile OSK and pinch zoom can change the visual viewport independently of the layout viewport; observe resize/scroll and measure against visual viewport metrics. Do not rely on VirtualKeyboard API as a universal requirement.
+- **Playwright — Emulation:** https://playwright.dev/docs/emulation — device profiles emulate viewport, screen, user agent and touch; this is not native iOS Safari or VoiceOver.
+- **Playwright — Locator boundingBox:** https://playwright.dev/docs/api/class-locator#locator-bounding-box — bounding boxes are viewport-relative CSS pixel measurements; combine them with auto-waiting locators and focused assertions to avoid brittle broad snapshots.
+- **Context7 Playwright documentation:** resolved /microsoft/playwright; queried Page.setViewportSize, keyboard interaction, toBeFocused, and test.step. Set viewport before navigation when testing initial responsive layout; use web-first assertions for focus and visibility.
+
+**Current application:** nested chat/toolbar/attachment/context/voice menu actions and attachment removal now receive a 44px minimum mobile target. The new 30-point acceptance matrix includes eight widths (320–1440), landscape, visual viewport/keyboard behavior, menus, forms, focus, localization and assistive-technology checks. Added E2E code is IMPLEMENTED only after it lands in main; no browser execution is implied.
+
+## Parallel execution technique — current session
+
+- **Lane A — repository truth/change:** GitHub reads/writes, exact parent SHA, bounded source/test surface, one guarded main update.
+- **Lane B — upstream research:** Exa discovers official source pages; Context7 resolves versioned library documentation; findings are deduplicated and recorded here.
+- **Lane C — live behavior:** independent TinyFish browser runs for responsive geometry and keyboard/form interactions; start both before waiting, then poll each run while repository inspection continues.
+- **Lane D — verification/record:** GitHub Actions exact-HEAD checks and deployment marker, then update NOW/master/INTEL. Do not equate Pages deployment with Chromium E2E or native-device acceptance.
+- Parallelize independent reads, research and browser runs. Serialize dependent edits/commits on the latest exact main SHA. Do not launch overlapping writes to the same files or start a replacement browser run after a non-retryable timeout; continue polling the original run ID.
+
