@@ -54,7 +54,7 @@
 - [ ] P0.17 Theme/motion/accessibility: light/dark, prefers-reduced-motion и user override, keyboard-only, visible focus, contrast, names/landmarks/live regions.
 - [ ] P0.18 Remove deadwood: trace controls, handlers, duplicated state, stale flags and payload only after consumer/dynamic-reference/import/export/migration/regression review. The current Vulture report does not cover inline client JS in built `index.md`; do not treat its output as a complete JS dead-code audit. Add a separate report-only AST pass after the Jekyll build; no automatic deletion.
 - [ ] P0.19 Performance / quality tooling: measure payload/startup/render/network and expand the advisory audit only where coverage is proven. For inline JS, extract script blocks from generated Jekyll HTML, parse AST, trace markup/global/dynamic event consumers and emit confidence + rationale. Keep Python and JS reports separate; include fixtures for dynamic handlers; report-only until false-positive rate is measured. Do not add a broad dependency or auto-delete code.
-- [ ] P0.20 Final UI acceptance: focused checks per package; finish visual/browser matrix, publication marker and root routes; native iPhone Safari/VoiceOver is a separate manual gate. Pages #44456706267 succeeded on base `484c3b9`; the subsequent visual-token commits require fresh exact-HEAD build/check evidence. No Quality/Chromium run is attached to the current main SHA. PR #187 Chromium was incomplete and is not evidence about main; keep baseline and PR results separate.
+- [ ] P0.20 Final UI acceptance: focused checks per package; finish visual/browser matrix, publication marker and root routes; native iPhone Safari/VoiceOver is a separate manual gate. The latest Pages runs after visual-token changes were cancelled by subsequent commits; a fresh stable exact-HEAD Pages run is required. No Quality/Chromium run is attached to the current main SHA. PR #187 Chromium was incomplete and is not evidence about main; keep baseline and PR results separate.
 
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
 
@@ -2311,9 +2311,9 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 ### 7.6 Implementation progress — root visual-system foundation (2026-11-19)
 
-- **IMPLEMENTED:** main commits `ab90ff5` and `7545395` add shared typography/line-height/spacing/radius/elevation/focus/touch/motion tokens and apply theme-semantic values to toast, cloud status/card, composer/toolbar popovers and dialogs.
+- **IMPLEMENTED:** main commits `ab90ff5`, `7545395` and `091bfd6` add shared typography/line-height/spacing/radius/elevation/focus/touch/motion tokens and apply theme-semantic values to toast, cloud status/card, provider state, focus rings, composer/toolbar popovers and dialogs.
 - **IMPLEMENTED:** main commit `67a50f6` adds a Playwright contract test for token presence and dark/light semantic differences.
-- **NOT VERIFIED:** the new Playwright test has not been executed; visual review on actual browser/device and full P0.5 coverage remain open. This is a foundation slice, not completion of the unified visual system.
+- **NOT VERIFIED:** the new Playwright test has not been executed; visual review on actual browser/device and full P0.5 coverage remain open. The latest Pages/Graphify attempts were cancelled by successive main commits or ran on an earlier code SHA; no exact-current-HEAD Quality/Chromium pass is claimed. This is a foundation slice, not completion of the unified visual system.
 
 ### 7.5 Execution order and gates
 
