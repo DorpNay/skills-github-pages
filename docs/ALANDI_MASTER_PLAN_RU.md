@@ -39,22 +39,22 @@
 - [x] P0.2 Создание: Create Project и Create Chat размещены компактными `＋`-действиями прямо в заголовках секций, с локализуемыми accessible names (commit `3f20322f`).
 - [~] P0.3 Collapsible Projects: collapse gives the freed height to Chats; expanded list has internal scroll cap. Focus/scroll/selection persistence needs browser acceptance (commit `3f20322f`; E2E added, not run).
 - [~] P0.4 Project Settings: FACT — form is already grouped by Context, Profile, Memory, Sources and Data; no rebuild needed. Mobile density, actions, save/cancel/migrations and duplicate audit remain.
-- [ ] P0.5 Единая визуальная система: типографика, размеры, spacing, ритм, border/radius, семантические цвета, контраст, hover/pressed/focus/disabled/loading/error/success.
+- [ ] P0.5 Единая визуальная система: провести аудит существующих `--ui-*` tokens и hard-coded CSS; закрепить общий контракт typography scale/line-height, spacing, radius, elevation, semantic colors, focus, motion и interactive states. Применять поэтапно к root surfaces/controls, сохраняя 16px mobile inputs, 44px touch policy, contrast и reduced-motion; не делать массовую замену без visual regression.
 - [~] P0.6 Mobile: primary sidebar navigation and nested project/chat actions already target 44px; this package extends the same minimum to chat/project menus, toolbar, attachment/context/voice choices and attachment removal. Responsive visual acceptance and real-device pass remain open.
 - [~] P0.7 Responsive: диапазон 320–1440px, portrait/landscape and root overflow regression added; mobile dialog safe-area padding/internal-scroll rules and 320×568 settings/functions/chat-action geometry test added. Keyboard/VisualViewport and native-device acceptance remain open.
 - [~] P0.8 Menus/dialogs: primary Settings/Functions/Project dialogs have focus lifecycle and keyboard/outside-close in code/E2E; toolbar Search/Functions disclosures close on Escape and outside click with focus return. Full dialogs/popovers, scroll containment, background inert and viewport/keyboard edge cases remain; browser tests not run here.
 - [~] P0.9 Chat row actions: rename/move/clone/delete/clear/export/import handlers exist; existing E2E covers move dialog, clear, clone, delete-cancel, keyboard and focus. Added a focused rename + selected-chat export regression test; import/export bundle behavior was delivered historically (PR #118). Still run the full browser suite and verify mobile/desktop menu geometry, touch and active-item persistence.
 - [~] P0.10 Composer: narrow-phone layout keeps the four utility controls in a first row and draft + send/stop in a usable second row at <=380px. Added 320/360px geometry regression plus nested attachment/context/voice menu and attachment-removal target coverage; browser execution pending. Remaining: empty/populated/long draft, stop/cancel/retry/regenerate and native keyboard reposition.
 - [~] P0.11 Forms: project create/edit and aServi required URL/model/key validation, localized errors, `aria-invalid`/`aria-describedby`, first-invalid focus and corrected-error clearing already exist with E2E coverage. Remaining: cross-form required/validation/error/success/busy/disabled/offline matrix, consistent first-invalid focus, safe retry/clear and no false connected states.
-- [~] P0.12 Functions IA: four independent panels exist. Research and Agents now separate active runtime / saved blueprint / planned methods; Skills and Connectors still need contract and visual audit.
+- [~] P0.12 Functions IA: four independent panels exist. Research and Agents separate active runtime / saved blueprint / planned methods; Skills and Connectors still need contract and visual audit. AgentRun chat integration is present in client code (bounded context packet, chat result return, active-run restore and chat-anchored status), but Gateway `ALANDI_AGENT_RUNS_ENABLED` defaults false; never imply host availability or production readiness from the UI/code alone.
 - [x] P0.13 Deep Research panel: duplicate Quick/Thorough and web breadth removed; real `multi_step_evidence_report` (sequential stages on one model) remains selectable, other methods are a non-interactive planned catalogue. No fake multi-agent independence (commit `8d88296ffc1ef86a7df0ed9368e897bc40e9d425`).
 - [~] P0.14 Agents panel: runtime separated from saved role blueprint; read-only catalogue includes specialist profiles, chat-directed subagents, parallel teams, review/debate, coding team, swarm/DAG and custom builder as PLANNED. Actual runtime remains one Gateway worker/concurrency=1; independent subagents/agent library/builder are not implemented (commit `4bd7df01…`).
-- [~] P0.15 Live chat status: chat and panel show allowlisted Gateway events and real `occurred_at` timestamps. Full model/tool/source/progress/error/approval/cancel/reconnect semantics still need integration (commit `6f6914f2…`).
+- [~] P0.15 Live chat status: allowlisted Gateway events and real `occurred_at` timestamps appear in the Agents panel; main-chat integration also has a chat-anchored status surface, task/event rendering, active-run restoration and result return. Verify exact behavior for progress/error/approval/cancel/reconnect and keep UI status separate from feature-flag/host availability.
 - [~] P0.16 RU/EN: all static `data-i18n*` markup references exist in both dictionaries; duplicate `languageLabel` and project-memory helper keys removed, and a static Playwright guard checks uniqueness/completeness. Dynamic validation/empty/error/loading/disabled state matrix remains.
 - [ ] P0.17 Theme/motion/accessibility: light/dark, prefers-reduced-motion и user override, keyboard-only, visible focus, contrast, names/landmarks/live regions.
-- [ ] P0.18 Remove deadwood: tracing всех controls, handlers, duplicated state, stale flags и ненужного payload; удалить только после поиска всех consumers, migration/import/export и regression contract.
-- [ ] P0.19 Performance: измерить payload/startup/render/network; убирать только доказанные DOM scans, sync work и дублирование, не минифицировать и не добавлять build tooling наугад.
-- [ ] P0.20 Final UI acceptance: focused checks per package; в конце визуальная/browser matrix, publication marker/root routes; native iPhone Safari/VoiceOver отдельный ручной gate.
+- [ ] P0.18 Remove deadwood: trace controls, handlers, duplicated state, stale flags and payload only after consumer/dynamic-reference/import/export/migration/regression review. The current Vulture report does not cover inline client JS in built `index.md`; do not treat its output as a complete JS dead-code audit. Add a separate report-only AST pass after the Jekyll build; no automatic deletion.
+- [ ] P0.19 Performance / quality tooling: measure payload/startup/render/network and expand the advisory audit only where coverage is proven. For inline JS, extract script blocks from generated Jekyll HTML, parse AST, trace markup/global/dynamic event consumers and emit confidence + rationale. Keep Python and JS reports separate; include fixtures for dynamic handlers; report-only until false-positive rate is measured. Do not add a broad dependency or auto-delete code.
+- [ ] P0.20 Final UI acceptance: focused checks per package; finish visual/browser matrix, publication marker and root routes; native iPhone Safari/VoiceOver is a separate manual gate. Current main `484c3b9` has Pages deployment #44456706267 SUCCESS, but no Quality/Chromium run is attached to that exact SHA. PR #187 Chromium was incomplete and is not evidence about main; keep baseline and PR results separate.
 
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
 
@@ -355,7 +355,7 @@
 ### P2 — Чат, модели, режимы, память и данные
 
 - [ ] P2.1 Сохранить естественный полноценный прямой чат для разговора, шуток, идей, планирования, анализа, исследования и кода.
-- [ ] P2.2 Матрица Quick/Thorough × search normal/more/offline × strategy × profile × model/provider × attachments × project/memory scope; проверить persisted/migration/import/export/request body/precedence.
+- [ ] P2.2 Матрица Quick/Thorough × search normal/more/offline × strategy × profile × model/provider × attachments × project/memory scope; проверить persisted/migration/import/export/request body/precedence. Include staged retirement of `multiAgentEnabled`/`STORAGE.multiAgent`: valid `deepResearchMethod` is canonical; legacy boolean is input-only compatibility after migration; settings profile v1 import → enum, v2 import/export → `deepResearchMethod`; preserve historical ResearchTrace. Do not stop dual-write/remove hidden DOM/storage adapters until rollback window is explicitly closed and migration/rollback tests pass.
 - [ ] P2.3 Internet/tools по необходимости: решение о поиске, вызовах и подключении skills/tools — только по policy и grant; агентам web access отдельно.
 - [ ] P2.4 Model routing и weights: main-only baseline, task-specific helper/specialist evaluation, model residency, hardware budgets, latency/quality/cost and failure route.
 - [ ] P2.5 Context engineering: prompt hierarchy, bounded context, token budget, stale state, cancellation, tool-round/deadline, response schema and provider-compatible multimodal content. Add user-facing transparency of actions/evidence/status; never expose private chain-of-thought.
@@ -370,9 +370,9 @@
 - [ ] P3.1 Deep Research method catalog: focused lookup, multi-source report, compare, literature review, fact-check/source audit, Notebook research and further specialist methods as separate handlers.
 - [ ] P3.2 Resumable bounded research workflow: discovery → fetch → gaps → evidence/claim validation → contradiction handling → synthesis/report/export.
 - [ ] P3.3 Exact citation lineage to source/page/block/offset/hash; freshness and unsupported-claim checks, no invented citation.
-- [ ] P3.4 True AgentRun: actual independent workers/model calls, typed DAG, bounded fan-out/queue/concurrency/backpressure, idempotency/retries/checkpoints/recovery/cancel/deadline.
+- [ ] P3.4 True AgentRun: actual independent workers/model calls, typed DAG, bounded fan-out/queue/concurrency/backpressure, idempotency/retries/checkpoints/recovery/cancel/deadline. Current client already builds a bounded chat context packet and routes AgentRun from the main chat; current host config defaults `ALANDI_AGENT_RUNS_ENABLED=false`, and the runtime remains limited to one worker/model slot. Treat these as implemented client paths + prototype/flag-off runtime, not production availability.
 - [ ] P3.5 Chat-directed subagents: define e.g. 3 specialists with roles, skills, knowledge and explicit permissions; use actual execution, not labels or sequential same-model disguise.
-- [ ] P3.6 Agent timeline/status integrated into chat and panel, sourced from real events, timestamps and run journal.
+- [ ] P3.6 Agent timeline/status: main-chat anchored status surface and result-return path exist in `index.md`; reconcile documentation that still says status is only in the Agents modal or that context transfer/chat integration is absent. Update the Functions IA, Chat Settings IA, Systems Map and Plan 1 statuses from exact main source; keep host readiness NOT VERIFIED and preserve historical plan chronology.
 - [ ] P3.7 Tool registry: typed schemas, permission engine, scopes, egress/SSRF, approval tickets, budgets, quotas, audit and secret redaction.
 - [ ] P3.8 Agent library/custom agent/team builder/swarm methods, only as capabilities become real and evaluated.
 - [ ] P3.9 Skill lifecycle: import/create, manifest, source provenance/licenses, injection/security scanning, tests/evals, approval, version/diff, enable/disable/export/rollback; scripts inert before approval.
@@ -2253,3 +2253,66 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **VERIFIED — exact-HEAD Pages + Graphify:** `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d`; Pages build/deploy #44450998348 SUCCESS; Graphify #44450998692 SUCCESS. Playwright E2E was not run; Quality Sentinels requires manual workflow_dispatch, which is not exposed by the current GitHub connector.
 
 - **IMPLEMENTED — RU/EN dictionary integrity (this commit).** Removed duplicate `languageLabel`, `helperMemoryNoProject` and `helperMemoryNoConfig` keys; later explicit copy remains authoritative. Added a static test for duplicate keys and missing markup translations. Browser execution pending.
+
+
+## 7. Дополнительный инженерный аудит — 2026-11-19 (append-only; не меняет P0 priority)
+
+Этот аудит уточняет три разных класса долга. Это не разрешение на немедленную чистку и не причина останавливать root UI. Source baseline: main `484c3b9b4570e110f8bc4584bab322c80c37803c`; PR #187 остаётся отдельной незамерженной веткой.
+
+### 7.1 Compatibility debt — staged retirement `multiAgentEnabled` (P2.2; после landing)
+
+**FACT · main source inspection:** `createChat()` создаёт одновременно `deepResearchMethod: 'none'` и `multiAgentEnabled: false`; `loadChats()` умеет преобразовать legacy boolean; `ensureChatFunctionSettings()` дополняет отсутствующие значения; `setDeepResearchMethod()` dual-writes chat fields и `STORAGE.multiAgent`; текущая синхронизация активного чата продолжает писать legacy storage key; settings profile v1 импортирует/экспортирует `multiAgent`; скрытый `toggleMultiAgent` остаётся DOM adapter. ResearchTrace сохраняет `multiAgentEnabled` в исторической телеметрии.
+
+**Проблема:** при валидном `deepResearchMethod` и конфликтующем boolean текущая нормализация не всегда приводит legacy boolean к каноническому значению; часть путей продолжает dual-write. Нельзя называть boolean полностью мёртвым, пока его читают migration/profile/history paths.
+
+**Предлагаемые стадии:**
+1. Закрепить enum `deepResearchMethod: 'none' | 'multi_step_evidence_report'` как единственный runtime authority. Валидный enum всегда побеждает legacy boolean.
+2. Сделать миграцию идемпотентной: при отсутствующем/невалидном enum преобразовать boolean; затем нормализовать legacy boolean как derived compatibility value без изменения выбранного enum.
+3. Сохранить dual-write на явно ограниченный rollback window; срок/закрытие окна — решение владельца, не вывод исполнителя.
+4. Ввести settings profile v2: v1 import преобразует `multiAgent`; v2 import/export использует `deepResearchMethod`; экспорт v2 не пишет legacy поле.
+5. После rollback gate отдельным изменением прекратить legacy writes, удалить `STORAGE.multiAgent` и hidden DOM adapter; legacy read оставить на срок поддержки старых данных.
+6. Не переписывать и не удалять старые ResearchTrace: это исторические записи.
+
+**Acceptance:** старые записи true/false/missing/invalid; конфликтующие поля; идемпотентная повторная миграция; profile v1/v2 import/export; quota/partial-write rollback; no loss of user choice; routing uses enum only; ResearchTrace immutable; tested rollback restores dual-write. **Status: SPECIFIED; no cleanup authorized yet.**
+
+### 7.2 Documentation drift — AgentRun main-chat integration (P3.4/P3.6; после landing, в AgentRun docs package)
+
+**FACT · main source inspection:** `buildAgentRunContextPacket()` constructs bounded project/chat context; `sendAgentRunChatMessage()` routes a chat request into AgentRun and stores `activeAgentRunId`; observed output returns to the same chat; `resumeAgentRunForChat()` restores observation; `renderAgentRunChatStatus()` renders a chat-anchored status surface. Gateway config explicitly defaults `ALANDI_AGENT_RUNS_ENABLED=false`; current worker concurrency is one. The code therefore proves client integration paths, not host feature availability or production readiness.
+
+**Documents requiring source-backed reconciliation:**
+- `docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md`: replace legacy-only orchestration description with current `executionMode`, `deepResearchMethod`, AgentRun routing and orthogonal settings; retain historical context.
+- `docs/AGENT_FUNCTIONS_MENU_INFORMATION_ARCHITECTURE_RU.md`: its 2026-11-16 audit says context packet/result/chat status are absent or modal-only; update these specific claims against main, preserving the one-worker/feature-off limits.
+- `docs/ALANDI_SYSTEMS_MAP_RU.md`: split browser context/routing/status, Gateway API, worker and state store; correct stale snapshot metadata and maturity.
+- Plan 1 / AgentRun integration task record: update Tasks 2–4 only where current source satisfies their acceptance; preserve the original plan and unresolved host/eval gates.
+- `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md`: retain its useful safety/maturity contract; make only targeted factual updates if current main contradicts it.
+
+**Unified maturity vocabulary:** Browser context builder — IMPLEMENTED; chat routing/result return/chat-anchored status — IMPLEMENTED in client source; Gateway worker/runtime — PROTOTYPE / one worker; host feature availability — NOT VERIFIED (code default false); production readiness — NOT VERIFIED. IMPLEMENTED is not VERIFIED; PROTOTYPE is not production capability; feature flag false is not dead code. **Status: SPECIFIED; docs not yet changed.**
+
+### 7.3 Coverage gap — inline JavaScript dead-code audit (P0.18/P0.19 quality-tooling extension; after immediate root UI packages)
+
+**FACT · workflow inspection:** `.github/workflows/dead-code-check.yml` triggers on `gateway/**`, `observability/**`, `scripts/**` and itself; it runs `vulture gateway observability --min-confidence 90`. Thus the path filter includes `scripts/**` while the Vulture command does not inspect scripts, and the workflow does not trigger for `index.md`. The current report cannot establish which inline browser functions in the generated root app are unused.
+
+**PROPOSAL · report-only pipeline:**
+1. Build Jekyll output and extract inline script blocks from generated `_site/index.html` into a temporary, deterministic directory with source line mapping.
+2. Parse JavaScript into AST and inventory declarations/references, DOM IDs, `data-action`, delegated/dynamic `addEventListener`, inline/global handlers, string-name dispatch, generated elements and public callbacks.
+3. Distinguish unresolved dynamic consumers from unused candidates; emit confidence, source location, consumer trace and rationale.
+4. Keep Python Vulture and JavaScript report as separate artifacts. Add fixtures for `$('id')`, `addEventListener`, inline handlers, global functions, string dispatch and dynamically created elements.
+5. Maintain a candidate registry (symbol/path, callers, dynamic consumers, compatibility state, tests, decision keep/migrate/remove/investigate, revisit condition).
+6. Never auto-delete or make advisory findings release-blocking until precision/false-positive rates are measured against manually classified fixtures.
+
+**Acceptance:** workflow runs on `index.md`; built HTML is the JS input; Python/JS reports are distinct; dynamic-consumer fixtures pass; each exception has a reason; report-only behavior is enforced. **Status: SPECIFIED; no analyzer/dependency added.**
+
+### 7.4 Cross-cutting engineering safeguards (attach to matching packages)
+
+- **Migration acceptance matrix (P2.2):** old/new chat values, legacy/profile v1 and v2, conflicting fields, corrupt records, quota/partial-write failure, export/import and rollback.
+- **Architecture drift assertions (P0.12/P2/P3 docs packages):** source-backed checks for default `executionMode`, default `deepResearchMethod`, allowed AgentRun strategies, default host flag, runtime route names, context builder and result-return path. Assertions must fail only on explicit contract drift, not wording changes in long prose.
+- **Routing invariant (P2/P3):** Direct, Deep Research and AgentRun are distinct execution paths; one request must not trigger two engines. Preserve current AgentRun-vs-Deep-Research exclusion and test it.
+- **Preservation rule:** do not delete `runMultiAgentResearch`, ToolDAG, `validator.py`, approval gates, AgentRun state/task journal, Team Blueprint or helper route merely because they share orchestration vocabulary. Require consumer graph, migration and regression evidence first.
+
+### 7.5 Execution order and gates
+
+1. Finish root UI P0, starting with P0.5 shared visual-system foundations and remaining high-frequency control/form/accessibility acceptance. Do not start studio routes.
+2. Then reconcile the three AgentRun architecture documents and Plan 1 from exact main source.
+3. Then implement the staged settings/profile migration; ask the owner to confirm the rollback-window end before removing any legacy write path.
+4. Add the report-only inline JavaScript audit as a bounded Quality tooling package; do not make it a blocker or delete code on its findings.
+5. Exact-HEAD Quality/Chromium, Pages and native-device evidence remain separate gates; no claim is inherited from a different SHA or PR.
