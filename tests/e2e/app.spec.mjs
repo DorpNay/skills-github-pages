@@ -6450,3 +6450,40 @@ test('locale refresh keeps composer draft, attachment focus and disclosure state
   await expect(page.locator('#userInput')).toHaveValue(draft);
   await expect(page.locator('#draftAttachments')).toContainText('locale-attachment.bin');
 });
+
+
+test('project bundle validation is localized and rejects malformed data without mutating storage', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const before = await page.evaluate(() => ({
+    projects: localStorage.getItem('ai_projects_v1'),
+    chats: localStorage.getItem('ai_chats_v87'),
+    current: localStorage.getItem('ai_current_chat_v87')
+  }));
+  const invalidBundles = [
+    { bundle: { format: 'wrong', version: 1, project: { name: 'Bad format' }, chats: [] }, ru: 'Формат или версия пакета проекта не поддерживается.', en: 'The project bundle format or version is not supported.' },
+    { bundle: { format: 'alandi-project-bundle', version: 1, project: { name: 'Bad chat' }, chats: [{ id: 'broken' }] }, ru: 'Пакет содержит некорректную запись чата.', en: 'The bundle contains an invalid chat record.' },
+    { bundle: { format: 'alandi-project-bundle', version: 1, project: { name: '   ' }, chats: [] }, ru: 'Название проекта не может быть пустым.', en: 'The project name must not be empty.' }
+  ];
+  for (const item of invalidBundles) {
+    await page.locator('#uiLanguage').selectOption('ru');
+    await page.locator('#importProjectFile').setInputFiles({ name: 'invalid-project.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(item.bundle)) });
+    await expect(page.locator('#toast')).toContainText(item.ru);
+    await page.locator('#uiLanguage').selectOption('en');
+    await page.locator('#importProjectFile').setInputFiles({ name: 'invalid-project.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(item.bundle)) });
+    await expect(page.locator('#toast')).toContainText(item.en);
+    const after = await page.evaluate(() => ({
+      projects: localStorage.getItem('ai_projects_v1'),
+      chats: localStorage.getItem('ai_chats_v87'),
+      current: localStorage.getItem('ai_current_chat_v87')
+    }));
+    expect(after).toEqual(before);
+  }
+});
+
+test('project bundle parser failures never expose raw exception text', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#importProjectFile').setInputFiles({ name: 'broken.json', mimeType: 'application/json', buffer: Buffer.from('{not-json') });
+  await expect(page.locator('#toast')).toContainText('The selected file is not valid JSON.');
+  await expect(page.locator('#toast')).not.toContainText('Unexpected token');
+});
