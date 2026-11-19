@@ -88,3 +88,8 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - На parent HEAD Pages/Graphify были `in_progress`; предыдущий verified exact HEAD `b72d134fcc4b5de2dc123ac919cea3d51a9ea72d` имел Pages #44450998348 SUCCESS и Graphify #44450998692 SUCCESS.
 - Open PRs: 0; открытые issues #111 (owner release gates) и #186 (unrelated GitHub Skills exercise) — перепроверить live.
 - Следующий пакет: закрыть dynamic RU/EN state parity, dead/duplicate controls audit, затем запустить доступный Chromium/Quality path и закрывать 30-point gates по evidence.
+
+- IMPLEMENTED в main: P0.26–P0.30 — runtime RU/EN refresh для открытых Skills/Agents, AgentRun tasks/events, sidebar/chat list, project UI, attachments/context choices, active chat action labels, provider metadata и open chat rename dialog. Добавлены 2 Playwright regression tests: open-panel/draft locale switching и DOM integrity/accessibility-name inventory. Tests authored; browser execution pending.
+- Static audit на parent `815ab3db849cd365b7c7a7146c69878e01b1dd57`: 260 static IDs, 0 duplicates; 77 static `data-action` nodes, all native `button`; 69 unique action names; `chat-action-save` handled by form submit. Это статический аудит, не runtime verification.
+- Исправлены RU-only dynamic strings в request-project descriptions, tool-call/retry/research-trace labels, selected memory confirmations/toasts, Pollinations disconnect, system-prompt editing и trace-link feedback.
+- Следующий пакет: добрать action-handler audit, localize remaining error/confirm paths, add active request-context/move-chat/attachment parity tests; затем выполнить доступный Chromium/Quality path.

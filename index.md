@@ -2009,6 +2009,92 @@ permalink: /
       const english=getUiLanguage()==='en',width=window.innerWidth||document.documentElement.clientWidth;
       input.placeholder=width<=340?'…':width<=360?(english?'Type':'Текст'):width<=420?(english?'Type…':'Текст…'):UI_TEXT[english?'en':'ru'].composerPlaceholder;
     }
+    function refreshAgentRuntimeEventLanguage() {
+      for(const id of ['agentRuntimeEvents','agentRunChatEvents']) {
+        const list=$(id);if(!list)continue;
+        const previousScrollTop=list.scrollTop;
+        for(const row of [...list.querySelectorAll('[data-event-id]')]) {
+          const next=createAgentRuntimeEventRow({
+            event_id:Number(row.dataset.eventId),
+            event_type:row.dataset.eventType,
+            occurred_at:Number(row.dataset.occurredAt)
+          });
+          if(next)row.replaceWith(next);
+        }
+        list.scrollTop=previousScrollTop;
+      }
+    }
+    function refreshLocalizedChatSurface() {
+      const english=getUiLanguage()==='en',chat=getCurrentChat();
+      const title=$('activeChatTitle');
+      if(title)title.textContent=chat?.title||(english?'New chat':'Новый чат');
+      const welcome=$('chatBox')?.querySelector('.chat-welcome');
+      if(welcome)welcome.textContent=english
+        ? 'Welcome. Connect aServi or choose a third-party provider in settings.'
+        : 'Привет! Подключи aServi или выбери стороннего провайдера в настройках.';
+      document.querySelectorAll('#chatBox .message-actions [data-action]').forEach(button=>{
+        const action=button.dataset.action;
+        const label=action==='copy-message'?(english?'Copy message':'Скопировать сообщение')
+          :action==='view-message'?(english?'Open readable message view':'Открыть полный текст сообщения')
+          :action==='speak-message'?(english?'Read message aloud':'Озвучить сообщение'):'';
+        if(label){button.setAttribute('aria-label',label);button.title=label;}
+      });
+      document.querySelectorAll('#chatBox .message-tool-call').forEach(node=>{
+        node.textContent=(english?'🔧 Tool call: ':'🔧 Вызов инструмента: ')+(node.dataset.toolNames||'');
+      });
+      document.querySelectorAll('#chatBox .message-model-meta').forEach(node=>{
+        const provider=node.dataset.providerLabel||node.dataset.provider||(english?'Unknown provider':'Провайдер неизвестен');
+        const model=node.dataset.modelName||(english?'model not specified':'модель не указана');
+        const requested=node.dataset.requestedModel&&node.dataset.requestedModel!==node.dataset.modelName
+          ? (english?' (requested ':' (запрошена ')+node.dataset.requestedModel+')':'';
+        const cache=node.dataset.provider==='alandi'&&node.dataset.cacheStatus
+          ? (english?' · cache ':' · кэш ')+node.dataset.cacheStatus:'';
+        node.textContent=provider+' · '+model+requested+cache;
+      });
+      document.querySelectorAll('#chatBox .research-trace-open').forEach(button=>{
+        button.textContent=english?'Open research trace':'Открыть журнал исследования';
+      });
+      document.querySelectorAll('#chatBox .retry-action').forEach(button=>{
+        button.textContent=english?'Retry request':'Повторить запрос';
+      });
+    }
+    function refreshChatActionDialogLanguage() {
+      const modal=$('chatActionModal');
+      if(!modal||modal.classList.contains('hidden'))return;
+      const english=getUiLanguage()==='en',mode=modal.dataset.mode;
+      const chat=chats.find(item=>item.id===modal.dataset.chatId);
+      if(!chat)return;
+      const name=$('chatActionName'),select=$('chatActionProject');
+      if(mode==='rename') {
+        $('chatActionTitle').textContent=english?'Rename chat':'Переименовать чат';
+        $('chatActionFieldLabel').textContent=english?'Chat name':'Название чата';
+        $('chatActionHelp').textContent=english?'Choose a short name for this chat.':'Укажи короткое название этого чата.';
+      } else {
+        const selected=select.value;
+        $('chatActionTitle').textContent=english?'Move chat to project':'Переместить чат в проект';
+        $('chatActionFieldLabel').textContent=english?'Project':'Проект';
+        $('chatActionHelp').textContent=english
+          ? 'Choose a project or personal chat. Project memory toggles will be reset.'
+          : 'Выбери проект или личный чат. Переключатели памяти проекта будут сброшены.';
+        select.replaceChildren();
+        const personal=document.createElement('option');personal.value='';
+        personal.textContent=english?'Personal chat (no project)':'Личный чат (без проекта)';
+        select.appendChild(personal);
+        projects.forEach(project=>{
+          const option=document.createElement('option');option.value=project.id;option.textContent=project.name;
+          select.appendChild(option);
+        });
+        select.value=selected;
+      }
+      const closeButtons=modal.querySelectorAll('[data-action="chat-action-cancel"]');
+      closeButtons.forEach((button,index)=>{
+        if(index===0)button.setAttribute('aria-label',english?'Close':'Закрыть');
+        else button.textContent=english?'Cancel':'Отмена';
+      });
+      const save=modal.querySelector('[data-action="chat-action-save"]');
+      if(save)save.textContent=english?'Save':'Сохранить';
+      if(mode==='rename'&&name)name.setAttribute('aria-label',english?'Chat name':'Название чата');
+    }
     function applyUiLanguage(language){
       const lang=language==='en'?'en':'ru';safeSet('ai_ui_language_v1',lang);document.documentElement.lang=lang;
       const text=UI_TEXT[lang];
@@ -2031,8 +2117,18 @@ permalink: /
       document.querySelectorAll('[data-action="toggle-settings"]').forEach(button=>button.setAttribute('aria-label',lang==='en'?'Settings':'Настройки'));
       const attach=$('attachTextButton');if(attach){attach.title=lang==='en'?'Attach photo, video or any file format':'Добавить фото, видео или файл любого формата';attach.setAttribute('aria-label',attach.title);}
       const voice=$('voiceUnavailableButton');if(voice){voice.title=lang==='en'?'Open voice modes':'Нажми, чтобы открыть режимы голоса';voice.setAttribute('aria-label',lang==='en'?'Open voice modes':'Открыть режимы голоса');}
-      updateOfflineUI();updateModeUI();updateHomeThemeButton();renderProjectUI({preserveDraft:true});updateMemoryStatusLine();
-      if(!$('agentFunctionSettings').classList.contains('hidden'))setAgentRuntimeCopy();
+      updateOfflineUI();updateModeUI();updateHomeThemeButton();
+      renderProjectNavigation();renderChatList();renderDraftAttachments();renderRequestProjectChoices();
+      updateMemoryStatusLine();refreshLocalizedChatSurface();refreshChatActionDialogLanguage();
+      refreshAgentRuntimeEventLanguage();
+      if(!$('skillFunctionSettings').classList.contains('hidden'))renderSkillConfiguration();
+      if(!$('agentFunctionSettings').classList.contains('hidden')){
+        renderAgentConfiguration();setAgentRuntimeCopy();
+        renderAgentRuntimeTasks(agentRuntimeLastTasks);
+        renderAgentRunChatTasks(agentRunChatLastTasks);
+        renderAgentRunChatStatus(agentRuntimeActiveRun,agentRuntimeActiveRun?.latestSnapshot);
+        refreshAgentRuntimeEventLanguage();
+      }
       if(!$('researchFunctionSettings').classList.contains('hidden'))renderResearchConfiguration();
     }
     window.addEventListener('resize',syncComposerPlaceholder,{passive:true});
@@ -2195,7 +2291,7 @@ permalink: /
         });
         const text=document.createElement('span');text.className='min-w-0 flex-1';
         const title=document.createElement('span');title.className='block font-medium';title.textContent=project.name;
-        const desc=document.createElement('span');desc.className='description';desc.textContent=(project.instructions?'инструкции':'без инструкций')+' · '+project.memory.length+' фактов памяти';
+        const desc=document.createElement('span');desc.className='description';desc.textContent=(getUiLanguage()==='en'?(project.instructions?'instructions':'no instructions'):(project.instructions?'инструкции':'без инструкций'))+' · '+project.memory.length+' '+(getUiLanguage()==='en'?'memory facts':'фактов памяти');
         text.append(title,desc);label.append(checkbox,text);box.appendChild(label);
       }
       updateRequestContextButton();
@@ -2393,8 +2489,9 @@ permalink: /
       else {
         if (Array.isArray(message.tool_calls) && message.tool_calls.length) {
           const indicator = document.createElement('div');
-          indicator.className = 'text-blue-300 text-xs italic mb-2';
-          indicator.textContent = `🔧 Вызов инструмента: ${message.tool_calls.map((tc) => tc?.function?.name || 'tool').join(', ')}`;
+          indicator.className = 'message-tool-call text-blue-300 text-xs italic mb-2';
+          indicator.dataset.toolNames = message.tool_calls.map((tc) => tc?.function?.name || 'tool').join(', ');
+          indicator.textContent = (getUiLanguage()==='en'?'🔧 Tool call: ':'🔧 Вызов инструмента: ')+indicator.dataset.toolNames;
           bubble.appendChild(indicator);
         }
         const content = document.createElement('div');
@@ -2431,11 +2528,11 @@ permalink: /
         }
         row.appendChild(actions);
       }
-      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.textContent=(r.providerLabel||r.provider||'Провайдер неизвестен')+' · '+(r.model||'модель не указана')+(r.requestedModel&&r.requestedModel!==r.model?' (запрошена '+r.requestedModel+')':'')+(r.provider==='alandi'&&r.cacheStatus?' · кэш '+r.cacheStatus:''); row.className+=' flex-col items-start'; row.appendChild(meta); }
+      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.dataset.providerLabel=String(r.providerLabel||r.provider||''); meta.dataset.modelName=String(r.model||''); meta.dataset.requestedModel=String(r.requestedModel||''); meta.dataset.provider=String(r.provider||''); meta.dataset.cacheStatus=String(r.cacheStatus||''); row.className+=' flex-col items-start'; row.appendChild(meta); }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
-        button.className = 'text-xs text-blue-300 hover:text-blue-200 underline underline-offset-2 px-1 py-1'; button.textContent = 'Открыть журнал исследования';
+        button.className = 'research-trace-open text-xs text-blue-300 hover:text-blue-200 underline underline-offset-2 px-1 py-1'; button.textContent = getUiLanguage()==='en'?'Open research trace':'Открыть журнал исследования';
         actions.appendChild(button); row.className += ' flex-col items-start'; row.appendChild(actions);
       }
       if (message.error) {
@@ -2443,7 +2540,7 @@ permalink: /
         retryLine.className = 'mt-1 text-xs text-red-400';
         const retry = document.createElement('button');
         retry.type = 'button'; retry.dataset.action = 'retry';
-        retry.className = 'retry-action underline hover:text-red-300'; retry.textContent = 'Повторить запрос';
+        retry.className = 'retry-action underline hover:text-red-300'; retry.textContent = getUiLanguage()==='en'?'Retry request':'Повторить запрос';
         retryLine.appendChild(retry); row.appendChild(retryLine);
       }
       return row;
@@ -2481,7 +2578,7 @@ permalink: /
       if(chat.activeAgentRunId&&!agentRuntimeActiveRun)resumeAgentRunForChat(chat);
       if (!chat.messages.length) {
         const welcome = document.createElement('div');
-        welcome.className = 'text-center text-gray-500 mt-10';
+        welcome.className = 'chat-welcome text-center text-gray-500 mt-10';
         welcome.textContent = getUiLanguage()==='en' ? 'Welcome. Connect aServi or choose a third-party provider in settings.' : 'Привет! Подключи aServi или выбери стороннего провайдера в настройках.';
         box.appendChild(welcome);
         updateJumpToLatest();
@@ -4441,6 +4538,8 @@ permalink: /
       renderAgentConfiguration();
     }
 let agentRuntimeRefreshPromise = null;
+    let agentRuntimeLastTasks = [];
+    let agentRunChatLastTasks = [];
     let executionModeChangePromise = null;
     let executionModeChangeSequence = 0;
     let executionModeChangeTarget = 'direct';
@@ -4548,6 +4647,7 @@ let agentRuntimeRefreshPromise = null;
       return label[getUiLanguage()==='en'?'en':'ru'];
     }
     function renderAgentRunChatTasks(tasks) {
+      agentRunChatLastTasks=Array.isArray(tasks)?tasks.slice():[];
       const list=$('agentRunChatTasks');
       list.replaceChildren();
       const english=getUiLanguage()==='en';
@@ -4568,6 +4668,8 @@ let agentRuntimeRefreshPromise = null;
       if(!label)return null;
       const item=document.createElement('li');
       item.dataset.eventId=String(event.event_id);
+      item.dataset.eventType=String(event.event_type||'');
+      item.dataset.occurredAt=String(event.occurred_at??'');
       item.className='flex items-start gap-2';
       const occurredAt=Number(event.occurred_at);
       if(Number.isFinite(occurredAt)&&occurredAt>0) {
@@ -4666,6 +4768,7 @@ let agentRuntimeRefreshPromise = null;
       });
     }
     function renderAgentRuntimeTasks(tasks) {
+      agentRuntimeLastTasks=Array.isArray(tasks)?tasks.slice():[];
       const list=$('agentRuntimeTasks');
       list.replaceChildren();
       if(!Array.isArray(tasks)||!tasks.length) {
@@ -7632,7 +7735,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             break;
           }
           case 'delete-memory':
-            if (confirm('Удалить этот личный факт из памяти?')) await MemoryDB.delete(control.dataset.memoryId);
+            if (confirm(getUiLanguage()==='en'?'Delete this personal memory item?':'Удалить этот личный факт из памяти?')) await MemoryDB.delete(control.dataset.memoryId);
             break;
           case 'promote-memory':
             await promotePrivateMemory(control.dataset.memoryId);
@@ -7640,21 +7743,21 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'save-shared-memory': {
             const input = $('sharedMemoryInput'); const fact = input.value.trim();
             if (!fact) { input.focus(); break; }
-            if (!confirm('Сохранить этот факт в ОБЩУЮ память? Он может попасть стороннему провайдеру, если включено использование общей памяти.')) break;
+            if (!confirm(getUiLanguage()==='en'?'Save this fact to SHARED memory? It may be sent to a third-party provider when shared memory is enabled.':'Сохранить этот факт в ОБЩУЮ память? Он может попасть стороннему провайдеру, если включено использование общей памяти.')) break;
             await SharedMemoryDB.add(fact); input.value = '';
-            showToast('Факт сохранён в общей памяти.');
+            showToast(getUiLanguage()==='en'?'Fact saved to shared memory.':'Факт сохранён в общей памяти.');
             break;
           }
           case 'delete-shared-memory':
-            if (confirm('Удалить этот факт из общей памяти?')) await SharedMemoryDB.delete(control.dataset.memoryId);
+            if (confirm(getUiLanguage()==='en'?'Delete this shared memory item?':'Удалить этот факт из общей памяти?')) await SharedMemoryDB.delete(control.dataset.memoryId);
             break;
           case 'toggle-settings': toggleSettings(true); break;
           case 'test-connection': await testProviderConnection(); break;
           case 'refresh-model-catalog': await refreshConnectedModelCatalogs({ quiet: false, force: true }); break;
           case 'clear-provider-key': clearProviderKey(); break;
           case 'connect-pollinations': await beginPollinationsOAuth(); break;
-          case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast('Pollinations-сессия завершена для этой вкладки.'); break;
-          case 'edit-system-prompt': { const textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly;textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?'Завершить редактирование · сохранить':'Редактировать';button.classList.toggle('is-editing',editable);$('promptEditHint').textContent=editable?'Редактирование включено':'Редактирование выключено';if(editable)textarea.focus();break;}
+          case 'disconnect-pollinations': clearPollinationsSession(); refreshApiKeyLamp(); showToast(getUiLanguage()==='en'?'Pollinations session ended for this tab.':'Pollinations-сессия завершена для этой вкладки.'); break;
+          case 'edit-system-prompt': { const english=getUiLanguage()==='en',textarea=$('systemPromptInput'),button=$('editSystemPrompt'),editable=textarea.readOnly;textarea.readOnly=!editable;button.setAttribute('aria-pressed',String(editable));button.textContent=editable?'✓':'✎';button.title=editable?(english?'Finish editing · save':'Завершить редактирование · сохранить'):(english?'Edit':'Редактировать');button.classList.toggle('is-editing',editable);$('promptEditHint').textContent=editable?(english?'Editing enabled':'Редактирование включено'):(english?'Editing disabled':'Редактирование выключено');if(editable)textarea.focus();break;}
           case 'toggle-offline': toggleOfflineMode(); break;
           case 'close-settings': toggleSettings(false); break;
           case 'save-settings': saveSettings(); break;
@@ -7664,7 +7767,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'stop': stopGeneration(); break;
           case 'retry': await retryLastMessage(); break;
           case 'copy-code': case 'download-code': case 'run-python': await handleCodeAction(control); break;
-          case 'open-trace': { const raw=safeGet('ai_research_trace_'+control.dataset.traceId); if(!raw) throw new Error('Журнал не найден: возможно, локальные данные очищены.'); showTrace(JSON.parse(raw)); break; }
+          case 'open-trace': { const raw=safeGet('ai_research_trace_'+control.dataset.traceId); if(!raw) throw new Error(getUiLanguage()==='en'?'Research trace not found. Local data may have been cleared.':'Журнал не найден: возможно, локальные данные очищены.'); showTrace(JSON.parse(raw)); break; }
           case 'persist-trace-evidence': await persistTraceEvidence(control); break;
           case 'close-trace': closeTrace(); break;
           case 'download-trace': downloadTrace(); break;
@@ -7673,7 +7776,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             if (!activeTrace) break;
             safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
             const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
-            await copyText(link); showToast('Локальная ссылка скопирована — работает в этом браузере'); break;
+            await copyText(link); showToast(getUiLanguage()==='en'?'Local link copied — it works in this browser.':'Локальная ссылка скопирована — работает в этом браузере'); break;
           }
         }
       } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }

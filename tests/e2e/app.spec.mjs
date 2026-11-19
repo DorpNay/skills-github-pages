@@ -6191,3 +6191,66 @@ test('root controls expose visible keyboard focus and consistent mobile touch ge
   await page.keyboard.press('Escape');
   await expect(page.locator('#projectCreateModal')).toBeHidden();
 });
+
+test('live RU EN switching refreshes open runtime surfaces without losing drafts', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="skills"]').click();
+  await expect(page.locator('#skillConfigSummary')).toContainText('Профиль:');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#skillConfigSummary')).toContainText('Profile:');
+  await expect(page.locator('#skillGoalSelect option[value="research"]')).toHaveText('Research');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#skillConfigSummary')).toContainText('Профиль:');
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('#functionsMenu > summary').click();
+  await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
+  await expect(page.locator('#agentConfigSummary')).toContainText('фиксированных этапа');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#agentConfigSummary')).toContainText('fixed stages');
+  await expect(page.locator('#agentTeamSizeValue')).toHaveText('4 roles');
+  await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('One task');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#agentConfigSummary')).toContainText('фиксированных этапа');
+  await expect(page.locator('#agentTeamSizeValue')).toHaveText('4 роли');
+
+  await page.locator('#functionPanelModal .function-panel-close').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const chatMenu = page.locator('#chatList .chat-row-menu').first();
+  if (!(await chatMenu.count())) await page.locator('#chatSection [data-action="new-chat"]').click();
+  const rowMenu = page.locator('#chatList .chat-row-menu').first();
+  await rowMenu.locator('summary').click();
+  await rowMenu.locator('[data-action="chat-rename"]').click();
+  await page.locator('#chatActionName').fill('Draft survives locale switch');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#chatActionTitle')).toHaveText('Rename chat');
+  await expect(page.locator('#chatActionName')).toHaveValue('Draft survives locale switch');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#chatActionTitle')).toHaveText('Переименовать чат');
+  await expect(page.locator('#chatActionName')).toHaveValue('Draft survives locale switch');
+  await page.locator('[data-action="chat-action-cancel"]').first().click();
+});
+
+test('dynamic composer and message action labels refresh after a locale switch', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Type…');
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Текст…');
+  const integrity = await page.evaluate(() => {
+    const ids = [...document.querySelectorAll('[id]')].map(node => node.id);
+    const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
+    const invalidActions = [...document.querySelectorAll('[data-action]')]
+      .filter(node => !['BUTTON', 'SUMMARY'].includes(node.tagName))
+      .map(node => ({ action: node.dataset.action, tag: node.tagName }));
+    const unlabeledVisibleButtons = [...document.querySelectorAll('button')]
+      .filter(node => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden')
+      .filter(node => !(node.getAttribute('aria-label') || node.getAttribute('title') || node.innerText.trim()))
+      .map(node => node.outerHTML.slice(0, 180));
+    return { duplicateIds, invalidActions, unlabeledVisibleButtons };
+  });
+  expect(integrity.duplicateIds).toEqual([]);
+  expect(integrity.invalidActions).toEqual([]);
+  expect(integrity.unlabeledVisibleButtons).toEqual([]);
+});

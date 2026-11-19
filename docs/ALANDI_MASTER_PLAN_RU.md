@@ -135,6 +135,157 @@
 - [~] 29. Existing RU/EN tests cover dynamic research/agent panels, composer validation, provider and project forms; full root status-copy parity remains.
 - [ ] 30. Real iOS Safari/VoiceOver and Windows forced-colors manual verification.
 
+
+### P0.26 — RU/EN live runtime parity (IMPLEMENTED; Chromium acceptance pending)
+
+- [~] 1. Re-render skill configuration summary on locale changes while Skills panel is open.
+- [~] 2. Re-render Agent team blueprint summary on locale changes while Agents panel is open.
+- [~] 3. Keep Agent role-count grammar consistent with the selected language.
+- [~] 4. Refresh AgentRun static labels without re-fetching Gateway capability.
+- [~] 5. Rebuild cached AgentRun task labels after a locale change.
+- [~] 6. Rebuild chat-scoped AgentRun task labels after a locale change.
+- [~] 7. Preserve AgentRun event IDs while refreshing event descriptions and local time format.
+- [~] 8. Refresh project navigation names/actions in the active locale.
+- [~] 9. Refresh chat navigation labels and empty states without losing scroll/focus.
+- [~] 10. Re-render project settings status while preserving an actively edited draft.
+- [~] 11. Refresh composer attachment metadata and unsupported-file warnings.
+- [~] 12. Refresh request-project choices without losing selected project IDs.
+- [~] 13. Localize request-project instruction/memory descriptors.
+- [~] 14. Refresh empty-chat welcome copy without rebuilding message history.
+- [~] 15. Refresh message copy/view/speak accessible names in-place.
+- [~] 16. Refresh research-trace and retry action labels in-place.
+- [~] 17. Refresh tool-call indicators in the active chat.
+- [~] 18. Refresh provider/model metadata labels while retaining original metadata values.
+- [~] 19. Re-localize an open chat rename dialog without overwriting its draft.
+- [~] 20. Re-localize an open chat-project dialog without losing its selected project.
+- [~] 21. Preserve AgentRun event scroll position during translation refresh.
+- [~] 22. Preserve chat-list scroll/focus during locale-triggered re-render.
+- [~] 23. Keep research configuration method/status synchronized with locale.
+- [~] 24. Keep memory count/status copy synchronized with locale.
+- [~] 25. Keep selected Quick/Thorough, search mode and skill profile unchanged during locale changes.
+- [ ] 26. Localize cached Project Sources status/error states without a second network request.
+- [ ] 27. Localize active voice menu states without restarting or cancelling capture.
+- [ ] 28. Localize in-flight chat stream status without changing/cancelling the request.
+- [ ] 29. Localize historical tool metadata without changing stored conversation content.
+- [ ] 30. Verify full RU → EN → RU round-trip in Chromium at 320/390/768/1440px.
+
+### P0.27 — Chat, project and composer interaction integrity (PARTIAL)
+
+- [~] 1. Keep chat action modal labels in sync with locale.
+- [~] 2. Preserve rename draft when locale changes.
+- [~] 3. Preserve selected project in move-chat dialog when locale changes.
+- [~] 4. Rebuild chat list with focus/scroll restoration on locale changes.
+- [~] 5. Rebuild project navigation action labels on locale changes.
+- [~] 6. Preserve project editor draft while updating project settings status.
+- [~] 7. Preserve request context selection while refreshing descriptions.
+- [~] 8. Refresh draft attachment labels without dropping selected files.
+- [~] 9. Refresh empty-chat welcome without replacing conversation content.
+- [~] 10. Update message action accessible names without rebuilding the chat.
+- [~] 11. Update research trace/retry labels without mutating message data.
+- [~] 12. Keep provider/model provenance values intact while localizing fallback labels.
+- [ ] 13. Verify chat action dialog Tab/Shift+Tab loop after language change.
+- [ ] 14. Verify project settings focus restoration after locale-triggered list refresh.
+- [ ] 15. Verify request context checkbox focus after locale-triggered rebuild.
+- [ ] 16. Verify attachment remove-button focus when attachments are re-rendered.
+- [ ] 17. Verify message action keyboard focus survives in-place relabeling.
+- [ ] 18. Verify long project/chat names remain clipped without horizontal overflow.
+- [ ] 19. Verify five-project request context cap in both locales.
+- [ ] 20. Verify no duplicate change handlers after repeated context-menu refresh.
+- [ ] 21. Verify no duplicate project/chat rows after 10 repeated locale switches.
+- [ ] 22. Verify no state loss across chat switch while locale is changed.
+- [ ] 23. Verify open menu state and aria-expanded remain consistent after locale change.
+- [ ] 24. Verify browser history/deep-link state remain unchanged by locale.
+- [ ] 25. Verify composer draft and selected attachments remain unchanged after 10 RU/EN toggles.
+
+### P0.28 — UI action feedback localization (PARTIAL)
+
+- [~] 1. Localize Pollinations disconnect feedback.
+- [~] 2. Localize personal-memory delete confirmation.
+- [~] 3. Localize shared-memory save confirmation and success toast.
+- [~] 4. Localize shared-memory delete confirmation.
+- [~] 5. Localize system-prompt edit/finish title and inline hint.
+- [~] 6. Localize missing research-trace error.
+- [~] 7. Localize copied research-trace link toast.
+- [~] 8. Localize tool-call indicator prefix.
+- [~] 9. Localize research trace and retry labels in rendered messages.
+- [ ] 10. Audit remaining confirm()/alert() paths for English parity.
+- [ ] 11. Audit thrown errors shown to users for locale-safe messages.
+- [ ] 12. Audit async Gateway failure/status messages for locale refresh.
+- [ ] 13. Audit provider test/connect/disconnect failure feedback.
+- [ ] 14. Audit project CRUD and import/export feedback.
+- [ ] 15. Audit memory CRUD and helper suggestions feedback.
+- [ ] 16. Audit chat CRUD and dialog validation.
+- [ ] 17. Audit trace export/copy/download feedback.
+- [ ] 18. Audit attachment parser/extraction warnings and failures.
+- [ ] 19. Audit Voice/ASR/TTS capability feedback.
+- [ ] 20. Audit offline/online mode and connectivity feedback.
+- [ ] 21. Audit storage quota and recovery warning feedback.
+- [ ] 22. Audit all toast messages for locale parity.
+- [ ] 23. Audit all aria-live/status announcements for locale parity.
+- [ ] 24. Audit native browser confirm prompts for contextual language parity.
+- [ ] 25. Verify errors do not expose secrets, request bodies or internal traces.
+
+### P0.29 — Control inventory and semantic integrity (PARTIAL)
+
+- [~] 1. Static markup contains no duplicate element IDs.
+- [~] 2. All static data-action elements are native buttons.
+- [~] 3. Chat action save remains a form submit, not a click-only pseudo-action.
+- [~] 4. Dynamic menu actions remain delegated through one action dispatcher.
+- [~] 5. Static inventory found 77 data-action nodes across 69 unique action names.
+- [ ] 6. Inventory all 69 distinct action names against dispatcher/submit/change handlers.
+- [ ] 7. Confirm no orphaned action names remain in markup/generated templates.
+- [ ] 8. Confirm no duplicate delegated listeners are installed on locale changes.
+- [ ] 9. Confirm destructive actions have clear confirmation or reversible undo.
+- [ ] 10. Confirm async actions have pending/disabled feedback.
+- [ ] 11. Confirm cancel actions abort the corresponding operation.
+- [ ] 12. Confirm close actions restore focus to a connected trigger.
+- [ ] 13. Confirm disclosures expose accurate aria-expanded/open state.
+- [ ] 14. Confirm selected toggles expose aria-pressed/checked.
+- [ ] 15. Confirm error fields have aria-invalid and aria-describedby.
+- [ ] 16. Confirm all visible buttons have non-empty accessible names.
+- [ ] 17. Confirm all form controls have associated labels or accessible names.
+- [ ] 18. Confirm all modals have dialog role, accessible title and description.
+- [ ] 19. Confirm no hidden interactive elements remain tabbable.
+- [ ] 20. Confirm menu actions are keyboard reachable and Escape/outside behavior stable.
+- [ ] 21. Confirm action buttons do not trigger nested row click handlers twice.
+- [ ] 22. Confirm disabled controls cannot dispatch consequential actions.
+- [ ] 23. Confirm action errors are announced without replacing current draft.
+- [ ] 24. Confirm touch and keyboard interaction have equivalent functionality.
+- [ ] 25. Confirm native controls remain operable in forced-colors mode.
+
+### P0.30 — RU/EN and interaction regression matrix (IMPLEMENTED; browser execution pending)
+
+- [~] 1. Skills summary updates RU → EN → RU while panel remains open.
+- [~] 2. Skill option labels update while preserving selected option values.
+- [~] 3. Agent blueprint summary updates RU → EN → RU while panel remains open.
+- [~] 4. Agent role count updates with correct English/Russian grammar.
+- [~] 5. AgentRun strategy help updates with the selected locale.
+- [~] 6. Open rename dialog title/help update with locale.
+- [~] 7. Open rename dialog text draft survives locale change.
+- [~] 8. Composer placeholder changes RU → EN → RU at 390px.
+- [~] 9. DOM audit checks duplicate IDs.
+- [~] 10. DOM audit checks native semantics of data-action controls.
+- [~] 11. DOM audit checks visible button accessible names.
+- [ ] 12. Add active move-chat dialog selection-preservation regression.
+- [ ] 13. Add live request-context selected-project preservation regression.
+- [ ] 14. Add selected attachment preservation regression across locale changes.
+- [ ] 15. Add existing message-action aria-label refresh regression.
+- [ ] 16. Add research-trace/retry label refresh regression.
+- [ ] 17. Add tool-call indicator prefix refresh regression.
+- [ ] 18. Add provider/model metadata fallback refresh regression.
+- [ ] 19. Add AgentRun task/event refresh regression with mocked Gateway.
+- [ ] 20. Add chat-list focus/scroll preservation regression.
+- [ ] 21. Add project-navigation focus preservation regression.
+- [ ] 22. Add 320px locale overflow regression.
+- [ ] 23. Add 768px locale wrapping regression.
+- [ ] 24. Add 1440px locale wrapping regression.
+- [ ] 25. Add 10-cycle RU/EN idempotency regression.
+- [ ] 26. Add active stream locale-change regression without aborting generation.
+- [ ] 27. Add native iOS Safari/VoiceOver language-change check.
+- [ ] 28. Add Windows forced-colors language-change check.
+- [ ] 29. Add locale persistence across reload regression.
+- [ ] 30. Add language change during Project Settings edit regression.
+
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
 - [ ] P1.1 aCodingi — отдельная same-origin workspace page/route; сохранить нынешний /workspace/ функционал и интегрировать в общий shell/project/chat identity.
