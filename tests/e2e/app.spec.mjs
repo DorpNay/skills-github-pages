@@ -427,7 +427,6 @@ test('project creation closes on Escape and restores focus to a visible control'
 });
 
 test('mobile project and chat navigation controls meet the 44px touch target', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
 
@@ -451,19 +450,41 @@ test('mobile project and chat navigation controls meet the 44px touch target', a
     ['chat select', page.locator('#chatList .chat-row [data-action="switch-chat"]').first()],
     ['chat actions', page.locator('#chatList .chat-row .chat-row-menu summary').first()]
   ];
-  for (const [label, control] of controls) {
-    await expect(control, label).toBeVisible();
-    const rect = await control.boundingBox();
-    expect(rect?.width || 0, label + ' width').toBeGreaterThanOrEqual(44);
-    expect(rect?.height || 0, label + ' height').toBeGreaterThanOrEqual(44);
+  for (const width of [320, 360, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const [label, control] of controls) {
+      await expect(control, label + ' at ' + width + 'px').toBeVisible();
+      const rect = await control.boundingBox();
+      expect(rect?.width || 0, label + ' width at ' + width + 'px').toBeGreaterThanOrEqual(44);
+      expect(rect?.height || 0, label + ' height at ' + width + 'px').toBeGreaterThanOrEqual(44);
+    }
+    const sidebarWidth = await page.locator('#sidebar').evaluate(element => ({
+      clientWidth: element.clientWidth,
+      scrollWidth: element.scrollWidth
+    }));
+    expect(sidebarWidth.scrollWidth, 'sidebar horizontal overflow at ' + width + 'px')
+      .toBeLessThanOrEqual(sidebarWidth.clientWidth + 1);
   }
-
-  const sidebarWidth = await page.locator('#sidebar').evaluate(element => ({
-    clientWidth: element.clientWidth,
-    scrollWidth: element.scrollWidth
-  }));
-  expect(sidebarWidth.scrollWidth).toBeLessThanOrEqual(sidebarWidth.clientWidth + 1);
 });
+
+test('native disclosure controls expose the shared visible keyboard focus ring', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const summary = page.locator('#functionsMenuSummary');
+  await page.keyboard.press('Tab');
+  await summary.focus();
+  await expect(summary).toBeFocused();
+  const focus = await summary.evaluate(element => ({
+    matchesFocusVisible: element.matches(':focus-visible'),
+    outlineWidth: getComputedStyle(element).outlineWidth,
+    outlineStyle: getComputedStyle(element).outlineStyle,
+    outlineColor: getComputedStyle(element).outlineColor
+  }));
+  expect(focus.matchesFocusVisible).toBe(true);
+  expect(focus.outlineWidth).toBe('2px');
+  expect(focus.outlineStyle).toBe('solid');
+  expect(focus.outlineColor).not.toBe('rgba(0, 0, 0, 0)');
+});
+
 
 test('mobile sidebar and modal close controls meet the 44px touch target', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });

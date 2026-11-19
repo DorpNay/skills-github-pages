@@ -359,7 +359,7 @@ permalink: /
     #settingsModal input, #settingsModal textarea, #settingsModal select, #userInput, #memoryInput,
     #sidebar .bg-gray-900 { background:var(--ui-bg)!important; color:var(--ui-text)!important; }
     #settingsModal label, #settingsModal p { color:var(--ui-text-muted)!important; }
-    :where(button,input,textarea,select,[tabindex]):focus-visible { outline:2px solid var(--ui-tiffany)!important; outline-offset:2px; }
+    :where(button,input,textarea,select,summary,a[href],[role="button"],[tabindex]):focus-visible { outline:2px solid var(--ui-tiffany)!important; outline-offset:2px; }
     button { transition:color var(--motion-fast) var(--motion-ease),background-color var(--motion-fast) var(--motion-ease),border-color var(--motion-fast) var(--motion-ease),opacity var(--motion-fast) var(--motion-ease),transform var(--motion-fast) var(--motion-ease); }
     button:active:not(:disabled) { transform:translateY(1px); }
     .motion-accent { position:relative; isolation:isolate; overflow:hidden; }
