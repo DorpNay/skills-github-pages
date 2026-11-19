@@ -67,7 +67,7 @@
 6. [ ] 1024 CSS px: desktop/tablet transition has no overlapping panels.
 7. [ ] 1280 CSS px: desktop sidebar, toolbar and composer remain aligned.
 8. [ ] 1440 CSS px: wide layout does not stretch text or detach primary actions.
-9. [ ] Landscape 844×390: header, scroll regions and composer remain reachable.
+9. [~] Landscape 844×390: added Playwright check for root overflow, composer bounds, textarea target height and Send visibility; browser execution pending.
 10. [ ] Keyboard/VisualViewport simulation: composer and popovers reposition without obscuring the focused control; native iOS keyboard remains a manual gate.
 
 **Composer and menus**
@@ -1966,3 +1966,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **NOT RUN — browser/device acceptance:** the new nested-menu and viewport sweep tests, along with earlier 320/360/390px regressions, have not yet run in Chromium; no native iPhone Safari/VoiceOver check was performed.
 
 - **IMPLEMENTED — toolbar disclosure Escape behavior (this commit).** Search, Functions and Language toolbar disclosures now share one Escape close path and restore focus to their own summary. Added Playwright coverage for Search/Functions Escape and first outside click not activating the underlying processing-mode control. Browser execution pending.
+
+- **IMPLEMENTED — landscape mobile acceptance (this commit).** Added an 844×390 Playwright regression for document/body overflow, composer viewport bounds, textarea minimum height and Send reachability. Browser execution remains pending.

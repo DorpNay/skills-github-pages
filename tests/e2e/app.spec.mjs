@@ -3800,6 +3800,34 @@ test('root app reflows without document-level horizontal overflow from 320 to 14
   }
 });
 
+test('landscape mobile viewport keeps the composer and chat controls reachable', async ({ page }) => {
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const metrics = await page.evaluate(() => {
+    const footer = document.querySelector('#composerFooter').getBoundingClientRect();
+    const input = document.querySelector('#userInput').getBoundingClientRect();
+    const send = document.querySelector('#sendBtn').getBoundingClientRect();
+    return {
+      viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
+      documentWidth: document.documentElement.scrollWidth,
+      bodyWidth: document.body.scrollWidth,
+      footerTop: footer.top,
+      footerBottom: footer.bottom,
+      footerHeight: footer.height,
+      inputHeight: input.height,
+      sendVisible: send.width > 0 && send.height > 0 && send.bottom <= window.innerHeight + 1
+    };
+  });
+  expect(metrics.documentWidth, 'landscape document should not overflow').toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  expect(metrics.bodyWidth, 'landscape body should not overflow').toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  expect(metrics.footerHeight, 'composer should remain rendered').toBeGreaterThan(0);
+  expect(metrics.footerTop, 'composer should remain inside the visual page').toBeLessThan(metrics.viewportHeight);
+  expect(metrics.footerBottom, 'composer should not extend below the viewport').toBeLessThanOrEqual(metrics.viewportHeight + 1);
+  expect(metrics.inputHeight, 'composer input should retain its minimum target height').toBeGreaterThanOrEqual(44);
+  expect(metrics.sendVisible, 'send control should remain reachable').toBe(true);
+});
+
 test('mobile text-entry controls use 16px without disabling user zoom', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });

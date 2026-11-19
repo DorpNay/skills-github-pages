@@ -83,5 +83,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - NOT RUN: new 320/360/390px sidebar geometry, composer 320/360px geometry and native disclosure focus-ring Playwright tests; no native iPhone Safari/VoiceOver check.
 - Новый пакет: 30-point landing acceptance matrix P0.21; внедрены mobile 44px nested-menu/attachment targets и root overflow regression на 8 ширинах, тесты пока не запускались. Два независимых live-browser прохода (геометрия и keyboard/forms) ожидают результатов.
 - Exact HEAD `3d69c7ae56c6d533d6e54f0febf23ed16b6dcd42`: Pages deploy/build/report checks SUCCESS; это не Chromium E2E. Источники по WCAG 2.2, ARIA Dialog, MDN VisualViewport и Playwright emulation/bounding boxes добавляются в INTEL.
-- Следующий code slice: единая Escape-семантика для Search/Functions/Language disclosures с возвратом фокуса; затем Chromium acceptance текущего 30-point пакета и исправление фактических дефектов.
+- IMPLEMENTED в main: отдельный landscape Playwright acceptance для 844×390 проверяет document/body overflow, нижний composer, высоту textarea и видимость Send; execution pending.
+- Следующий code slice: пройти оставшиеся 30-point acceptance gates через Chromium workflow, затем исправлять только подтверждённые дефекты.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.
