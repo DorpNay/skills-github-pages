@@ -1981,3 +1981,11 @@ These references support the proposed migration and analysis techniques; they do
 - **Knip — Configuration / Compilers:** https://knip.dev/reference/configuration (reviewed 2026-11-19). Custom compilers are available for non-standard file formats and are configured in JavaScript/TypeScript config; evaluate extraction of built HTML into deterministic JS inputs before adopting a compiler or Knip in this repository. No package installation is proposed.
 
 **Repository-specific application:** `.github/workflows/dead-code-check.yml` currently runs Vulture only on `gateway observability`; `index.md` is not in its trigger filter. The planned JS pass is separate, report-only, and must be validated against fixtures for dynamic browser references before it influences cleanup.
+
+### Accessibility sources — root keyboard and contrast package (2026-11-19)
+
+- **W3C — WCAG 2.2 Understanding SC 1.4.3 Contrast (Minimum):** https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html — normal text requires 4.5:1; large text 3:1. The explanatory page is informative; conformance requires applying the normative criterion and evaluating actual rendered foreground/background pairs.
+- **WAI-ARIA APG — Button Pattern:** https://www.w3.org/WAI/ARIA/apg/patterns/button/ — native button semantics and keyboard activation are preferred; toggle buttons expose state with `aria-pressed`, and their label should remain stable when the control toggles a persistent setting. aLandi theme toggle uses action-oriented name plus current state.
+- **MDN — prefers-reduced-motion:** https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion — use the OS preference as a baseline; preserve a user-selected reduced/off mode and avoid assuming motion is acceptable.
+- **Disposition:** design/implementation guidance only. No claim of WCAG conformance or screen-reader verification from source review or Playwright assertions alone.
+

@@ -6357,3 +6357,49 @@ test('shared visual tokens cover typography, spacing, shape, elevation and both 
   expect(tokens.dark.background).not.toBe(tokens.light.background);
   expect(tokens.dark.shadow).not.toBe(tokens.light.shadow);
 });
+
+test('keyboard skip link reaches chat content and theme toggle announces its target state', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const skip = page.locator('.skip-link');
+  await page.keyboard.press('Tab');
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeVisible();
+  await expect(skip).toHaveAccessibleName('Перейти к содержимому чата');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#chatBox')).toBeFocused();
+
+  const theme = page.locator('#homeThemeToggle');
+  await expect(theme).toHaveAttribute('aria-pressed', 'false');
+  await expect(theme).toHaveAccessibleName('Переключить на светлую тему');
+  await theme.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(theme).toHaveAttribute('aria-pressed', 'true');
+  await expect(theme).toHaveAccessibleName('Переключить на тёмную тему');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(skip).toHaveText('Skip to chat content');
+  await expect(theme).toHaveAccessibleName('Switch to dark theme');
+  await theme.click();
+  await expect(theme).toHaveAttribute('aria-pressed', 'false');
+  await expect(theme).toHaveAccessibleName('Switch to light theme');
+});
+
+test('system reduced-motion preference is honored in automatic mode and high contrast strengthens focus', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await openAdditionalSettings(page);
+  const autoMotion = await page.locator('#voiceMenu').evaluate(element => getComputedStyle(element).animationDuration);
+  expect(autoMotion).toBe('0.01ms');
+
+  await page.locator('#readingContrast').selectOption('high');
+  const focus = await page.locator('#readingContrast').evaluate(element => {
+    element.focus();
+    const style = getComputedStyle(element);
+    return { width: style.outlineWidth, offset: style.outlineOffset, style: style.outlineStyle };
+  });
+  expect(focus.width).toBe('3px');
+  expect(focus.offset).toBe('3px');
+  expect(focus.style).toBe('solid');
+});

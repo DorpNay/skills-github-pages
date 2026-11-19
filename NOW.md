@@ -85,10 +85,8 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Live main before this NOW refresh:** `2d1286eeab6850380c434d90c5e5b39a12435d2e`. Root visual-token implementation: `ab90ff5`, `7545395`, `091bfd6`; Playwright token contract authored in `67a50f6`. Audit tasks appended in the master plan; LaunchDarkly/Knip primary sources recorded in INTEL.
+- **Live main before this package:** `02fdb8be88c982e561fa4aab15aed57dec6a4d68`. Current UI source: `index.md`; shared visual token foundation and root control/acceptance matrices are already in main.
 - **Open PRs:** #187 provider diagnostics (head `c951585d5a411a0099a229c074cb5d8ed1168fff`, separate/unmerged). **Open issues:** #111 owner release gates; #186 unrelated GitHub Skills exercise.
-- **Pages:** build + deploy #44467972603 SUCCESS on exact main `2d1286eeab6850380c434d90c5e5b39a12435d2e`. **Graphify:** #44467776502 SUCCESS on code SHA `091bfd660406acb1cb553567a46d4c3585a6ab24`; later main commits were docs-only.
-- **Quality / Chromium:** no Quality Sentinels run on current main. PR #187 Chromium was incomplete and is not main baseline evidence. New Playwright token contract is authored but NOT RUN. Native iOS Safari/VoiceOver NOT VERIFIED.
-- **Current root UI work:** P0.5 token foundation covers typography/line-height/spacing/radius/elevation/focus/touch/motion; toast/cloud status/card/provider state/focus rings/popovers/toolbar/dialogs use shared tokens. P0.5 remains PARTIAL.
-- **Audit tasks:** appended to the end of `docs/ALANDI_MASTER_PLAN_RU.md`; overlaps integrated into P0.12/P0.15/P0.18/P0.19/P0.20 and P2.2/P3.4/P3.6. Sources are in INTEL.md.
-- **NEXT:** continue root UI P0: complete P0.5 token adoption and visual consistency; then P0.17 theme/motion/accessibility and remaining P0.27–P0.32 acceptance. No studio routes or post-landing cleanup/migration yet.
+- **Actions:** Pages build/deploy #44468142441 SUCCESS on exact base SHA `02fdb8be88c982e561fa4aab15aed57dec6a4d68`. Quality Sentinels has only workflow_dispatch and was not run; connector does not provide workflow_dispatch. Do not claim Chromium/browser acceptance.
+- **Current implementation package:** first-tab skip link to chat; localized theme-toggle action label + aria-pressed; high-contrast focus/border/link treatment; Playwright tests authored for keyboard, theme, reduced-motion and contrast. Browser execution NOT VERIFIED.
+- **NEXT:** continue P0.17 and P0.21–P0.32 as a connected root UI acceptance package; do not start studio routes before root UI gates.
