@@ -7656,8 +7656,8 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         else if (!$('projectCreateModal').classList.contains('hidden')) closeProjectCreate();
         else if (!$('projectSettingsModal').classList.contains('hidden')) closeProjectSettings();
         else if (!$('functionPanelModal').classList.contains('hidden')) closeFunctionPanel();
-        else if (['searchModeMenu','functionsMenu','languageMenu'].some(id => $(id)?.open)) {
-          const openToolbarMenu=['searchModeMenu','functionsMenu','languageMenu'].map(id=>$(id)).find(menu=>menu?.open);
+        else if (['searchModeMenu','functionsMenu'].some(id => $(id)?.open)) {
+          const openToolbarMenu=['searchModeMenu','functionsMenu'].map(id=>$(id)).find(menu=>menu?.open);
           if(openToolbarMenu){openToolbarMenu.open=false;openToolbarMenu.querySelector('summary')?.focus({preventScroll:true});}
         }
         else if (!$('settingsModal').classList.contains('hidden')) toggleSettings(false);
