@@ -208,7 +208,7 @@
 - [~] 7. Localize copied research-trace link toast.
 - [~] 8. Localize tool-call indicator prefix.
 - [~] 9. Localize research trace and retry labels in rendered messages.
-- [ ] 10. Audit remaining confirm()/alert() paths for English parity.
+- [~] 10. Static audit found no raw alert() calls; all remaining confirm() paths use the active locale or projectSourcesText dictionary.
 - [ ] 11. Audit thrown errors shown to users for locale-safe messages.
 - [ ] 12. Audit async Gateway failure/status messages for locale refresh.
 - [ ] 13. Audit provider test/connect/disconnect failure feedback.

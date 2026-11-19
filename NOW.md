@@ -84,12 +84,12 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
 ## Последний проверенный checkpoint
-- **Live main HEAD:** `4bb57a78bd905be07a87b6f33963c6520f884fd9`; open PRs: 0; open issues: #111 (owner release gates), #186 (unrelated GitHub Skills exercise).
-- **Pages:** deployment #681 SUCCESS; live public page metadata `alandi-build-revision` exactly equals `4bb57a78bd905be07a87b6f33963c6520f884fd9`.
-- **Graphify:** #1444 SUCCESS on exact HEAD.
-- **Quality Sentinels:** no run on current HEAD; public workflow history latest #3109 failed on older `9ecf623` (Nov 17). GitHub connector cannot dispatch this workflow; no exact-head Quality/Chromium claim.
+- **Last verified functional HEAD:** `0c0ed40a897a86d6881072bd714f1c31884c0468` on `main`; this documentation-only checkpoint refresh is its direct child. Open PRs: 0; open issues: #111 (owner release gates), #186 (unrelated GitHub Skills exercise).
+- **Pages:** deployment #682 SUCCESS; cache-busted public page metadata `alandi-build-revision` exactly equals `0c0ed40a897a86d6881072bd714f1c31884c0468`.
+- **Graphify:** #1445 SUCCESS on exact HEAD.
+- **Quality Sentinels:** no run on current functional HEAD; public workflow history latest #3109 failed on older `9ecf623` (Nov 17). GitHub connector cannot dispatch this workflow; no exact-head Quality/Chromium claim.
 - **Browser tests:** 4 new Playwright tests authored; 160 total in `tests/e2e/app.spec.mjs`. They have NOT been executed in Chromium. Native iOS Safari/VoiceOver also NOT VERIFIED.
-- **Static audit on exact HEAD:** 260 markup IDs, 0 duplicates; 77 static `data-action` controls, all native buttons; 69 unique static actions + 13 generated actions, no unmapped actions; 294 RU keys / 302 EN keys; 199 referenced markup keys, none missing in either dictionary.
-- **IMPLEMENTED:** commits `57b4d8b`, `babdefb`, `4bb57a7` cover live RU/EN runtime refresh, focus restoration in rebuilt surfaces, and localized memory/chat feedback. P0.26–P0.32 add 185 acceptance points; implementation/verification status is tracked item-by-item in the master plan.
-- **OPEN:** remaining provider/attachment/voice/Gateway feedback localization; active move-chat/context/attachment/message metadata regressions; Quality/Chromium execution and native-device checks.
-- **NEXT:** continue root UI with the remaining high-frequency provider and attachment feedback, then complete the focused RU/EN behavior tests. Do not start studio routes before root UI acceptance.
+- **Static audit on exact source:** 260 markup IDs, 0 duplicates; 77 static `data-action` controls, all native buttons; 69 unique static actions + 13 generated actions, no unmapped actions; 294 RU keys / 302 EN keys; 199 referenced markup keys, none missing in either dictionary. No raw `alert()` remains; `confirm()` calls are localized or use the project-source locale dictionary.
+- **IMPLEMENTED:** commits `57b4d8b`, `babdefb`, `4bb57a7` cover live RU/EN runtime refresh, focus restoration in rebuilt surfaces, and localized memory/chat feedback. P0.26–P0.32 contain 185 acceptance points with implementation/verification status tracked item-by-item in the master plan.
+- **OPEN:** remaining provider/attachment/voice/Gateway feedback localization; move-chat/context/attachment/message-metadata regressions; exact-head Quality/Chromium and native-device checks.
+- **NEXT:** continue root UI with high-frequency provider and attachment feedback, then complete focused RU/EN behavior tests. Do not start studio routes before root UI acceptance.
