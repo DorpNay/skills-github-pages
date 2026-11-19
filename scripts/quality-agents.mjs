@@ -203,7 +203,7 @@ const suites = {
       includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus})', 'Successful requests must preserve per-attempt timings and carry the optional server-cache status.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
-      includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
+      includes("showToast(english?'Settings saved.':'Настройки сохранены')", 'Saving settings should use the localized toast and keep the modal open.');
       includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
       includes("$('userInput').disabled = false;", 'Composer must remain editable during generation.');
       includes("['openai/gpt-oss-120b:fastest'", 'Hugging Face preset should use a routed chat model.');
