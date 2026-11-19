@@ -1,5 +1,5 @@
 # aLandi — NOW / единственный ориентир
-**Срез:** 2026-11-18 · **Канон:** DorpNay/skills-github-pages · **Live SHA/PR/issues/Actions всегда считывать заново; ориентир не хранит доверенный текущий SHA.**
+**Срез:** 2026-11-19 · **Канон:** DorpNay/skills-github-pages · **Live SHA/PR/issues/Actions всегда считывать заново; ориентир не хранит доверенный текущий SHA.**
 
 ## Начало каждой задачи
 1. Прочитать только этот файл, строки 1–100.
@@ -76,5 +76,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Exact-HEAD Pages build/deploy и Graphify успешны для четырёх UI commits: `3f20322f` (#643/#1414), `8d88296f` (#644/#1415), `4bd7df01` (#645/#1416), `6f6914f2` (#646/#1417). Это не подтверждает Gateway/VPS, браузерный E2E, native iPhone Safari или VoiceOver.
 - E2E и quality-sentinel assertions обновлены в репозитории, но Chromium/quality workflow в этой сессии не запускались. Не повышать их до VERIFIED.
 - Chat-row actions: все семь пунктов меню имеют реальные handlers; удалён один недостижимый вызов после `return`; добавлен Playwright тест rename/export, но он пока не запускался. Исторический PR #118 уже содержит import/export/merge/collision safeguards.
-- Следующий пакет: продолжить P0 — composer geometry/keyboard/attachments/voice menus/stop-retry, затем forms и validation; параллельно закрыть оставшиеся menu/dialog edge cases, responsive 320–1440, density, RU/EN, theme/motion, accessibility и dead-control sweep.
+- IMPLEMENTED в `main`: узкий composer при ширине ≤380px раскладывает четыре utility-кнопки в первую строку, поле ввода + send/stop — во вторую; сохранены 44px hit targets. Playwright geometry regression для 320/360px добавлен, но не запускался.
+- Exact-HEAD Pages build/deploy (#44444338963) и Graphify (#44444339995) завершились SUCCESS на `39730108fee5f99f7cca012381ba2baee206687b`. Это не подтверждает Chromium E2E, native iPhone Safari или VoiceOver.
+- Следующий пакет: composer edge cases (attachments/context/voice/keyboard/stop-retry), forms/validation, затем полный responsive 320–1440, menu/dialog, density, RU/EN, theme/motion, accessibility и dead-control sweep.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.
