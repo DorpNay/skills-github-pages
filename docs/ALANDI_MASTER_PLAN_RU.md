@@ -1981,3 +1981,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — stronger geometry assertions (this commit).** Nested menu/action acceptance measures both width and height; the eight-width responsive sweep checks left/right bounds for header and composer, and the 844×390 landscape test checks header/toolbar/composer edges rather than width alone. Browser execution pending.
 
 - **IMPLEMENTED — toolbar outside-click focus return (this commit).** Focus target is selected from the active toolbar disclosure; requestAnimationFrame restores focus only while the trigger remains connected and outside inert content. Removed stale Language disclosure selector because the current UI uses a language select.
+
+- **VERIFIED — exact-HEAD Pages + Graphify:** `fef43b55237c1106c02880914bc6a81681cfe0f4`; Pages build/deploy #44448700108 SUCCESS; Graphify #44448701548 SUCCESS. Chromium E2E not run.

@@ -87,5 +87,6 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - IMPLEMENTED в main: 8-width responsive sweep проверяет left/right bounds header/composer, nested menu targets измеряются по width+height, а landscape 844×390 дополнительно проверяет header/toolbar/composer edges, textarea и Send; execution pending.
 - IMPLEMENTED в main: project create/edit и aServi URL/model/key E2E теперь явно проверяют aria-describedby → inline role=alert error association вместе с aria-invalid и первым invalid focus; запуск Chromium пока не выполнен.
 - IMPLEMENTED в main: outside-click закрытие Search/Functions disclosures возвращает фокус на соответствующий summary и не активирует нижележащую кнопку; Playwright regression проверяет возврат фокуса. Chromium execution pending.
+- VERIFIED exact HEAD `fef43b55237c1106c02880914bc6a81681cfe0f4`: Pages build/deploy #44448700108 SUCCESS; Graphify #44448701548 SUCCESS. Chromium E2E не запускался.
 - Следующий шаг: запустить Quality Sentinels с Chromium через GitHub Actions workflow_dispatch (доступный GitHub connector не предоставляет dispatch action); затем исправлять только подтверждённые дефекты.
 - Только после P0 acceptance — aCodingi/aNoteBooki shells; aSoundi после landing и voice audit; обсуждение провайдеров с владельцем после landing.
