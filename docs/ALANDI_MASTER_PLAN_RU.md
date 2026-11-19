@@ -305,9 +305,9 @@
 - [~] 14. Localize synthetic private-memory command/assistant transcript.
 - [~] 15. Localize shared-memory command confirmation.
 - [~] 16. Localize synthetic shared-memory command/assistant transcript.
-- [ ] 17. Localize project import structural validation errors.
-- [ ] 18. Localize project import size/count limits.
-- [ ] 19. Localize project export/import completion toasts.
+- [~] 17. Localize project import structural validation errors; format, project-name and chat-shape validation now have RU/EN copy and regression coverage.
+- [~] 18. Localize project import size/count limits; 15 MiB, 200 projects, 500 chats, 50,000 messages and 1,000 local chats have explicit RU/EN feedback.
+- [~] 19. Localize project export/import completion toasts; export and import now announce success in the active locale.
 - [ ] 20. Localize project source upload/delete error status.
 - [ ] 21. Localize shared-memory promotion errors from IndexedDB.
 - [ ] 22. Localize memory list loading failures.
@@ -337,7 +337,7 @@
 - [ ] 18. Confirm cancel paths leave persisted data unchanged.
 - [ ] 19. Confirm local-only memory does not enter third-party requests.
 - [ ] 20. Confirm shared memory only enters requests when explicit scope is enabled.
-- [ ] 21. Confirm imported bundles cannot overwrite current state on failed validation.
+- [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
 - [ ] 22. Confirm failure feedback does not mutate or clear the user's draft.
 - [ ] 23. Confirm toast/alert copy does not expose raw secrets or private content.
 - [ ] 24. Verify all privacy prompts in both locales.
