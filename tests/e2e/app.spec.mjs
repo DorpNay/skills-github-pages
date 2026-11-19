@@ -6254,3 +6254,38 @@ test('dynamic composer and message action labels refresh after a locale switch',
   expect(integrity.invalidActions).toEqual([]);
   expect(integrity.unlabeledVisibleButtons).toEqual([]);
 });
+
+test('locale refresh preserves focus in rebuilt project, chat and request-context controls', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Locale focus project');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+
+  const projectSelect = page.locator('#projectNavigationList .project-nav-select').first();
+  await projectSelect.focus();
+  await page.locator('#uiLanguage').evaluate(element => {
+    element.value = 'en';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#projectNavigationList .project-nav-select').first()).toBeFocused();
+
+  const chatTrigger = page.locator('#chatList .chat-row-menu summary').first();
+  if (await chatTrigger.count()) {
+    await chatTrigger.focus();
+    await page.locator('#uiLanguage').evaluate(element => {
+      element.value = 'ru';
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await expect(page.locator('#chatList .chat-row-menu summary').first()).toBeFocused();
+  }
+
+  await page.locator('#contextPickerButton').click();
+  const projectCheckbox = page.locator('#requestProjectChecks input[data-request-project-id]').first();
+  await projectCheckbox.focus();
+  await page.locator('#uiLanguage').evaluate(element => {
+    element.value = 'en';
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#requestProjectChecks input[data-request-project-id]').first()).toBeFocused();
+});

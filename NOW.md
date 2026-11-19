@@ -93,3 +93,5 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Static audit на parent `815ab3db849cd365b7c7a7146c69878e01b1dd57`: 260 static IDs, 0 duplicates; 77 static `data-action` nodes, all native `button`; 69 unique action names; `chat-action-save` handled by form submit. Это статический аудит, не runtime verification.
 - Исправлены RU-only dynamic strings в request-project descriptions, tool-call/retry/research-trace labels, selected memory confirmations/toasts, Pollinations disconnect, system-prompt editing и trace-link feedback.
 - Следующий пакет: добрать action-handler audit, localize remaining error/confirm paths, add active request-context/move-chat/attachment parity tests; затем выполнить доступный Chromium/Quality path.
+
+- IMPLEMENTED в main: locale-triggered re-render теперь восстанавливает фокус в project navigation, request-context checkboxes и remove-attachment controls; chat list уже восстанавливает фокус/scroll. Добавлен focused Playwright regression на project/chat/context focus restoration; browser execution pending.

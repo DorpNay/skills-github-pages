@@ -184,9 +184,9 @@
 - [~] 11. Update research trace/retry labels without mutating message data.
 - [~] 12. Keep provider/model provenance values intact while localizing fallback labels.
 - [ ] 13. Verify chat action dialog Tab/Shift+Tab loop after language change.
-- [ ] 14. Verify project settings focus restoration after locale-triggered list refresh.
-- [ ] 15. Verify request context checkbox focus after locale-triggered rebuild.
-- [ ] 16. Verify attachment remove-button focus when attachments are re-rendered.
+- [~] 14. Preserve focused project navigation control after locale-triggered list refresh; browser test added.
+- [~] 15. Preserve focused request-context checkbox after locale-triggered rebuild; browser test added.
+- [~] 16. Restore attachment remove-button focus when attachment chips are re-rendered.
 - [ ] 17. Verify message action keyboard focus survives in-place relabeling.
 - [ ] 18. Verify long project/chat names remain clipped without horizontal overflow.
 - [ ] 19. Verify five-project request context cap in both locales.

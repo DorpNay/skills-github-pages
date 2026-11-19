@@ -2258,7 +2258,9 @@ permalink: /
     }
     function renderDraftAttachments() {
       const english=getUiLanguage()==='en';
-      const box=$('draftAttachments');box.replaceChildren();
+      const box=$('draftAttachments');
+      const activeAttachmentId=box.contains(document.activeElement)?document.activeElement.dataset.attachmentId||'':'';
+      box.replaceChildren();
       if(!pendingComposerAttachments.length){box.classList.add('hidden');return;}
       box.classList.remove('hidden');
       for(const attachment of pendingComposerAttachments) {
@@ -2271,9 +2273,12 @@ permalink: /
       }
       const warning=pendingComposerAttachments.some(item=>item.kind==='unsupported');
       if(warning){const note=document.createElement('p');note.className='w-full px-1 text-[10px] text-amber-300';note.textContent=english?'Some selected files are not supported yet. Remove them before sending: their contents will not be included in the request.':'Часть файлов выбрана, но ещё не распознаётся. Удали их, прежде чем отправлять сообщение: содержимое таких файлов не попадёт в запрос.';box.appendChild(note);}
+      if(activeAttachmentId){const restore=[...box.querySelectorAll('[data-attachment-id]')].find(node=>node.dataset.attachmentId===activeAttachmentId);restore?.focus({preventScroll:true});}
     }
     function renderRequestProjectChoices() {
       const box=$('requestProjectChecks');if(!box)return;
+      const hadFocus=box.contains(document.activeElement);
+      const focusedProjectId=document.activeElement?.dataset.requestProjectId||'';
       for(const id of [...selectedRequestProjectIds])if(!projects.some(project=>project.id===id))selectedRequestProjectIds.delete(id);
       box.replaceChildren();
       const english=getUiLanguage()==='en';
@@ -2295,6 +2300,10 @@ permalink: /
         text.append(title,desc);label.append(checkbox,text);box.appendChild(label);
       }
       updateRequestContextButton();
+      if(hadFocus&&focusedProjectId){
+        const restore=[...box.querySelectorAll('input[data-request-project-id]')].find(input=>input.dataset.requestProjectId===focusedProjectId);
+        restore?.focus({preventScroll:true});
+      }
     }
     function updateRequestContextButton() {
       const button=$('contextPickerButton'),badge=$('requestContextCount');if(!button||!badge)return;
@@ -3110,6 +3119,11 @@ permalink: /
     }
     function renderProjectNavigation() {
       const list=$('projectNavigationList');if(!list)return;
+      const active=list.contains(document.activeElement)?document.activeElement:null;
+      const focusedProjectId=active?.dataset.projectId||active?.closest('.project-nav-item')?.dataset.projectId||'';
+      const focusedAction=active?.dataset.action||'';
+      const focusedMenuTrigger=active?.matches('.project-row-menu summary')===true;
+      const previousScrollTop=list.scrollTop;
       list.replaceChildren();
       const english=getUiLanguage()==='en';
       const unassignedCount=chats.filter(chat=>!chat.projectId).length;
@@ -3150,6 +3164,14 @@ permalink: /
         const empty=document.createElement('p');empty.className='px-2 py-2 text-[11px] text-gray-500';
         empty.setAttribute('role','status');empty.setAttribute('aria-atomic','true');
         empty.textContent=english?'No projects yet.':'Проектов пока нет.';list.appendChild(empty);
+      }
+      list.scrollTop=previousScrollTop;
+      if(active){
+        const row=[...list.querySelectorAll('.project-nav-item')].find(item=>item.dataset.projectId===focusedProjectId);
+        const target=focusedMenuTrigger?row?.querySelector('.project-row-menu summary')
+          :focusedAction?Array.from(row?.querySelectorAll('[data-action]')||[]).find(item=>item.dataset.action===focusedAction)
+          :row?.querySelector('.project-nav-select');
+        (target||$('projectNavToggle'))?.focus({preventScroll:true});
       }
     }
     function renderChatList() {
