@@ -84,12 +84,11 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
 ## Последний проверенный checkpoint
-- **Last verified functional HEAD:** `0c0ed40a897a86d6881072bd714f1c31884c0468` on `main`; this documentation-only checkpoint refresh is its direct child. Open PRs: 0; open issues: #111 (owner release gates), #186 (unrelated GitHub Skills exercise).
-- **Pages:** deployment #682 SUCCESS; cache-busted public page metadata `alandi-build-revision` exactly equals `0c0ed40a897a86d6881072bd714f1c31884c0468`.
-- **Graphify:** #1445 SUCCESS on exact HEAD.
-- **Quality Sentinels:** no run on current functional HEAD; public workflow history latest #3109 failed on older `9ecf623` (Nov 17). GitHub connector cannot dispatch this workflow; no exact-head Quality/Chromium claim.
-- **Browser tests:** 4 new Playwright tests authored; 160 total in `tests/e2e/app.spec.mjs`. They have NOT been executed in Chromium. Native iOS Safari/VoiceOver also NOT VERIFIED.
-- **Static audit on exact source:** 260 markup IDs, 0 duplicates; 77 static `data-action` controls, all native buttons; 69 unique static actions + 13 generated actions, no unmapped actions; 294 RU keys / 302 EN keys; 199 referenced markup keys, none missing in either dictionary. No raw `alert()` remains; `confirm()` calls are localized or use the project-source locale dictionary.
-- **IMPLEMENTED:** commits `57b4d8b`, `babdefb`, `4bb57a7` cover live RU/EN runtime refresh, focus restoration in rebuilt surfaces, and localized memory/chat feedback. P0.26–P0.32 contain 185 acceptance points with implementation/verification status tracked item-by-item in the master plan.
-- **OPEN:** remaining provider/attachment/voice/Gateway feedback localization; move-chat/context/attachment/message-metadata regressions; exact-head Quality/Chromium and native-device checks.
-- **NEXT:** continue root UI with high-frequency provider and attachment feedback, then complete focused RU/EN behavior tests. Do not start studio routes before root UI acceptance.
+
+- **Live main before this NOW refresh:** `ecb31f4bb0a4f788dc1a3cb2d2415e7f5f400518`. Root visual-token implementation is in main commits `ab90ff5` and `7545395`; Playwright token contract is authored in `67a50f6`. Master-plan audit integration: `54f3943` + `ecb31f4`; INTEL source review: `3ac1d77`.
+- **Open PRs:** #187 provider diagnostics (head `c951585d5a411a0099a229c074cb5d8ed1168fff`, still separate/unmerged). **Open issues:** #111 owner release gates; #186 unrelated GitHub Skills exercise.
+- **Pages / Graphify:** Pages run #44467640870 queued and Graphify #44467640997 in progress on code SHA `754539553a87db4ec9e8bfca5be363f18d705d8f`; both postdate the earlier cancelled runs. Their results must be checked before claiming build success. Latest successful Pages on the prior baseline was #44456706267 on `484c3b9`.
+- **Quality / Chromium:** no Quality Sentinels run on the current main source. The earlier PR #187 Chromium run was incomplete and must not be treated as main baseline evidence. Browser E2E for shared visual tokens is authored but NOT RUN. Native iOS Safari/VoiceOver NOT VERIFIED.
+- **Current root UI work:** P0.5 shared token foundation now covers typography/line-height/spacing/radius/elevation/focus/touch/motion; toast/cloud status/card/popovers/toolbar/dialogs use shared semantic tokens. P0.5 remains PARTIAL pending full visual consistency and browser review.
+- **Audit tasks:** appended to the end of `docs/ALANDI_MASTER_PLAN_RU.md`; overlaps are integrated into P0.12/P0.15/P0.18/P0.19/P0.20 and P2.2/P3.4/P3.6. Official migration/Knip sources recorded in INTEL.md.
+- **NEXT:** continue root UI P0 in priority order: finish P0.5 token adoption and visual consistency, then P0.17 theme/motion/accessibility and remaining P0.27–P0.32 interaction/localization/privacy acceptance. Do not start studio routes or the post-landing cleanup/migration packages yet.
