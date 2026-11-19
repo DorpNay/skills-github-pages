@@ -1991,3 +1991,5 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **IMPLEMENTED — attachment popover dismissal acceptance (this commit).** Added Escape and outside-click checks for scrim/aria-expanded/focus return while preserving the unsent draft. Browser execution pending.
 
 - **IMPLEMENTED — mobile modal safe-area sizing (this commit).** Project Create, Settings, Message Viewer, Chat Action, Functions and Trace surfaces now share safe-area-aware viewport padding and max-height; Chat Action has bounded internal scrolling. Added 320×568 geometry/scroll regression for Settings, Functions and Chat Action. Browser execution pending.
+
+- **IMPLEMENTED — sticky mobile panel headers (this commit).** Functions and Trace panel headers remain visible while their long content scrolls; the short-viewport dialog regression asserts the Functions header is sticky. Browser execution pending.

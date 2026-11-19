@@ -461,6 +461,13 @@ permalink: /
         max-height:calc(100dvh - max(env(safe-area-inset-top),.5rem) - max(env(safe-area-inset-bottom),.5rem))!important;
       }
       #chatActionModal > .chat-action-dialog { overflow-y:auto;overscroll-behavior:contain; }
+      #functionPanelModal .function-panel-surface > header,
+      #traceModal > div > div:first-child {
+        position:sticky;top:-.75rem;z-index:5;
+        margin:-.75rem -.75rem 0;padding:.75rem;
+        background:var(--ui-surface);border-bottom:1px solid var(--ui-border);
+        backdrop-filter:blur(14px);
+      }
     }
       .message-actions{display:flex;align-items:center;gap:6px;margin-top:1px;min-height:28px;opacity:.9}
     .message-actions button,.message-viewer-actions button{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:6px;border:1px solid var(--ui-border);border-radius:12px;color:var(--ui-text-muted);background:var(--ui-surface-raised);font-size:18px;line-height:1}

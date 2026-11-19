@@ -4833,6 +4833,7 @@ test('mobile settings, function and chat-action dialogs stay inside a short view
       const style = getComputedStyle(element);
       return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom,
         maxHeight: parseFloat(style.maxHeight), overflowY: style.overflowY,
+        headerPosition: getComputedStyle(element.querySelector(':scope > header')).position,
         scrollHeight: element.scrollHeight, clientHeight: element.clientHeight };
     });
     expect(metrics.left, label + ' left').toBeGreaterThanOrEqual(0);
@@ -4854,6 +4855,7 @@ test('mobile settings, function and chat-action dialogs stay inside a short view
   await page.locator('#functionsMenuSummary').click();
   await page.locator('#functionsMenu [data-function="agents"]').click();
   await assertSurface(functions, functions.locator(':scope > .function-panel-surface'), 'functions');
+  await expect(functions.locator('.function-panel-surface > header')).toHaveCSS('position', 'sticky');
   await page.locator('#functionPanelModal [data-action="close-function-panel"]').click();
   await expect(functions).toBeHidden();
 
