@@ -7768,3 +7768,66 @@ test('forced-colors focus remains visible and usable through RU/EN locale refres
   expect(russian.style).toBe('solid');
   expect(russian.color).not.toBe('rgba(0, 0, 0, 0)');
 });
+
+test('chat import distinguishes complete from partial recovery in RU and EN', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'recovery-existing-chat',
+      title: 'Existing history',
+      projectId: null,
+      projectMemoryEnabled: false,
+      messages: [{ role: 'user', content: 'EXISTING_HISTORY_SENTINEL' }]
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'recovery-existing-chat');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const completeRu = {
+    id: 'recovery-complete-ru',
+    title: 'Complete recovery RU',
+    messages: [{ role: 'user', content: 'COMPLETE_RU_SENTINEL' }]
+  };
+  const partialRu = {
+    id: 'recovery-partial-ru',
+    title: 'Partial recovery RU',
+    messages: [
+      { role: 'system', content: 'unsupported role must be omitted' },
+      { role: 'assistant', content: 'x'.repeat(30001) }
+    ]
+  };
+  const completeEn = {
+    id: 'recovery-complete-en',
+    title: 'Complete recovery EN',
+    messages: [{ role: 'assistant', content: 'COMPLETE_EN_SENTINEL' }]
+  };
+  const partialEn = {
+    id: 'recovery-partial-en',
+    title: 'Partial recovery EN',
+    messages: [{ role: 'tool', content: 42 }]
+  };
+  const importFile = page.locator('#importFile');
+  const upload = async (chat, filename) => importFile.setInputFiles({
+    name: filename,
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify([chat]))
+  });
+
+  await upload(completeRu, 'complete-ru.json');
+  await expect(page.locator('#toast')).toHaveText('Импорт завершён: всё поддерживаемое содержимое чатов перенесено; существующая история сохранена.');
+  await setUiLanguageInPlace(page, 'ru');
+  await upload(partialRu, 'partial-ru.json');
+  await expect(page.locator('#toast')).toHaveText('Импорт завершён частично: неподдерживаемые или слишком большие записи и поля пропущены либо сокращены; существующая история сохранена.');
+
+  await setUiLanguageInPlace(page, 'en');
+  await upload(completeEn, 'complete-en.json');
+  await expect(page.locator('#toast')).toHaveText('Import completed: all supported chat content was imported; existing history was preserved.');
+  await upload(partialEn, 'partial-en.json');
+  await expect(page.locator('#toast')).toHaveText('Import completed partially: unsupported or oversized records and fields were omitted or shortened; existing history was preserved.');
+
+  const result = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]'));
+  expect(result).toHaveLength(5);
+  expect(result.find(chat => chat.id === 'recovery-existing-chat').messages[0].content).toBe('EXISTING_HISTORY_SENTINEL');
+  expect(result.find(chat => chat.title === 'Complete recovery RU').messages[0].content).toBe('COMPLETE_RU_SENTINEL');
+  expect(result.find(chat => chat.title === 'Complete recovery EN').messages[0].content).toBe('COMPLETE_EN_SENTINEL');
+  expect(result.find(chat => chat.title === 'Partial recovery RU').messages).toEqual([{ role: 'assistant', content: 'x'.repeat(30000) }]);
+  expect(result.find(chat => chat.title === 'Partial recovery EN').messages).toEqual([{ role: 'tool', content: '' }]);
+});
