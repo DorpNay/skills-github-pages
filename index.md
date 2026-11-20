@@ -3960,9 +3960,6 @@ permalink: /
       updateModeUI();
       if ($('researchFunctionSettings') && !$('researchFunctionSettings').classList.contains('hidden')) renderResearchConfiguration();
     }
-    function setAgentMode(enabled) {
-      setDeepResearchMethod(enabled ? 'multi_step_evidence_report' : 'none');
-    }
     function setSkillPreset(preset) {
       if (!VALID_SKILL_PRESETS.has(preset)) preset = 'auto';
       const chat = getCurrentChat();

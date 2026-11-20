@@ -171,7 +171,7 @@ jobs:
             done <<'EOF'
           UI aServi provider route|applyProviderPreset connectAlandiAServi
           Functions Deep Research panel|openFunctionPanel renderResearchConfiguration
-          Agents structured pipeline|renderAgentConfiguration setAgentMode
+          Agents structured pipeline|renderAgentConfiguration
           UI send path|sendMessage runAssistant
           Gateway auth/provider client|authorize client_for
           Bounded request parsing|read_limited_body completions
