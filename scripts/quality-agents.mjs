@@ -133,8 +133,8 @@ const suites = {
       includes('const target={id:projectIdNew(),name:importedName', 'Project import must create a new project record with a fresh ID.');
       includes('projects=[target,...projects]', 'Imported project must be prepended as a distinct project.');
       includes('chat.projectId=target.id', 'Every imported chat must be associated with the new imported project.');
-      includes("if(projects.length>=200)throw new Error('Достигнут предел проектов (200). Сначала удали ненужный проект.');", 'Project import must respect the local project-count bound.');
-      includes("if(chats.length+importedChats.length>1000)throw new Error('Импорт превысит безопасный лимит локальных чатов (1000).');", 'Project import must bound total local chat count.');
+      includes("if(projects.length>=200)reject('projectLimit')", 'Project import must respect the local project-count bound.');
+      includes("if(chats.length+importedChats.length>1000)reject('localChatLimit')", 'Project import must bound total local chat count.');
       includes('data-action="voice-chat-preview"', 'Voice mode chooser must be present without claiming a live voice runtime.');
       includes('async function handleTextAttachment()', 'Text attachments must be size/type bounded and treated as untrusted data.');
       includes("provider==='custom'||provider==='alandi'", 'Custom gateway providers must not fall back to the default cloud endpoint.');
