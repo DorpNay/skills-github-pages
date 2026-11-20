@@ -251,7 +251,7 @@
 - [~] 22. Confirm disabled controls cannot dispatch consequential actions; the shared delegated dispatcher now ignores native `disabled` and `aria-disabled="true"` action controls before dispatch. E2E injects an aria-disabled destructive action and asserts no confirmation or project mutation; execution pending.
 - [~] 23. Provider request failures now use localized status-based feedback and preserve the draft; the 401 regression asserts the original text remains and raw credentials/details are absent.
 - [~] 24. Mobile navigation, nested menus, attachment actions and composer controls now enforce 44px minimum targets; native-device and complete keyboard parity checks remain open.
-- [ ] 25. Confirm native controls remain operable in forced-colors mode.
+- [~] 25. Confirm native controls remain operable in forced-colors mode; existing CSS sets system `Highlight` focus outlines and `Mark` invalid borders, and a new Playwright test emulates `forcedColors: active`, checks `:focus-visible` outline width/style/color, and verifies focus survives RU/EN/RU refresh. Real Windows/Edge/native control acceptance and Chromium execution remain pending.
 
 ### P0.30 — RU/EN and interaction regression matrix (IMPLEMENTED; browser execution pending)
 
@@ -282,7 +282,7 @@
 - [~] 25. Added 10-cycle RU/EN idempotency regression for composer draft, attachment focus and disclosure state; browser execution pending.
 - [~] 26. Add active stream locale-change regression without aborting generation; existing in-flight status test blocks a mock response, switches RU/EN, asserts the request stays active and then completes. Chromium execution remains pending.
 - [ ] 27. Add native iOS Safari/VoiceOver language-change check.
-- [ ] 28. Add Windows forced-colors language-change check.
+- [~] 28. Add Windows forced-colors language-change check; new Playwright regression uses the browser `forcedColors: active` media emulation, changes RU/EN while the composer remains focused, and verifies the system focus outline persists. This is browser emulation, not a Windows hardware/Edge test; native Windows acceptance and Chromium execution remain pending.
 - [~] 29. Added a RU/EN persisted-locale reload regression that checks initial sidebar labels, Cloudflare help, composer option copy and Research option copy; browser execution pending.
 - [~] 30. Add language change during Project Settings edit regression; new project fixture edits name/instructions, switches RU→EN→RU while the name field remains focused, verifies both drafts and focus survive, then saves and checks persisted values. Chromium execution pending.
 
