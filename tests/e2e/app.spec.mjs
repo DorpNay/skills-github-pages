@@ -1021,6 +1021,29 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
+test('chat and AgentRun status accessible names follow the active RU/EN locale', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const labels = [
+    ['#chatBox', 'Сообщения чата', 'Chat messages'],
+    ['#agentRunChatRefresh', 'Проверить статус AgentRun', 'Check AgentRun status'],
+    ['#agentRunChatCancel', 'Отменить AgentRun', 'Cancel AgentRun'],
+    ['#agentRunChatDismiss', 'Скрыть статус AgentRun', 'Hide AgentRun status'],
+    ['#agentRunChatTasks', 'Состояние задач AgentRun', 'AgentRun task status'],
+    ['#agentRunChatEvents', 'Последние события AgentRun', 'Latest AgentRun events'],
+    ['#agentRuntimeTasks', 'Задачи AgentRun', 'AgentRun tasks'],
+    ['#agentRuntimeEvents', 'События AgentRun', 'AgentRun events']
+  ];
+
+  for (const [language, index] of [['ru', 1], ['en', 2], ['ru', 1]]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    for (const [selector, russian, english] of labels) {
+      await expect(page.locator(selector)).toHaveAttribute('aria-label', index === 1 ? russian : english);
+    }
+    await expect(page.locator('#agentRunChatRefresh')).toHaveAttribute('title', language === 'en' ? 'Check status' : 'Проверить статус');
+    await expect(page.locator('html')).toHaveAttribute('lang', language);
+  }
+});
+
 test('aNoteBooki sidebar link keeps its route and localizes its accessible name', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const notebookLink = page.locator('#sidebar a[href*="/notebook/"]');
