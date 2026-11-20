@@ -6579,7 +6579,7 @@ test('saved locale is applied on initial load after reload and updates dynamic o
   await page.locator('[data-action="toggle-settings"]').click();
   await page.locator('#uiLanguage').selectOption('en');
   await expect(page.locator('#sidebar')).toHaveAttribute('aria-label','Projects and chats');
-  await expect(page.locator('#cloudflareAccountHelp')).toContainText('The Account ID is not a secret');
+  await expect(page.locator('[data-i18n="cloudflareAccountHelp"]')).toContainText('The Account ID is not a secret');
   await expect(page.locator('#composerPosition option[value="top"]')).toHaveText('Top, below mode controls');
   await page.locator('[data-action="close-settings"]').click();
   await page.locator('#functionsMenuSummary').click();
