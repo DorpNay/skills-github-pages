@@ -7438,7 +7438,7 @@ test('request context caps selected projects at five with localized feedback in 
     await expect(page.locator('#toast')).toContainText(
       language === 'en' ? 'Choose up to five projects per request.' : 'Для одного запроса можно выбрать не более пяти проектов.'
     );
-    await expect(checkboxes.filter({ checked: true })).toHaveCount(5);
+    await expect(page.locator('#requestProjectChecks input[data-request-project-id]:checked')).toHaveCount(5);
 
     await page.locator('#userInput').fill('Send the bounded project context in ' + language + '.');
     await page.locator('#sendBtn').click();
