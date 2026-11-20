@@ -205,7 +205,8 @@ const suites = {
       includes("source:'successful-request'", 'A successful model response should store only non-secret connection-verification metadata.');
       includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus})', 'Successful requests must preserve per-attempt timings and carry the optional server-cache status.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
-      includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
+      includes('Your original text was preserved.', 'English fallback errors must preserve the original user prompt.');
+      includes('Исходный текст сохранён.', 'Russian fallback errors must preserve the original user prompt.');
       includes("showToast(english?'Settings saved.':'Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
       includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
       includes("$('userInput').disabled = false;", 'Composer must remain editable during generation.');
