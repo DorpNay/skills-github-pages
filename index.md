@@ -8324,13 +8324,28 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         button.classList.remove('hidden');
         button.textContent = getUiLanguage() === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов';
       }
-      if (projectRecoveryWarning && chatRecoveryWarning) showToast('История и проекты прочитались не полностью. Исходные данные не перезаписаны; скачай обе резервные копии кнопками восстановления.', 'error');
+      if (projectRecoveryWarning && chatRecoveryWarning) showToast(storageMessage(
+        'История и проекты прочитались не полностью. Исходные данные не перезаписаны; скачай обе резервные копии кнопками восстановления.',
+        'Chat history and projects could not be fully loaded. Original data was not overwritten; download both recovery backups using the recovery buttons.'
+      ), 'error');
       else if (projectRecoveryWarning) showToast(projectStorageCorruptNotBackedUp
-        ? 'Повреждённые проекты не перезаписаны: скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
-        : 'Проекты не прочитались полностью. Исходные данные сохранены локально; скачай резервную копию проектов.', 'error');
+        ? storageMessage(
+            'Повреждённые проекты не перезаписаны: скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.',
+            'Corrupt project data was not overwritten. Download the original data using the recovery button, free up storage and reload the page.'
+          )
+        : storageMessage(
+            'Проекты не прочитались полностью. Исходные данные сохранены локально; скачай резервную копию проектов.',
+            'Projects could not be fully loaded. Original data is preserved locally; download the project recovery backup.'
+          ), 'error');
       else if (chatRecoveryWarning) showToast(chatStorageCorruptNotBackedUp
-        ? 'История не прочиталась, резервная копия не создалась. Скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.'
-        : 'История не прочиталась. Исходные данные сохранены локально; скачай резервную копию в настройках.', 'error');
+        ? storageMessage(
+            'История не прочиталась, резервная копия не создалась. Скачай исходные данные кнопкой восстановления, освободи место и перезагрузи страницу.',
+            'Chat history could not be loaded and a recovery backup could not be created. Download the original data using the recovery button, free up storage and reload the page.'
+          )
+        : storageMessage(
+            'История не прочиталась. Исходные данные сохранены локально; скачай резервную копию в настройках.',
+            'Chat history could not be fully loaded. Original data remains stored locally; download the recovery backup in Settings.'
+          ), 'error');
       const match=location.hash.match(/^#trace=([^&]+)/);
       if(match){try{const id=decodeURIComponent(match[1]),raw=safeGet('ai_research_trace_'+id);if(raw)showTrace(JSON.parse(raw));}catch(error){console.warn('Не удалось открыть локальный журнал:',error);}}
       await initDB();
