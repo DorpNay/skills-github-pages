@@ -220,8 +220,8 @@
 - [~] 19. Audit Voice/ASR/TTS capability feedback; local document/ASR, voice transcription and TTS errors now map to safe localized messages. Voice capture/TTS capability and full native-device matrix remain open.
 - [ ] 20. Audit offline/online mode and connectivity feedback.
 - [ ] 21. Audit storage quota and recovery warning feedback.
-- [ ] 22. Audit all toast messages for locale parity.
-- [ ] 23. Audit all aria-live/status announcements for locale parity.
+- [~] 22. Audit all toast messages for locale parity; browser-storage 80%/95% quota warnings now use RU/EN copy. The complete toast inventory remains open.
+- [~] 23. Audit all aria-live/status announcements for locale parity; the shared toast uses role=status/polite for success and role=alert/assertive for errors, with aria-atomic=true. Other async status surfaces remain open.
 - [ ] 24. Audit native browser confirm prompts for contextual language parity.
 - [ ] 25. Verify errors do not expose secrets, request bodies or internal traces.
 
@@ -339,7 +339,7 @@
 - [ ] 20. Confirm shared memory only enters requests when explicit scope is enabled.
 - [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
 - [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
-- [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages, while the complete toast inventory remains open.
+- [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages. Shared toast announcement semantics are explicit; full message inventory and recovery/partial-export copy remain open.
 - [ ] 24. Verify all privacy prompts in both locales.
 - [ ] 25. Verify user-data export/restore messages distinguish complete vs partial recovery.
 
@@ -2335,3 +2335,45 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 - **FOLLOW-UP LIVE CHECK:** Pages #44470332033 and Graphify #44470331614 both SUCCESS on exact SHA `4b403ff8d0348a2fec7edb34a27349db561ea02d`. Cache-busted Context.dev HTML independently confirms `meta[name=alandi-build-revision]` equals that SHA; TinyFish's report of a missing meta tag conflicts with this raw HTML evidence and is treated as an automation observation error. TinyFish confirms theme-toggle labels and `aria-pressed` after toggling, and first-tab skip-link targeting. Its computed outline observation was `none` after programmatic focus; the Playwright test now explicitly establishes keyboard `:focus-visible` modality before measuring the high-contrast ring. This follow-up test is authored, NOT RUN.
 - **OPEN:** full landmark/live-region audit, actual computed contrast for all component states, forced-colors and screen-reader/browser/device acceptance. P0.17 remains PARTIAL.
 
+
+
+## Owner runbook — действия после Landing 2.0 (ручные; сервер не менялся)
+
+**Разделение:** GitHub Pages — статический клиент; FastAPI/aServi и Ollama — отдельный приватный контур. Live VPS/Tunnel/Ollama не подтверждены. Никогда не передавай пароль, API key, Tunnel token, OAuth secret или полный env-файл в чат/issues/CI.
+
+### 1. До сервера
+1. Обнови чистый checkout до выбранного commit main и запиши SHA. Не деплой PR preview.
+2. Из корня репозитория запусти:
+   ```bash
+   python scripts/check_deploy_preflight.py
+   python -m pytest -q gateway/tests/test_deploy_preflight.py
+   ```
+   Это проверяет шаблон/unit в Git, не живой VPS.
+3. Создай и проверь защищённые резервные копии /etc/alandi-gateway.env и SQLite из /var/lib/alandi-gateway. Храни вне Git и публичных артефактов.
+4. Зафиксируй ОС/архитектуру, CPU/RAM/disk и бюджет. Не создавай платную VM и не скачивай модели без отдельного решения.
+
+### 2. VPS и Gateway
+1. Сверь фактический unit: sudo systemctl cat alandi-gateway. Канонический файл — gateway/alandi-gateway.service: пользователь alandi, один Uvicorn worker, bind 127.0.0.1:8000, EnvironmentFile /etc/alandi-gateway.env, systemd hardening.
+2. Проверь слушающие порты: sudo ss -ltnp. Gateway — только 127.0.0.1:8000; Ollama — только 127.0.0.1:11434. Не открывай их публично.
+3. Создай /etc/alandi-gateway.env вручную из gateway/.env.example. Замени placeholder на новый ALANDI_API_KEY, созданный openssl rand -hex 32. Целевой режим файла 0600, владелец root; production env никогда не копировать обратно в Git.
+4. Сохрани ALANDI_MAX_INFLIGHT_REQUESTS=1, один реально установленный и разрешённый model tag, OLLAMA_BASE_URL=http://127.0.0.1:11434. Все experimental flags false, helper model пустой. Не включай AgentRun, RAG, extraction, ASR/TTS, OAuth или GitHub App без отдельных eval/license/security gates.
+5. Локально проверь ollama --version, ollama list, ollama ps; зафиксируй точный tag/digest/license. Не выполняй ollama pull без явного решения о модели и размере.
+6. После backup и preflight: sudo systemctl daemon-reload; sudo systemctl restart alandi-gateway; sudo systemctl status alandi-gateway --no-pager. При сбое — sudo journalctl -u alandi-gateway -n 100 --no-pager; не публикуй секреты/prompts.
+7. На VPS проверь /livez, /readyz, /healthz через loopback. Отдельно проверь отказ без авторизации и один реальный completion с Bearer key из защищённого локального shell/password manager; не помещай ключ в чат, командную историю или screenshot.
+
+### 3. HTTPS Tunnel, Access и CORS
+1. Оставь public frontend на https://dorpnay.github.io/skills-github-pages/; private Gateway API размести на отдельном HTTPS hostname.
+2. Cloudflare Tunnel (или ранее утверждённый эквивалент) направляй только на http://127.0.0.1:8000. Не публикуй порт 8000 и никогда не проксируй Ollama 11434.
+3. Включи Cloudflare Access или эквивалентную identity policy. CORS не является аутентификацией.
+4. В ALANDI_CORS_ORIGINS оставь точный origin https://dorpnay.github.io; дополнительные origins добавляй только после явной настройки домена. Не используй wildcard.
+5. С публичного сайта проверь TLS, Access, CORS preflight, отказ без Bearer key, health/readiness и authenticated completion. Убедись, что прямой origin IP и порты 8000/11434 недоступны извне.
+
+### 4. Evidence, rollback и ручная приёмка
+1. Запиши приватно app SHA, OS/архитектуру, unit revision, Python/FastAPI/Uvicorn, Ollama, model tag+digest+license, CORS/Tunnel/Access state, health/auth results, cold/warm latency, RAM/PSS, disk и дату backup. Не записывай ключи, prompts или payloads.
+2. Включай только одну experimental capability за раз после eval, hash/license review, negative auth tests и rollback. База — один model/worker/concurrency=1.
+3. При сбое верни Tunnel на предыдущий проверенный endpoint, восстанови env/SQLite backup по отдельной процедуре и повтори health/auth smoke. Не удаляй базу/backups и не меняй DNS наугад.
+4. Отдельно проверь iPhone Safari/VoiceOver и реальные microphone/voice paths. CI, Pages и TinyFish не заменяют VPS/native-device evidence.
+
+**Owner-only:** домен/DNS, Cloudflare account/Access, SSH/VPS, секреты, платные ресурсы и реальные model downloads выполняет владелец в своих аккаунтах. SSH/VPS доступ в текущем контексте не подтверждён; серверных действий этим срезом не выполнялось.
+
+**Опорные материалы:** docs/DEPLOYMENT_PREFLIGHT_RU.md, docs/DOMAIN_SETUP.md, docs/INFRASTRUCTURE_UPGRADE.md, gateway/alandi-gateway.service, gateway/.env.example и issue #111. Архивный docs/PRE_LAUNCH_STACK_RU.md не использовать как актуальный runbook.

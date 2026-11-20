@@ -3248,6 +3248,9 @@ test('warns before browser storage reaches the critical quota threshold', async 
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#toast')).toContainText('Хранилище сайта заполнено на 80%');
   await expect(page.locator('#toast')).toContainText('экспортировать чаты');
+  await expect(page.locator('#toast')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-live', 'assertive');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-atomic', 'true');
 });
 
 test('gives urgent export guidance at 95% storage use', async ({ page }) => {
@@ -3260,6 +3263,54 @@ test('gives urgent export guidance at 95% storage use', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#toast')).toContainText('Хранилище сайта почти заполнено (96%)');
   await expect(page.locator('#toast')).toContainText('Не очищай данные сайта до экспорта');
+  await expect(page.locator('#toast')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-live', 'assertive');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-atomic', 'true');
+});
+
+
+test('browser storage warning is localized in English', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(window.navigator, 'storage', {
+      configurable: true,
+      value: { estimate: async () => ({ usage: 80, quota: 100 }) }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#toast')).toContainText('Site storage is 80% full');
+  await expect(page.locator('#toast')).toContainText('Export chats');
+  await expect(page.locator('#toast')).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-live', 'assertive');
+  await expect(page.locator('#toast')).toHaveAttribute('aria-atomic', 'true');
+});
+
+test('toast announces successful actions politely and errors assertively', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const toast = page.locator('#toast');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Toast semantics');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  await expect(toast).toContainText('Создан проект: Toast semantics');
+  await expect(toast).toHaveAttribute('role', 'status');
+  await expect(toast).toHaveAttribute('aria-live', 'polite');
+  await expect(toast).toHaveAttribute('aria-atomic', 'true');
+  await page.locator('#importFile').setInputFiles({
+    name: 'invalid-toast.json', mimeType: 'application/json', buffer: Buffer.from('{invalid')
+  });
+  await expect(toast).toContainText('не является корректным');
+  await expect(toast).toHaveAttribute('role', 'alert');
+  await expect(toast).toHaveAttribute('aria-live', 'assertive');
+  await expect(toast).toHaveAttribute('aria-atomic', 'true');
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#importFile').setInputFiles({
+    name: 'invalid-toast-en.json', mimeType: 'application/json', buffer: Buffer.from('{invalid')
+  });
+  await expect(toast).toContainText('not a valid');
+  await expect(toast).toHaveAttribute('role', 'alert');
+  await expect(toast).toHaveAttribute('aria-live', 'assertive');
 });
 
 test('storage estimate failures do not block app startup or persistence', async ({ page }) => {

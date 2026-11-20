@@ -1104,7 +1104,7 @@ permalink: /
     <div class="mb-2 flex items-center justify-between gap-3"><p id="ttsMiniPlayerStatus" class="text-xs text-gray-300">Локальное озвучивание</p><button type="button" data-action="stop-speech" class="rounded-md border border-gray-700 px-2 py-1 text-xs">Стоп</button></div><label id="ttsVoiceChoiceWrap" class="hidden mb-2 block text-xs text-gray-300">Голос ответа<select id="ttsVoiceSelect" class="mt-1 w-full rounded-lg border border-gray-700 bg-gray-900 px-2 py-2 text-sm" aria-label="Голос локального озвучивания"></select></label>
     <audio id="ttsAudioPlayer" class="w-full" controls preload="none"></audio>
   </div>
-  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
   <button id="jumpToLatest" type="button" data-action="jump-to-latest" class="jump-to-latest hidden" aria-label="Перейти к последнему сообщению" title="В конец чата">↓</button>
   <div id="composerPopoverScrim" class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" aria-hidden="true"></div>
   <div id="messageViewerModal" class="hidden fixed inset-0 z-[86] bg-black/80 p-3 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="messageViewerTitle">
@@ -1393,8 +1393,14 @@ permalink: /
         storageHealthWarningLevel = level;
         const percent = Math.round(ratio * 100);
         showToast(level === 2
-          ? 'Хранилище сайта почти заполнено (' + percent + '%). Срочно экспортируй чаты через «Экспорт» и проверь резервную копию. Не очищай данные сайта до экспорта.'
-          : 'Хранилище сайта заполнено на ' + percent + '%. Рекомендуется экспортировать чаты через «Экспорт» и сохранить копию вне этого устройства.', 'error');
+          ? storageMessage(
+              'Хранилище сайта почти заполнено (' + percent + '%). Срочно экспортируй чаты через «Экспорт» и проверь резервную копию. Не очищай данные сайта до экспорта.',
+              'Site storage is almost full (' + percent + '%). Export your chats now using “Export” and check the backup. Do not clear site data before export.'
+            )
+          : storageMessage(
+              'Хранилище сайта заполнено на ' + percent + '%. Рекомендуется экспортировать чаты через «Экспорт» и сохранить копию вне этого устройства.',
+              'Site storage is ' + percent + '% full. Export chats using “Export” and save a copy outside this device.'
+            ), 'error');
       }).catch(() => {});
     }
     let pyodidePromise = null;
@@ -1516,8 +1522,12 @@ permalink: /
     function showToast(message, kind = 'success') {
       const node = $('toast');
       if (!node) return;
+      const isError = kind === 'error';
+      node.setAttribute('role', isError ? 'alert' : 'status');
+      node.setAttribute('aria-live', isError ? 'assertive' : 'polite');
+      node.setAttribute('aria-atomic', 'true');
       node.textContent = String(message || '');
-      node.classList.toggle('toast-error', kind === 'error');
+      node.classList.toggle('toast-error', isError);
       node.classList.remove('hidden', 'toast-visible');
       if (toastTimer) clearTimeout(toastTimer);
       if (toastHideTimer) clearTimeout(toastHideTimer);

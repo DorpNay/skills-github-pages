@@ -57,6 +57,7 @@
 ## External source register
 
 ### Landing UI finish — authoritative design and test references (reviewed 2026-11-20)
+- **Toast/status implementation note (2026-11-20):** the shared root toast distinguishes polite success status from assertive error alerts and sets atomic announcements. This applies the existing W3C WCAG 2.2 SC 4.1.3 Status Messages and ARIA22 references below; it does not establish screen-reader/browser conformance by itself.
 - **Current root UI slice (2026-11-20):** chat/project fallback-copy fixes retain the existing HTML/JS interaction model and use the already catalogued WCAG 2.2 and WAI-ARIA APG references as design constraints. No UI framework, runtime dependency, provider, or external asset was added; this slice introduces no new upstream claim requiring another URL.
 
 
