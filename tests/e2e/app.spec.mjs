@@ -7432,9 +7432,7 @@ test('request context caps selected projects at five with localized feedback in 
     const checkboxes = page.locator('#requestProjectChecks input[data-request-project-id]');
     await expect(checkboxes).toHaveCount(7);
     for (let index = 0; index < 5; index += 1) await checkboxes.nth(index).check();
-    await expect(page.locator('#requestProjectCount')).toHaveText('5').catch(async () => {
-      await expect(page.locator('#requestContextCount')).toHaveText('5');
-    });
+    await expect(page.locator('#requestContextCount')).toHaveText('5');
     await checkboxes.nth(5).check();
     await expect(checkboxes.nth(5)).not.toBeChecked();
     await expect(page.locator('#toast')).toContainText(
