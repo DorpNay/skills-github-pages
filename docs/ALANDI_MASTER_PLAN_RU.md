@@ -189,7 +189,7 @@
 - [~] 16. Restore attachment remove-button focus when attachment chips are re-rendered.
 - [ ] 17. Verify message action keyboard focus survives in-place relabeling.
 - [~] 18. Verify long project/chat names remain clipped without horizontal overflow; existing 320px regression checks title preservation and bounded row geometry. Locale-specific recheck and Chromium execution remain pending.
-- [ ] 19. Verify five-project request context cap in both locales.
+- [~] 19. Verify five-project request context cap in both locales; new mock-provider Playwright regression selects five projects, checks the sixth is rejected with localized RU/EN feedback, and asserts only projects 1–5 enter the outbound system context while projects 6–7 are excluded. Chromium execution pending.
 - [~] 20. Verify no duplicate change handlers after repeated context-menu refresh; added 10-cycle RU/EN regression for composer disclosures and their single Escape-close path.
 - [~] 21. Verify no duplicate project/chat rows after 10 repeated locale switches; added 10-cycle locale idempotency regression, runtime execution pending.
 - [ ] 22. Verify no state loss across chat switch while locale is changed.
