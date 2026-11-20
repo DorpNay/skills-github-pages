@@ -6778,6 +6778,25 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           : '').filter(Boolean).join('\n\n');
       const userContent=[text,attachmentText].filter(Boolean).join('\n\n');
       const chat = getCurrentChat();
+      const activeProjectForDisclosure=getProjectForChat(chat);
+      const projectContextsForDisclosure=new Map();
+      if(activeProjectForDisclosure && (
+        Boolean(activeProjectForDisclosure.instructions?.trim()) ||
+        (chat.projectMemoryEnabled===true && activeProjectForDisclosure.memory.length>0)
+      )) projectContextsForDisclosure.set(activeProjectForDisclosure.id,activeProjectForDisclosure.name);
+      for(const projectId of requestProjectIds) {
+        const selectedProject=projects.find(project=>project.id===projectId);
+        if(selectedProject)projectContextsForDisclosure.set(selectedProject.id,selectedProject.name);
+      }
+      if(selectedProvider!=='alandi' && chat.executionMode!=='agent' && projectContextsForDisclosure.size) {
+        const english=getUiLanguage()==='en';
+        const providerLabel=PROVIDERS[selectedProvider]?.label||selectedProvider;
+        const projectNames=[...projectContextsForDisclosure.values()].map(name=>'“'+name+'”').join(', ');
+        const disclosure=english
+          ? 'This request will send project context for '+projectNames+' to '+providerLabel+', outside the aLandi Gateway. It may include project instructions and selected project-memory facts. Continue?'
+          : 'Этот запрос отправит контекст проекта '+projectNames+' провайдеру '+providerLabel+', вне aLandi Gateway. Он может включать инструкции проекта и выбранные факты памяти проекта. Продолжить?';
+        if(!confirm(disclosure))return;
+      }
       if(chat.executionMode==='agent') {
         if(chat.deepResearchMethod!=='none')showToast(getUiLanguage()==='en'?'AgentRun is selected for this turn; the Deep Research method is not executed. Switch to Direct to use it.':'Для этого запроса выбран AgentRun; метод Deep Research не запускается. Переключись на Direct, чтобы использовать его.');
         const retryPrompt=isRetry?[...chat.messages].reverse().find(message=>message.role==='user')?.content||'':userContent;
