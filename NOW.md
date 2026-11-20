@@ -1,6 +1,6 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-19 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
+**Срез:** 2026-11-20 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
 
 ## Начало каждой задачи
 1. Прочитать только этот файл (строки 1–100).
@@ -30,9 +30,10 @@ GitHub `main` — источник истины по проекту. Project Sou
 - **IMPLEMENTED в main:** 30-point landing acceptance matrix P0.21 и 30-point root control matrix P0.25. Элементы с кодом/тестом отмечены PARTIAL `[~]`, пока Chromium/native evidence не получены.
 - **IMPLEMENTED в main:** RU/EN static dictionary audit — удалены дубли `languageLabel`, `helperMemoryNoProject`, `helperMemoryNoConfig`; статический Playwright guard проверяет уникальность ключей и покрытие всех `data-i18n*` markup refs.
 - **IMPLEMENTED в main:** мобильные editable fields остаются 16 CSS px; Project Settings поля и touch controls имеют минимум 44px. Компактность достигается spacing/grouping, не уменьшением текста.
+- **IMPLEMENTED в main (2026-11-20):** root document title/application-name/description/Open Graph metadata приведены к aLandi v10.0; aNoteBooki sidebar descriptor и accessible name локализованы RU/EN без изменения маршрута. Добавлена Playwright regression для locale round-trip и metadata.
 - **EXTERNAL SOURCES:** WCAG 2.2, WAI-ARIA APG, MDN VisualViewport/safe-area/VirtualKeyboard, WebKit, web.dev viewport units и Playwright guidance занесены в INTEL.md.
-- **NOT VERIFIED:** Chromium E2E/Quality Sentinels и native iOS Safari/VoiceOver в этой сессии не запускались. Pages/Graphify — отдельные build/architecture checks, не browser acceptance.
-- **Workflow limitation:** текущий GitHub connector не предоставляет `workflow_dispatch`; не заявлять ручной запуск Quality Sentinels. Проверять доступные exact-HEAD checks и искать разрешённый путь запуска, не обходить permissions.
+- **NOT VERIFIED:** Chromium E2E, Lightpanda и native iOS Safari/VoiceOver не запускались; точные 1440×900/390×844 browser viewports не подтверждены. TinyFish live inspection после публикации подтвердил title, Notebook href, RU/EN accessible names/descriptors и отсутствие page errors; head metadata он не смог прочитать. Source + Jekyll build подтверждают metadata и viewport markup. Pages/Graphify — отдельные build/architecture checks, не полная browser acceptance.
+- **Workflow limitation:** Quality Sentinels запускает static gates на push; Chromium, Lightpanda, static analysis и published-release jobs — optional `workflow_dispatch` inputs. Текущий GitHub connector не предоставляет dispatch action; не заявлять, что эти jobs запускались. Не обходить permissions.
 
 ## Техника параллельной работы
 - **Lane A — repository/code:** GitHub truth, точечный inspect, план, минимальный reversible patch.
@@ -85,12 +86,13 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Live main HEAD:** `52022071bc5d04076d9491780631215ef7f52dc9`. Working branch remains `main`; open PR #187 provider diagnostics (head `c951585d5a411a0099a229c074cb5d8ed1168fff`, unmerged). Open issues #111 owner release gates and #186 unrelated GitHub Skills exercise.
-- **Exact-HEAD Actions:** Pages build/deploy #44483581194 SUCCESS; Graphify Code-Only Architecture Pilot #44483582109 SUCCESS; both on `52022071bc5d04076d9491780631215ef7f52dc9`. Quality Sentinels is `workflow_dispatch` only; the connected GitHub toolset exposes no dispatch action. Do not claim Chromium acceptance.
+- **Last verified application HEAD:** `b30a4135d7cc7912bfbdac9c67787f5fca72a4c0` on `main` (this checkpoint update is docs-only). Open PR #187 provider diagnostics remains unmerged. Open issues #111 owner release gates and #186 unrelated GitHub Skills exercise.
+- **Exact-HEAD Actions on `b30a4135d7cc7912bfbdac9c67787f5fca72a4c0`:** Pages build/deploy #44663063201 SUCCESS; Graphify Code-Only Architecture Pilot #44663064229 SUCCESS; Quality Sentinels #44663064263 SUCCESS for Jekyll build, Integrity, Security and Context sentinels. Chromium, Lightpanda, static analysis and published-release jobs were SKIPPED. No E2E acceptance is claimed.
 - **Implemented source package:** `index.md` now re-synchronizes `aria-expanded` for attachment, request-context and voice disclosure triggers from the actual menu visibility after RU/EN refresh. Playwright regression added for 10 locale cycles, draft preservation, attachment retention/remove-button focus/name and disclosure open/Escape state.
 - **Browser evidence:** TinyFish confirmed the deployed revision and composer draft persistence, but its subsequent DOM inspection returned contradictory false negatives (it reported markup IDs present in source as absent and trigger `aria-expanded` as null). It could not attach a file or complete the disclosure matrix. Treat the live browser run as INCONCLUSIVE, not a pass or a confirmed product defect. Playwright test remains NOT RUN.
 - **Current project bundle package (IMPLEMENTED; E2E pending):** project import validates every chat record before mutation, localizes malformed JSON/format/name/shape and file/project/chat/message limits in RU/EN, and maps storage rollback/unexpected failures to safe non-raw feedback. Project export/import success toasts are localized. Playwright regressions cover RU/EN validation and unchanged persisted state on malformed input.
 - **Current project source feedback package (IMPLEMENTED; E2E pending):** upload, delete and catalog failures/timeouts now use localized safe messages instead of displaying raw Gateway diagnostics; added RU/EN Playwright regression that injects a credential-like string in a failed Gateway response and asserts it is not rendered.
 - **Current chat import package (IMPLEMENTED; E2E pending):** malformed JSON, invalid shape, 15 MiB/500-chat/50,000-message/1,000-local-chat limits and storage rollback now have explicit RU/EN feedback; parser/storage exceptions are not surfaced raw. Added RU/EN regression proving invalid input does not mutate existing history.
 - **Latest landing hardening (IMPLEMENTED; browser tests authored, not yet run):** project-memory helper, local document extraction, local ASR, Pollinations OAuth, model-catalog failures, image/video preview and settings-profile import now use bounded safe feedback instead of raw external/parser exception text. RU/EN regressions cover helper/document/audio redaction, OAuth query redaction, model-catalog status and failed profile import without persisted-state mutation.
+- **Root metadata + Notebook localization (IMPLEMENTED; published smoke checked):** `index.md` title is now `aLandi v10.0`, application/description/Open Graph metadata use aLandi, and the sidebar Notebook link descriptor/accessible name follow RU/EN. Playwright regression authored; not run. TinyFish run #38dcb161-ad99-4c57-aea5-b684a305f656 verified deployed title, Notebook URL and RU→EN→RU labels with no page errors; it could not inspect the document head or set exact viewport dimensions. Source and Jekyll build verify the head markup.
 - **NEXT:** continue root UI P0.17 and P0.21–P0.32 in cohesive implementation/test packages; preserve studio-route hold until root acceptance is closed.
