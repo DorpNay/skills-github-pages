@@ -183,11 +183,11 @@
 - [~] 10. Update message action accessible names without rebuilding the chat.
 - [~] 11. Update research trace/retry labels without mutating message data.
 - [~] 12. Keep provider/model provenance values intact while localizing fallback labels.
-- [ ] 13. Verify chat action dialog Tab/Shift+Tab loop after language change.
+- [~] 13. Verify chat action dialog Tab/Shift+Tab loop after language change; new move-chat dialog regression selects a project, switches RU/EN, verifies the selected option remains stable and asserts both Tab and Shift+Tab wrap focus. Chromium execution pending.
 - [~] 14. Preserve focused project navigation control after locale-triggered list refresh; browser test added.
 - [~] 15. Preserve focused request-context checkbox after locale-triggered rebuild; browser test added.
 - [~] 16. Restore attachment remove-button focus when attachment chips are re-rendered.
-- [ ] 17. Verify message action keyboard focus survives in-place relabeling.
+- [~] 17. Verify message action keyboard focus survives in-place relabeling; new Playwright test focuses the message copy action, switches RU→EN→RU and asserts the same action retains focus while its accessible name changes. Chromium execution pending.
 - [~] 18. Verify long project/chat names remain clipped without horizontal overflow; existing 320px regression checks title preservation and bounded row geometry. Locale-specific recheck and Chromium execution remain pending.
 - [~] 19. Verify five-project request context cap in both locales; new mock-provider Playwright regression selects five projects, checks the sixth is rejected with localized RU/EN feedback, and asserts only projects 1–5 enter the outbound system context while projects 6–7 are excluded. Chromium execution pending.
 - [~] 20. Verify no duplicate change handlers after repeated context-menu refresh; added 10-cycle RU/EN regression for composer disclosures and their single Escape-close path.
@@ -266,15 +266,15 @@
 - [~] 9. DOM audit checks duplicate IDs.
 - [~] 10. DOM audit checks native semantics of data-action controls.
 - [~] 11. DOM audit checks visible button accessible names.
-- [ ] 12. Add active move-chat dialog selection-preservation regression.
+- [~] 12. Add active move-chat dialog selection-preservation regression; mock-free UI test preserves selected destination through RU/EN refresh, verifies localized fields and submits the same project selection. Chromium execution pending.
 - [~] 13. Add live request-context selected-project preservation regression; the one-shot project-context test confirms selected project context is sent once without changing the active chat project, while locale-focus regression checks the request-context checkbox retains focus after language refresh. Combined selected-state + locale matrix and Chromium execution remain pending.
 - [~] 14. Add selected attachment preservation regression across locale changes; existing ten-cycle RU/EN test preserves the draft, selected attachment, localized remove action and keyboard focus. Chromium execution remains pending.
-- [ ] 15. Add existing message-action aria-label refresh regression.
+- [~] 15. Add existing message-action aria-label refresh regression; copy-message accessible name updates in-place from RU→EN→RU without losing keyboard focus. Chromium execution pending.
 - [~] 16. Add research-trace/retry label refresh regression; historical tool/research metadata test checks localized trace-open/retry labels and unchanged chat history. Chromium execution remains pending.
 - [~] 17. Add tool-call indicator prefix refresh regression; historical metadata test checks RU/EN tool-call prefix without mutating stored history. Chromium execution remains pending.
 - [~] 18. Add provider/model metadata fallback refresh regression; historical metadata test checks localized cache/provider metadata labels while preserving provenance and serialized history. Chromium execution remains pending.
 - [ ] 19. Add AgentRun task/event refresh regression with mocked Gateway.
-- [ ] 20. Add chat-list focus/scroll preservation regression.
+- [~] 20. Add chat-list focus/scroll preservation regression; new 40-chat fixture scrolls to the last row, focuses its menu trigger, switches RU/EN in place and asserts the same row remains focused, scrollTop is unchanged and no rows duplicate. Chromium execution pending.
 - [~] 21. Add project-navigation focus preservation regression; existing locale refresh test asserts the focused project navigation control survives list rebuild. Chromium execution remains pending.
 - [~] 22. Add 320px locale overflow regression; RU/EN round-trip test asserts document/body width stays within the viewport at 320px. Chromium execution remains pending.
 - [~] 23. Add 768px locale wrapping regression; RU/EN round-trip test asserts document/body width stays within the viewport at 768px; text-wrap-specific geometry remains pending. Chromium execution remains pending.
