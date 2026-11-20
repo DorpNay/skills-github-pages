@@ -5689,8 +5689,10 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
   });
   await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#executionModeToggle')).toHaveAttribute('aria-pressed', 'false');
   await page.locator('#executionModeToggle').click();
   await expect(page.locator('#executionModeToggle')).toHaveText('A');
+  await expect(page.locator('#executionModeToggle')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(async () => page.evaluate(() => {
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
     const id = localStorage.getItem('ai_current_chat_v87');

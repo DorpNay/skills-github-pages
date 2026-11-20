@@ -240,7 +240,7 @@
 - [ ] 11. Confirm cancel actions abort the corresponding operation.
 - [~] 12. Settings modal now shares the Tab/Shift+Tab focus loop, Escape/backdrop close and existing opener restoration; browser regression is authored but not run.
 - [~] 13. Attachment, request-context and voice disclosures synchronize aria-expanded from actual visibility; RU/EN locale regression added, runtime pending.
-- [ ] 14. Confirm selected toggles expose aria-pressed/checked.
+- [~] 14. Confirm selected toggles expose aria-pressed/checked; the Direct/AgentRun execution-mode control now synchronizes `aria-pressed` from the active chat mode, with existing execution-mode E2E asserting false→true. Complete toggle inventory remains open.
 - [~] 15. Project create/edit name validation now resolves the actual inline error element and synchronizes aria-invalid/aria-describedby; the full form inventory remains open.
 - [~] 16. Confirm all visible buttons have non-empty accessible names; source scan found no unlabeled static buttons and a runtime DOM audit now checks visible buttons plus chat-menu actions. Playwright execution pending.
 - [~] 17. Confirm all form controls have associated labels or accessible names; source scan found no unlabelled static controls and the runtime DOM audit checks visible inputs/selects/textareas. Playwright execution pending.

@@ -3842,6 +3842,7 @@ permalink: /
         const agentMode=chat.executionMode==='agent',english=getUiLanguage()==='en';
         executionModeToggle.textContent=agentMode?'A':'D';
         executionModeToggle.dataset.mode=agentMode?'agent':'direct';
+        executionModeToggle.setAttribute('aria-pressed',String(agentMode));
         executionModeToggle.title=agentMode
           ? (english?'AgentRun · bounded Gateway execution. Click to switch to Direct.':'AgentRun · ограниченное выполнение через Gateway. Нажми, чтобы переключить на Direct.')
           : (english?'Direct · ordinary chat. Click to switch to AgentRun.':'Direct · обычный чат. Нажми, чтобы переключить на AgentRun.');
