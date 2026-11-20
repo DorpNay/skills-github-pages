@@ -1445,7 +1445,13 @@ permalink: /
       const callback=new URL(location.href),code=callback.searchParams.get('code'),error=callback.searchParams.get('error');
       if(!code&&!error) return '';
       const cleanUrl=new URL(safeSessionGet(POLLINATIONS_SESSION.redirectUri)||location.href); cleanUrl.search=''; cleanUrl.hash='';
-      if(error) { history.replaceState(null,'',cleanUrl.toString()); clearPollinationsSession(); return 'Авторизация Pollinations отменена или отклонена: '+String(error).slice(0,90); }
+      if(error) {
+        history.replaceState(null,'',cleanUrl.toString()); clearPollinationsSession();
+        const english=getUiLanguage()==='en';
+        return error==='access_denied'
+          ? (english?'Pollinations authorization was cancelled.':'Авторизация Pollinations отменена.')
+          : (english?'Pollinations authorization was not completed.':'Авторизация Pollinations не завершена.');
+      }
       const state=callback.searchParams.get('state'),expectedState=safeSessionGet(POLLINATIONS_SESSION.state);
       const verifier=safeSessionGet(POLLINATIONS_SESSION.verifier),clientId=safeSessionGet(POLLINATIONS_SESSION.clientId)||safeGet(providerKeyStorage('pollinations'))||'';
       const redirectUri=safeSessionGet(POLLINATIONS_SESSION.redirectUri)||'';
@@ -1461,8 +1467,9 @@ permalink: /
         const payload=await response.json().catch(()=>({}));
         if(!response.ok||typeof payload.access_token!=='string'||!payload.access_token) {
           clearPollinationsSession();
-          const safeDetail=String(payload.error_description||payload.error||'неизвестная ошибка').slice(0,120);
-          return 'Pollinations не выдал токен доступа: '+safeDetail+'. Проверьте зарегистрированный Redirect URI.';
+          return getUiLanguage()==='en'
+            ? 'Pollinations did not issue an access token. Check the registered Redirect URI.'
+            : 'Pollinations не выдал токен доступа. Проверьте зарегистрированный Redirect URI.';
         }
         const lifetime=Math.max(60,Number(payload.expires_in)||604800);
         if(!safeSessionSet(POLLINATIONS_SESSION.token,payload.access_token)||!safeSessionSet(POLLINATIONS_SESSION.expiresAt,String(Date.now()+lifetime*1000))) {
@@ -2385,15 +2392,15 @@ permalink: /
         const type=file.type||'';
         if(type.startsWith('image/')) {
           try {const dataUrl=await fileAsDataUrl(file);pendingComposerAttachments.push({id:projectIdNew(),kind:'image',name:file.name,mime:type,size:file.size,dataUrl,frames:[]});}
-          catch(error){showToast(String(error.message||error),'error');}
+          catch(error){showToast(english?'Could not read this image file.':'Не удалось прочитать файл изображения.','error');}
         } else if(type.startsWith('video/')) {
           try {
             const frames=await extractVideoPreviewFrames(file);
             pendingComposerAttachments.push({id:projectIdNew(),kind:'video',name:file.name,mime:type,size:file.size,frames});
             showToast(english?'Extracted '+frames.length+' video frames. The audio track is not transcribed yet.':'Из видео извлечено '+frames.length+' кадров. Аудиодорожка пока не расшифровывается.');
           } catch(error) {
-            pendingComposerAttachments.push({id:projectIdNew(),kind:'unsupported',name:file.name,mime:type,size:file.size,reason:String(error.message||error)});
-            showToast((english?'Could not extract video frames: ':'Не удалось извлечь кадры видео: ')+String(error.message||error).slice(0,120),'error');
+            pendingComposerAttachments.push({id:projectIdNew(),kind:'unsupported',name:file.name,mime:type,size:file.size,reason:english?'Video preview could not be extracted.':'Не удалось извлечь предпросмотр видео.'});
+            showToast(english?'Could not extract video preview.':'Не удалось извлечь предпросмотр видео.','error');
           }
         } else {
           pendingComposerAttachments.push({id:projectIdNew(),kind:'unsupported',name:file.name,mime:type,size:file.size,reason:english?'Unsupported photo or video type.':'Это не распознанный тип фото или видео.'});
@@ -4191,16 +4198,22 @@ permalink: /
         return { count: models.length, models, cached: false };
       } catch (error) {
         const cached = readProviderModelCatalog(provider, true);
+        const english=getUiLanguage()==='en';
+        const timedOut=error?.name==='AbortError'||controller.signal.aborted;
         if (provider === currentProvider()) {
           if (cached?.models?.length) {
-            $('modelCatalogStatus').textContent = 'Не удалось обновить каталог (' + (error?.message === 'AbortError' ? 'тайм-аут' : String(error?.message || 'ошибка сети/CORS')) + '). Сохранён старый список из ' + cached.models.length + ' моделей; при смене модели проверьте доступность вручную.';
+            $('modelCatalogStatus').textContent = english
+              ? 'Could not refresh the model catalog ('+(timedOut?'timeout':'network/CORS')+'). Kept the cached list of '+cached.models.length+' models; verify availability before switching.'
+              : 'Не удалось обновить каталог моделей ('+(timedOut?'тайм-аут':'сеть/CORS')+'). Сохранён прежний список ('+cached.models.length+'); проверьте доступность перед переключением.';
             populateModelPresets(provider, $('modelName').value);
           } else {
-            $('modelCatalogStatus').textContent = 'Каталог недоступен (' + (error?.message === 'AbortError' ? 'тайм-аут' : String(error?.message || 'сеть/CORS')) + '). Встроенные модели и ручной ввод продолжают работать.';
+            $('modelCatalogStatus').textContent = english
+              ? 'Model catalog is unavailable ('+(timedOut?'timeout':'network/CORS')+'). Built-in models and manual entry remain available.'
+              : 'Каталог моделей недоступен ('+(timedOut?'тайм-аут':'сеть/CORS')+'). Встроенные модели и ручной ввод доступны.';
           }
         }
-        if (!quiet) showToast('Не удалось обновить каталог моделей. Проверьте ключ, права API и доступ CORS.', 'error');
-        return { count: cached?.models?.length || 0, error: String(error?.message || 'catalog-error'), stale: true };
+        if (!quiet) showToast(english?'Could not refresh the model catalog. Check provider access and CORS.':'Не удалось обновить каталог моделей. Проверьте доступ провайдера и CORS.', 'error');
+        return { count: cached?.models?.length || 0, error: timedOut?'timeout':'catalog-error', stale: true };
       } finally {
         clearTimeout(timeoutId);
         if (provider === currentProvider() && manageButton) {

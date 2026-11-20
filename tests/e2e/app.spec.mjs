@@ -2838,6 +2838,34 @@ test('local helper suggests compact project-memory facts without saving them aut
 });
 
 
+test('Pollinations OAuth callback errors never echo untrusted query details', async ({ page }) => {
+  const leaked='Authorization: Bearer e2e-private-oauth-token';
+  await page.goto(APP_PATH+'?error='+encodeURIComponent(leaked),{waitUntil:'domcontentloaded'});
+  await expect(page.locator('#toast')).toContainText('Авторизация Pollinations не завершена.');
+  await expect(page.locator('#toast')).not.toContainText(leaked);
+  expect(page.url()).not.toContain('error=');
+});
+
+test('model catalog failures keep localized safe feedback', async ({ page }) => {
+  const leaked='e2e-private-provider-diagnostic-token';
+  await page.route('https://api.example.test/v1/models',async route=>route.fulfill({
+    status:502,contentType:'application/json',body:JSON.stringify({detail:'upstream Authorization: Bearer '+leaked})
+  }));
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  if(!(await page.locator('#legacyProviderSettings').evaluate(el=>el.open)))await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('e2e-model');
+  await page.locator('#apiKey').fill('e2e-provider-placeholder-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#refreshModelCatalog').click();
+  await expect(page.locator('#modelCatalogStatus')).toContainText('Model catalog is unavailable');
+  await expect(page.locator('#modelCatalogStatus')).not.toContainText(leaked);
+  await expect(page.locator('#toast')).not.toContainText(leaked);
+});
+
 test('local helper Gateway failures never expose backend diagnostics in RU and EN', async ({ page }) => {
   const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, DELETE, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
   const leaked='e2e-private-helper-token-DO-NOT-RENDER';
