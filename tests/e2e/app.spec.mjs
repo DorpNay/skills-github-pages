@@ -2654,7 +2654,7 @@ test('aServi connection validates required fields in order and clears corrected 
   await expect(page.locator('#cloudBaseUrlError')).toHaveText('Укажи URL своего сервера.');
   await expect(page.locator('#cloudBaseUrl')).toBeFocused();
 
-  await page.locator('#cloudBaseUrl').fill('https://gateway.example.test/v1');
+  await page.locator('#cloudBaseUrl').fill('http://127.0.0.1:4173/v1');
   await expect(page.locator('#cloudBaseUrl')).toHaveAttribute('aria-invalid', 'false');
   await connect.click();
   await expect(page.locator('#cloudModel')).toHaveAttribute('aria-invalid', 'true');
@@ -2807,16 +2807,16 @@ test('aServi settings remain separate from third-party provider settings', async
 test('local helper suggests compact project-memory facts without saving them automatically', async ({ page }) => {
   const helperRequests=[];
   const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, DELETE, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
-  await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions',async route=>{
+  await page.route('http://127.0.0.1:4173/v1/helpers/project-memory-suggestions',async route=>{
     if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:corsHeaders});
     helperRequests.push(route.request().postDataJSON());
     return route.fulfill({status:200,headers:corsHeaders,body:JSON.stringify({model:'qwen3.5:0.8b',source_fact_count:1,candidates:['Project work must be verified with tests.'],count:1})});
   });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
-    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi','e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider','alandi');
     localStorage.setItem('ai_model_name','qwen3.5:4b');
     localStorage.setItem('ai_alandi_cloud_model','qwen3.5:4b');
@@ -2907,15 +2907,15 @@ for (const language of ['ru', 'en']) {
 test('local helper Gateway failures never expose backend diagnostics in RU and EN', async ({ page }) => {
   const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, DELETE, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
   const leaked='e2e-private-helper-token-DO-NOT-RENDER';
-  await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions',async route=>{
+  await page.route('http://127.0.0.1:4173/v1/helpers/project-memory-suggestions',async route=>{
     if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:corsHeaders});
     return route.fulfill({status:502,headers:corsHeaders,body:JSON.stringify({detail:'upstream failure Authorization: Bearer '+leaked})});
   });
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
-    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi','e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider','alandi');
     localStorage.setItem('ai_model_name','qwen3.5:4b');
     localStorage.setItem('ai_alandi_cloud_model','qwen3.5:4b');
@@ -2942,20 +2942,20 @@ test('local helper Gateway failures never expose backend diagnostics in RU and E
 test('document and audio Gateway errors are localized and redact backend details', async ({ page }) => {
   const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
   const leaked='e2e-private-gateway-diagnostic-token';
-  await page.route('https://gateway.example.test/v1/capabilities',async route=>route.fulfill({
+  await page.route('http://127.0.0.1:4173/v1/capabilities',async route=>route.fulfill({
     status:200,headers:corsHeaders,body:JSON.stringify({documents:{extraction:true},audio:{transcription:true}})
   }));
-  await page.route('https://gateway.example.test/v1/documents/extract**',async route=>route.fulfill({
+  await page.route('http://127.0.0.1:4173/v1/documents/extract**',async route=>route.fulfill({
     status:502,headers:corsHeaders,body:JSON.stringify({detail:'upstream Authorization: Bearer '+leaked})
   }));
-  await page.route('https://gateway.example.test/v1/audio/transcriptions**',async route=>route.fulfill({
+  await page.route('http://127.0.0.1:4173/v1/audio/transcriptions**',async route=>route.fulfill({
     status:502,headers:corsHeaders,body:JSON.stringify({error:{message:'upstream Authorization: Bearer '+leaked}})
   }));
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
   await page.evaluate(()=>{
-    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi','e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url','http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider','alandi');
     localStorage.setItem('ai_model_name','qwen3.5:4b');
     localStorage.setItem('ai_alandi_cloud_model','qwen3.5:4b');
@@ -3328,13 +3328,13 @@ test('clearing a non-active project chat preserves the active chat and both proj
 test('Agents panel reports the disabled AgentRun capability without offering a runnable control', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
-  await page.route('https://gateway.example.test/v1/capabilities', route => route.fulfill({
+  await page.route('http://127.0.0.1:4173/v1/capabilities', route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ agent_runs: { enabled: false, worker_concurrency: 1, tools_enabled: false } })
   }));
@@ -3349,9 +3349,9 @@ test('Agents panel reports the disabled AgentRun capability without offering a r
 test('AgentRun submits only the explicit prompt and safely renders real events and output', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
@@ -3360,7 +3360,7 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   }));
   let submitted = null;
   let idempotencyKey = '';
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -3422,16 +3422,16 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
 test('AgentRun Check replaces the observer without detaching the active run', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let statusReads = 0;
   let postAttempts = 0;
   let allowCompletion = false;
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -3482,14 +3482,14 @@ test('AgentRun Check replaces the observer without detaching the active run', as
 test('AgentRun treats budget_exhausted as a terminal state', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let statusReads = 0;
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -3528,14 +3528,14 @@ test('AgentRun treats budget_exhausted as a terminal state', async ({ page }) =>
 test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let cancelled = false;
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -3577,15 +3577,15 @@ test('AgentRun cancellation is server-confirmed and keeps the explicit prompt', 
 test('AgentRun reuses the idempotency key after an ambiguous network failure', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let postAttempts = 0;
   const keys = [];
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -3633,13 +3633,13 @@ test('AgentRun reuses the idempotency key after an ambiguous network failure', a
 test('AgentRun submission errors are bounded and do not erase the task prompt', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -5471,14 +5471,14 @@ test('obsolete Tavily Tools and Web Search settings are removed while web scope 
 test('AgentRun persists the selected safe strategy and submits it without escalating capabilities', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let submitted = null;
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: { agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false } } });
     if (url.pathname === '/v1/agent-runs/profiles') return route.fulfill({ json: {
@@ -5597,9 +5597,9 @@ test('chat composer defaults to Direct execution mode', async ({ page }) => {
 test('AgentRun composer sends bounded chat history and returns output to the same chat', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const chatId = await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
     const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
@@ -5614,7 +5614,7 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
   });
   let submitted = null;
   let completionCalls = 0;
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: {
       agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false }
@@ -5685,15 +5685,15 @@ test('AgentRun composer sends bounded chat history and returns output to the sam
 test('AgentRun chat status is visible, collapsible, safe and resumable from the chat surface', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-placeholder-key');
-    localStorage.setItem('ai_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_provider', 'alandi');
     localStorage.setItem('ai_model_name', 'qwen3.5:4b');
   });
   let cancelCalls = 0;
   const runCreatedAt = Math.floor(Date.now() / 1000);
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/v1/capabilities') return route.fulfill({ json: {
       agent_runs: { enabled: true, worker_concurrency: 1, tools_enabled: false }
@@ -5924,7 +5924,7 @@ test('custom agent team fields expose localized accessible names', async ({ page
 test('project sources upload, deduplicate by SHA-256, preview and delete within project scope', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-key');
   });
   const documents = [];
@@ -5935,7 +5935,7 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
     'access-control-allow-headers': 'authorization,content-type',
     'access-control-allow-methods': 'GET,POST,DELETE,OPTIONS'
   };
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const request = route.request(), url = new URL(request.url());
     if (request.method() === 'OPTIONS') {
       await route.fulfill({ status: 204, headers: corsHeaders });
@@ -6675,7 +6675,7 @@ test('project bundle parser failures never expose raw exception text', async ({ 
 test('project source failures are localized and never expose Gateway diagnostics', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => {
-    localStorage.setItem('ai_alandi_cloud_base_url', 'https://gateway.example.test/v1');
+    localStorage.setItem('ai_alandi_cloud_base_url', 'http://127.0.0.1:4173/v1');
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-key');
   });
   const corsHeaders = {
@@ -6683,7 +6683,7 @@ test('project source failures are localized and never expose Gateway diagnostics
     'access-control-allow-headers': 'authorization,content-type',
     'access-control-allow-methods': 'GET,POST,DELETE,OPTIONS'
   };
-  await page.route('https://gateway.example.test/v1/**', async route => {
+  await page.route('http://127.0.0.1:4173/v1/**', async route => {
     const request = route.request(), url = new URL(request.url());
     if (request.method() === 'OPTIONS') {
       await route.fulfill({ status: 204, headers: corsHeaders });
