@@ -7379,3 +7379,78 @@ test('RU → EN → RU language round-trip preserves the draft at 320/390/768/14
     await expect(page).toHaveURL(initialUrl);
   }
 });
+
+test('request context caps selected projects at five with localized feedback in RU and EN', async ({ page }) => {
+  const captured = [];
+  await page.route('https://api.example.test/v1/chat/completions', async route => {
+    captured.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ model: 'project-cap-e2e', choices: [{ message: { role: 'assistant', content: 'Project context cap verified.' } }] })
+    });
+  });
+  page.on('dialog', dialog => dialog.accept());
+  await page.addInitScript(() => {
+    const projects = Array.from({ length: 7 }, (_, index) => ({
+      id: 'cap-project-' + (index + 1),
+      name: 'Cap project ' + (index + 1),
+      description: '',
+      instructions: 'CAP_PROJECT_' + (index + 1) + '_INSTRUCTION',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: '',
+      updatedAt: ''
+    }));
+    localStorage.setItem('ai_projects_v1', JSON.stringify(projects));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'project-cap-chat',
+      title: 'Project cap chat',
+      projectId: null,
+      projectMemoryEnabled: false,
+      messages: [],
+      executionMode: 'direct',
+      deepResearchMethod: 'none',
+      searchMode: 'offline'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'project-cap-chat');
+  });
+
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#legacyProviderSettings > summary').click();
+  await page.locator('#providerPreset').selectOption('custom');
+  await page.locator('#baseUrl').fill('https://api.example.test/v1');
+  await page.locator('#modelName').fill('project-cap-e2e');
+  await page.locator('#apiKey').fill('e2e-project-cap-key');
+  await page.locator('[data-action="save-settings"]').click();
+  await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+
+  for (const language of ['ru', 'en']) {
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('#contextPickerButton').click();
+    const checkboxes = page.locator('#requestProjectChecks input[data-request-project-id]');
+    await expect(checkboxes).toHaveCount(7);
+    for (let index = 0; index < 5; index += 1) await checkboxes.nth(index).check();
+    await expect(page.locator('#requestProjectCount')).toHaveText('5').catch(async () => {
+      await expect(page.locator('#requestContextCount')).toHaveText('5');
+    });
+    await checkboxes.nth(5).check();
+    await expect(checkboxes.nth(5)).not.toBeChecked();
+    await expect(page.locator('#toast')).toContainText(
+      language === 'en' ? 'Choose up to five projects per request.' : 'Для одного запроса можно выбрать не более пяти проектов.'
+    );
+    await expect(checkboxes.filter({ checked: true })).toHaveCount(5);
+
+    await page.locator('#userInput').fill('Send the bounded project context in ' + language + '.');
+    await page.locator('#sendBtn').click();
+    await expect(page.locator('#chatBox')).toContainText('Project context cap verified.');
+    expect(captured).toHaveLength(language === 'ru' ? 1 : 2);
+    const systemContext = captured.at(-1).messages[0].content;
+    for (let index = 1; index <= 5; index += 1) {
+      expect(systemContext).toContain('CAP_PROJECT_' + index + '_INSTRUCTION');
+    }
+    expect(systemContext).not.toContain('CAP_PROJECT_6_INSTRUCTION');
+    expect(systemContext).not.toContain('CAP_PROJECT_7_INSTRUCTION');
+  }
+});
