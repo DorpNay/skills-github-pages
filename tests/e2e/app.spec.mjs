@@ -1593,6 +1593,44 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   await expect(page.locator('#toast')).toContainText('Research trace JSON downloaded.');
 });
 
+test('research trace export failures are localized and never expose browser exception details', async ({ page }) => {
+  const trace = {
+    id: 'e2e-trace-export-failure', createdAt: '2026-10-15T00:00:00.000Z',
+    provider: 'Local fixture', model: 'fixture-model', plan: 'PRIVATE_TRACE_CONTENT',
+    draft: 'Draft', critique: 'Critique', finalText: 'Final'
+  };
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(traceData => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'e2e-trace-export-chat', title: 'Trace export failure',
+      messages: [{ role: 'assistant', content: traceData.finalText, researchTrace: { id: traceData.id } }]
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'e2e-trace-export-chat');
+    localStorage.setItem('ai_research_trace_' + traceData.id, JSON.stringify(traceData));
+  }, trace);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="open-trace"][data-trace-id="e2e-trace-export-failure"]').click();
+  await page.evaluate(() => Object.defineProperty(URL, 'createObjectURL', {
+    configurable: true,
+    value: () => { throw new Error('PRIVATE_TRACE_EXPORT_EXCEPTION'); }
+  }));
+  const toast = page.locator('#toast');
+  await page.locator('[data-action="download-trace"]').click();
+  await expect(toast).toContainText('Не удалось скачать журнал исследования');
+  await expect(toast).not.toContainText('PRIVATE_TRACE_EXPORT_EXCEPTION');
+  await expect(toast).not.toContainText('PRIVATE_TRACE_CONTENT');
+  await expect(toast).toHaveAttribute('role', 'alert');
+  await expect(toast).toHaveAttribute('aria-live', 'assertive');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('[data-action="download-trace-json"]').click();
+  await expect(toast).toContainText('Could not download the research trace');
+  await expect(toast).not.toContainText('PRIVATE_TRACE_EXPORT_EXCEPTION');
+  await expect(toast).not.toContainText('PRIVATE_TRACE_CONTENT');
+  await expect(toast).toHaveAttribute('role', 'alert');
+  await expect(page.locator('#traceTitle')).toHaveText('Research trace');
+});
+
 test('research trace records prompt fingerprint, run settings, timings, and model attempts without storing prompt text', async ({ page }) => {
   const responses = [
     '1. Найти проверяемые утверждения.\n2. Сопоставить их с источниками.\n3. Проверить итог.',

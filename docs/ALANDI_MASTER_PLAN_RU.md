@@ -219,11 +219,11 @@
 - [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors and image/video preview failures now use safe localized messages with credential-redaction coverage.
 - [~] 19. Audit Voice/ASR/TTS capability feedback; local document/ASR, voice transcription and TTS errors now map to safe localized messages. Voice capture/TTS capability and full native-device matrix remain open.
 - [~] 20. Audit offline/online mode and connectivity feedback; browser offline/online events now show localized hints and distinguish browser network state from Gateway/provider availability. The web-search preference is not changed; endpoint health checks and full connectivity recovery matrix remain open.
-- [ ] 21. Audit storage quota and recovery warning feedback.
+- [~] 21. Audit storage quota and recovery warning feedback; 80% and 95% browser quota warnings now have RU/EN copy, assertive alert semantics and explicit export/backup guidance. Full backup/restore and partial-recovery copy remains open.
 - [~] 22. Audit all toast messages for locale parity; browser-storage 80%/95% quota warnings now use RU/EN copy. The complete toast inventory remains open.
 - [~] 23. Audit all aria-live/status announcements for locale parity; the shared toast uses role=status/polite for success and role=alert/assertive for errors, with aria-atomic=true. Other async status surfaces remain open.
-- [ ] 24. Audit native browser confirm prompts for contextual language parity.
-- [ ] 25. Verify errors do not expose secrets, request bodies or internal traces.
+- [~] 24. Audit native browser confirm prompts for contextual language parity; project-memory item deletion and provider credential clearing now have RU/EN confirmations. Complete chat/project/source/personal/shared-memory prompt matrix remains open.
+- [~] 25. Verify errors do not expose secrets, request bodies or internal traces; covered helper/document/audio/provider/OAuth/profile/chat-import/trace-save and research-trace export failures use bounded localized feedback. Full thrown-error and recovery inventory remains open.
 
 ### P0.29 — Control inventory and semantic integrity (PARTIAL)
 
@@ -332,7 +332,7 @@
 - [~] 13. Audit Gateway errors for URL/authorization redaction; project-source, helper, document extraction, ASR, voice transcription, TTS, trace-save and chat-request feedback now map covered failures to safe localized messages. Full endpoint inventory remains open.
 - [~] 14. Audit voice/transcription errors for media/body redaction; local ASR, voice transcription and TTS failure details no longer surface raw Gateway bodies. Native capture/recording still needs device verification.
 - [~] 15. Audit AgentRun errors for prompt/task content redaction; UI catches now use the allowlisted agentRuntimeErrorText mapper instead of raw error.message, while task/event/trace content paths still need review.
-- [ ] 16. Audit trace export errors for source/private data redaction.
+- [~] 16. Audit trace export errors for source/private data redaction; Markdown/JSON download exceptions now map to fixed RU/EN feedback without exposing browser exception details or trace content. Fault-injection regression added; full export/privacy review remains open.
 - [ ] 17. Confirm confirmations never silently default to approval.
 - [ ] 18. Confirm cancel paths leave persisted data unchanged.
 - [ ] 19. Confirm local-only memory does not enter third-party requests.
@@ -340,7 +340,7 @@
 - [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
 - [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
 - [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages. Shared toast announcement semantics are explicit; full message inventory and recovery/partial-export copy remain open.
-- [ ] 24. Verify all privacy prompts in both locales.
+- [~] 24. Verify all privacy prompts in both locales; project-memory deletion and provider credential removal confirmations have RU/EN coverage. Remaining native prompt matrix and cancellation invariance still open.
 - [ ] 25. Verify user-data export/restore messages distinguish complete vs partial recovery.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
@@ -2337,6 +2337,14 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 
 
+### 7.10 Implementation progress — browser connectivity hints (2026-11-20)
+
+- **IMPLEMENTED:** the root app listens to browser offline/online events and shows RU/EN status feedback. Offline warns that local chats remain available while cloud/Gateway calls may fail; online explicitly does not claim that any server/provider is reachable.
+- **IMPLEMENTED:** the browser connectivity hint does not toggle the independent web-search preference or execution mode.
+- **TEST ADDED / NOT RUN:** Playwright dispatches offline/online events, checks RU/EN copy and announcement priority, and asserts web-search preference is unchanged.
+- **SOURCE BASIS:** MDN Navigator.onLine and Window online/offline event documentation warns that browser network state is heuristic and must not be used to infer availability of a specific website. Source URL is recorded in INTEL.md.
+- **OPEN:** actual provider/Gateway reachability, request retry/cancel recovery, native iOS offline behavior and Chromium execution remain pending.
+
 ## Owner runbook — действия после Landing 2.0 (ручные; сервер не менялся)
 
 **Разделение:** GitHub Pages — статический клиент; FastAPI/aServi и Ollama — отдельный приватный контур. Live VPS/Tunnel/Ollama не подтверждены. Никогда не передавай пароль, API key, Tunnel token, OAuth secret или полный env-файл в чат/issues/CI.
@@ -2378,11 +2386,3 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 **Опорные материалы:** docs/DEPLOYMENT_PREFLIGHT_RU.md, docs/DOMAIN_SETUP.md, docs/INFRASTRUCTURE_UPGRADE.md, gateway/alandi-gateway.service, gateway/.env.example и issue #111. Архивный docs/PRE_LAUNCH_STACK_RU.md не использовать как актуальный runbook.
 
-
-### 7.10 Implementation progress — browser connectivity hints (2026-11-20)
-
-- **IMPLEMENTED:** the root app listens to browser offline/online events and shows RU/EN status feedback. Offline warns that local chats remain available while cloud/Gateway calls may fail; online explicitly does not claim that any server/provider is reachable.
-- **IMPLEMENTED:** the browser connectivity hint does not toggle the independent web-search preference or execution mode.
-- **TEST ADDED / NOT RUN:** Playwright dispatches offline/online events, checks RU/EN copy and announcement priority, and asserts web-search preference is unchanged.
-- **SOURCE BASIS:** MDN Navigator.onLine and Window online/offline event documentation warns that browser network state is heuristic and must not be used to infer availability of a specific website. Source URL is recorded in INTEL.md.
-- **OPEN:** actual provider/Gateway reachability, request retry/cancel recovery, native iOS offline behavior and Chromium execution remain pending.

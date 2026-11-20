@@ -7741,6 +7741,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     function downloadTrace() {
       const english=getUiLanguage()==='en';
       if(!activeTrace||typeof activeTrace!=='object'){showToast(english?'No research trace is available to export.':'Нет журнала исследования для экспорта.','error');return;}
+      try {
       const run=activeTrace.run||{},routes=Array.isArray(activeTrace.routes)?activeTrace.routes:[],attempts=Array.isArray(activeTrace.attempts)?activeTrace.attempts:[];
       const t=english?{title:'Research trace',date:'Date',provider:'Provider',model:'Model',notRecorded:'not recorded',runSettings:'Run settings',schema:'Trace schema',mode:'Mode',webSearch:'Web search',multiAgent:'Multi-agent mode',fallback:'Cross-provider fallback',started:'Started',duration:'Duration',fingerprint:'Prompt fingerprint',successfulRoutes:'Successful routes',attempts:'All routing attempts',sources:'Tool sources',noData:'No data.',noSources:'No structured HTTPS links found.',planner:'Planner',draft:'Researcher draft',critique:'Critique',final:'Final answer',stage:'stage',providerFallback:'provider',unknownTime:'time unknown',enabled:'enabled',disabled:'disabled',allowed:'allowed',off:'off',retrievedBy:'Retrieved by',excerpt:'Excerpt',ms:' ms',downloaded:'Research trace downloaded.'}:{title:'Журнал исследования',date:'Дата',provider:'Провайдер',model:'Модель',notRecorded:'не записано',runSettings:'Параметры запуска',schema:'Схема журнала',mode:'Режим',webSearch:'Веб-поиск',multiAgent:'Мультиагентный режим',fallback:'Резерв между провайдерами',started:'Начало',duration:'Длительность',fingerprint:'Отпечаток промпта',successfulRoutes:'Успешные маршруты',attempts:'Все попытки маршрутизации',sources:'Источники из инструментов',noData:'Нет данных.',noSources:'Структурированные HTTPS-ссылки не найдены.',planner:'Планировщик',draft:'Черновик исследователя',critique:'Критика',final:'Итоговый ответ',stage:'этап',providerFallback:'провайдер',unknownTime:'время неизвестно',enabled:'включён',disabled:'выключен',allowed:'разрешён',off:'выключен',retrievedBy:'Получено через',excerpt:'Фрагмент',ms:' мс',downloaded:'Журнал исследования скачан.'};
       const routeLines=routes.length?routes.map(route=>'- '+(route.stage||t.stage)+': '+(route.providerLabel||route.provider||t.providerFallback)+' / '+(route.model||t.notRecorded)+(Number.isFinite(route.elapsedMs)?' — '+route.elapsedMs+t.ms:'')).join('\n'):t.noData;
@@ -7756,14 +7757,21 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const url=URL.createObjectURL(new Blob([body],{type:'text/markdown;charset=utf-8'})),a=document.createElement('a');
       a.href=url;a.download='research-trace-'+(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.md';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       showToast(t.downloaded);
+      } catch (_) {
+        showToast(english?'Could not download the research trace. The local trace remains available.':'Не удалось скачать журнал исследования. Локальная запись сохранена.', 'error');
+      }
     }
     function downloadTraceJson() {
       const english=getUiLanguage()==='en';
       if(!activeTrace||typeof activeTrace!=='object'){showToast(english?'No research trace is available to export.':'Нет журнала исследования для экспорта.','error');return;}
+      try {
       const body=JSON.stringify({format:'ai-mobile-agent-research-trace',version:1,exportedAt:new Date().toISOString(),trace:activeTrace},null,2);
       const url=URL.createObjectURL(new Blob([body],{type:'application/json;charset=utf-8'})),a=document.createElement('a');
       a.href=url;a.download='research-trace-'+String(activeTrace.createdAt||new Date().toISOString()).slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       showToast(english?'Research trace JSON downloaded.':'JSON-журнал исследования скачан.');
+      } catch (_) {
+        showToast(english?'Could not download the research trace. The local trace remains available.':'Не удалось скачать журнал исследования. Локальная запись сохранена.', 'error');
+      }
     }
 
     async function handleCodeAction(button) {
@@ -8054,10 +8062,17 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'download-trace': downloadTrace(); break;
           case 'download-trace-json': downloadTraceJson(); break;
           case 'copy-trace-link': {
+            const english=getUiLanguage()==='en';
             if (!activeTrace) break;
-            safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace));
-            const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
-            await copyText(link); showToast(getUiLanguage()==='en'?'Local link copied — it works in this browser.':'Локальная ссылка скопирована — работает в этом браузере'); break;
+            if (!safeSet('ai_research_trace_'+activeTrace.id,JSON.stringify(activeTrace))) break;
+            try {
+              const link=location.href.split('#')[0]+'#trace='+encodeURIComponent(activeTrace.id);
+              await copyText(link);
+              showToast(english?'Local link copied — it works in this browser.':'Локальная ссылка скопирована — работает в этом браузере');
+            } catch (_) {
+              showToast(english?'Could not copy the local trace link. The trace remains saved in this browser.':'Не удалось скопировать локальную ссылку. Журнал остаётся сохранён в этом браузере.', 'error');
+            }
+            break;
           }
         }
       } catch (error) {
