@@ -6945,3 +6945,39 @@ test('visible controls have accessible names and hidden navigation remains inert
   await expect(page.locator('#sidebar')).toHaveJSProperty('inert', true);
   await auditVisibleControls();
 });
+
+
+test('project memory deletion requires localized confirmation and cancellation preserves the item', async ({ page }) => {
+  const projectId = 'e2e-project-memory-delete';
+  const memoryId = 'e2e-project-memory-item';
+  await page.addInitScript(({ projectId, memoryId }) => {
+    const now = new Date().toISOString();
+    const project = { id: projectId, name: 'Memory deletion project', description: '', instructions: '', memoryScope: 'project-only', memory: [{ id: memoryId, text: 'PROJECT_MEMORY_DELETE_SENTINEL', createdAt: now }], createdAt: now, updatedAt: now };
+    const chat = { id: 'e2e-project-memory-chat', title: 'Memory deletion chat', projectId, projectMemoryEnabled: false, messages: [], createdAt: now, updatedAt: now };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', chat.id);
+  }, { projectId, memoryId });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await openProjectSettingsForId(page, projectId);
+  const deleteButton = page.locator('#projectMemoryBox [data-action="delete-project-memory"][data-memory-id="' + memoryId + '"]');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(deleteButton).toHaveAttribute('aria-label', 'Delete project memory item');
+  const cancelDialogPromise = page.waitForEvent('dialog');
+  await deleteButton.click();
+  const cancelDialog = await cancelDialogPromise;
+  expect(cancelDialog.message()).toBe('Delete this project memory item? This cannot be undone.');
+  await cancelDialog.dismiss();
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === 'e2e-project-memory-delete')?.memory.some(item => item.id === id), memoryId)).toBe(true);
+
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(deleteButton).toHaveAttribute('aria-label', 'Удалить факт проектной памяти');
+  const acceptDialogPromise = page.waitForEvent('dialog');
+  await deleteButton.click();
+  const acceptDialog = await acceptDialogPromise;
+  expect(acceptDialog.message()).toBe('Удалить эту запись из памяти проекта? Это действие нельзя отменить.');
+  await acceptDialog.accept();
+  await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === 'e2e-project-memory-delete')?.memory.some(item => item.id === id), memoryId)).toBe(false);
+  await expect(page.locator('#projectMemoryBox')).not.toContainText('PROJECT_MEMORY_DELETE_SENTINEL');
+});

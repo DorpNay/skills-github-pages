@@ -3023,7 +3023,7 @@ permalink: /
         for(const fact of settingsProject.memory){
           const row=document.createElement('div');row.className='flex items-start gap-1.5';
           const text=document.createElement('span');text.className='min-w-0 flex-1 break-words';text.textContent='• '+fact.text;
-          const del=document.createElement('button');del.type='button';del.dataset.action='delete-project-memory';del.dataset.memoryId=fact.id;del.className='text-red-300 px-1';del.setAttribute('aria-label',getUiLanguage()==='en'?'Delete project memory':'Удалить факт проектной памяти');del.textContent='×';
+          const del=document.createElement('button');del.type='button';del.dataset.action='delete-project-memory';del.dataset.memoryId=fact.id;del.className='text-red-300 px-1';del.setAttribute('aria-label',getUiLanguage()==='en'?'Delete project memory item':'Удалить факт проектной памяти');del.textContent='×';
           row.append(text,del);memBox.appendChild(row);
         }
       }
@@ -3093,8 +3093,11 @@ permalink: /
     }
     function deleteProjectMemory(id){
       const project=getProjectForChat();if(!project)return;
+      const item=project.memory.find(entry=>entry.id===id);if(!item)return;
+      const english=getUiLanguage()==='en';
+      if(!confirm(english?'Delete this project memory item? This cannot be undone.':'Удалить эту запись из памяти проекта? Это действие нельзя отменить.'))return;
       const previousMemory=project.memory,previousUpdatedAt=project.updatedAt;
-      project.memory=project.memory.filter(item=>item.id!==id);project.updatedAt=new Date().toISOString();
+      project.memory=project.memory.filter(entry=>entry.id!==id);project.updatedAt=new Date().toISOString();
       if(!persistProjects()){project.memory=previousMemory;project.updatedAt=previousUpdatedAt;}
       renderProjectUI();
     }
