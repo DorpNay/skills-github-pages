@@ -273,7 +273,7 @@
 - [~] 16. Add research-trace/retry label refresh regression; historical tool/research metadata test checks localized trace-open/retry labels and unchanged chat history. Chromium execution remains pending.
 - [~] 17. Add tool-call indicator prefix refresh regression; historical metadata test checks RU/EN tool-call prefix without mutating stored history. Chromium execution remains pending.
 - [~] 18. Add provider/model metadata fallback refresh regression; historical metadata test checks localized cache/provider metadata labels while preserving provenance and serialized history. Chromium execution remains pending.
-- [ ] 19. Add AgentRun task/event refresh regression with mocked Gateway.
+- [~] 19. Add AgentRun task/event refresh regression with mocked Gateway; the existing mock-Gateway run test now supplies task records and two events, verifies RU labels, switches RU→EN→RU, and checks task/event labels, run state, event IDs and timestamps remain stable. Chromium execution pending.
 - [~] 20. Add chat-list focus/scroll preservation regression; new 40-chat fixture scrolls to the last row, focuses its menu trigger, switches RU/EN in place and asserts the same row remains focused, scrollTop is unchanged and no rows duplicate. Chromium execution pending.
 - [~] 21. Add project-navigation focus preservation regression; existing locale refresh test asserts the focused project navigation control survives list rebuild. Chromium execution remains pending.
 - [~] 22. Add 320px locale overflow regression; RU/EN round-trip test asserts document/body width stays within the viewport at 320px. Chromium execution remains pending.
