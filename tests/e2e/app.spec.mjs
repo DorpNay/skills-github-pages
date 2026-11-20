@@ -7336,3 +7336,28 @@ test('chat recovery backup failure warning uses the active locale and preserves 
     await recoveryPage.close();
   }
 });
+
+test('RU → EN → RU language round-trip preserves the draft at 320/390/768/1440px', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const initialUrl = page.url();
+  const draft = 'Draft remains stable through language changes.';
+  await page.locator('#userInput').fill(draft);
+
+  for (const width of [320, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const language = page.locator('#uiLanguage');
+    await expect(language).toBeVisible();
+
+    await selectLanguage(page, 'en');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(language).toHaveValue('en');
+    await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
+    await expect(page.locator('#userInput')).toHaveValue(draft);
+
+    await selectLanguage(page, 'ru');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+    await expect(language).toHaveValue('ru');
+    await expect(page.locator('#userInput')).toHaveValue(draft);
+    await expect(page).toHaveURL(initialUrl);
+  }
+});
