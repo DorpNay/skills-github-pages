@@ -6482,7 +6482,7 @@ let agentRuntimeRefreshPromise = null;
                 updateState([...chats]);
                 throw abortError();
               }
-              result = 'Не удалось выполнить инструмент ' + name + ': ' + error.message;
+              result = getUiLanguage()==='en'?'The public tool failed. Check the URL and network connection, then try again.':'Не удалось выполнить публичный инструмент. Проверьте URL и сетевое соединение, затем повторите попытку.';
             }
           }
           chat.messages.push({ role: 'tool', tool_call_id: id, content: result });
@@ -7269,7 +7269,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         await startVoiceMessageRecording({voiceConversation:true});
         if(voiceConversationActive&&!activeVoiceRecorder)stopVoiceConversation(false);
       } catch(error) {
-        showToast(error?.name==='AbortError'?'Проверка голосовых возможностей превысила лимит времени.':String(error.message||'Не удалось запустить голосовой диалог.'),'error');
+        showToast(error?.name==='AbortError'?'Проверка голосовых возможностей превысила лимит времени.':(getUiLanguage()==='en'?'Could not start voice chat. Check microphone permission and Gateway availability.':'Не удалось запустить голосовой диалог. Проверьте разрешение микрофона и доступность Gateway.'),'error');
       }
     }
 
@@ -7836,7 +7836,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const action = button.dataset.action;
       if (action === 'copy-code') {
         try { await copyText(code); showToast('Код скопирован'); const old = button.textContent; button.textContent = 'Скопировано'; setTimeout(() => { button.textContent = old; }, 1500); }
-        catch (error) { showToast(error.message, 'error'); }
+        catch (_) { showToast(getUiLanguage()==='en'?'Could not copy code. Check clipboard permission and try again.':'Не удалось скопировать код. Проверьте разрешение буфера обмена и повторите попытку.','error'); }
       } else if (action === 'download-code') {
         const isPython = block?.querySelector('code')?.classList.contains('language-python');
         const answer = prompt('Имя файла для скачивания:', isPython ? 'snippet.py' : 'snippet.txt');
@@ -7889,7 +7889,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           pyodideScriptPromise = null;
           status.textContent = 'Py: не загружен';
           status.className = 'text-[10px] bg-gray-700 text-gray-300 px-2 py-0.5 rounded';
-          status.title = error.message;
+          status.title = getUiLanguage()==='en'?'Python runtime could not be loaded. Check network access and reload the page.':'Не удалось загрузить среду Python. Проверьте доступ к сети и перезагрузите страницу.';
           throw error;
         }
       })();
@@ -7897,7 +7897,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     }
     async function runPythonCode(code) {
       try { await initPyodide(); }
-      catch (error) { return 'Не удалось загрузить Python: ' + error.message; }
+      catch (_) { return getUiLanguage()==='en'?'Could not load Python runtime. Check network access and reload the page.':'Не удалось загрузить среду Python. Проверьте доступ к сети и перезагрузите страницу.';
       const stdout = [];
       const stderr = [];
       let result;
