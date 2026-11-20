@@ -7025,7 +7025,9 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         messageLimit:en?'The export contains more than 50,000 messages. Split it into smaller files.':'Экспорт содержит больше 50 000 сообщений. Раздели его на несколько файлов.',
         localLimit:en?'Import would exceed the 1,000 local chat limit. Delete unused chats first.':'Импорт превысит лимит 1000 локальных чатов. Сначала удали ненужные чаты.',
         storage:en?'Browser storage could not confirm the import; the existing history was restored.':'Хранилище не подтвердило импорт; исходная история восстановлена.',
-        failed:en?'Chat import failed. Check the file format and browser storage.':'Не удалось импортировать чаты. Проверь формат файла и доступность хранилища.'
+        failed:en?'Chat import failed. Check the file format and browser storage.':'Не удалось импортировать чаты. Проверь формат файла и доступность хранилища.',
+        complete:en?'Import completed: all supported chat content was imported; existing history was preserved.':'Импорт завершён: всё поддерживаемое содержимое чатов перенесено; существующая история сохранена.',
+        partial:en?'Import completed partially: unsupported or oversized records and fields were omitted or shortened; existing history was preserved.':'Импорт завершён частично: неподдерживаемые или слишком большие записи и поля пропущены либо сокращены; существующая история сохранена.'
       };
       if(file.size>15*1024*1024){showToast(copy.tooLarge,'error');return;}
       try{
@@ -7037,6 +7039,19 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         const totalMessages=imported.reduce((total,chat)=>total+chat.messages.length,0);
         if(totalMessages>MAX_IMPORTED_MESSAGES)throw new Error('messageLimit');
         if(chats.length+imported.length>1000)throw new Error('localLimit');
+        const partialRecovery=imported.some(chat=>{
+          const validMessages=chat.messages.filter(message=>message&&['user','assistant','tool'].includes(message.role));
+          return chat.id.length>128
+            || (typeof chat.title==='string'&&chat.title.length>160)
+            || (typeof chat.projectId==='string'&&!projects.some(project=>project.id===chat.projectId))
+            || chat.messages.length>10000
+            || validMessages.length!==chat.messages.length
+            || validMessages.some(message=>typeof message.content!=='string'
+              || message.content.length>30000
+              || (message.tool_call_id!==undefined&&typeof message.tool_call_id!=='string')
+              || (message.tool_calls!==undefined&&!Array.isArray(message.tool_calls))
+              || (Array.isArray(message.tool_calls)&&message.tool_calls.length>100));
+        });
         const seen=new Set(chats.map(chat=>chat.id));
         const clean=imported.map(chat=>({
           id:chat.id.slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):(en?'Imported chat':'Импортированный чат'),
@@ -7061,7 +7076,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           throw new Error('storage');
         }
         toggleSidebar(false);
-        showToast(en?'Imported chats were added without replacing existing history.':'Импортированные чаты добавлены; существующая история не заменена.');
+        showToast(partialRecovery?copy.partial:copy.complete,partialRecovery?'error':'success');
       }catch(error){
         const code=String(error?.message||'');
         showToast(copy[code]||copy.failed,'error');
