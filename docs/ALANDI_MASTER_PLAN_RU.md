@@ -192,7 +192,7 @@
 - [~] 19. Verify five-project request context cap in both locales; new mock-provider Playwright regression selects five projects, checks the sixth is rejected with localized RU/EN feedback, and asserts only projects 1–5 enter the outbound system context while projects 6–7 are excluded. Chromium execution pending.
 - [~] 20. Verify no duplicate change handlers after repeated context-menu refresh; added 10-cycle RU/EN regression for composer disclosures and their single Escape-close path.
 - [~] 21. Verify no duplicate project/chat rows after 10 repeated locale switches; added 10-cycle locale idempotency regression, runtime execution pending.
-- [ ] 22. Verify no state loss across chat switch while locale is changed.
+- [~] 22. Verify no state loss across chat switch while locale is changed; new two-chat Playwright fixture switches RU→EN, opens the second chat, verifies only its history is shown, switches EN→RU, checks both persisted histories and current-chat identity, then returns to the first chat and confirms its history is intact. Chromium execution pending.
 - [~] 23. Synchronize `aria-expanded` from actual menu visibility after locale refresh; regression covers attachment, request-context and voice disclosures.
 - [~] 24. Verify browser history/deep-link state remain unchanged by locale; the new round-trip regression checks URL stability through RU→EN→RU at 320/390/768/1440px. `history.state`/deep-link route matrix and Chromium execution remain pending.
 - [~] 25. Added 10-cycle RU/EN regression preserving composer draft, unsupported attachment, localized remove label and keyboard focus.
