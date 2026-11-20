@@ -6329,7 +6329,11 @@ let agentRuntimeRefreshPromise = null;
       if (promptOverride) systemPrompt = promptOverride;
       if (systemPrompt.includes('<ALANDI_PRIVATE_MEMORY_BEGIN>') && chat && typeof chat === 'object' && !chat.privateMemoryUsed) {
         chat.privateMemoryUsed = true;
-        persistChats();
+        // Never send private context until the chat-level privacy barrier is durable.
+        if (!persistChats()) {
+          chat.privateMemoryUsed = false;
+          throw new Error('private-memory-privacy-marker-not-persisted');
+        }
       }
       const useResearchPipeline=useMultiAgent&&requestImages.length===0&&shouldUseMultiAgentResearch(latestUserMessage);
       if(useMultiAgent&&!useResearchPipeline)showToast(requestImages.length?'Запрос с изображениями отправляется напрямую: мультимодальные вложения не передаются в исследовательский конвейер.':'Простой запрос: отвечаю напрямую без лишних агентных этапов.');
@@ -6664,7 +6668,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const selectedProvider=safeGet(STORAGE.provider)||'alandi';
       const activeChatForPrivacy=getCurrentChat();
       if(activeChatForPrivacy?.privateMemoryUsed && selectedProvider!=='alandi'){
-        showToast('Этот чат использовал личную память локальной модели. Сторонние провайдеры заблокированы для этого чата, чтобы не передать им историю. Создай новый чат для внешнего провайдера или вернись к aLandi gateway.','error');
+        const english=getUiLanguage()==='en';
+        showToast(english
+          ? 'This chat used personal memory from the local model. Third-party providers are blocked for this chat to protect its history. Create a new chat for an external provider or switch back to the aLandi Gateway.'
+          : 'Этот чат использовал личную память локальной модели. Сторонние провайдеры заблокированы для этого чата, чтобы защитить его историю. Создай новый чат для внешнего провайдера или вернись к aLandi Gateway.','error');
         return;
       }
       if(text && !chosenAttachments.length) {
@@ -6816,7 +6823,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           hideStatus();
           const english=getUiLanguage()==='en',status=Number.isInteger(error?.status)?' (HTTP '+error.status+')':'';
           let message;
-          if(error?.message==='request_missing_base_url')message=english?'Enter and save the Base URL for your own API.':'Укажите и сохраните Base URL собственного API.';
+          if(error?.message==='private-memory-privacy-marker-not-persisted')message=english
+            ? 'Personal-memory privacy could not be saved. No model request was sent. Your draft was preserved.'
+            : 'Не удалось сохранить защитную отметку личной памяти. Запрос модели не отправлен. Черновик сохранён.';
+          else if(error?.message==='request_missing_base_url')message=english?'Enter and save the Base URL for your own API.':'Укажите и сохраните Base URL собственного API.';
           else if(error?.message==='request_missing_provider')message=english?'No API key or Base URL is available for the selected provider. Check Settings.':'Для выбранного провайдера не найден API-ключ или Base URL. Проверьте настройки.';
           else if(error?.message==='request_failed'&&error.status===401)message=english?'Request failed'+status+'. Check the provider API key. Your original text was preserved.':'Запрос не выполнен'+status+'. Проверьте API-ключ провайдера. Исходный текст сохранён.';
           else if(error?.message==='request_failed'&&error.status===403)message=english?'Request denied'+status+'. Check provider permissions and model access. Your original text was preserved.':'Доступ отклонён'+status+'. Проверьте права провайдера и доступность модели. Исходный текст сохранён.';
