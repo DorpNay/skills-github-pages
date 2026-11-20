@@ -1291,6 +1291,24 @@ test('settings profile exports portable preferences but never API secrets', asyn
   expect(json).not.toContain('ai_api_key_');
   expect(json).not.toContain('apiKey');
 });
+test('settings profile import reports safe localized errors without leaking parser details', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await openAdditionalSettings(page);
+  const before=await page.evaluate(()=>localStorage.getItem('ai_system_prompt'));
+  for(const [language,expected] of [['ru','Не удалось импортировать профиль настроек'],['en','Could not import the settings profile']]){
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('#settingsProfileFile').setInputFiles({
+      name:'broken-settings-profile.json',
+      mimeType:'application/json',
+      buffer:Buffer.from('{"settings":')
+    });
+    await expect(page.locator('#toast')).toContainText(expected);
+    await expect(page.locator('#toast')).not.toContainText('Unexpected token');
+    expect(await page.evaluate(()=>localStorage.getItem('ai_system_prompt'))).toBe(before);
+  }
+});
+
 test('settings profile import restores preferences while preserving existing provider and search keys', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
@@ -2819,6 +2837,78 @@ test('local helper suggests compact project-memory facts without saving them aut
   expect(helperRequests).toHaveLength(1);
 });
 
+
+test('local helper Gateway failures never expose backend diagnostics in RU and EN', async ({ page }) => {
+  const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, DELETE, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
+  const leaked='e2e-private-helper-token-DO-NOT-RENDER';
+  await page.route('https://gateway.example.test/v1/helpers/project-memory-suggestions',async route=>{
+    if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:corsHeaders});
+    return route.fulfill({status:502,headers:corsHeaders,body:JSON.stringify({detail:'upstream failure Authorization: Bearer '+leaked})});
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>{
+    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi','e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider','alandi');
+    localStorage.setItem('ai_model_name','qwen3.5:4b');
+    localStorage.setItem('ai_alandi_cloud_model','qwen3.5:4b');
+  });
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#projectPanel [data-action="open-project-create"]').click();
+  await page.locator('#projectCreateNameInput').fill('Helper error privacy');
+  await page.locator('#projectCreateModal [data-action="create-project"]').click();
+  const projectId=await page.evaluate(()=>JSON.parse(localStorage.getItem('ai_projects_v1')||'[]').find(item=>item.name==='Helper error privacy')?.id||'');
+  await openProjectSettingsForId(page,projectId);
+  await page.locator('#projectMemoryInput').fill('Keep private project notes within their project scope.');
+  await page.locator('[data-action="add-project-memory"]').click();
+  await page.locator('#projectMemoryHelperDetails > summary').click();
+  for(const [language,expected] of [['ru','Не удалось получить предложения'],['en','Could not get suggestions']]){
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('[data-action="suggest-helper-memory"]').click();
+    await expect(page.locator('#helperMemoryStatus')).toContainText(expected);
+    await expect(page.locator('#helperMemoryStatus')).not.toContainText(leaked);
+    await expect(page.locator('#toast')).not.toContainText(leaked);
+  }
+});
+
+test('document and audio Gateway errors are localized and redact backend details', async ({ page }) => {
+  const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
+  const leaked='e2e-private-gateway-diagnostic-token';
+  await page.route('https://gateway.example.test/v1/capabilities',async route=>route.fulfill({
+    status:200,headers:corsHeaders,body:JSON.stringify({documents:{extraction:true},audio:{transcription:true}})
+  }));
+  await page.route('https://gateway.example.test/v1/documents/extract**',async route=>route.fulfill({
+    status:502,headers:corsHeaders,body:JSON.stringify({detail:'upstream Authorization: Bearer '+leaked})
+  }));
+  await page.route('https://gateway.example.test/v1/audio/transcriptions**',async route=>route.fulfill({
+    status:502,headers:corsHeaders,body:JSON.stringify({error:{message:'upstream Authorization: Bearer '+leaked}})
+  }));
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.evaluate(()=>{
+    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi','e2e-gateway-placeholder-key');
+    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_provider','alandi');
+    localStorage.setItem('ai_model_name','qwen3.5:4b');
+    localStorage.setItem('ai_alandi_cloud_model','qwen3.5:4b');
+  });
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.locator('#textAttachmentInput').setInputFiles({name:'private-notes.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4 test fixture')});
+  await page.locator('#userInput').fill('Summarize the attached document.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#toast')).toContainText('Не удалось обработать документ через aLandi Gateway.');
+  await expect(page.locator('#toast')).not.toContainText(leaked);
+  await expect(page.locator('#userInput')).toHaveValue('Summarize the attached document.');
+  await page.locator('[data-action="remove-draft-attachment"]').first().click();
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.locator('#textAttachmentInput').setInputFiles({name:'private-audio.wav',mimeType:'audio/wav',buffer:Buffer.from('RIFF0000WAVEfmt ')});
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#toast')).toContainText('Could not transcribe audio with aLandi Gateway.');
+  await expect(page.locator('#toast')).not.toContainText(leaked);
+  await expect(page.locator('#userInput')).toHaveValue('Summarize the attached document.');
+});
 
 test('retired Server Memory experiment has no UI or request path', async ({ page }) => {
   const graphRequests = [];
