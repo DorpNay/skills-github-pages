@@ -7173,3 +7173,57 @@ test('aria-disabled action controls cannot dispatch destructive operations', asy
   const projects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
   expect(projects.map(project => project.id)).toEqual(['e2e-disabled-action-project']);
 });
+
+
+test('project recovery warnings use the active locale and preserve the original data', async ({ page }) => {
+  const raw = '{"projects":';
+  for (const [language, expected] of [
+    ['ru', 'Проекты не прочитались полностью. Исходные данные сохранены локально'],
+    ['en', 'Projects could not be fully loaded. Original data is preserved locally']
+  ]) {
+    const recoveryPage = await page.context().newPage();
+    await recoveryPage.addInitScript(({ locale, value }) => {
+      localStorage.setItem('ai_ui_language_v1', locale);
+      localStorage.setItem('ai_projects_v1', value);
+    }, { locale: language, value: raw });
+    await recoveryPage.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+    await expect(recoveryPage.locator('#toast')).toContainText(expected);
+    await expect(recoveryPage.locator('#toast')).toHaveAttribute('role', 'alert');
+    const storage = await recoveryPage.evaluate(() => ({
+      original: localStorage.getItem('ai_projects_v1'),
+      backup: localStorage.getItem('ai_projects_recovery_backup')
+    }));
+    expect(storage).toEqual({ original: raw, backup: raw });
+    await recoveryPage.close();
+  }
+});
+
+test('chat recovery backup failure warning uses the active locale and preserves the source', async ({ page }) => {
+  const raw = JSON.stringify([
+    { id: 'valid-chat', title: 'Valid', messages: [{ role: 'user', content: 'keep me' }] },
+    { id: 'invalid-chat', title: 'Invalid', messages: 'not-an-array' }
+  ]);
+  for (const [language, expected] of [
+    ['ru', 'История не прочиталась, резервная копия не создалась'],
+    ['en', 'Chat history could not be loaded and a recovery backup could not be created']
+  ]) {
+    const recoveryPage = await page.context().newPage();
+    await recoveryPage.addInitScript(({ locale, value }) => {
+      localStorage.setItem('ai_ui_language_v1', locale);
+      localStorage.setItem('ai_chats_v87', value);
+      const originalSetItem = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, nextValue) {
+        if (key.startsWith('ai_chats_recovery_backup')) {
+          throw new DOMException('QuotaExceededError', 'QuotaExceededError');
+        }
+        return originalSetItem.call(this, key, nextValue);
+      };
+    }, { locale: language, value: raw });
+    await recoveryPage.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+    await expect(recoveryPage.locator('#toast')).toContainText(expected);
+    await expect(recoveryPage.locator('#toast')).toHaveAttribute('role', 'alert');
+    await expect(recoveryPage.locator('#recoveryBackupButton')).not.toHaveClass(/hidden/);
+    expect(await recoveryPage.evaluate(() => localStorage.getItem('ai_chats_v87'))).toBe(raw);
+    await recoveryPage.close();
+  }
+});
