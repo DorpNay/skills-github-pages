@@ -1229,9 +1229,24 @@ test('provider connection loads filtered model catalog into selector and key del
   expect(JSON.stringify(cachedCatalog)).not.toContain('not-a-real-key');
   await page.locator('#modelPreset').selectOption('e2e-dynamic-model');
   await expect(page.locator('#modelName')).toHaveValue('e2e-dynamic-model');
+  await page.locator('#uiLanguage').selectOption('en');
+  const cancelConfirmationPromise = page.waitForEvent('dialog');
   await page.locator('[data-action="clear-provider-key"]').click();
+  const cancelConfirmation = await cancelConfirmationPromise;
+  expect(cancelConfirmation.message()).toBe('Remove the selected provider credential from this browser? This does not revoke it with the provider. You can add it again in Settings.');
+  await cancelConfirmation.dismiss();
+  await expect(page.locator('#apiKey')).toHaveValue('not-a-real-key');
+  await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'connected');
+
+  await page.locator('#uiLanguage').selectOption('ru');
+  const acceptConfirmationPromise = page.waitForEvent('dialog');
+  await page.locator('[data-action="clear-provider-key"]').click();
+  const acceptConfirmation = await acceptConfirmationPromise;
+  expect(acceptConfirmation.message()).toBe('Удалить учётные данные выбранного провайдера из этого браузера? Это не отзывает их у провайдера. Их можно добавить снова в настройках.');
+  await acceptConfirmation.accept();
   await expect(page.locator('#apiKey')).toHaveValue('');
   await expect(page.locator('#apiKeyShell')).toHaveAttribute('data-state', 'empty');
+  await expect(page.locator('#toast')).toContainText('Учётные данные выбранного провайдера удалены из этого браузера.');
 });
 
 test('switching providers explains an empty API key field inline', async ({ page }) => {
