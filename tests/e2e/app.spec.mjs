@@ -7884,3 +7884,23 @@ test('chat and project recovery backups download exact source bytes with RU/EN f
   }));
   expect(preserved).toEqual({ chats: chatRaw, projects: projectRaw });
 });
+
+test('client-facing tool and clipboard failures never expose raw exception diagnostics', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: async () => { throw new Error('SECRET_SENTINEL https://user:password@example.test/path'); } }
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    const message = document.createElement('div');
+    message.className = 'message assistant-message';
+    message.innerHTML = '<div class="code-block"><pre><code class="language-js">const safe = true;</code></pre><button data-action="copy-code">Copy</button></div>';
+    document.querySelector('#chatBox').appendChild(message);
+  });
+  await page.locator('#chatBox [data-action="copy-code"]').last().click();
+  await expect(page.locator('#toast')).toContainText('Не удалось скопировать код');
+  await expect(page.locator('#toast')).not.toContainText('SECRET_SENTINEL');
+  await expect(page.locator('#toast')).not.toContainText('user:password');
+});
