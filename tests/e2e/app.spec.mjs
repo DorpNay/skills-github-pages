@@ -7452,3 +7452,72 @@ test('request context caps selected projects at five with localized feedback in 
     expect(systemContext).not.toContain('CAP_PROJECT_7_INSTRUCTION');
   }
 });
+
+test('move-chat dialog preserves project selection and keyboard focus across RU/EN changes', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'locale-move-target',
+      name: 'Locale move target',
+      description: '',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: '',
+      updatedAt: ''
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'locale-move-chat',
+      title: 'Locale move chat',
+      projectId: null,
+      projectMemoryEnabled: false,
+      messages: [],
+      executionMode: 'direct',
+      deepResearchMethod: 'none',
+      searchMode: 'offline'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'locale-move-chat');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const row = page.locator('#chatList .chat-row[data-chat-id="locale-move-chat"]');
+  const trigger = row.locator('.chat-row-menu summary');
+  await trigger.click();
+  await row.locator('[data-action="chat-project"]').click();
+
+  const modal = page.locator('#chatActionModal');
+  const projectSelect = page.locator('#chatActionProject');
+  await expect(modal).toBeVisible();
+  await expect(projectSelect).toBeVisible();
+  await projectSelect.selectOption('locale-move-target');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#chatActionTitle')).toHaveText('Move chat to project');
+  await expect(page.locator('#chatActionHelp')).toContainText('Project memory toggles will be reset.');
+  await expect(projectSelect).toHaveValue('locale-move-target');
+  await expect(projectSelect.locator('option[value=""]')).toHaveText('Personal chat (no project)');
+  await expect(modal.locator('[data-action="chat-action-save"]')).toHaveText('Save');
+
+  const focusables = modal.locator('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])').filter({ visible: true });
+  const first = focusables.first();
+  const last = focusables.last();
+  await first.focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(last).toBeFocused();
+  await last.focus();
+  await page.keyboard.press('Tab');
+  await expect(first).toBeFocused();
+
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(page.locator('#chatActionTitle')).toHaveText('Переместить чат в проект');
+  await expect(projectSelect).toHaveValue('locale-move-target');
+  await expect(modal.locator('[data-action="chat-action-save"]')).toHaveText('Сохранить');
+  await projectSelect.focus();
+  await page.locator('#chatActionForm [data-action="chat-action-save"]').click();
+
+  await expect(modal).toBeHidden();
+  const storedChat = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]')
+    .find(chat => chat.id === 'locale-move-chat'));
+  expect(storedChat.projectId).toBe('locale-move-target');
+  expect(storedChat.projectMemoryEnabled).toBe(false);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="locale-move-chat"] .chat-row-menu summary')).toBeFocused();
+});
