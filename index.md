@@ -7088,7 +7088,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     async function copyText(text) {
       if (navigator.clipboard?.writeText && window.isSecureContext) {
         try { await navigator.clipboard.writeText(text); return; }
-        catch (error) { console.warn('Clipboard API недоступен; пробую резервное копирование.', error); }
+        catch (_) { console.warn('Clipboard API недоступен; пробую резервное копирование.'); }
       }
       const area = document.createElement('textarea');
       area.value = text; area.setAttribute('readonly', '');
