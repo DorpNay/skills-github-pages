@@ -7725,3 +7725,46 @@ test('switching chats during RU/EN changes preserves each chat history and activ
   await setUiLanguageInPlace(page, 'en');
   await expect(page.locator('#chatBox')).toContainText('ALPHA_HISTORY_SENTINEL');
 });
+
+test('forced-colors focus remains visible and usable through RU/EN locale refresh', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'auto');
+  const input = page.locator('#userInput');
+  await input.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  await expect(input).toBeFocused();
+
+  const focusStyle = async () => input.evaluate(element => {
+    const style = getComputedStyle(element);
+    return {
+      matchesFocusVisible: element.matches(':focus-visible'),
+      width: style.outlineWidth,
+      style: style.outlineStyle,
+      color: style.outlineColor
+    };
+  });
+  const initial = await focusStyle();
+  expect(initial.matchesFocusVisible).toBe(true);
+  expect(initial.width).toBe('2px');
+  expect(initial.style).toBe('solid');
+  expect(initial.color).not.toBe('rgba(0, 0, 0, 0)');
+
+  await setUiLanguageInPlace(page, 'en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(input).toBeFocused();
+  await expect(input).toHaveAttribute('placeholder', 'Write a message...');
+  const english = await focusStyle();
+  expect(english.width).toBe('2px');
+  expect(english.style).toBe('solid');
+  expect(english.color).not.toBe('rgba(0, 0, 0, 0)');
+
+  await setUiLanguageInPlace(page, 'ru');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+  await expect(input).toBeFocused();
+  const russian = await focusStyle();
+  expect(russian.width).toBe('2px');
+  expect(russian.style).toBe('solid');
+  expect(russian.color).not.toBe('rgba(0, 0, 0, 0)');
+});
