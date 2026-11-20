@@ -3335,6 +3335,32 @@ test('toast announces successful actions politely and errors assertively', async
   await expect(toast).toHaveAttribute('aria-live', 'assertive');
 });
 
+
+test('browser connectivity hints are localized and do not change web-search preference', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const webSearch = page.locator('#toggleSearch');
+  const initialWebSearch = await webSearch.isChecked();
+  const toast = page.locator('#toast');
+
+  await page.evaluate(() => window.dispatchEvent(new Event('offline')));
+  await expect(toast).toContainText('Браузер сообщает об отсутствии сети');
+  await expect(toast).toContainText('Локальные чаты остаются доступны');
+  await expect(toast).toHaveAttribute('role', 'alert');
+  await expect(toast).toHaveAttribute('aria-live', 'assertive');
+  expect(await webSearch.isChecked()).toBe(initialWebSearch);
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await expect(toast).toContainText('Your browser reports that network connectivity has returned');
+  await expect(toast).toContainText('does not confirm server or provider availability');
+  await expect(toast).toHaveAttribute('role', 'status');
+  await expect(toast).toHaveAttribute('aria-live', 'polite');
+  expect(await webSearch.isChecked()).toBe(initialWebSearch);
+});
+
 test('storage estimate failures do not block app startup or persistence', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window.navigator, 'storage', {

@@ -1537,6 +1537,21 @@ permalink: /
         toastHideTimer = setTimeout(() => node.classList.add('hidden'), 180);
       }, 2400);
     }
+    // navigator.onLine is only a browser connectivity hint, not proof that the Gateway or a provider is reachable.
+    let browserConnectivityState = navigator.onLine !== false;
+    function announceBrowserConnectivity(isOnline) {
+      if (browserConnectivityState === isOnline) return;
+      browserConnectivityState = isOnline;
+      showToast(isOnline
+        ? storageMessage('Браузер сообщает о восстановлении сети. Это не подтверждает доступность сервера или провайдера.','Your browser reports that network connectivity has returned. This does not confirm server or provider availability.')
+        : storageMessage('Браузер сообщает об отсутствии сети. Локальные чаты остаются доступны; облачные провайдеры и сервер могут не отвечать.','Your browser reports no network connection. Local chats remain available; cloud providers and your server may not respond.'),
+        isOnline ? 'success' : 'error');
+    }
+    window.addEventListener('offline', () => announceBrowserConnectivity(false));
+    window.addEventListener('online', () => announceBrowserConnectivity(true));
+    if (!browserConnectivityState) {
+      showToast(storageMessage('Браузер сообщает об отсутствии сети. Локальные чаты остаются доступны; облачные провайдеры и сервер могут не отвечать.','Your browser reports no network connection. Local chats remain available; cloud providers and your server may not respond.'), 'error');
+    }
     function storageMessage(ru,en){return getUiLanguage()==='en'?en:ru;}
     function safeSet(key, value) {
       try { localStorage.setItem(key, value); return true; }

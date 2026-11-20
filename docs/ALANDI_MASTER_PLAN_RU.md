@@ -218,7 +218,7 @@
 - [~] 17. Audit trace export/copy/download feedback; trace modal controls and Markdown export metadata/headings now follow RU/EN, Markdown/JSON downloads announce success, and missing traces receive safe feedback. E2E checks RU/EN Markdown and JSON exports; clipboard failure and dynamic trace-content localization remain open.
 - [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors and image/video preview failures now use safe localized messages with credential-redaction coverage.
 - [~] 19. Audit Voice/ASR/TTS capability feedback; local document/ASR, voice transcription and TTS errors now map to safe localized messages. Voice capture/TTS capability and full native-device matrix remain open.
-- [ ] 20. Audit offline/online mode and connectivity feedback.
+- [~] 20. Audit offline/online mode and connectivity feedback; browser offline/online events now show localized hints and distinguish browser network state from Gateway/provider availability. The web-search preference is not changed; endpoint health checks and full connectivity recovery matrix remain open.
 - [ ] 21. Audit storage quota and recovery warning feedback.
 - [~] 22. Audit all toast messages for locale parity; browser-storage 80%/95% quota warnings now use RU/EN copy. The complete toast inventory remains open.
 - [~] 23. Audit all aria-live/status announcements for locale parity; the shared toast uses role=status/polite for success and role=alert/assertive for errors, with aria-atomic=true. Other async status surfaces remain open.
@@ -2377,3 +2377,12 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 **Owner-only:** домен/DNS, Cloudflare account/Access, SSH/VPS, секреты, платные ресурсы и реальные model downloads выполняет владелец в своих аккаунтах. SSH/VPS доступ в текущем контексте не подтверждён; серверных действий этим срезом не выполнялось.
 
 **Опорные материалы:** docs/DEPLOYMENT_PREFLIGHT_RU.md, docs/DOMAIN_SETUP.md, docs/INFRASTRUCTURE_UPGRADE.md, gateway/alandi-gateway.service, gateway/.env.example и issue #111. Архивный docs/PRE_LAUNCH_STACK_RU.md не использовать как актуальный runbook.
+
+
+### 7.10 Implementation progress — browser connectivity hints (2026-11-20)
+
+- **IMPLEMENTED:** the root app listens to browser offline/online events and shows RU/EN status feedback. Offline warns that local chats remain available while cloud/Gateway calls may fail; online explicitly does not claim that any server/provider is reachable.
+- **IMPLEMENTED:** the browser connectivity hint does not toggle the independent web-search preference or execution mode.
+- **TEST ADDED / NOT RUN:** Playwright dispatches offline/online events, checks RU/EN copy and announcement priority, and asserts web-search preference is unchanged.
+- **SOURCE BASIS:** MDN Navigator.onLine and Window online/offline event documentation warns that browser network state is heuristic and must not be used to infer availability of a specific website. Source URL is recorded in INTEL.md.
+- **OPEN:** actual provider/Gateway reachability, request retry/cancel recovery, native iOS offline behavior and Chromium execution remain pending.
