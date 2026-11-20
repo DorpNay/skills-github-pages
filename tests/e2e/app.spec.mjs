@@ -6574,6 +6574,25 @@ test('system reduced-motion preference is honored in automatic mode and high con
   expect(focus.style).toBe('solid');
 });
 
+test('saved locale is applied on initial load after reload and updates dynamic option copy', async ({ page }) => {
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('[data-action="toggle-settings"]').click();
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#sidebar')).toHaveAttribute('aria-label','Projects and chats');
+  await expect(page.locator('#cloudflareAccountHelp')).toContainText('The Account ID is not a secret');
+  await expect(page.locator('#composerPosition option[value="top"]')).toHaveText('Top, below mode controls');
+  await page.locator('[data-action="close-settings"]').click();
+  await page.locator('#functionsMenuSummary').click();
+  await expect(page.locator('#functionsMenu')).toContainText('Deep Research · thoroughness; web search is separate');
+  await page.locator('#functionsMenu [data-function="research"]').click();
+  await expect(page.locator('#deepResearchMethodSelect option[value="none"]')).toHaveText('Direct chat');
+  await page.locator('[data-action="close-function-panel"]').click();
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('#sidebar')).toHaveAttribute('aria-label','Projects and chats');
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(page.locator('#uiLanguage')).toHaveValue('en');
+});
+
 test('locale refresh keeps composer draft, attachment focus and disclosure state idempotent', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const draft = 'Preserve this composer draft across repeated locale changes.';
