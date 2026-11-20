@@ -1812,15 +1812,21 @@ permalink: /
       }
     };
     const MemoryDB = {
-      async getAll() {
-        if (!db) return [];
+      async getAll({ strict = false } = {}) {
+        if (!db) {
+          if (strict) throw new Error('IndexedDB unavailable');
+          return [];
+        }
         try {
           const tx = db.transaction('memory', 'readonly');
           const store = tx.objectStore('memory');
           const [values, keys] = await Promise.all([requestResult(store.getAll()), requestResult(store.getAllKeys())]);
           return values.map((item, index) => ({ ...item, id: String(item.id ?? keys[index]) }))
             .filter((item) => typeof item.fact === 'string');
-        } catch (_) { return []; }
+        } catch (error) {
+          if (strict) throw error;
+          return [];
+        }
       },
       async add(fact) {
         if (!db) throw new Error('IndexedDB недоступна в этом браузере.');
@@ -1836,26 +1842,33 @@ permalink: /
         await renderMemory();
       },
       async delete(id) {
-        if (!db) return;
+        if (!db) throw new Error('IndexedDB unavailable');
         await new Promise((resolve, reject) => {
           const tx = db.transaction('memory', 'readwrite');
           tx.objectStore('memory').delete(id);
           tx.oncomplete = resolve;
           tx.onerror = () => reject(tx.error || new Error('Не удалось удалить факт'));
+          tx.onabort = () => reject(tx.error || new Error('Удаление отменено'));
         });
         await renderMemory();
       }
     };
     const SharedMemoryDB = {
-      async getAll() {
-        if (!db) return [];
+      async getAll({ strict = false } = {}) {
+        if (!db) {
+          if (strict) throw new Error('IndexedDB unavailable');
+          return [];
+        }
         try {
           const tx = db.transaction('sharedMemory', 'readonly');
           const store = tx.objectStore('sharedMemory');
           const [values, keys] = await Promise.all([requestResult(store.getAll()), requestResult(store.getAllKeys())]);
           return values.map((item, index) => ({ ...item, id: String(item.id ?? keys[index]) }))
             .filter((item) => typeof item.fact === 'string');
-        } catch (_) { return []; }
+        } catch (error) {
+          if (strict) throw error;
+          return [];
+        }
       },
       async add(fact, sourcePrivateId = null) {
         if (!db) throw new Error('IndexedDB недоступна в этом браузере.');
@@ -1871,12 +1884,13 @@ permalink: /
         await renderSharedMemory();
       },
       async delete(id) {
-        if (!db) return;
+        if (!db) throw new Error('IndexedDB unavailable');
         await new Promise((resolve, reject) => {
           const tx = db.transaction('sharedMemory', 'readwrite');
           tx.objectStore('sharedMemory').delete(id);
           tx.oncomplete = resolve;
           tx.onerror = () => reject(tx.error || new Error('Не удалось удалить общий факт'));
+          tx.onabort = () => reject(tx.error || new Error('Удаление отменено'));
         });
         await renderSharedMemory();
       }
@@ -3329,16 +3343,20 @@ permalink: /
     }
     function updateMemoryStatusLine(){
       const line=$('memoryStatusLine');if(!line)return;
-      const personalCount=$('memoryBox')?.querySelectorAll('.memory-item').length||0;
-      const sharedCount=$('sharedMemoryBox')?.querySelectorAll('.memory-item').length||0;
+      const personalBox=$('memoryBox'),sharedBox=$('sharedMemoryBox');
+      const personalUnavailable=personalBox?.dataset.loadState==='error',sharedUnavailable=sharedBox?.dataset.loadState==='error';
+      const personalCount=personalBox?.querySelectorAll('.memory-item').length||0;
+      const sharedCount=sharedBox?.querySelectorAll('.memory-item').length||0;
       const globalEnabled=$('globalMemoryToggle')?.checked===true;
       const english=getUiLanguage()==='en';
-      const personalCountLabel=$('personalMemoryCount');if(personalCountLabel)personalCountLabel.textContent=String(personalCount);
-      const sharedCountLabel=$('sharedMemoryCount');if(sharedCountLabel)sharedCountLabel.textContent=String(sharedCount);
+      const personalValue=personalUnavailable?(english?'unavailable':'недоступна'):String(personalCount);
+      const sharedValue=sharedUnavailable?(english?'unavailable':'недоступна'):String(sharedCount);
+      const personalCountLabel=$('personalMemoryCount');if(personalCountLabel)personalCountLabel.textContent=personalUnavailable?'—':String(personalCount);
+      const sharedCountLabel=$('sharedMemoryCount');if(sharedCountLabel)sharedCountLabel.textContent=sharedUnavailable?'—':String(sharedCount);
       const globalStatus=$('globalMemoryStatus');if(globalStatus)globalStatus.textContent=english?(globalEnabled?'Context on':'Context off'):(globalEnabled?'Контекст вкл.':'Контекст выкл.');
       line.textContent=english
-        ? `Memory · personal ${personalCount} · shared ${sharedCount} · global context ${globalEnabled?'on':'off'}`
-        : `Память · личных ${personalCount} · общих ${sharedCount} · общая в контексте ${globalEnabled?'вкл.':'выкл.'}`;
+        ? `Memory · personal ${personalValue} · shared ${sharedValue} · global context ${globalEnabled?'on':'off'}`
+        : `Память · личных ${personalValue} · общих ${sharedValue} · общая в контексте ${globalEnabled?'вкл.':'выкл.'}`;
     }
     function createMemoryItemDisclosure(fact,kind) {
       const language=getUiLanguage();
@@ -3369,7 +3387,15 @@ permalink: /
     async function renderMemory() {
       const box=$('memoryBox');if(!box)return;
       const openIds=new Set([...box.querySelectorAll('.memory-item[open]')].map(row=>row.dataset.memoryId));
-      const facts=await MemoryDB.getAll();box.replaceChildren();
+      let facts;
+      try { facts=await MemoryDB.getAll({strict:true}); }
+      catch (_) {
+        box.replaceChildren();box.dataset.loadState='error';
+        const error=document.createElement('p');error.setAttribute('role','status');
+        error.textContent=storageMessage('Личную память не удалось прочитать. Проверь хранилище браузера.','Personal memory could not be loaded. Check browser storage.');
+        box.appendChild(error);updateMemoryStatusLine();return;
+      }
+      box.removeAttribute('data-load-state');box.replaceChildren();
       if(!facts.length){
         const empty=document.createElement('p');empty.dataset.i18n='personalMemoryEmpty';empty.textContent=UI_TEXT[getUiLanguage()].personalMemoryEmpty;box.appendChild(empty);
         updateMemoryStatusLine();return;
@@ -3382,7 +3408,15 @@ permalink: /
     async function renderSharedMemory() {
       const box=$('sharedMemoryBox');if(!box)return;
       const openIds=new Set([...box.querySelectorAll('.memory-item[open]')].map(row=>row.dataset.memoryId));
-      const facts=await SharedMemoryDB.getAll();box.replaceChildren();
+      let facts;
+      try { facts=await SharedMemoryDB.getAll({strict:true}); }
+      catch (_) {
+        box.replaceChildren();box.dataset.loadState='error';
+        const error=document.createElement('p');error.setAttribute('role','status');
+        error.textContent=storageMessage('Общую память не удалось прочитать. Проверь хранилище браузера.','Shared memory could not be loaded. Check browser storage.');
+        box.appendChild(error);updateMemoryStatusLine();return;
+      }
+      box.removeAttribute('data-load-state');box.replaceChildren();
       if(!facts.length){
         const empty=document.createElement('p');empty.dataset.i18n='sharedMemoryEmpty';empty.textContent=UI_TEXT[getUiLanguage()].sharedMemoryEmpty;box.appendChild(empty);
         updateMemoryStatusLine();return;
@@ -3393,11 +3427,23 @@ permalink: /
       updateMemoryStatusLine();
     }
     async function promotePrivateMemory(id) {
-      const fact = (await MemoryDB.getAll()).find(item => item.id === id);
       const english=getUiLanguage()==='en';
-      if (!fact) throw new Error(english?'Personal memory item not found. Refresh the memory list.':'Личный факт не найден. Обнови список памяти.');
+      let fact;
+      try { fact=(await MemoryDB.getAll({strict:true})).find(item=>item.id===id); }
+      catch (_) {
+        showToast(english?'Personal memory could not be loaded. Check browser storage.':'Не удалось прочитать личную память. Проверь хранилище браузера.','error');
+        return;
+      }
+      if (!fact) {
+        showToast(english?'Personal memory item not found. Refresh the memory list.':'Личный факт не найден. Обнови список памяти.','error');
+        return;
+      }
       if (!confirm(english?'Move only this item to shared memory? It may be sent to third-party providers when shared memory is enabled. The personal copy will remain local.':'Перенести только этот факт в общую память? Он может попасть внешнему провайдеру, если включено использование общей памяти. Личная копия останется локальной.')) return;
-      await SharedMemoryDB.add(fact.fact, fact.id);
+      try { await SharedMemoryDB.add(fact.fact, fact.id); }
+      catch (_) {
+        showToast(english?'Could not add the item to shared memory. The personal copy was kept.':'Не удалось добавить факт в общую память. Личная копия сохранена.','error');
+        return;
+      }
       showToast(english?'Selected item added to shared memory. The personal copy was kept.':'Выбранный факт добавлен в общую память. Личная копия сохранена.');
     }
     function updateState(nextChats = null, nextCurrentId = null) {
@@ -7925,22 +7971,34 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             break;
           }
           case 'delete-memory':
-            if (confirm(getUiLanguage()==='en'?'Delete this personal memory item?':'Удалить этот личный факт из памяти?')) await MemoryDB.delete(control.dataset.memoryId);
+            if (confirm(getUiLanguage()==='en'?'Delete this personal memory item?':'Удалить этот личный факт из памяти?')) {
+              try { await MemoryDB.delete(control.dataset.memoryId); }
+              catch (_) { showToast(getUiLanguage()==='en'?'Could not delete the personal memory item. Check browser storage.':'Не удалось удалить личный факт. Проверь хранилище браузера.','error'); }
+            }
             break;
           case 'promote-memory':
             await promotePrivateMemory(control.dataset.memoryId);
             break;
           case 'save-shared-memory': {
-            const input = $('sharedMemoryInput'); const fact = input.value.trim();
+            const input = $('sharedMemoryInput'); const fact = input.value.trim(),english=getUiLanguage()==='en';
             if (!fact) { input.focus(); break; }
-            if (!confirm(getUiLanguage()==='en'?'Save this fact to SHARED memory? It may be sent to a third-party provider when shared memory is enabled.':'Сохранить этот факт в ОБЩУЮ память? Он может попасть стороннему провайдеру, если включено использование общей памяти.')) break;
-            await SharedMemoryDB.add(fact); input.value = '';
-            showToast(getUiLanguage()==='en'?'Fact saved to shared memory.':'Факт сохранён в общей памяти.');
+            if (!confirm(english?'Save this fact to SHARED memory? It may be sent to a third-party provider when shared memory is enabled.':'Сохранить этот факт в ОБЩУЮ память? Он может попасть стороннему провайдеру, если включено использование общей памяти.')) break;
+            try {
+              await SharedMemoryDB.add(fact); input.value = '';
+              showToast(english?'Fact saved to shared memory.':'Факт сохранён в общей памяти.');
+            } catch (_) {
+              showToast(english?'Could not save the shared memory item. Check browser storage.':'Не удалось сохранить факт в общую память. Проверь хранилище браузера.','error');
+            }
             break;
           }
-          case 'delete-shared-memory':
-            if (confirm(getUiLanguage()==='en'?'Delete this shared memory item?':'Удалить этот факт из общей памяти?')) await SharedMemoryDB.delete(control.dataset.memoryId);
+          case 'delete-shared-memory': {
+            const english=getUiLanguage()==='en';
+            if (confirm(english?'Delete this shared memory item?':'Удалить этот факт из общей памяти?')) {
+              try { await SharedMemoryDB.delete(control.dataset.memoryId); }
+              catch (_) { showToast(english?'Could not delete the shared memory item. Check browser storage.':'Не удалось удалить факт из общей памяти. Проверь хранилище браузера.','error'); }
+            }
             break;
+          }
           case 'toggle-settings': toggleSettings(true); break;
           case 'test-connection': await testProviderConnection(); break;
           case 'refresh-model-catalog': await refreshConnectedModelCatalogs({ quiet: false, force: true }); break;
