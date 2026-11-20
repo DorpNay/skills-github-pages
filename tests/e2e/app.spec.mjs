@@ -1559,6 +1559,27 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   await expect(page.locator('#traceContent')).toContainText('Источники из инструментов');
   await expect(page.locator('#traceContent a')).toHaveAttribute('href', 'https://example.test/docs');
   await expect(page.locator('#traceContent')).toContainText('Short source excerpt.');
+  await expect(page.locator('#traceTitle')).toHaveText('Журнал исследования');
+  await expect(page.locator('[data-action="download-trace"]')).toHaveText('Скачать журнал .md');
+  const markdownRuPromise = page.waitForEvent('download');
+  await page.locator('[data-action="download-trace"]').click();
+  const markdownRu = await markdownRuPromise;
+  const markdownRuText = await readFile(await markdownRu.path(), 'utf8');
+  expect(markdownRuText).toContain('# Журнал исследования');
+  expect(markdownRuText).toContain('## Параметры запуска');
+  expect(markdownRuText).toContain('## Источники из инструментов');
+  await expect(page.locator('#toast')).toContainText('Журнал исследования скачан.');
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#traceTitle')).toHaveText('Research trace');
+  await expect(page.locator('[data-action="download-trace"]')).toHaveText('Download trace .md');
+  const markdownEnPromise = page.waitForEvent('download');
+  await page.locator('[data-action="download-trace"]').click();
+  const markdownEn = await markdownEnPromise;
+  const markdownEnText = await readFile(await markdownEn.path(), 'utf8');
+  expect(markdownEnText).toContain('# Research trace');
+  expect(markdownEnText).toContain('## Run settings');
+  expect(markdownEnText).toContain('## Tool sources');
+  await expect(page.locator('#toast')).toContainText('Research trace downloaded.');
   const downloadPromise = page.waitForEvent('download');
   await page.locator('[data-action="download-trace-json"]').click();
   const download = await downloadPromise;
@@ -1569,6 +1590,7 @@ test('research trace supports a structured JSON download', async ({ page }) => {
   expect(exportData.trace.routes[0].provider).toBe('groq');
   expect(exportData.trace.finalText).toBe('Final result');
   expect(exportData.trace.sources[0].url).toBe('https://example.test/docs');
+  await expect(page.locator('#toast')).toContainText('Research trace JSON downloaded.');
 });
 
 test('research trace records prompt fingerprint, run settings, timings, and model attempts without storing prompt text', async ({ page }) => {

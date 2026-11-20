@@ -215,7 +215,7 @@
 - [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby. Existing bundle E2E verifies a new imported project ID/name, imported chat association, and preservation of the source/other project; the full CRUD feedback inventory remains open.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
 - [~] 16. Audit chat CRUD and dialog validation; stale project references now show RU/EN feedback, clone titles and missing imported-chat titles use the active locale, and a combined RU/EN regression is added. Remaining: complete persistence-failure and dialog-validation matrix.
-- [ ] 17. Audit trace export/copy/download feedback.
+- [~] 17. Audit trace export/copy/download feedback; trace modal controls and Markdown export metadata/headings now follow RU/EN, Markdown/JSON downloads announce success, and missing traces receive safe feedback. E2E checks RU/EN Markdown and JSON exports; clipboard failure and dynamic trace-content localization remain open.
 - [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors and image/video preview failures now use safe localized messages with credential-redaction coverage.
 - [~] 19. Audit Voice/ASR/TTS capability feedback; local document/ASR, voice transcription and TTS errors now map to safe localized messages. Voice capture/TTS capability and full native-device matrix remain open.
 - [ ] 20. Audit offline/online mode and connectivity feedback.
