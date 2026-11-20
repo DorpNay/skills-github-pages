@@ -6433,6 +6433,16 @@ test('chat row menu renames and exports only the selected chat', async ({ page }
   await ensureSidebarOpen(page);
 
   const row = page.locator('#chatList .chat-row[data-chat-id="e2e-rename-export"]');
+  const otherRow = page.locator('#chatList .chat-row[data-chat-id="e2e-untouched-chat"]');
+  await otherRow.locator('.chat-row-menu summary').click();
+  await otherRow.locator('[data-action="chat-rename"]').click();
+  await expect(page.locator('#chatActionModal')).toBeVisible();
+  await expect(page.locator('#chatActionName')).toHaveValue('Untouched chat');
+  expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe('e2e-rename-export');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#chatActionModal')).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe('e2e-rename-export');
+
   await row.locator('.chat-row-menu summary').click();
   await row.locator('[data-action="chat-rename"]').click();
   await expect(page.locator('#chatActionModal')).toBeVisible();
