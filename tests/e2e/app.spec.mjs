@@ -57,6 +57,9 @@ async function setSkillPreset(page, preset) {
 async function selectLanguage(page, language) {
   await page.locator('#uiLanguage').selectOption(language);
 }
+async function setUiLanguageInPlace(page, language) {
+  await page.locator('#uiLanguage').evaluate((select, value) => { select.value=value; select.dispatchEvent(new Event('change',{bubbles:true})); }, language);
+}
 
 async function openAdditionalSettings(page) {
   const section = page.locator('#additionalSettings');
@@ -1510,6 +1513,62 @@ test('new Direct chats default to model-only while saved per-chat search modes s
   await expect(page.locator('#toggleSearch')).toBeChecked();
 });
 
+test('in-flight chat status localizes without cancelling the request', async ({ page }) => {
+  let beginUserRequest, releaseUserRequest;
+  const userRequestStarted=new Promise(resolve=>{beginUserRequest=resolve;});
+  const userResponseGate=new Promise(resolve=>{releaseUserRequest=resolve;});
+  let userResponseReleased=false;
+  const corsHeaders={'access-control-allow-origin':'*','access-control-allow-headers':'authorization,content-type','access-control-allow-methods':'POST,OPTIONS'};
+  await page.route('https://api.example.test/v1/chat/completions',async route=>{
+    if(route.request().method()==='OPTIONS')return route.fulfill({status:204,headers:corsHeaders});
+    const payload=route.request().postDataJSON(),lastMessage=String(payload.messages?.at(-1)?.content||'');
+    if(!lastMessage.includes('Keep this request running while changing the interface language.'))return route.fulfill({status:200,headers:corsHeaders,contentType:'application/json',body:JSON.stringify({model:'live-status-model',choices:[{message:{role:'assistant',content:'OK'}}]})});
+    beginUserRequest();
+    await userResponseGate;
+    userResponseReleased=true;
+    await route.fulfill({status:200,headers:corsHeaders,contentType:'application/json',body:JSON.stringify({model:'live-status-model',choices:[{message:{role:'assistant',content:'Completed after locale change.'}}]})});
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await configureCustomProvider(page,'live-status-model');
+  await page.locator('#userInput').fill('Keep this request running while changing the interface language.');
+  await page.locator('#sendBtn').click();
+  await userRequestStarted;
+  try {
+    await expect(page.locator('#statusText')).toContainText('Primary response',{timeout:10000});
+    await setUiLanguageInPlace(page,'en');
+    await expect(page.locator('#statusText')).toContainText('Primary response');
+    await expect(page.locator('#thinkingTime')).toContainText('Elapsed');
+    await expect(page.locator('#stopBtn')).toBeVisible();
+    expect(userResponseReleased).toBe(false);
+  } finally { releaseUserRequest(); }
+  await expect(page.locator('#chatBox')).toContainText('Completed after locale change.',{timeout:20000});
+  expect(userResponseReleased).toBe(true);
+});
+
+
+test('historical tool, research and provider metadata localize without rewriting chat history', async ({ page }) => {
+  const chat={id:'historical-locale-metadata',title:'Historical tool metadata',messages:[
+    {role:'user',content:'Find and verify a public source.'},
+    {role:'assistant',content:'A historical tool result.',tool_calls:[{id:'call-history-1',type:'function',function:{name:'web_search',arguments:'{"query":"history"}'}}],providerInfo:{provider:'alandi',providerLabel:'aLandi aServi',model:'qwen3.5:4b',requestedModel:'qwen3.5:4b',cacheStatus:'HIT'}},
+    {role:'assistant',content:'A historical research result.',researchTrace:{id:'trace-history-locale'},error:true}
+  ]};
+  await page.addInitScript(seed=>{localStorage.setItem('ai_chats_v87',JSON.stringify([seed]));localStorage.setItem('ai_current_chat_v87',seed.id);},chat);
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  const before=await page.evaluate(()=>localStorage.getItem('ai_chats_v87'));
+  await expect(page.locator('#chatBox .message-tool-call')).toHaveText('🔧 Вызов инструмента: web_search');
+  await expect(page.locator('#chatBox .message-model-meta')).toContainText('кэш HIT');
+  await expect(page.locator('#chatBox .research-trace-open')).toHaveText('Открыть журнал исследования');
+  await expect(page.locator('#chatBox .retry-action')).toHaveText('Повторить запрос');
+  await setUiLanguageInPlace(page,'en');
+  await expect(page.locator('#chatBox .message-tool-call')).toHaveText('🔧 Tool call: web_search');
+  await expect(page.locator('#chatBox .message-model-meta')).toContainText('cache HIT');
+  await expect(page.locator('#chatBox .research-trace-open')).toHaveText('Open research trace');
+  await expect(page.locator('#chatBox .retry-action')).toHaveText('Retry request');
+  const after=await page.evaluate(()=>localStorage.getItem('ai_chats_v87'));
+  expect(after).toBe(before);
+});
+
+
 test('legacy chat research preference migrates to an explicit Deep Research method', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('ai_chats_v87', JSON.stringify([
@@ -2818,6 +2877,12 @@ test('voice mode menu opens with one tap and keeps gateway setup explicit', asyn
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
   await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЕ СООБЩЕНИЕ');
+  await setUiLanguageInPlace(page,'en');
+  await expect(page.locator('#voiceMenu')).toHaveAttribute('aria-label','Voice modes');
+  await expect(page.locator('#voiceMenu')).toContainText('VOICE CONVERSATION');
+  await expect(page.locator('#voiceMenu')).toContainText('VOICE MESSAGE');
+  await setUiLanguageInPlace(page,'ru');
+  await expect(page.locator('#voiceMenu')).toContainText('ГОЛОСОВОЙ ДИАЛОГ');
   await page.keyboard.press('Escape');
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -2828,6 +2893,42 @@ test('voice mode menu opens with one tap and keeps gateway setup explicit', asyn
   await expect(page.locator('#voiceMenu')).toBeHidden();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#toast')).toContainText('Сначала настрой адрес и ключ собственного gateway.');
+});
+
+
+test('active voice recording status localizes without stopping capture', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_base_url','https://gateway.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi','e2e-voice-key');
+    localStorage.setItem('ai_api_provider','alandi');
+    localStorage.setItem('ai_model_name','qwen3.5:4b');
+    const track={stopped:false,stop(){this.stopped=true;},addEventListener(){}};
+    const stream={getTracks:()=>[track],getAudioTracks:()=>[track]};
+    Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:async()=>stream}});
+    class FakeMediaRecorder extends EventTarget {
+      static isTypeSupported(){return false;}
+      constructor(){super();this.state='inactive';this.mimeType='audio/webm';window.__alandiTestRecorder=this;window.__alandiTestTrack=track;}
+      start(){this.state='recording';}
+      stop(){if(this.state==='inactive')return;this.state='inactive';this.dispatchEvent(new Event('stop'));}
+    }
+    window.MediaRecorder=FakeMediaRecorder;
+  });
+  await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.locator('#voiceUnavailableButton').click();
+  await page.locator('[data-action="voice-message-preview"]').click();
+  await expect(page.locator('#voiceRecordingPanel')).toBeVisible();
+  await expect(page.locator('#voiceRecordingStatus')).toContainText('● Запись… не более 2 минут');
+  await setUiLanguageInPlace(page,'en');
+  await expect(page.locator('#voiceRecordingStatus')).toContainText('Recording… up to 2 minutes');
+  const active=await page.evaluate(()=>({state:window.__alandiTestRecorder?.state,stopped:window.__alandiTestTrack?.stopped}));
+  expect(active.state).toBe('recording');
+  expect(active.stopped).toBe(false);
+  await page.locator('[data-action="cancel-voice-recording"]').click();
+  await expect(page.locator('#voiceRecordingPanel')).toBeHidden();
+  const stopped=await page.evaluate(()=>({state:window.__alandiTestRecorder?.state,stopped:window.__alandiTestTrack?.stopped}));
+  expect(stopped.state).toBe('inactive');
+  expect(stopped.stopped).toBe(true);
 });
 
 
@@ -6126,8 +6227,9 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
     localStorage.setItem('ai_api_key_alandi', 'e2e-gateway-key');
   });
   const documents = [];
-  let ingestCount = 0;
+  let ingestCount = 0, projectSourceReadCount = 0;
   let extractionEnabled = true;
+  page.on('request',request=>{const url=request.url();if(url.includes('/v1/capabilities')||url.includes('/v1/rag/documents?'))projectSourceReadCount++;});
   const corsHeaders = {
     'access-control-allow-origin': '*',
     'access-control-allow-headers': 'authorization,content-type',
@@ -6182,6 +6284,12 @@ test('project sources upload, deduplicate by SHA-256, preview and delete within 
   expect(projectId).not.toBe('');
   await openProjectSettingsForId(page, projectId);
   await page.locator('#projectSourcesDetails > summary').click();
+  await expect(page.locator('#projectSourcesStatus')).toContainText('В этом проекте пока нет источников');
+  const sourceReadsBeforeLocaleChange=projectSourceReadCount;
+  await setUiLanguageInPlace(page,'en');
+  await expect(page.locator('#projectSourcesStatus')).toContainText('This project has no sources yet.');
+  expect(projectSourceReadCount).toBe(sourceReadsBeforeLocaleChange);
+  await setUiLanguageInPlace(page,'ru');
   await expect(page.locator('#projectSourcesStatus')).toContainText('В этом проекте пока нет источников');
   await expect(page.locator('#projectSourcesDetails > summary')).toHaveCSS('min-height', '44px');
   await expect(page.locator('[data-action="select-project-source-file"]')).toHaveCSS('min-height', '44px');

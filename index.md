@@ -1092,12 +1092,12 @@ permalink: /
         <p class="text-[10px] text-amber-300/80" data-i18n="requestContextLimitHint">Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.</p>
       </div>
     </div>
-    <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса">
-      <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong>ГОЛОСОВОЙ ДИАЛОГ</strong><small>Локально · реплики по очереди</small></span></button>
-      <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong>ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small>Записать → локально расшифровать → отредактировать</small></span></button>
+    <div id="voiceMenu" class="voice-menu hidden" role="group" aria-label="Режимы голоса" data-i18n-aria-label="voiceMenuAria">
+      <button type="button" data-action="voice-chat-preview" class="voice-menu-option"><span class="voice-direction">↑</span><span><strong data-i18n="voiceChatTitle">ГОЛОСОВОЙ ДИАЛОГ</strong><small data-i18n="voiceChatHelp">Локально · реплики по очереди</small></span></button>
+      <button type="button" data-action="voice-message-preview" class="voice-menu-option"><span class="voice-direction">↓</span><span><strong data-i18n="voiceMessageTitle">ГОЛОСОВОЕ СООБЩЕНИЕ</strong><small data-i18n="voiceMessageHelp">Записать → локально расшифровать → отредактировать</small></span></button>
     </div>
-    <div id="voiceRecordingPanel" class="hidden mx-auto mb-2 w-full max-w-3xl rounded-xl border border-red-500/40 bg-gray-900 px-3 py-2 shadow-lg" role="group" aria-label="Запись голосового сообщения">
-      <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div id="voiceRecordingActions" class="flex gap-2"><button type="button" data-action="cancel-voice-recording" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div><button id="stopVoiceConversationBtn" type="button" data-action="stop-voice-conversation" class="hidden rounded-lg border border-red-500/60 px-3 py-2 text-xs text-red-200">Завершить диалог</button></div>
+    <div id="voiceRecordingPanel" class="hidden mx-auto mb-2 w-full max-w-3xl rounded-xl border border-red-500/40 bg-gray-900 px-3 py-2 shadow-lg" role="group" aria-label="Запись голосового сообщения" data-i18n-aria-label="voiceRecordingPanelAria">
+      <div class="flex items-center justify-between gap-3"><p id="voiceRecordingStatus" class="text-xs text-gray-200" role="status" aria-live="polite">● Запись…</p><div id="voiceRecordingActions" class="flex gap-2"><button type="button" data-action="cancel-voice-recording" data-i18n="voiceRecordingCancel" class="rounded-lg border border-gray-700 px-3 py-2 text-xs">Отмена</button><button type="button" data-action="stop-voice-recording" data-i18n="voiceRecordingStop" class="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white">Остановить и расшифровать</button></div><button id="stopVoiceConversationBtn" type="button" data-action="stop-voice-conversation" data-i18n="voiceConversationStop" class="hidden rounded-lg border border-red-500/60 px-3 py-2 text-xs text-red-200">Завершить диалог</button></div>
     </div>
   </footer>
   <div id="ttsMiniPlayer" class="hidden fixed bottom-24 right-3 z-[75] w-[min(22rem,calc(100vw-1.5rem))] rounded-xl border border-cyan-700/60 bg-gray-950 p-3 shadow-2xl" role="region" aria-label="Миниплеер озвучивания">
@@ -2045,7 +2045,7 @@ permalink: /
         kiloPrivacyNotice:'Kilo Auto Free — обычный альтернативный провайдер в общем списке API, не часть основного маршрута aLandi aServi. Запросы передаются Kilo и назначенным им моделям; они могут сохранять запросы для улучшения сервисов. Не отправляй конфиденциальные данные. Скрытого резервирования нет.',languageLabel:'Язык интерфейса',clockLabel:'Местное время',saveSettings:'Сохранить',closeSettings:'Закрыть',
          readingSettingsTitle:'Читаемость текста',readingSettingsHelp:'Настрой размер, интервалы и контраст текста сообщений. Изменения сохраняются автоматически и действуют в обеих темах.',readingFontSizeLabel:'Размер текста сообщений',readingLineHeightLabel:'Межстрочный интервал',readingContrastLabel:'Контраст цветовой схемы',readingContrastStandard:'Стандартный',readingContrastHigh:'Повышенный',readingSettingsSaved:'Настройки читаемости сохраняются на этом устройстве.',
         globalMemoryOptIn:'Разрешить общей памяти попадать в контекст.',globalMemoryHint:'Выбранные факты · внешние провайдеры получают их только при включении и разрешённой области проекта.',personalMemoryHint:'IndexedDB этого браузера · только через aLandi gateway; при использовании блокирует внешних провайдеров для всего чата.',sharedMemoryInputLabel:'Общая память (только выбранные факты)',personalMemoryInputLabel:'Личная память локальной модели',sharedMemoryPlaceholder:'Выбранный факт для общей памяти',personalMemoryPlaceholder:'Личный факт для локальной модели',saveSharedMemoryAria:'Сохранить в общую память',savePersonalMemoryAria:'Сохранить в личную память',memoryPersonalMeta:'Личная · локально · private-local',memorySharedManualMeta:'Общая · добавлено вручную · shared',memorySharedPromotedMeta:'Общая · перенесено из личной · shared',memorySavedLabel:'Сохранено',memoryPromoteAction:'В общую',memoryDeleteAction:'Удалить',memoryPromoteAria:'Перенести этот факт в общую память',memoryDeletePersonalAria:'Удалить личный факт',memoryDeleteSharedAria:'Удалить общий факт',personalMemoryEmpty:'Нет личных заметок.',sharedMemoryEmpty:'Нет общих заметок.',noProjectNav:'Без проекта',projectMemoryScopeLabel:'Режим памяти проекта',projectMemoryScopeOnly:'Память только внутри проекта',projectMemoryScopeGlobal:'Память проекта + общая память (если разрешена)',attachMediaTitle:'Фото или видео',attachMediaHelp:'Изображения и выбор кадров из ролика',attachAnyFileTitle:'Файл любого формата',attachAnyFileHelp:'Системный выбор нескольких файлов; доступность разбора зависит от формата.',requestContextTitle:'Контекст этого запроса',requestContextHelp:'Выбранные проекты будут учтены только при следующей отправке. Сам чат и его проект не изменятся.',clearRequestContext:'Сбросить',skillsAutoHint:'Навыки: автоматический подбор по задаче; отдельный каталог выбора пока не подключён.',requestContextLimitHint:'Контекст ограничен пятью проектами и общим лимитом, чтобы не переполнять запрос.',projectsTitle:'▣ Проекты',currentProjectLabel:'Проект текущего чата',projectMemoryOptIn:'Использовать память выбранного проекта в этом чате',manageProject:'Создать или настроить проект',projectContextGroup:'Контекст чата и проекта',projectProfileGroup:'Профиль проекта',projectMemoryGroup:'Память проекта',projectDataGroup:'Данные проекта',projectNameLabel:'Название',projectInstructionsLabel:'Инструкции проекта',projectCreateTitle:'Создать проект',projectCreateClose:'Закрыть создание проекта',projectCreateNameLabel:'Название проекта',projectCreateInstructionsLabel:'Инструкции проекта',projectCreateMemoryScopeLabel:'Область памяти',projectCreateNamePlaceholder:'Название проекта',projectCreateInstructionsPlaceholder:'Цель, стиль, ограничения и критерии результата',createProject:'＋ Создать проект',saveProject:'Сохранить изменения',projectMemoryLabel:'Добавить факт в память проекта',exportProject:'Экспорт проекта',importProject:'Импорт проекта',detachChat:'Извлечь чат из проекта',deleteProject:'Удалить проект и его чаты',helperMemoryTitle:'Помощник памяти проекта',helperMemoryDescription:'Предложить короткие факты из памяти проекта. Ничего не сохраняется без твоего выбора.',helperMemoryNoProject:'Сначала выбери проект.',helperMemoryNoConfig:'Настрой URL и ключ aLandi aServi в параметрах облака.',helperMemorySuggest:'Предложить компактные факты',helperMemoryInitial:'Помощник выключен, пока не настроен ALANDI_HELPER_MODEL.',helperMemoryLoading:'Модель-помощник готовит предложения…',helperMemoryEmpty:'Помощник не нашёл новых фактов.',helperMemoryAdd:'Добавить в проект',helperMemoryAdded:'Факт добавлен в локальную память проекта.',helperMemoryNoFacts:'Сначала добавь факты в память выбранного проекта.',helperMemoryNotConfigured:'Модель-помощник не настроена. Укажи ALANDI_HELPER_MODEL и установи этот тег в Ollama.',helperMemoryTimeout:'Помощник не ответил вовремя; память не менялась.',helperMemoryFailed:'Не удалось получить предложения. Проверь gateway и Ollama.',helperMemorySkippedSensitive:'Пропущены потенциально чувствительные факты:',helperMemoryOnlySensitive:'Все факты похожи на секреты и не были отправлены помощнику.',
-        projectSourcesTitle:'Источники проекта',projectSourcesDescription:'Добавляй документы в индекс выбранного проекта. Текст извлекается собственным aLandi Gateway.',projectSourcesStorageNotice:'В Gateway сохраняются извлечённый текст и метаданные. Исходные байты файла не сохраняются.',projectSourcesAdd:'Добавить файл',projectSourcesRefresh:'Обновить список',projectSourcesNoProject:'Сначала выбери проект.',projectSourcesNoConfig:'Настрой URL /v1 и ключ aLandi Gateway в параметрах облака.',projectSourcesDisabled:'На Gateway должны быть включены извлечение документов и RAG.',projectSourcesLoading:'Загружаю источники проекта…',projectSourcesEmpty:'В этом проекте пока нет источников.',projectSourcesSelectFile:'Выбери файл.',projectSourcesUnsupported:'Поддерживаются PDF, DOCX, XLSX, TXT, Markdown, CSV и JSON.',projectSourcesTooLarge:'Файл превышает лимит 8 МиБ.',projectSourcesDuplicate:'Этот файл уже индексирован в проекте: SHA-256 совпадает.',projectSourcesExtracting:'Извлекаю текст на собственном Gateway…',projectSourcesIndexing:'Индексирую фрагменты…',projectSourcesUploaded:'Источник добавлен в индекс проекта.',projectSourcesError:'Не удалось обработать источник. Проверь подключение к собственному Gateway и его доступность.',projectSourcesTimeout:'Истёк лимит ожидания ответа Gateway.',projectSourcesDeleteError:'Не удалось удалить источник из индекса проекта. Проверь подключение к Gateway и повтори попытку.',projectSourcesDeleteConfirm:'Удалить источник и его индексированные фрагменты из этого проекта?',projectSourcesDelete:'Удалить',projectSourcesPreview:'Предпросмотр первого фрагмента',projectSourcesChunks:'фрагм.',projectSourcesParser:'Парсер',projectSourcesSize:'Размер',projectSourcesDeleteDone:'Источник удалён из индекса проекта.',projectSourcesRefreshFailed:'Источник изменён, но список не удалось обновить. Нажми «Обновить список». '
+        voiceMenuAria:'Режимы голоса',voiceChatTitle:'ГОЛОСОВОЙ ДИАЛОГ',voiceChatHelp:'Локально · реплики по очереди',voiceMessageTitle:'ГОЛОСОВОЕ СООБЩЕНИЕ',voiceMessageHelp:'Записать → локально расшифровать → отредактировать',voiceRecordingPanelAria:'Запись голосового сообщения',voiceRecordingCancel:'Отмена',voiceRecordingStop:'Остановить и расшифровать',voiceConversationStop:'Завершить диалог',voiceStatusConnecting:'Подключаю микрофон…',voiceStatusNextTurn:'Слушаю следующую реплику…',voiceStatusTranscribing:'Расшифровываю локально…',voiceStatusSendingAudio:'Отправляю аудио в локальный ASR…',voiceStatusSendingModel:'Отправляю реплику модели…',voiceStatusSpeaking:'Озвучиваю ответ локальной моделью…',voiceStatusRecording:'● Запись… не более 2 минут · аудио не сохраняется в истории',voiceStatusReadyNext:'Готов к следующей реплике…',liveStatusCheckConnection:'Проверяю подключение…',liveStatusSearchFallback:'🔎 Tavily недоступен — переключаюсь на открытые источники…',liveStatusWebSearch:'🔎 Поиск в сети: {query}…',liveStatusPublicSource:'📚 Открытый источник: {source} · {query}',liveStatusReadPage:'📄 Читаю страницу: {host}',liveStatusModelFallback:'Модель недоступна; пробую другую модель этого провайдера…',liveStatusProviderFallback:'Провайдер недоступен; пробую разрешённый резерв…',liveStatusPrimaryStage:'Основной ответ',liveStatusToolContinuation:'Продолжение после инструмента',liveStatusModelWaiting:'🤖 Ожидание ответа модели…',liveStatusSearchProcessing:'🧠 Модель обрабатывает результаты поиска…',liveStatusAgentPreparing:'AgentRun · подготовка ограниченного контекста чата…',liveStatusAgentAccepted:'AgentRun принят; Gateway может продолжать выполнение. Открой «Агенты», чтобы возобновить наблюдение',projectSourcesTitle:'Источники проекта',projectSourcesDescription:'Добавляй документы в индекс выбранного проекта. Текст извлекается собственным aLandi Gateway.',projectSourcesStorageNotice:'В Gateway сохраняются извлечённый текст и метаданные. Исходные байты файла не сохраняются.',projectSourcesAdd:'Добавить файл',projectSourcesRefresh:'Обновить список',projectSourcesNoProject:'Сначала выбери проект.',projectSourcesNoConfig:'Настрой URL /v1 и ключ aLandi Gateway в параметрах облака.',projectSourcesDisabled:'На Gateway должны быть включены извлечение документов и RAG.',projectSourcesLoading:'Загружаю источники проекта…',projectSourcesEmpty:'В этом проекте пока нет источников.',projectSourcesSelectFile:'Выбери файл.',projectSourcesUnsupported:'Поддерживаются PDF, DOCX, XLSX, TXT, Markdown, CSV и JSON.',projectSourcesTooLarge:'Файл превышает лимит 8 МиБ.',projectSourcesDuplicate:'Этот файл уже индексирован в проекте: SHA-256 совпадает.',projectSourcesExtracting:'Извлекаю текст на собственном Gateway…',projectSourcesIndexing:'Индексирую фрагменты…',projectSourcesUploaded:'Источник добавлен в индекс проекта.',projectSourcesError:'Не удалось обработать источник. Проверь подключение к собственному Gateway и его доступность.',projectSourcesTimeout:'Истёк лимит ожидания ответа Gateway.',projectSourcesDeleteError:'Не удалось удалить источник из индекса проекта. Проверь подключение к Gateway и повтори попытку.',projectSourcesDeleteConfirm:'Удалить источник и его индексированные фрагменты из этого проекта?',projectSourcesDelete:'Удалить',projectSourcesPreview:'Предпросмотр первого фрагмента',projectSourcesChunks:'фрагм.',projectSourcesParser:'Парсер',projectSourcesSize:'Размер',projectSourcesDeleteDone:'Источник удалён из индекса проекта.',projectSourcesRefreshFailed:'Источник изменён, но список не удалось обновить. Нажми «Обновить список». '
       },
       en:{
         settingsTitle:'⚙️ Settings',sidebarTitle:'💬 Projects & chats',sidebarMenuOpenAria:'Open navigation',sidebarMenuCloseAria:'Close navigation',chatsTitle:'Chats',newChat:'＋ New chat',clearChat:'🗑 Clear chat',newPersonalChat:'＋ New personal chat',
@@ -2069,7 +2069,7 @@ permalink: /
         kiloPrivacyNotice:'Kilo Auto Free is an ordinary alternative provider in the API list, not part of the primary aLandi aServi route. Requests go to Kilo and its selected models, which may log prompts or use them to improve services. Do not send confidential data. No silent fallback.',languageLabel:'Interface language',clockLabel:'Local time',saveSettings:'Save settings',closeSettings:'Close',
          readingSettingsTitle:'Text readability',readingSettingsHelp:'Adjust message text size, spacing and color contrast. Changes are saved automatically and apply in both themes.',readingFontSizeLabel:'Message text size',readingLineHeightLabel:'Line spacing',readingContrastLabel:'Color scheme contrast',readingContrastStandard:'Standard',readingContrastHigh:'High',readingSettingsSaved:'Readability settings are saved on this device.',
         globalMemoryOptIn:'Allow Global Memory in context.',globalMemoryHint:'Selected facts · external providers receive them only when enabled and allowed by project scope.',personalMemoryHint:'This browser’s IndexedDB · aLandi gateway only; when used, third-party providers are blocked for the whole chat.',sharedMemoryInputLabel:'Global Memory (selected facts only)',personalMemoryInputLabel:'Personal Memory for the local model',sharedMemoryPlaceholder:'Selected fact for Global Memory',personalMemoryPlaceholder:'Personal fact for the local model',saveSharedMemoryAria:'Save to Global Memory',savePersonalMemoryAria:'Save to Personal Memory',memoryPersonalMeta:'Personal · local browser · private-local',memorySharedManualMeta:'Global · added manually · shared',memorySharedPromotedMeta:'Global · promoted from Personal · shared',memorySavedLabel:'Saved',memoryPromoteAction:'Promote to Global',memoryDeleteAction:'Delete',memoryPromoteAria:'Promote this fact to Global Memory',memoryDeletePersonalAria:'Delete Personal Memory item',memoryDeleteSharedAria:'Delete Global Memory item',personalMemoryEmpty:'No Personal Memory items.',sharedMemoryEmpty:'No Global Memory items.',noProjectNav:'No project',projectMemoryScopeLabel:'Project memory scope',projectMemoryScopeOnly:'Memory inside this project only',projectMemoryScopeGlobal:'Project memory + shared memory (when enabled)',attachMediaTitle:'Photo or video',attachMediaHelp:'Images or sampled frames from a video',attachAnyFileTitle:'Any file format',attachAnyFileHelp:'Native multi-file picker; parsing depends on file type.',requestContextTitle:'Context for this request',requestContextHelp:'Selected projects apply only to the next send. The active chat and its project do not change.',clearRequestContext:'Clear selection',skillsAutoHint:'Skills: automatically selected for the task; a manual catalog is not connected yet.',requestContextLimitHint:'Context is limited to five projects and a shared size budget.',projectsTitle:'▣ Projects',currentProjectLabel:'Project for this chat',projectMemoryOptIn:'Use the selected project memory in this chat',manageProject:'Create or edit a project',projectContextGroup:'Chat and project context',projectProfileGroup:'Project profile',projectMemoryGroup:'Project memory',projectDataGroup:'Project data',projectNameLabel:'Project name',projectInstructionsLabel:'Project instructions',projectCreateTitle:'Create project',projectCreateClose:'Close project creation',projectCreateNameLabel:'Project name',projectCreateInstructionsLabel:'Project instructions',projectCreateMemoryScopeLabel:'Memory scope',projectCreateNamePlaceholder:'Project name',projectCreateInstructionsPlaceholder:'Goal, style, constraints and success criteria',createProject:'＋ Create project',saveProject:'Save changes',projectMemoryLabel:'Add a project-memory fact',exportProject:'Export project',importProject:'Import project',detachChat:'Remove chat from project',deleteProject:'Delete project and its chats',helperMemoryTitle:'Project memory helper',helperMemoryDescription:'Suggest short facts from project memory. Nothing is saved until you choose.',helperMemoryNoProject:'Choose a project first.',helperMemoryNoConfig:'Configure the aLandi aServi URL and key in cloud settings.',helperMemorySuggest:'Suggest compact facts',helperMemoryInitial:'Helper is off until ALANDI_HELPER_MODEL is configured.',helperMemoryLoading:'The helper model is preparing suggestions…',helperMemoryEmpty:'The helper found no new facts.',helperMemoryAdd:'Add to project',helperMemoryAdded:'Fact added to local project memory.',helperMemoryNoFacts:'Add facts to the selected project memory first.',helperMemoryNotConfigured:'Helper model is not configured. Set ALANDI_HELPER_MODEL and install that exact Ollama tag.',helperMemoryTimeout:'The helper timed out; memory was not changed.',helperMemoryFailed:'Could not get suggestions. Check the gateway and Ollama.',helperMemorySkippedSensitive:'Potentially sensitive facts skipped:',helperMemoryOnlySensitive:'All facts looked secret-like and were not sent to the helper.',
-        projectSourcesTitle:'Project sources',projectSourcesDescription:'Add documents to the selected project index. Text is extracted by your own aLandi Gateway.',projectSourcesStorageNotice:'The Gateway stores extracted text and metadata. Original file bytes are not retained.',projectSourcesAdd:'Add file',projectSourcesRefresh:'Refresh list',projectSourcesNoProject:'Select a project first.',projectSourcesNoConfig:'Configure the aLandi Gateway /v1 URL and key in cloud settings.',projectSourcesDisabled:'Document extraction and RAG must both be enabled on the Gateway.',projectSourcesLoading:'Loading project sources…',projectSourcesEmpty:'This project has no sources yet.',projectSourcesSelectFile:'Choose a file.',projectSourcesUnsupported:'Supported: PDF, DOCX, XLSX, TXT, Markdown, CSV and JSON.',projectSourcesTooLarge:'The file exceeds the 8 MiB limit.',projectSourcesDuplicate:'This file is already indexed in this project (matching SHA-256).',projectSourcesExtracting:'Extracting text on your own Gateway…',projectSourcesIndexing:'Indexing chunks…',projectSourcesUploaded:'Source added to the project index.',projectSourcesError:'Could not process the source. Check your own Gateway connection and availability.',projectSourcesTimeout:'The Gateway request timed out.',projectSourcesDeleteError:'Could not delete the source from the project index. Check the Gateway connection and try again.',projectSourcesDeleteConfirm:'Delete this source and its indexed chunks from this project?',projectSourcesDelete:'Delete',projectSourcesPreview:'First chunk preview',projectSourcesChunks:'chunks',projectSourcesParser:'Parser',projectSourcesSize:'Size',projectSourcesDeleteDone:'Source removed from the project index.',projectSourcesRefreshFailed:'The source changed, but the catalog could not be refreshed. Select Refresh list.'
+        voiceMenuAria:'Voice modes',voiceChatTitle:'VOICE CONVERSATION',voiceChatHelp:'Local · one turn at a time',voiceMessageTitle:'VOICE MESSAGE',voiceMessageHelp:'Record → transcribe locally → edit',voiceRecordingPanelAria:'Voice recording',voiceRecordingCancel:'Cancel',voiceRecordingStop:'Stop and transcribe',voiceConversationStop:'End conversation',voiceStatusConnecting:'Connecting microphone…',voiceStatusNextTurn:'Listening for the next turn…',voiceStatusTranscribing:'Transcribing locally…',voiceStatusSendingAudio:'Sending audio to local ASR…',voiceStatusSendingModel:'Sending your turn to the model…',voiceStatusSpeaking:'Speaking the answer with the local model…',voiceStatusRecording:'● Recording… up to 2 minutes · audio is not saved to chat history',voiceStatusReadyNext:'Ready for the next turn…',liveStatusCheckConnection:'Checking connection…',liveStatusSearchFallback:'🔎 Tavily unavailable — switching to open sources…',liveStatusWebSearch:'🔎 Web search: {query}…',liveStatusPublicSource:'📚 Public source: {source} · {query}',liveStatusReadPage:'📄 Reading page: {host}',liveStatusModelFallback:'Model unavailable; trying another model from this provider…',liveStatusProviderFallback:'Provider unavailable; trying the permitted fallback…',liveStatusPrimaryStage:'Primary response',liveStatusToolContinuation:'Continuation after tool',liveStatusModelWaiting:'🤖 Waiting for the model response…',liveStatusSearchProcessing:'🧠 The model is processing search results…',liveStatusAgentPreparing:'AgentRun · preparing the bounded chat context…',liveStatusAgentAccepted:'AgentRun accepted; the Gateway may still be working. Open Agents to resume observation',projectSourcesTitle:'Project sources',projectSourcesDescription:'Add documents to the selected project index. Text is extracted by your own aLandi Gateway.',projectSourcesStorageNotice:'The Gateway stores extracted text and metadata. Original file bytes are not retained.',projectSourcesAdd:'Add file',projectSourcesRefresh:'Refresh list',projectSourcesNoProject:'Select a project first.',projectSourcesNoConfig:'Configure the aLandi Gateway /v1 URL and key in cloud settings.',projectSourcesDisabled:'Document extraction and RAG must both be enabled on the Gateway.',projectSourcesLoading:'Loading project sources…',projectSourcesEmpty:'This project has no sources yet.',projectSourcesSelectFile:'Choose a file.',projectSourcesUnsupported:'Supported: PDF, DOCX, XLSX, TXT, Markdown, CSV and JSON.',projectSourcesTooLarge:'The file exceeds the 8 MiB limit.',projectSourcesDuplicate:'This file is already indexed in this project (matching SHA-256).',projectSourcesExtracting:'Extracting text on your own Gateway…',projectSourcesIndexing:'Indexing chunks…',projectSourcesUploaded:'Source added to the project index.',projectSourcesError:'Could not process the source. Check your own Gateway connection and availability.',projectSourcesTimeout:'The Gateway request timed out.',projectSourcesDeleteError:'Could not delete the source from the project index. Check the Gateway connection and try again.',projectSourcesDeleteConfirm:'Delete this source and its indexed chunks from this project?',projectSourcesDelete:'Delete',projectSourcesPreview:'First chunk preview',projectSourcesChunks:'chunks',projectSourcesParser:'Parser',projectSourcesSize:'Size',projectSourcesDeleteDone:'Source removed from the project index.',projectSourcesRefreshFailed:'The source changed, but the catalog could not be refreshed. Select Refresh list.'
       }
     };
     function getUiLanguage(){return safeGet('ai_ui_language_v1')==='en'?'en':'ru';}
@@ -2215,6 +2215,7 @@ permalink: /
         if(trigger&&menu)trigger.setAttribute('aria-expanded',String(!menu.classList.contains('hidden')));
       }
       updateMemoryStatusLine();refreshLocalizedChatSurface();refreshChatActionDialogLanguage();
+      refreshProjectSourcesLanguage();refreshVoiceRecordingStatus();refreshLiveStatusLanguage();
       refreshAgentRuntimeEventLanguage();
       if(!$('skillFunctionSettings').classList.contains('hidden'))renderSkillConfiguration();
       if(!$('agentFunctionSettings').classList.contains('hidden')){
@@ -2824,7 +2825,11 @@ permalink: /
     const PROJECT_SOURCE_MAX_BYTES=8*1024*1024;
     const PROJECT_SOURCE_CHUNK_CHARS=8000;
     let projectSourcesBusy=false;
+    let projectSourcesStatusState={key:'projectSourcesNoProject',args:{}};
     function projectSourcesText(key){return UI_TEXT[getUiLanguage()]?.[key]||UI_TEXT.ru[key]||key;}
+    function projectSourcesStatusMessage(){if(!projectSourcesStatusState)return '';const {key,args}=projectSourcesStatusState;return String(args.prefix||'')+projectSourcesText(key)+String(args.suffix||'');}
+    function setProjectSourcesStatus(key,args={}){projectSourcesStatusState={key,args:{...args}};const node=$('projectSourcesStatus');if(node)node.textContent=projectSourcesStatusMessage();}
+    function refreshProjectSourcesLanguage(){const node=$('projectSourcesStatus');if(node&&projectSourcesStatusState)node.textContent=projectSourcesStatusMessage();}
     function selectedProjectSourceId(){return selectedProjectForSettingsId&&projects.some(project=>project.id===selectedProjectForSettingsId)?selectedProjectForSettingsId:null;}
     function syncProjectSourcesControls(){
       const available=Boolean(selectedProjectSourceId());
@@ -2832,9 +2837,8 @@ permalink: /
       const refresh=$('projectSourcesDetails')?.querySelector('[data-action="refresh-project-sources"]');
       if(add)add.disabled=!available||projectSourcesBusy;
       if(refresh)refresh.disabled=!available||projectSourcesBusy;
-      if(!available&&$('projectSourcesStatus'))$('projectSourcesStatus').textContent=projectSourcesText('projectSourcesNoProject');
+      if(!available)setProjectSourcesStatus('projectSourcesNoProject');
     }
-    function setProjectSourcesStatus(message){const node=$('projectSourcesStatus');if(node)node.textContent=message;}
     function formatProjectSourceSize(bytes){const value=Number(bytes)||0;if(value<1024)return value+' B';if(value<1024*1024)return (value/1024).toFixed(1)+' KiB';return (value/(1024*1024)).toFixed(2)+' MiB';}
     function renderProjectSources(sources){
       const list=$('projectSourcesList');if(!list)return;list.replaceChildren();
@@ -2862,20 +2866,20 @@ permalink: /
     function projectSourcesCatalogPath(projectId){return '/rag/documents?'+new URLSearchParams({scope:'project',scope_id:projectId,limit:'500'}).toString();}
     async function loadProjectSources({force=false}={}){
       const projectId=selectedProjectSourceId();
-      if(!projectId){renderProjectSources([]);setProjectSourcesStatus(projectSourcesText('projectSourcesNoProject'));syncProjectSourcesControls();return false;}
+      if(!projectId){renderProjectSources([]);setProjectSourcesStatus('projectSourcesNoProject');syncProjectSourcesControls();return false;}
       if(projectSourcesBusy&&!force)return false;
-      setProjectSourcesStatus(projectSourcesText('projectSourcesLoading'));
+      setProjectSourcesStatus('projectSourcesLoading');
       try{
         const config=getAlandiGatewayConfig(),capabilities=await projectSourcesRequest(config,'/capabilities');
-        if(capabilities?.documents?.extraction!==true||capabilities?.rag?.enabled!==true){renderProjectSources([]);setProjectSourcesStatus(projectSourcesText('projectSourcesDisabled'));return false;}
+        if(capabilities?.documents?.extraction!==true||capabilities?.rag?.enabled!==true){renderProjectSources([]);setProjectSourcesStatus('projectSourcesDisabled');return false;}
         const catalog=await projectSourcesRequest(config,projectSourcesCatalogPath(projectId));
         if(!Array.isArray(catalog.documents))throw new Error('Gateway returned an invalid project source catalog.');
         renderProjectSources(catalog.documents);
-        setProjectSourcesStatus(catalog.count?String(catalog.count)+' · '+projectSourcesText('projectSourcesTitle'):projectSourcesText('projectSourcesEmpty'));
+        setProjectSourcesStatus(catalog.count?'projectSourcesTitle':'projectSourcesEmpty',catalog.count?{prefix:String(catalog.count)+' · '}:{});
         return true;
       }catch(error){
         renderProjectSources([]);
-        setProjectSourcesStatus(error?.name==='AbortError'?projectSourcesText('projectSourcesTimeout'):projectSourcesText('projectSourcesError'));
+        setProjectSourcesStatus(error?.name==='AbortError'?'projectSourcesTimeout':'projectSourcesError');
         return false;
       }
     }
@@ -2886,28 +2890,28 @@ permalink: /
     }
     async function sha256FileHex(file){if(!globalThis.crypto?.subtle)throw new Error('Secure SHA-256 is unavailable in this browser.');const digest=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());return Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('');}
     async function uploadProjectSource(file){
-      const projectId=selectedProjectSourceId();if(!projectId){setProjectSourcesStatus(projectSourcesText('projectSourcesNoProject'));return;}if(!file){setProjectSourcesStatus(projectSourcesText('projectSourcesSelectFile'));return;}
-      const extension=String(file.name.split('.').pop()||'').toLowerCase();if(!['pdf','docx','xlsx','txt','md','csv','json'].includes(extension)){setProjectSourcesStatus(projectSourcesText('projectSourcesUnsupported'));return;}if(file.size>PROJECT_SOURCE_MAX_BYTES){setProjectSourcesStatus(projectSourcesText('projectSourcesTooLarge'));return;}if(file.name.length>255||/[\u0000-\u001f]/.test(file.name)){setProjectSourcesStatus(projectSourcesText('projectSourcesUnsupported'));return;}if(projectSourcesBusy)return;
+      const projectId=selectedProjectSourceId();if(!projectId){setProjectSourcesStatus('projectSourcesNoProject');return;}if(!file){setProjectSourcesStatus('projectSourcesSelectFile');return;}
+      const extension=String(file.name.split('.').pop()||'').toLowerCase();if(!['pdf','docx','xlsx','txt','md','csv','json'].includes(extension)){setProjectSourcesStatus('projectSourcesUnsupported');return;}if(file.size>PROJECT_SOURCE_MAX_BYTES){setProjectSourcesStatus('projectSourcesTooLarge');return;}if(file.name.length>255||/[\u0000-\u001f]/.test(file.name)){setProjectSourcesStatus('projectSourcesUnsupported');return;}if(projectSourcesBusy)return;
       projectSourcesBusy=true;syncProjectSourcesControls();
       try{
         const config=getAlandiGatewayConfig(),capabilities=await projectSourcesRequest(config,'/capabilities');if(capabilities?.documents?.extraction!==true||capabilities?.rag?.enabled!==true)throw new Error(projectSourcesText('projectSourcesDisabled'));
         const digest=await sha256FileHex(file),existing=await projectSourcesRequest(config,projectSourcesCatalogPath(projectId));if(!Array.isArray(existing.documents))throw new Error('Gateway returned an invalid project source catalog.');
-        if(existing.documents.some(item=>String(item?.metadata?.sha256||'').toLowerCase()===digest)){renderProjectSources(existing.documents);setProjectSourcesStatus(projectSourcesText('projectSourcesDuplicate'));return;}
-        setProjectSourcesStatus(projectSourcesText('projectSourcesExtracting'));
+        if(existing.documents.some(item=>String(item?.metadata?.sha256||'').toLowerCase()===digest)){renderProjectSources(existing.documents);setProjectSourcesStatus('projectSourcesDuplicate');return;}
+        setProjectSourcesStatus('projectSourcesExtracting');
         const extracted=await projectSourcesRequest(config,'/documents/extract?filename='+encodeURIComponent(file.name),{method:'POST',headers:{'Content-Type':file.type||'application/octet-stream'},body:file});
         const text=String(extracted.text||'').trim();if(!text)throw new Error('The local parser returned no extractable text.');const chunks=splitProjectSourceText(text);if(!chunks.length)throw new Error('The local parser returned no indexable text.');
-        setProjectSourcesStatus(projectSourcesText('projectSourcesIndexing')+' '+chunks.length);
+        setProjectSourcesStatus('projectSourcesIndexing',{suffix:' '+chunks.length});
         const documentId=crypto.randomUUID(),metadata={original_name:file.name.slice(0,255),mime_type:file.type||'application/octet-stream',size_bytes:file.size,sha256:digest,parser:String(extracted.parser||'unknown').slice(0,255),character_count:Number(extracted.characters)||text.length,source_type:'file',imported_at:new Date().toISOString(),preview:chunks[0].content.slice(0,1200)};
         const sourceUri='https://project-source.invalid/'+encodeURIComponent(projectId)+'/'+documentId;
         await projectSourcesRequest(config,'/rag/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({document_id:documentId,source_uri:sourceUri,scope:'project',scope_id:projectId,metadata,chunks})});
-        if(!await loadProjectSources({force:true}))throw new Error(projectSourcesText('projectSourcesRefreshFailed'));setProjectSourcesStatus(projectSourcesText('projectSourcesUploaded'));
-      }catch(error){setProjectSourcesStatus(error?.name==='AbortError'?projectSourcesText('projectSourcesTimeout'):projectSourcesText('projectSourcesError'));}
+        if(!await loadProjectSources({force:true}))throw new Error(projectSourcesText('projectSourcesRefreshFailed'));setProjectSourcesStatus('projectSourcesUploaded');
+      }catch(error){setProjectSourcesStatus(error?.name==='AbortError'?'projectSourcesTimeout':'projectSourcesError');}
       finally{projectSourcesBusy=false;syncProjectSourcesControls();const input=$('projectSourceFileInput');if(input)input.value='';}
     }
     async function deleteProjectSource(documentId){
       const projectId=selectedProjectSourceId();if(!projectId||!documentId||projectSourcesBusy)return;if(!confirm(projectSourcesText('projectSourcesDeleteConfirm')))return;projectSourcesBusy=true;syncProjectSourcesControls();
-      try{const config=getAlandiGatewayConfig(),query=new URLSearchParams({scope:'project',scope_id:projectId});await projectSourcesRequest(config,'/rag/documents/'+encodeURIComponent(documentId)+'?'+query.toString(),{method:'DELETE'});if(!await loadProjectSources({force:true}))throw new Error(projectSourcesText('projectSourcesRefreshFailed'));setProjectSourcesStatus(projectSourcesText('projectSourcesDeleteDone'));}
-      catch(error){setProjectSourcesStatus(error?.name==='AbortError'?projectSourcesText('projectSourcesTimeout'):projectSourcesText('projectSourcesDeleteError'));}
+      try{const config=getAlandiGatewayConfig(),query=new URLSearchParams({scope:'project',scope_id:projectId});await projectSourcesRequest(config,'/rag/documents/'+encodeURIComponent(documentId)+'?'+query.toString(),{method:'DELETE'});if(!await loadProjectSources({force:true}))throw new Error(projectSourcesText('projectSourcesRefreshFailed'));setProjectSourcesStatus('projectSourcesDeleteDone');}
+      catch(error){setProjectSourcesStatus(error?.name==='AbortError'?'projectSourcesTimeout':'projectSourcesDeleteError');}
       finally{projectSourcesBusy=false;syncProjectSourcesControls();}
     }
     async function localHelperMemoryRequest(facts){
@@ -4481,7 +4485,7 @@ permalink: /
       const button=document.querySelector('[data-action="test-connection"]');
       if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=english?'Checking…':'Проверяю…';}
       updateApiKeyLamp('pending',english?'Checking the model. A retry is attempted only when the API explicitly reports that the model ID is unavailable.':'Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
-      showStatus(english?'Checking connection…':'Проверяю подключение…');
+      showLocalizedStatus('liveStatusCheckConnection');
       let result=null,lastError=null;
       const probe=async candidateModel=>{
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
@@ -5753,9 +5757,14 @@ let agentRuntimeRefreshPromise = null;
     }
     function formatElapsed(ms){const n=Math.max(0,Math.floor(ms/1000));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
     function getRunEstimateMs(){if(!activeRunTelemetry)return null;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|');try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=(Array.isArray(all[key])?all[key].slice(-7):[]).filter(Number.isFinite).sort((a,b)=>a-b);return values.length?values[Math.floor(values.length/2)]:null;}catch(_){return null;}}
-    function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs();$('thinkingTime').textContent=estimate?'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · собираю оценку';}
-    function showStatus(message,tone='info'){const allowedTones=['neutral','info','success','warning','error'];$('searchStatus').dataset.tone=allowedTones.includes(tone)?tone:'info';$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
-    function hideStatus(){$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
+    let activeRunStatusLocalization=null;
+    function localizedStatusText(key,args={}){const template=UI_TEXT[getUiLanguage()]?.[key]||UI_TEXT.ru[key]||key;return Object.entries(args).reduce((message,[name,value])=>message.replaceAll('{'+name+'}',String(value??'')),template);}
+    function updateStatusTimer(){if(!activeRunStartedAt||$('searchStatus').classList.contains('hidden'))return;const elapsed=Date.now()-activeRunStartedAt,estimate=getRunEstimateMs(),english=getUiLanguage()==='en';$('thinkingTime').textContent=estimate?(english?'Elapsed '+formatElapsed(elapsed)+' · estimate '+formatElapsed(Math.max(elapsed,estimate)):'Прошло '+formatElapsed(elapsed)+' · ориентир '+formatElapsed(Math.max(elapsed,estimate))):(english?'Elapsed '+formatElapsed(elapsed)+' · estimating':'Прошло '+formatElapsed(elapsed)+' · собираю оценку');}
+    function showStatus(message,tone='info',localization=null){activeRunStatusLocalization=localization&&typeof localization.key==='string'?{key:localization.key,args:{...(localization.args||{})}}:null;const allowedTones=['neutral','info','success','warning','error'];$('searchStatus').dataset.tone=allowedTones.includes(tone)?tone:'info';$('statusText').textContent=message;$('searchStatus').classList.add('motion-accent','motion-active');$('searchStatus').classList.remove('hidden');$('searchStatus').querySelector('.status-thinking-dots')?.classList.add('is-active');if(!statusTimerId&&activeRunStartedAt)statusTimerId=setInterval(updateStatusTimer,1000);updateStatusTimer();}
+    function showLocalizedStatus(key,args={},tone='info'){const localization={key,args:{...args}};showStatus(localizedStatusText(key,localization.args),tone,localization);}
+    function showStageStatus(stageName){const key=stageName==='Основной ответ'?'liveStatusPrimaryStage':stageName==='Продолжение после инструмента'?'liveStatusToolContinuation':null;if(key)showLocalizedStatus(key);else showStatus(stageName);}
+    function refreshLiveStatusLanguage(){if(!activeRunStatusLocalization||$('searchStatus').classList.contains('hidden'))return;$('statusText').textContent=localizedStatusText(activeRunStatusLocalization.key,activeRunStatusLocalization.args);updateStatusTimer();}
+    function hideStatus(){$('searchStatus').classList.remove('motion-active');$('searchStatus').querySelector('.status-thinking-dots')?.classList.remove('is-active');$('searchStatus').classList.add('hidden');activeRunStatusLocalization=null;if(!isGenerating&&statusTimerId){clearInterval(statusTimerId);statusTimerId=null;}}
     function saveRunDuration(){if(!activeRunTelemetry||!activeRunStartedAt)return;const key=[activeRunTelemetry.provider,activeRunTelemetry.model,activeRunTelemetry.workflow].join('|'),elapsed=Date.now()-activeRunStartedAt;try{const all=JSON.parse(safeGet('ai_request_timing_v1')||'{}'),values=Array.isArray(all[key])?all[key]:[];values.push(elapsed);all[key]=values.slice(-8);safeSet('ai_request_timing_v1',JSON.stringify(all));}catch(_){} }
     function abortError() { return new DOMException('Запрос отменён', 'AbortError'); }
     function throwIfAborted(signal) { if (signal.aborted) throw abortError(); }
@@ -5810,7 +5819,7 @@ let agentRuntimeRefreshPromise = null;
     }
     async function performOpenWebFallback(query, signal, mode = 'fast', reason = '') {
       const sources = mode === 'deep' ? ['wikipedia','github','hackernews','arxiv','stackexchange'] : ['wikipedia','github','hackernews'];
-      showStatus('🔎 Tavily недоступен — переключаюсь на открытые источники…','warning');
+      showLocalizedStatus('liveStatusSearchFallback',{},'warning');
       const attempts = await Promise.all(sources.map(async source => {
         try {
           const result = await performPublicKnowledgeSearch(source, query, signal, mode);
@@ -5830,7 +5839,7 @@ let agentRuntimeRefreshPromise = null;
     async function performTavilySearch(query, signal, mode = 'fast') {
       const key = safeGet(STORAGE.tavilyKey) || '';
       if (!key) return performOpenWebFallback(query, signal, mode);
-      showStatus(`🔎 Поиск в сети: ${query.slice(0, 120)}…`);
+      showLocalizedStatus('liveStatusWebSearch',{query:query.slice(0,120)});
       let response;
       try {
         response = await fetch('https://api.tavily.com/search', {
@@ -5896,7 +5905,7 @@ let agentRuntimeRefreshPromise = null;
       const q = String(query || '').trim().slice(0, 300);
       if (!q) return 'Пустой поисковый запрос.';
       const limit = mode === 'deep' ? 5 : 3;
-      showStatus('📚 Открытый источник: ' + source + ' · ' + q.slice(0, 70));
+      showLocalizedStatus('liveStatusPublicSource',{source,query:q.slice(0,70)});
       const wikiLanguage = /[\u0E00-\u0E7F]/u.test(q) ? 'th' : (/[а-яё]/i.test(q) ? 'ru' : 'en');
       let endpoint;
       if (source === 'wikipedia') {
@@ -5954,7 +5963,7 @@ let agentRuntimeRefreshPromise = null;
     }
     async function readPublicWebpage(rawUrl, signal, mode = 'fast') {
       const url = validatePublicHttpsUrl(rawUrl);
-      showStatus('📄 Читаю страницу: ' + url.hostname);
+      showLocalizedStatus('liveStatusReadPage',{host:url.hostname});
       const response = await fetchPublicText(url.href, signal);
       let content;
       if (/json/i.test(response.contentType) || /^[\s]*[\[{]/.test(response.text)) {
@@ -6089,7 +6098,7 @@ let agentRuntimeRefreshPromise = null;
           // Only a clearly model-specific error justifies choosing another model. Auth, quota,
           // network, malformed endpoint, and transient 5xx errors are not model-selection signals.
           if(!modelError)break;
-          if(i<candidates.length-1){const next=candidates[i+1],fallbackMessage=next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':'');if(fallbackMessage)showStatus(fallbackMessage,'warning');}
+          if(i<candidates.length-1){const next=candidates[i+1],fallbackKey=next.provider===candidate.provider?'liveStatusModelFallback':(allowCross?'liveStatusProviderFallback':'');if(fallbackKey)showLocalizedStatus(fallbackKey,{},'warning');}
         }
       }
       const failure=new Error('request_failed');
@@ -6102,7 +6111,7 @@ let agentRuntimeRefreshPromise = null;
       return text.length < 240 && /^(i'?m sorry, but i can'?t help with that\.?|i cannot help with that request\.?|извините, но я не могу помочь с этим запросом\.?|я не могу помочь с этим запросом\.?)$/i.test(text);
     }
     async function requestTextStage(systemPrompt, messages, signal, stageName) {
-      throwIfAborted(signal); showStatus(stageName);
+      throwIfAborted(signal); showStageStatus(stageName);
       const model = safeGet(STORAGE.model) || DEFAULT_MODEL;
       const data = await requestChatCompletion({ model, messages: [{ role: 'system', content: systemPrompt }, ...messages], stream: false }, signal, stageName);
       const content = data?.choices?.[0]?.message?.content;
@@ -6381,7 +6390,7 @@ let agentRuntimeRefreshPromise = null;
         const localDeterministic = safeGet(STORAGE.provider)==='alandi' && !useSearch && !useMultiAgent && !tools;
         const body = { model, messages: apiMessages, stream: false, ...(localDeterministic ? {temperature:0} : {}) };
         if (tools && round < maxToolRounds && executedToolCalls < maxToolCallsPerRun) { body.tools = tools; body.tool_choice = 'auto'; }
-        showStatus(round === 0 ? '🤖 Ожидание ответа модели…' : '🧠 Модель обрабатывает результаты поиска…');
+        showLocalizedStatus(round===0?'liveStatusModelWaiting':'liveStatusSearchProcessing');
         const data = await requestChatCompletion(body, signal, round === 0 ? 'Основной ответ' : 'Продолжение после инструмента');
         const message = data?.choices?.[0]?.message;
         if (!message) throw new Error('API не вернул сообщение модели. Проверьте выбранную модель и совместимость endpoint.');
@@ -6541,7 +6550,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const controller=new AbortController();
       isGenerating=true;activeChatId=chat.id;activeController=controller;setBusy(true);
       activeRunStartedAt=Date.now();
-      showStatus(english?'AgentRun · preparing the bounded chat context…':'AgentRun · подготовка ограниченного контекста чата…','info');
+      showLocalizedStatus('liveStatusAgentPreparing');
       let accepted=false;
       try {
         if(!agentRuntimeReady)await refreshAgentRunRuntime();
@@ -6607,7 +6616,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         } else if(!agentRuntimeActiveRun&&!chat.activeAgentRunId) {
           hideStatus();
         } else {
-          showStatus(english?'AgentRun accepted; the Gateway may still be working. Open Agents to resume observation.':'AgentRun принят; Gateway может продолжать выполнение. Открой «Агенты», чтобы возобновить наблюдение.','info');
+          showLocalizedStatus('liveStatusAgentAccepted');
         }
       } catch(error) {
         if(!accepted) {
@@ -7164,6 +7173,9 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     let voiceConversationApiKey = '';
     let voiceConversationChatId = '';
     let activeVoiceTranscriptionController = null;
+    let activeVoiceStatusKey = null;
+    function setVoiceRecordingStatus(key){activeVoiceStatusKey=key;const node=$('voiceRecordingStatus');if(node)node.textContent=UI_TEXT[getUiLanguage()]?.[key]||UI_TEXT.ru[key]||key;}
+    function refreshVoiceRecordingStatus(){if(!activeVoiceStatusKey)return;const node=$('voiceRecordingStatus');if(node)node.textContent=UI_TEXT[getUiLanguage()]?.[activeVoiceStatusKey]||UI_TEXT.ru[activeVoiceStatusKey]||activeVoiceStatusKey;}
 
     function voiceConversationRouteStillSelected() {
       return voiceConversationActive && currentProvider()==='alandi'
@@ -7209,7 +7221,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         $('voiceRecordingPanel').classList.remove('hidden');
         $('voiceRecordingActions').classList.remove('hidden');
         $('stopVoiceConversationBtn').classList.remove('hidden');
-        $('voiceRecordingStatus').textContent='Подключаю микрофон…';
+        setVoiceRecordingStatus('voiceStatusConnecting');
         showToast('Голосовой диалог запущен. Останови запись после каждой реплики; ответ будет озвучен локально.');
         await startVoiceMessageRecording({voiceConversation:true});
         if(voiceConversationActive&&!activeVoiceRecorder)stopVoiceConversation(false);
@@ -7230,6 +7242,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       voiceConversationBaseUrl='';
       voiceConversationApiKey='';
       voiceConversationChatId='';
+      activeVoiceStatusKey=null;
       $('voiceRecordingPanel').classList.add('hidden');
       $('voiceRecordingActions').classList.remove('hidden');
       $('stopVoiceConversationBtn').classList.add('hidden');
@@ -7296,14 +7309,14 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             && conversationGenerationForTurn === voiceConversationGeneration;
           if (discarded) {
             if (conversationStillActive) {
-              $('voiceRecordingStatus').textContent = 'Слушаю следующую реплику…';
+              setVoiceRecordingStatus('voiceStatusNextTurn');
               $('voiceRecordingActions').classList.remove('hidden');
               await startVoiceMessageRecording({voiceConversation:true});
             }
             return;
           }
           if (conversationStillActive) {
-            $('voiceRecordingStatus').textContent = 'Расшифровываю локально…';
+            setVoiceRecordingStatus('voiceStatusTranscribing');
             $('voiceRecordingActions').classList.add('hidden');
             $('stopVoiceConversationBtn').classList.remove('hidden');
           } else {
@@ -7320,7 +7333,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
             return;
           }
-          $('voiceRecordingStatus').textContent = conversationStillActive ? 'Расшифровываю локально…' : 'Отправляю аудио в локальный ASR…';
+          setVoiceRecordingStatus(conversationStillActive?'voiceStatusTranscribing':'voiceStatusSendingAudio');
           try {
             const controller = new AbortController();
             if(conversationStillActive)activeVoiceTranscriptionController=controller;
@@ -7356,7 +7369,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
               }
               field.value=payload.text.trim();
               autoResizeTextarea(field);
-              $('voiceRecordingStatus').textContent='Отправляю реплику модели…';
+              setVoiceRecordingStatus('voiceStatusSendingModel');
               const previousMessageCount=getCurrentChat().messages.length;
               await sendMessage(false);
               if(!voiceConversationRouteStillSelected()) {
@@ -7368,7 +7381,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
                           showToast('Не удалось получить ответ. Слушаю следующую реплику.','error');
                 await startVoiceMessageRecording({voiceConversation:true});return;
               }
-              $('voiceRecordingStatus').textContent='Озвучиваю ответ локальной моделью…';
+              setVoiceRecordingStatus('voiceStatusSpeaking');
               await playAssistantMessage(answer.content);
               return;
             }
@@ -7391,7 +7404,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           }
         }, { once: true });
         activeVoiceRecorder.start(250);
-        $('voiceRecordingStatus').textContent = '● Запись… не более 2 минут · аудио не сохраняется в истории';
+        setVoiceRecordingStatus('voiceStatusRecording');
         $('voiceRecordingPanel').classList.remove('hidden');
         $('voiceMenu').classList.add('hidden');
         voiceRecordingLimitTimer = setTimeout(() => stopVoiceMessageRecording(false), 120000);
@@ -7430,7 +7443,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       player.removeAttribute('src');player.load();
       $('ttsMiniPlayer').classList.add('hidden');
       $('voiceRecordingActions').classList.remove('hidden');
-      $('voiceRecordingStatus').textContent='Готов к следующей реплике…';
+      setVoiceRecordingStatus('voiceStatusReadyNext');
       await startVoiceMessageRecording({voiceConversation:true});
       if(voiceConversationActive&&!activeVoiceRecorder)stopVoiceConversation(false);
     });
@@ -7953,7 +7966,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'add-project-memory': addProjectMemory();break;
           case 'delete-project-memory': deleteProjectMemory(control.dataset.memoryId);break;
           case 'suggest-helper-memory': await suggestProjectMemoryWithHelper();break;
-          case 'select-project-source-file': if(selectedProjectSourceId())$('projectSourceFileInput').click();else setProjectSourcesStatus(projectSourcesText('projectSourcesNoProject'));break;
+          case 'select-project-source-file': if(selectedProjectSourceId())$('projectSourceFileInput').click();else setProjectSourcesStatus('projectSourcesNoProject');break;
           case 'refresh-project-sources': await loadProjectSources();break;
           case 'delete-project-source': await deleteProjectSource(control.dataset.documentId);break;
           case 'add-helper-memory-suggestion': addHelperMemorySuggestion(Number(control.dataset.suggestionIndex));break;
@@ -7971,7 +7984,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'stop-speech': if(voiceConversationActive)stopVoiceConversation();else stopAssistantSpeech(); break;
           case 'stop-voice-conversation': stopVoiceConversation(); break;
           case 'stop-voice-recording': stopVoiceMessageRecording(false); break;
-          case 'cancel-voice-recording': stopVoiceMessageRecording(true); break;
+          case 'cancel-voice-recording': stopVoiceMessageRecording(true); if(!voiceConversationActive){activeVoiceStatusKey=null;$('voiceRecordingPanel').classList.add('hidden');} break;
           case 'toggle-sidebar': toggleSidebar(); break;
           case 'close-sidebar': toggleSidebar(false); break;
           case 'new-chat': if(voiceConversationActive)stopVoiceConversation(false);createNewChat(); break;
