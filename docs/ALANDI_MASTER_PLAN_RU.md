@@ -212,7 +212,7 @@
 - [~] 11. Audit thrown errors shown to users for locale-safe messages; project-memory helper and settings-profile import now map unknown/parser/Gateway errors to RU/EN safe copy, but the full thrown-error inventory remains open.
 - [~] 12. Audit async Gateway failure/status messages for locale refresh; helper, local document extraction and local ASR no longer render raw Gateway details, with RU/EN redaction regressions added.
 - [~] 13. Audit provider test/connect/disconnect failure feedback; provider probe failure is localized, redacts echoed credentials, and exposes an aria-busy lifecycle with RU/EN Playwright coverage. The full provider probe/connect/disconnect matrix remains open.
-- [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby, while the full CRUD feedback inventory remains open.
+- [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby. Existing bundle E2E verifies a new imported project ID/name, imported chat association, and preservation of the source/other project; the full CRUD feedback inventory remains open.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
 - [ ] 16. Audit chat CRUD and dialog validation.
 - [ ] 17. Audit trace export/copy/download feedback.
