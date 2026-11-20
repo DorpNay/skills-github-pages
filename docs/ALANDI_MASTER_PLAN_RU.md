@@ -167,7 +167,7 @@
 - [~] 27. Voice menu labels and active recording status re-localize without resetting MediaRecorder; cancel now stops capture and closes the one-shot panel while preserving conversation-turn discard semantics. Mock-recorder E2E authored; Chromium execution pending.
 - [~] 28. Live request status and elapsed timer re-localize from a semantic descriptor while the request remains in flight. Delayed-response E2E authored; the assertion now follows the actual model-waiting stage rather than assuming a pipeline stage. Chromium execution pending.
 - [~] 29. Historical tool-call, provider/cache, research-trace and retry labels refresh in place; E2E compares stored chat JSON before/after. Chromium execution pending.
-- [ ] 30. Verify full RU → EN → RU round-trip in Chromium at 320/390/768/1440px.
+- [~] 30. Verify full RU → EN → RU round-trip in Chromium at 320/390/768/1440px; a Playwright regression now iterates all four widths, checks the language/placeholder state, preserves the unsent composer draft and asserts that locale changes do not navigate. Chromium execution remains pending.
 
 ### P0.27 — Chat, project and composer interaction integrity (PARTIAL)
 
