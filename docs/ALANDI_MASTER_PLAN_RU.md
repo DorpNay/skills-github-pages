@@ -248,7 +248,7 @@
 - [~] 19. Sidebar uses `aria-hidden` plus `inert`; the runtime audit verifies closed navigation has no tabbable descendants and checks open/closed states. Playwright execution pending.
 - [~] 20. Outside-click now closes menus without swallowing the clicked action; Function panels remain on the shared dispatcher, with Escape/backdrop behavior and keyboard regression authored. Full menu inventory remains open.
 - [ ] 21. Confirm action buttons do not trigger nested row click handlers twice.
-- [ ] 22. Confirm disabled controls cannot dispatch consequential actions.
+- [~] 22. Confirm disabled controls cannot dispatch consequential actions; the shared delegated dispatcher now ignores native `disabled` and `aria-disabled="true"` action controls before dispatch. E2E injects an aria-disabled destructive action and asserts no confirmation or project mutation; execution pending.
 - [~] 23. Provider request failures now use localized status-based feedback and preserve the draft; the 401 regression asserts the original text remains and raw credentials/details are absent.
 - [~] 24. Mobile navigation, nested menus, attachment actions and composer controls now enforce 44px minimum targets; native-device and complete keyboard parity checks remain open.
 - [ ] 25. Confirm native controls remain operable in forced-colors mode.

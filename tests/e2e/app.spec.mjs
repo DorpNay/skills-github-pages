@@ -6983,3 +6983,31 @@ test('project memory deletion requires localized confirmation and cancellation p
   await expect.poll(() => page.evaluate(id => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]').find(project => project.id === 'e2e-project-memory-delete')?.memory.some(item => item.id === id), memoryId)).toBe(false);
   await expect(page.locator('#projectMemoryBox')).not.toContainText('PROJECT_MEMORY_DELETE_SENTINEL');
 });
+
+
+test('aria-disabled action controls cannot dispatch destructive operations', async ({ page }) => {
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const project = { id: 'e2e-disabled-action-project', name: 'Disabled action project', description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: now, updatedAt: now };
+    const chat = { id: 'e2e-disabled-action-chat', title: 'Disabled action chat', projectId: project.id, projectMemoryEnabled: false, messages: [], createdAt: now, updatedAt: now };
+    localStorage.setItem('ai_projects_v1', JSON.stringify([project]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', chat.id);
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  let dialogSeen = false;
+  page.on('dialog', dialog => { dialogSeen = true; void dialog.dismiss(); });
+  await page.evaluate(() => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.action = 'delete-project';
+    button.setAttribute('aria-disabled', 'true');
+    button.textContent = 'Disabled destructive action';
+    button.id = 'e2e-aria-disabled-delete-project';
+    document.body.appendChild(button);
+    button.click();
+  });
+  expect(dialogSeen, 'aria-disabled actions must not open destructive confirmations').toBe(false);
+  const projects = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]'));
+  expect(projects.map(project => project.id)).toEqual(['e2e-disabled-action-project']);
+});

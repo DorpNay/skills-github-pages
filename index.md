@@ -7833,7 +7833,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
 
     document.addEventListener('click', async (event) => {
       const control = event.target.closest('[data-action]');
-      if (!control || control.closest('#messageViewerContent')) return;
+      if (!control || control.closest('#messageViewerContent') || control.disabled || control.getAttribute('aria-disabled') === 'true') return;
       const action = control.dataset.action;
       if (control.closest('#chatBox')) {
         const isCodeAction = ['copy-code','download-code','run-python'].includes(action) && control.classList.contains('code-action') && control.closest('.code-block');
