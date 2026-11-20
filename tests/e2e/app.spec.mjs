@@ -442,6 +442,7 @@ test('mobile project and chat navigation controls meet the 44px touch target', a
   await page.locator('#projectCreateNameInput').fill('Mobile target project');
   await page.locator('#projectCreateModal [data-action="create-project"]').click();
   await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await page.locator('[data-action="toggle-sidebar"]').click();
 
   const projectNavigation = page.locator('#projectNavigationList');
   if (await projectNavigation.evaluate(element => element.classList.contains('hidden'))) {
@@ -3972,6 +3973,9 @@ test('mobile nested menu and attachment actions meet the 44px touch target', asy
   await page.locator('#projectCreateNameInput').fill('Nested menu target project');
   await page.locator('#projectCreateModal [data-action="create-project"]').click();
   await expect(page.locator('#projectCreateModal')).toBeHidden();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const projectNavigation=page.locator('#projectNavigationList');
+  if(await projectNavigation.evaluate(element=>element.classList.contains('hidden')))await page.locator('#projectNavToggle').click();
 
   const measureTargets = async (label, locator) => {
     const count = await locator.count();
@@ -4563,6 +4567,12 @@ test('skill and agent configuration setters restore unsaved values when chat sto
     };
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="skills"]').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
+  await page.locator('#functionsMenuSummary').click();
+  await page.locator('#functionsMenu [data-function="agents"]').click();
+  await expect(page.locator('#functionPanelModal')).toBeVisible();
   const before = await page.evaluate(() => localStorage.getItem('ai_chats_v87'));
   await page.evaluate(() => { window.__failChatWrites = true; });
   await page.evaluate(() => {
