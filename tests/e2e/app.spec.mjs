@@ -7899,8 +7899,12 @@ test('client-facing tool and clipboard failures never expose raw exception diagn
     message.innerHTML = '<div class="code-block"><pre><code class="language-js">const safe = true;</code></pre><button class="code-action" data-action="copy-code">Copy</button></div>';
     document.querySelector('#chatBox').appendChild(message);
   });
-  await page.locator('#chatBox [data-action="copy-code"]').last().click();
-  await expect(page.locator('#toast')).toContainText('Не удалось скопировать код');
-  await expect(page.locator('#toast')).not.toContainText('SECRET_SENTINEL');
-  await expect(page.locator('#toast')).not.toContainText('user:password');
+  await page.evaluate(() => { document.execCommand = () => false; });
+  for (const [locale, message] of [['ru', 'Не удалось скопировать код'], ['en', 'Could not copy code']]) {
+    await page.locator('#uiLanguage').selectOption(locale);
+    await page.locator('#chatBox [data-action="copy-code"]').last().click();
+    await expect(page.locator('#toast')).toContainText(message);
+    await expect(page.locator('#toast')).not.toContainText('SECRET_SENTINEL');
+    await expect(page.locator('#toast')).not.toContainText('user:password');
+  }
 });
