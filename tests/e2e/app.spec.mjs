@@ -7896,7 +7896,7 @@ test('client-facing tool and clipboard failures never expose raw exception diagn
   await page.evaluate(() => {
     const message = document.createElement('div');
     message.className = 'message assistant-message';
-    message.innerHTML = '<div class="code-block"><pre><code class="language-js">const safe = true;</code></pre><button data-action="copy-code">Copy</button></div>';
+    message.innerHTML = '<div class="code-block"><pre><code class="language-js">const safe = true;</code></pre><button class="code-action" data-action="copy-code">Copy</button></div>';
     document.querySelector('#chatBox').appendChild(message);
   });
   await page.locator('#chatBox [data-action="copy-code"]').last().click();
