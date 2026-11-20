@@ -1,6 +1,28 @@
 name: Independent Quality Sentinels
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.md'
+      - 'tests/e2e/**'
+      - 'tests/check-action-pinning.test.mjs'
+      - 'scripts/quality-agents.mjs'
+      - 'scripts/check-action-pinning.mjs'
+      - 'scripts/provider-smoke*.mjs'
+      - 'scripts/diagnose_model_runtime.sh'
+      - '.github/workflows/quality-sentinels.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.md'
+      - 'tests/e2e/**'
+      - 'tests/check-action-pinning.test.mjs'
+      - 'scripts/quality-agents.mjs'
+      - 'scripts/check-action-pinning.mjs'
+      - 'scripts/provider-smoke*.mjs'
+      - 'scripts/diagnose_model_runtime.sh'
+      - '.github/workflows/quality-sentinels.yml'
   workflow_dispatch:
     inputs:
       run_static_analysis:
