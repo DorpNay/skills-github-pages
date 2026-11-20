@@ -45,7 +45,7 @@ const suites = {
       assert.ok(agentPanel.includes('id="agentTopologyRoadmapDetails"'), 'Agents must distinguish planned topologies from current runtime.');
       assert.ok(agentPanel.includes('data-i18n="agentTopologySubagents"'), 'Chat-directed subagents must be explicit as a planned capability.');
       assert.equal(agentPanel.includes('roadmap-ticker'), false, 'Do not display an animated placeholder as agent progress.');
-      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\\s\\S]*?<\\/section>/)?.[0] || '';
+      const connectorPanel = source.match(/<section id="connectorFunctionStatus"[\s\S]*?<\/section>/)?.[0] || '';
       assert.ok(connectorPanel, 'Connectors must open an independent panel.');
       assert.ok(connectorPanel.includes('functionConnectorsDescription'), 'Connectors must explain the current connection state.');
       assert.equal(/<(?:button|input|select|textarea)\b/i.test(connectorPanel), false, 'Do not show fake connector actions before a real registry and permissions exist.');
@@ -97,7 +97,7 @@ const suites = {
       assert.ok(source.includes('<details id="additionalSettings"'), 'Additional settings must have a separate disclosure.');
       assert.equal(providerPicker.includes('<option value="alandi"'), false, 'The private aLandi route must never appear in the third-party provider picker.');
       assert.equal(source.includes('providerPrimaryGroup'), false, 'The obsolete hidden primary-provider optgroup must be removed.');
-      assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom">'), 'External providers must remain selectable.');
+      assert.ok(externalRouteGroup.includes('<option value="gemini">') && externalRouteGroup.includes('<option value="custom"'), 'External providers must remain selectable.');
       includes("const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')]", 'aServi must be mutually exclusive with third-party and additional settings; those two sections may coexist.');
       assert.equal((source.match(/id="cloudConnect"/g) || []).length, 0, 'The retired cloud connection element ID must remain absent.');
       includes('function connectAlandiAServi()', 'The aServi UI must verify a real model response before showing connected.');
@@ -203,7 +203,7 @@ const suites = {
       includes('await recordSuccessfulRoute(candidate,stageName,data?.model,{elapsedMs,attemptIndex:i+1,cacheStatus:data?.__alCacheStatus})', 'Successful requests must preserve per-attempt timings and carry the optional server-cache status.');
       includes('async function requestChatCompletion(body,signal', 'All model calls must use the classified provider fallback path.');
       includes("Запрос не выполнен. Исходный текст сохранён.", 'Fallback errors must preserve the original user prompt.');
-      includes("showToast('Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
+      includes("showToast(english?'Settings saved.':'Настройки сохранены')", 'Saving settings should use the toast and keep the modal open.');
       includes("node.classList.add('toast-visible')", 'Toast notification must use lightweight CSS animation.');
       includes("$('userInput').disabled = false;", 'Composer must remain editable during generation.');
       includes("['openai/gpt-oss-120b:fastest'", 'Hugging Face preset should use a routed chat model.');

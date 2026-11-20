@@ -923,7 +923,7 @@ permalink: /
         <button type="button" data-action="connect-pollinations" data-i18n="pollinationsConnect" class="w-full bg-cyan-900/50 hover:bg-cyan-800/70 border border-cyan-700/50 py-2 rounded-lg text-xs text-cyan-100">Подключить аккаунт Pollinations · PKCE</button>
         <button type="button" data-action="disconnect-pollinations" data-i18n="pollinationsDisconnect" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 py-1.5 rounded-lg text-[11px] text-gray-300">Завершить сессию Pollinations</button>
       </div>
-      <div class="flex gap-2"><button type="button" data-action="test-connection" data-i18n="testProviderConnection" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" data-i18n="clearProviderKey" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
+      <div class="flex gap-2"><button type="button" data-action="test-connection" data-i18n="testProviderConnection" aria-busy="false" class="flex-1 bg-emerald-900/70 hover:bg-emerald-800 border border-emerald-700/50 py-2 rounded-lg text-xs text-emerald-100">Проверить соединение и модель</button><button type="button" data-action="clear-provider-key" data-i18n="clearProviderKey" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 py-2 px-3 rounded-lg text-xs text-gray-300">Удалить ключ</button></div>
              <input type="text" id="modelName" data-i18n-aria-label="modelNameLabel" aria-label="Модель" autocomplete="off" class="w-full p-2 bg-gray-900 rounded-lg border border-gray-700 text-sm outline-none advanced-field" data-i18n-placeholder="modelNamePlaceholder" placeholder="ID модели"></div>
       </details>
       <details id="additionalSettings" class="settings-subpanel rounded-xl border border-gray-700">
@@ -4343,6 +4343,7 @@ permalink: /
     }
     async function testProviderConnection(){
       if(isTestingProviderConnection)return;
+      const english=getUiLanguage()==='en';
       const provider=currentProvider(),baseUrl=$('baseUrl').value.trim().replace(/\/+$/,'').replace(/\/chat\/completions$/i,''),key=provider==='kilo'?'':(provider==='pollinations'?getProviderRequestKey(provider):($('apiKey').value.trim()||getProviderRequestKey(provider))),model=$('modelName').value.trim();
       const initialKeyInput=$('apiKey').value.trim();
       const initialCloudSettings=provider==='alandi'?getCloudSettings():null;
@@ -4362,17 +4363,17 @@ permalink: /
           &&key===liveEffectiveKey;
       };
       if(!key&&provider!=='kilo'){
-        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending','App Key задан. Подключи Pollinations через OAuth PKCE, затем повтори проверку.');showToast('Сначала подключи Pollinations через OAuth PKCE.','error');return;}
-        updateApiKeyLamp('error','Сначала вставь API-ключ.');showToast('Для проверки нужен API-ключ выбранного провайдера.','error');return;
+        if(provider==='pollinations'&&($('apiKey').value.trim()||safeGet(providerKeyStorage('pollinations')))){updateApiKeyLamp('pending',english?'Connect Pollinations with OAuth PKCE first.':'Сначала подключи Pollinations через OAuth PKCE.');showToast(english?'Connect Pollinations with OAuth PKCE first.':'Сначала подключи Pollinations через OAuth PKCE.','error');return;}
+        updateApiKeyLamp('error',english?'An API key is required to test this provider.':'Для проверки нужен API-ключ выбранного провайдера.');showToast(english?'An API key is required to test this provider.':'Для проверки нужен API-ключ выбранного провайдера.','error');return;
       }
-      if(!model){updateApiKeyLamp('error','Укажи модель для проверки.');return;}
-      let parsed;try{parsed=new URL(baseUrl);}catch(_){updateApiKeyLamp('error','Укажи корректный Base URL.');return;}
-      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error','Для удалённого API нужен HTTPS.');return;}
+      if(!model){updateApiKeyLamp('error',english?'Enter a model ID to test.':'Укажи модель для проверки.');return;}
+      let parsed;try{parsed=new URL(baseUrl);}catch(_){updateApiKeyLamp('error',english?'Enter a valid Base URL.':'Укажи корректный Base URL.');return;}
+      if(parsed.protocol!=='https:'&&!['localhost','127.0.0.1','[::1]'].includes(parsed.hostname)){updateApiKeyLamp('error',english?'Remote APIs must use HTTPS.':'Для удалённого API нужен HTTPS.');return;}
       isTestingProviderConnection=true;
       const button=document.querySelector('[data-action="test-connection"]');
-      if(button){button.disabled=true;button.textContent=getUiLanguage()==='en'?'Checking…':'Проверяю…';}
-      updateApiKeyLamp('pending','Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
-      showStatus('Проверяю подключение…');
+      if(button){button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=english?'Checking…':'Проверяю…';}
+      updateApiKeyLamp('pending',english?'Checking the model. A retry is attempted only when the API explicitly reports that the model ID is unavailable.':'Проверяю модель. Повторю попытку только если API явно сообщил, что ID модели недоступен.');
+      showStatus(english?'Checking connection…':'Проверяю подключение…');
       let result=null,lastError=null;
       const probe=async candidateModel=>{
         const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
@@ -4410,13 +4411,14 @@ permalink: /
           }
 
           safeSet('ai_provider_connection_'+provider,'');
-          updateApiKeyLamp('error','Не удалось подтвердить модель: '+String(lastError?.message||'нет совместимого ответа').slice(0,240));
-          showToast('Проверка провайдера не пройдена.','error');return;
+          const status=Number.isInteger(lastError?.status)?' (HTTP '+lastError.status+')':'';
+          updateApiKeyLamp('error',english?'Could not confirm the model'+status+'. Check the provider key and model ID.':'Не удалось подтвердить модель'+status+'. Проверьте ключ провайдера и ID модели.');
+          showToast(english?'Provider/model check failed.':'Проверка провайдера не пройдена.','error');return;
         }
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
           if(provider==='alandi')void refreshCloudStatus();
-          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          showToast(english?'Settings changed during the check. The result was not saved; run the check again.':'Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
           return;
         }
         const fingerprint=await providerKeyFingerprint(key);
@@ -4424,7 +4426,7 @@ permalink: /
         if(!isProviderProbeContextCurrent()){
           await refreshApiKeyLamp();
           if(provider==='alandi')void refreshCloudStatus();
-          showToast('Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
+          showToast(english?'Settings changed during the check. The result was not saved; run the check again.':'Настройки изменились во время проверки. Результат не сохранён; запусти проверку ещё раз.','error');
           return;
         }
         $('modelName').value=result.candidateModel;safeSet(STORAGE.model,result.candidateModel);safeSet(STORAGE.provider,provider);safeSet(STORAGE.baseUrl,baseUrl);
@@ -4434,11 +4436,11 @@ permalink: /
           safeSet('ai_alandi_cloud_base_url',baseUrl);safeSet('ai_alandi_cloud_model',result.candidateModel);
           if($('cloudBaseUrl')){$('cloudBaseUrl').value=baseUrl;$('cloudModel').value=result.candidateModel;$('cloudApiKey').value=key;}
           // A model probe alone is not the full cloud-card health check; never show green before refreshCloudStatus validates /healthz.
-          setCloudStatus('checking',getUiLanguage()==='en'?'Model responded. Checking gateway health…':'Модель ответила. Проверяю health-check gateway…');
+          setCloudStatus('checking',english?'Model responded. Checking gateway health…':'Модель ответила. Проверяю health-check gateway…');
         }
         if(result.candidateModel!==model)populateModelPresets(provider,result.candidateModel);
-        updateApiKeyLamp('connected','Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
-        showToast(result.candidateModel!==model?'Подобрана доступная модель: '+result.candidateModel:'Провайдер и модель прошли проверку');
+        updateApiKeyLamp('connected',english?'Connected — model '+result.candidateModel+' responded successfully; connection confirmed.':'Зелёный — модель '+result.candidateModel+' успешно ответила; соединение подтверждено.');
+        showToast(result.candidateModel!==model?(english?'Selected an available model: '+result.candidateModel:'Подобрана доступная модель: '+result.candidateModel):(english?'Provider and model check passed.':'Провайдер и модель прошли проверку.'));
         await refreshModelCatalog({quiet:true,force:true,provider,baseUrl,key});
       }catch(error){
         if(!isProviderProbeContextCurrent()){
@@ -4447,11 +4449,11 @@ permalink: /
           return;
         }
         safeSet('ai_provider_connection_'+provider,'');
-        updateApiKeyLamp('error','Проверка не удалась: '+String(error?.message||error).slice(0,220));
-        showToast('Проверка не удалась: сеть, CORS или формат ответа.','error');
+        updateApiKeyLamp('error',english?'Connection check failed. Check network, CORS and provider settings.':'Проверка соединения не удалась. Проверьте сеть, CORS и настройки провайдера.');
+        showToast(english?'Provider/model check failed.':'Проверка провайдера не пройдена.','error');
       }finally{
         isTestingProviderConnection=false;
-        if(button){button.disabled=false;button.textContent='Проверить соединение и модель';}
+        if(button){button.disabled=false;button.setAttribute('aria-busy','false');button.textContent=english?'Test connection and model':'Проверить соединение и модель';}
         hideStatus();if(provider==='alandi')void refreshCloudStatus();
       }
     }
@@ -5477,7 +5479,7 @@ let agentRuntimeRefreshPromise = null;
       const sequence=++executionModeChangeSequence;
       executionModeChangeTarget=target;
       executionModeChangePromise=setChatExecutionMode(target,sequence).catch(error=>{
-        showToast(error?.message||agentRuntimeErrorText(error),'error');
+        showToast(agentRuntimeErrorText(error),'error');
         return false;
       }).finally(()=>{
         if(sequence===executionModeChangeSequence)executionModeChangePromise=null;
@@ -5932,8 +5934,8 @@ let agentRuntimeRefreshPromise = null;
       let candidates=getApiCandidates(preferredModel);
       if(containsPrivateMemory)candidates=candidates.filter(candidate=>candidate.provider==='alandi');
       const allowCross=safeGet(STORAGE.crossProviderFallback)==='true';
-      if((preferredProvider==='alandi'||preferredProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim())throw new Error('Сначала укажите Base URL собственного API и сохраните настройки.');
-      if(!candidates.length)throw new Error('Не найден API-ключ или Base URL для выбранного провайдера. Откройте настройки и проверьте подключение.');
+      if((preferredProvider==='alandi'||preferredProvider==='custom')&&!String(safeGet(STORAGE.baseUrl)||'').trim())throw new Error('request_missing_base_url');
+      if(!candidates.length)throw new Error('request_missing_provider');
       let lastError=null;
       for(let i=0;i<candidates.length;i++){
         const candidate=candidates[i];throwIfAborted(signal);
@@ -5971,7 +5973,10 @@ let agentRuntimeRefreshPromise = null;
           if(i<candidates.length-1){const next=candidates[i+1],fallbackMessage=next.provider===candidate.provider?'Модель недоступна; пробую другую модель этого провайдера…':(allowCross?'Провайдер недоступен; пробую разрешённый резерв…':'');if(fallbackMessage)showStatus(fallbackMessage,'warning');}
         }
       }
-      throw new Error('Запрос не выполнен. Исходный текст сохранён. Последняя ошибка: '+(lastError?.message||'неизвестная ошибка')+(lastError?.status===401?' · Проверьте API-ключ.':lastError?.status===403?' · Проверьте права и доступность модели.':lastError?.status===429?' · Превышен лимит или квота. Не переключаю модели/провайдеры автоматически.':lastError?.status===404?' · Проверьте точный ID модели и Base URL.':' · Проверьте диагностический статус, модель и Base URL.')+(lastError?.retryAfter?' Провайдер прислал Retry-After: '+lastError.retryAfter+'. Не повторяйте запрос раньше указанного времени.':'')+(lastError?.status===429&&!lastError?.retryAfter?' Повторите вручную после паузы; автоматический резерв не запускается.':''));
+      const failure=new Error('request_failed');
+      failure.status=Number.isInteger(lastError?.status)?lastError.status:null;
+      failure.failureType=lastError?classifyRouteFailure(lastError):'unknown';
+      throw failure;
     }
     function isGenericModelRefusal(value) {
       const text = String(value || '').trim().replace(/[\s\u00a0]+/g, ' ');
@@ -6488,10 +6493,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       } catch(error) {
         if(!accepted) {
           if(error?.name==='AbortError')hideStatus();
-          else showToast(error?.message||agentRuntimeErrorText(error),'error');
+          else showToast(agentRuntimeErrorText(error),'error');
         } else if(!agentRuntimeActiveRun) {
           delete chat.activeAgentRunId;
-          chat.messages.push({role:'assistant',content:'❌ '+(error?.message||agentRuntimeErrorText(error)),error:true});
+          chat.messages.push({role:'assistant',content:'❌ '+agentRuntimeErrorText(error),error:true});
           updateState([...chats]);
           hideStatus();
         } else {
@@ -6684,7 +6689,17 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         } else {
           console.error('Ошибка запроса:', error);
           hideStatus();
-          chat.messages.push({ role: 'assistant', content: `❌ ${error.message || 'Неизвестная ошибка.'}`, error: true });
+          const english=getUiLanguage()==='en',status=Number.isInteger(error?.status)?' (HTTP '+error.status+')':'';
+          let message;
+          if(error?.message==='request_missing_base_url')message=english?'Enter and save the Base URL for your own API.':'Укажите и сохраните Base URL собственного API.';
+          else if(error?.message==='request_missing_provider')message=english?'No API key or Base URL is available for the selected provider. Check Settings.':'Для выбранного провайдера не найден API-ключ или Base URL. Проверьте настройки.';
+          else if(error?.message==='request_failed'&&error.status===401)message=english?'Request failed'+status+'. Check the provider API key. Your original text was preserved.':'Запрос не выполнен'+status+'. Проверьте API-ключ провайдера. Исходный текст сохранён.';
+          else if(error?.message==='request_failed'&&error.status===403)message=english?'Request denied'+status+'. Check provider permissions and model access. Your original text was preserved.':'Доступ отклонён'+status+'. Проверьте права провайдера и доступность модели. Исходный текст сохранён.';
+          else if(error?.message==='request_failed'&&error.status===429)message=english?'Provider quota or rate limit reached'+status+'. Wait before retrying. Your original text was preserved.':'Превышен лимит или квота провайдера'+status+'. Подождите перед повтором. Исходный текст сохранён.';
+          else if(error?.message==='request_failed'&&error.status===404)message=english?'Model or endpoint not found'+status+'. Check the model ID and Base URL. Your original text was preserved.':'Модель или маршрут не найдены'+status+'. Проверьте ID модели и Base URL. Исходный текст сохранён.';
+          else if(error?.message==='request_failed')message=english?'Request failed'+status+'. Check provider settings and connection. Your original text was preserved.':'Запрос не выполнен'+status+'. Проверьте настройки провайдера и подключение. Исходный текст сохранён.';
+          else message=english?'The request could not be completed. Your draft was preserved.':'Не удалось выполнить запрос. Черновик сохранён.';
+          chat.messages.push({ role: 'assistant', content: '❌ '+message, error: true });
           updateState([...chats]);
         }
       } finally {
@@ -6975,10 +6990,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           body: JSON.stringify({ text, ...($('ttsVoiceSelect')?.value ? { voice: $('ttsVoiceSelect').value } : {}) }), cache: 'no-store', signal: controller.signal
         });
         if (requestId !== speechRequestGeneration) return;
-        if (!response.ok) {
-          const detail = await response.text().catch(() => '');
-          throw new Error(detail.slice(0, 180) || ('HTTP ' + response.status));
-        }
+        if (!response.ok) throw new Error('tts_request_failed');
         const audio = await response.blob();
         if (requestId !== speechRequestGeneration) return;
         if (!audio.size || audio.size > 25 * 1024 * 1024 || !audio.type.startsWith('audio/')) throw new Error('Gateway вернул некорректный аудиофайл.');
@@ -6997,8 +7009,9 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         }
       } catch (error) {
         if (requestId !== speechRequestGeneration) return;
-        status.textContent = timedOut ? 'Озвучивание превысило лимит времени.' : 'Локальный TTS недоступен или выключен.';
-        showToast(timedOut ? 'Озвучивание превысило лимит времени.' : String(error.message || 'Локальный TTS недоступен.'), 'error');
+        const english=getUiLanguage()==='en';
+        status.textContent = timedOut ? (english?'Speech generation timed out.':'Озвучивание превысило лимит времени.') : (english?'Local TTS is unavailable or disabled.':'Локальный TTS недоступен или выключен.');
+        showToast(timedOut ? status.textContent : (english?'Could not generate speech with the local Gateway.':'Не удалось сгенерировать речь через локальный Gateway.'), 'error');
         if(voiceConversationActive)stopVoiceConversation(false);
       } finally {
         clearTimeout(timeout);
@@ -7208,7 +7221,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             }
             const payload = await response.json().catch(() => ({}));
             if(conversationTurn&&(!voiceConversationActive||conversationGenerationForTurn!==voiceConversationGeneration))return;
-            if (!response.ok) throw new Error(payload?.detail || payload?.error?.message || ('HTTP ' + response.status));
+            if (!response.ok) throw new Error('voice_transcription_failed');
             if (typeof payload.text !== 'string' || !payload.text.trim()) throw new Error('Речь не распознана. Попробуй говорить ближе к микрофону.');
             const field = $('userInput');
             if(conversationStillActive) {
@@ -7251,7 +7264,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
               showToast('Маршрут изменился. Голосовой диалог остановлен, чтобы не отправить данные другому провайдеру.','error');
               return;
             }
-            showToast(error?.name === 'AbortError' ? 'Расшифровка превысила лимит времени.' : String(error.message || 'Не удалось расшифровать аудио.'), 'error');
+            const english=getUiLanguage()==='en';
+            showToast(error?.name === 'AbortError'
+              ? (english?'Audio transcription timed out.':'Расшифровка превысила лимит времени.')
+              : (english?'Could not transcribe the voice message with the local Gateway.':'Не удалось расшифровать голосовое сообщение через локальный Gateway.'), 'error');
             if(conversationStillActive)await startVoiceMessageRecording({voiceConversation:true});
           }
         }, { once: true });
@@ -7264,7 +7280,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         stream.getTracks().forEach(track => track.stop());
         activeVoiceRecorder = null;
         activeVoiceStream = null;
-        showToast('Не удалось начать запись: ' + String(error.message || error), 'error');
+        const english=getUiLanguage()==='en';
+        showToast(error?.name==='NotAllowedError'
+          ? (english?'Microphone permission was denied. Check browser permissions.':'Доступ к микрофону запрещён. Проверьте разрешения браузера.')
+          : (english?'Could not start microphone recording. Check the microphone and browser permissions.':'Не удалось начать запись. Проверьте микрофон и разрешения браузера.'), 'error');
       }
     }
 
@@ -7588,8 +7607,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
         else showToast('Нет записей, пригодных для сохранения в Gateway.', 'error');
         return activeTrace.evidenceLedger;
       } catch (error) {
-        if (status) status.textContent = (timedOut ? 'Истекло время ожидания. ' : 'Сохранение не завершено: ') + String(error?.message || 'Gateway недоступен.').slice(0, 180);
-        throw error;
+        const english=getUiLanguage()==='en';
+        if (status) status.textContent = timedOut
+          ? (english?'Evidence Ledger save timed out. The local trace remains available.':'Истекло время сохранения Evidence Ledger. Локальный журнал доступен.')
+          : (english?'Evidence Ledger save failed. The local trace remains available.':'Не удалось сохранить Evidence Ledger. Локальный журнал доступен.');
+        throw new Error('trace_evidence_save_failed');
       } finally {
         clearTimeout(timer);
         if (trigger) trigger.disabled = false;
@@ -7908,7 +7930,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             await copyText(link); showToast(getUiLanguage()==='en'?'Local link copied — it works in this browser.':'Локальная ссылка скопирована — работает в этом браузере'); break;
           }
         }
-      } catch (error) { console.error('Ошибка действия интерфейса:', error); showToast(error.message || 'Не удалось выполнить действие.', 'error'); }
+      } catch (error) {
+        console.error('Ошибка действия интерфейса:', error);
+        showToast(getUiLanguage()==='en'?'This action could not be completed. Check the current state and try again.':'Не удалось выполнить действие. Проверьте текущее состояние и повторите попытку.', 'error');
+      }
     });
      const aserviSettingsGroup=$('aserviSettingsGroup');
      const peerSettingsGroups=[$('legacyProviderSettings'),$('additionalSettings')];

@@ -1640,9 +1640,11 @@ test('401 stops after the selected provider rejects credentials', async ({ page 
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
   await page.locator('#userInput').fill('Auth error test');
   await page.locator('#sendBtn').click();
-  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен.');
+  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен');
   await expect(page.locator('#chatBox')).toContainText('HTTP 401');
-  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ.');
+  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ провайдера.');
+  await expect(page.locator('#chatBox')).not.toContainText('invalid credential');
+  await expect(page.locator('#chatBox')).not.toContainText('not-a-real-key');
   await expect.poll(() => calls).toBe(1);
 });
 
@@ -2865,6 +2867,41 @@ test('model catalog failures keep localized safe feedback', async ({ page }) => 
   await expect(page.locator('#modelCatalogStatus')).not.toContainText(leaked);
   await expect(page.locator('#toast')).not.toContainText(leaked);
 });
+
+for (const language of ['ru', 'en']) {
+  test('provider probe failure is localized, exposes pending state and does not echo credentials ('+language+')', async ({ page }) => {
+    let releaseProbe,markStarted;
+    const started=new Promise(resolve=>{markStarted=resolve;});
+    const gate=new Promise(resolve=>{releaseProbe=resolve;});
+    await page.route('https://api.example.test/v1/chat/completions',async route=>{
+      markStarted();
+      await gate;
+      await route.fulfill({status:401,contentType:'application/json',body:JSON.stringify({error:{message:'invalid credential e2e-provider-secret'}})});
+    });
+    await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('[data-action="toggle-settings"]').click();
+    if(!(await page.locator('#legacyProviderSettings').evaluate(el=>el.open)))await page.locator('#legacyProviderSettings > summary').click();
+    await page.locator('#providerPreset').selectOption('custom');
+    await page.locator('#baseUrl').fill('https://api.example.test/v1');
+    await page.locator('#modelName').fill('e2e-provider-model');
+    await page.locator('#apiKey').fill('e2e-provider-secret');
+    await page.locator('[data-action="save-settings"]').click();
+    const button=page.locator('[data-action="test-connection"]');
+    await button.click();
+    await started;
+    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute('aria-busy','true');
+    await expect(button).toHaveText(language==='en'?'Checking…':'Проверяю…');
+    releaseProbe();
+    await expect(page.locator('#apiKeyStatus')).toContainText(language==='en'?'Could not confirm the model (HTTP 401)':'Не удалось подтвердить модель (HTTP 401)');
+    await expect(page.locator('#apiKeyStatus')).not.toContainText('e2e-provider-secret');
+    await expect(page.locator('#toast')).toContainText(language==='en'?'Provider/model check failed.':'Проверка провайдера не пройдена.');
+    await expect(button).toBeEnabled();
+    await expect(button).toHaveAttribute('aria-busy','false');
+    await expect(button).toHaveText(language==='en'?'Test connection and model':'Проверить соединение и модель');
+  });
+}
 
 test('local helper Gateway failures never expose backend diagnostics in RU and EN', async ({ page }) => {
   const corsHeaders={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, DELETE, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Content-Type':'application/json'};
