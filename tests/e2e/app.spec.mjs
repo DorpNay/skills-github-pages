@@ -7831,3 +7831,56 @@ test('chat import distinguishes complete from partial recovery in RU and EN', as
   expect(result.find(chat => chat.title === 'Partial recovery RU').messages).toEqual([{ role: 'assistant', content: 'x'.repeat(30000) }]);
   expect(result.find(chat => chat.title === 'Partial recovery EN').messages).toEqual([{ role: 'tool', content: '' }]);
 });
+
+test('chat and project recovery backups download exact source bytes with RU/EN feedback', async ({ page }) => {
+  const chatRaw = '{"chat-history":';
+  const projectRaw = '{"project-data":';
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(values => {
+    localStorage.setItem('ai_chats_v87', values.chat);
+    localStorage.setItem('ai_projects_v1', values.project);
+  }, { chat: chatRaw, project: projectRaw });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const readDownload = async (button, filename, expected) => {
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      button.click()
+    ]);
+    expect(download.suggestedFilename()).toBe(filename);
+    const stream = await download.createReadStream();
+    let content = '';
+    for await (const chunk of stream) content += chunk.toString();
+    expect(content).toBe(expected);
+  };
+
+  for (const language of ['ru', 'en']) {
+    await setUiLanguageInPlace(page, language);
+    if (!(await page.locator('#settingsModal').isVisible())) {
+      await page.locator('[data-action="toggle-settings"]').first().click();
+    }
+    await expect(page.locator('#recoveryBackupButton')).toBeVisible();
+    await readDownload(page.locator('#recoveryBackupButton'), 'ai-chat-recovery-backup.json', chatRaw);
+    await expect(page.locator('#toast')).toHaveText(
+      language === 'en' ? 'Chat recovery backup is downloading.' : 'Резервная копия истории скачивается.'
+    );
+
+    await page.locator('#settingsModal [data-action="close-settings"]').click();
+    await ensureSidebarOpen(page);
+    const projectBackup = page.locator('#projectRecoveryBackupButton');
+    await expect(projectBackup).toBeVisible();
+    await expect(projectBackup).toHaveText(
+      language === 'en' ? 'Download project recovery backup' : 'Скачать резервную копию проектов'
+    );
+    await readDownload(projectBackup, 'ai-projects-recovery-backup.json', projectRaw);
+    await expect(page.locator('#toast')).toHaveText(
+      language === 'en' ? 'Project recovery backup is downloading.' : 'Резервная копия проектов скачивается.'
+    );
+  }
+
+  const preserved = await page.evaluate(() => ({
+    chats: localStorage.getItem('ai_chats_v87'),
+    projects: localStorage.getItem('ai_projects_v1')
+  }));
+  expect(preserved).toEqual({ chats: chatRaw, projects: projectRaw });
+});
