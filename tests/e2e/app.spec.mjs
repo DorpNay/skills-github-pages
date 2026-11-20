@@ -7521,3 +7521,68 @@ test('move-chat dialog preserves project selection and keyboard focus across RU/
   expect(storedChat.projectMemoryEnabled).toBe(false);
   await expect(page.locator('#chatList .chat-row[data-chat-id="locale-move-chat"] .chat-row-menu summary')).toBeFocused();
 });
+
+test('message action accessible names refresh in place without losing keyboard focus', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'locale-message-focus',
+      title: 'Message focus chat',
+      projectId: null,
+      projectMemoryEnabled: false,
+      messages: [{ role: 'assistant', content: 'A stable message for keyboard focus.' }]
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'locale-message-focus');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const copy = page.locator('#chatBox .message-actions [data-action="copy-message"]').first();
+  await expect(copy).toHaveAccessibleName('Скопировать сообщение');
+  await copy.focus();
+  await setUiLanguageInPlace(page, 'en');
+  await expect(copy).toHaveAccessibleName('Copy message');
+  await expect(copy).toBeFocused();
+  await setUiLanguageInPlace(page, 'ru');
+  await expect(copy).toHaveAccessibleName('Скопировать сообщение');
+  await expect(copy).toBeFocused();
+});
+
+test('chat list preserves scroll position and focused row menu through RU/EN refresh', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 720 });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const chats = Array.from({ length: 40 }, (_, index) => ({
+      id: 'locale-scroll-chat-' + index,
+      title: 'Locale scroll chat ' + String(index + 1).padStart(2, '0'),
+      messages: [],
+      projectId: null,
+      createdAt: now,
+      updatedAt: now,
+      searchMode: 'offline'
+    }));
+    localStorage.setItem('ai_chats_v87', JSON.stringify(chats));
+    localStorage.setItem('ai_current_chat_v87', 'locale-scroll-chat-0');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const list = page.locator('#chatList');
+  await list.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  const summary = page.locator('#chatList .chat-row[data-chat-id="locale-scroll-chat-39"] .chat-row-menu summary');
+  await summary.focus();
+  const before = await list.evaluate(element => ({
+    scrollTop: element.scrollTop,
+    scrollHeight: element.scrollHeight,
+    clientHeight: element.clientHeight
+  }));
+  expect(before.scrollHeight).toBeGreaterThan(before.clientHeight);
+
+  await setUiLanguageInPlace(page, 'en');
+  const englishSummary = page.locator('#chatList .chat-row[data-chat-id="locale-scroll-chat-39"] .chat-row-menu summary');
+  await expect(englishSummary).toBeFocused();
+  const englishScroll = await list.evaluate(element => element.scrollTop);
+  expect(englishScroll).toBe(before.scrollTop);
+  await setUiLanguageInPlace(page, 'ru');
+  const russianSummary = page.locator('#chatList .chat-row[data-chat-id="locale-scroll-chat-39"] .chat-row-menu summary');
+  await expect(russianSummary).toBeFocused();
+  const russianScroll = await list.evaluate(element => element.scrollTop);
+  expect(russianScroll).toBe(before.scrollTop);
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(40);
+});
