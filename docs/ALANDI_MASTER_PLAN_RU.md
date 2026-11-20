@@ -341,7 +341,7 @@
 - [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
 - [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages. Shared toast announcement semantics are explicit; full message inventory and recovery/partial-export copy remain open.
 - [~] 24. Verify all privacy prompts in both locales; project-memory deletion and provider credential removal confirmations have RU/EN coverage. Remaining native prompt matrix and cancellation invariance still open.
-- [ ] 25. Verify user-data export/restore messages distinguish complete vs partial recovery.
+- [~] 25. Verify user-data export/restore messages distinguish complete vs partial recovery; chat import now classifies lossy normalization (unsupported roles, malformed/non-string content, oversized IDs/titles/content/tool-call lists, excess per-chat messages and missing project associations) and shows explicit RU/EN complete vs partial result copy while preserving existing history. Playwright covers complete/partial imports in both locales and persisted content; Chromium execution pending. Raw corruption backups remain byte-preserving and are downloadable separately; this is not a general restore/merge UI for raw backups.
 
 ### P1 — Страницы aCodingi и aNoteBooki (только оболочка и уже существующее)
 
