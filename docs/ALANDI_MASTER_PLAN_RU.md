@@ -165,7 +165,7 @@
 - [~] 25. Keep selected Quick/Thorough, search mode and skill profile unchanged during locale changes.
 - [~] 26. Project Sources status/error state is re-rendered from its cached semantic key on locale change; E2E asserts no second Gateway request. Chromium execution pending.
 - [~] 27. Voice menu labels and active recording status re-localize without resetting MediaRecorder; cancel now stops capture and closes the one-shot panel while preserving conversation-turn discard semantics. Mock-recorder E2E authored; Chromium execution pending.
-- [~] 28. Live request status and elapsed timer re-localize from a semantic descriptor while the request remains in flight. Delayed-response E2E authored; Chromium execution pending.
+- [~] 28. Live request status and elapsed timer re-localize from a semantic descriptor while the request remains in flight. Delayed-response E2E authored; the assertion now follows the actual model-waiting stage rather than assuming a pipeline stage. Chromium execution pending.
 - [~] 29. Historical tool-call, provider/cache, research-trace and retry labels refresh in place; E2E compares stored chat JSON before/after. Chromium execution pending.
 - [ ] 30. Verify full RU → EN → RU round-trip in Chromium at 320/390/768/1440px.
 

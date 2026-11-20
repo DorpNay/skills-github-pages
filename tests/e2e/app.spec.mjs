@@ -1534,9 +1534,9 @@ test('in-flight chat status localizes without cancelling the request', async ({ 
   await page.locator('#sendBtn').click();
   await userRequestStarted;
   try {
-    await expect(page.locator('#statusText')).toContainText('Primary response',{timeout:10000});
+    await expect(page.locator('#statusText')).toContainText('Ожидание ответа модели',{timeout:10000});
     await setUiLanguageInPlace(page,'en');
-    await expect(page.locator('#statusText')).toContainText('Primary response');
+    await expect(page.locator('#statusText')).toContainText('Waiting for the model response');
     await expect(page.locator('#thinkingTime')).toContainText('Elapsed');
     await expect(page.locator('#stopBtn')).toBeVisible();
     expect(userResponseReleased).toBe(false);
@@ -1552,8 +1552,9 @@ test('historical tool, research and provider metadata localize without rewriting
     {role:'assistant',content:'A historical tool result.',tool_calls:[{id:'call-history-1',type:'function',function:{name:'web_search',arguments:'{"query":"history"}'}}],providerInfo:{provider:'alandi',providerLabel:'aLandi aServi',model:'qwen3.5:4b',requestedModel:'qwen3.5:4b',cacheStatus:'HIT'}},
     {role:'assistant',content:'A historical research result.',researchTrace:{id:'trace-history-locale'},error:true}
   ]};
-  await page.addInitScript(seed=>{localStorage.setItem('ai_chats_v87',JSON.stringify([seed]));localStorage.setItem('ai_current_chat_v87',seed.id);},chat);
   await page.goto(APP_PATH,{waitUntil:'domcontentloaded'});
+  await page.evaluate(seed=>{localStorage.setItem('ai_chats_v87',JSON.stringify([seed]));localStorage.setItem('ai_current_chat_v87',seed.id);},chat);
+  await page.reload({waitUntil:'domcontentloaded'});
   const before=await page.evaluate(()=>localStorage.getItem('ai_chats_v87'));
   await expect(page.locator('#chatBox .message-tool-call')).toHaveText('🔧 Вызов инструмента: web_search');
   await expect(page.locator('#chatBox .message-model-meta')).toContainText('кэш HIT');
