@@ -7645,3 +7645,61 @@ test('Project Settings preserves edited fields while the interface language chan
   expect(storedProject.name).toBe('Edited project name survives locale');
   expect(storedProject.instructions).toBe('Edited project instructions survive locale refresh.');
 });
+
+test('switching chats during RU/EN changes preserves each chat history and active identity', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_chats_v87', JSON.stringify([
+      {
+        id: 'locale-state-alpha',
+        title: 'Alpha state chat',
+        projectId: null,
+        projectMemoryEnabled: false,
+        messages: [
+          { role: 'user', content: 'ALPHA_HISTORY_SENTINEL' },
+          { role: 'assistant', content: 'Alpha history remains intact.' }
+        ]
+      },
+      {
+        id: 'locale-state-beta',
+        title: 'Beta state chat',
+        projectId: null,
+        projectMemoryEnabled: false,
+        messages: [
+          { role: 'user', content: 'BETA_HISTORY_SENTINEL' },
+          { role: 'assistant', content: 'Beta history remains intact.' }
+        ]
+      }
+    ]));
+    localStorage.setItem('ai_current_chat_v87', 'locale-state-alpha');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('ALPHA_HISTORY_SENTINEL');
+  await setUiLanguageInPlace(page, 'en');
+  await ensureSidebarOpen(page);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="locale-state-beta"]').click();
+  await expect(page.locator('#chatBox')).toContainText('BETA_HISTORY_SENTINEL');
+  await expect(page.locator('#chatBox')).not.toContainText('ALPHA_HISTORY_SENTINEL');
+  await setUiLanguageInPlace(page, 'ru');
+  const betaState = await page.evaluate(() => ({
+    currentId: localStorage.getItem('ai_current_chat_v87'),
+    chats: JSON.parse(localStorage.getItem('ai_chats_v87') || '[]')
+  }));
+  expect(betaState.currentId).toBe('locale-state-beta');
+  expect(betaState.chats.find(chat => chat.id === 'locale-state-alpha').messages)
+    .toEqual([
+      { role: 'user', content: 'ALPHA_HISTORY_SENTINEL' },
+      { role: 'assistant', content: 'Alpha history remains intact.' }
+    ]);
+  expect(betaState.chats.find(chat => chat.id === 'locale-state-beta').messages)
+    .toEqual([
+      { role: 'user', content: 'BETA_HISTORY_SENTINEL' },
+      { role: 'assistant', content: 'Beta history remains intact.' }
+    ]);
+
+  await ensureSidebarOpen(page);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="locale-state-alpha"]').click();
+  await expect(page.locator('#chatBox')).toContainText('ALPHA_HISTORY_SENTINEL');
+  await expect(page.locator('#chatBox')).not.toContainText('BETA_HISTORY_SENTINEL');
+  await setUiLanguageInPlace(page, 'en');
+  await expect(page.locator('#chatBox')).toContainText('ALPHA_HISTORY_SENTINEL');
+});
