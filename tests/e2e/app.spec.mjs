@@ -7586,3 +7586,62 @@ test('chat list preserves scroll position and focused row menu through RU/EN ref
   expect(russianScroll).toBe(before.scrollTop);
   await expect(page.locator('#chatList .chat-row')).toHaveCount(40);
 });
+
+test('Project Settings preserves edited fields while the interface language changes', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'locale-settings-project',
+      name: 'Locale settings project',
+      description: '',
+      instructions: 'Original project instructions',
+      memoryScope: 'project-only',
+      memory: [],
+      createdAt: '',
+      updatedAt: ''
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'locale-settings-chat',
+      title: 'Locale settings chat',
+      projectId: 'locale-settings-project',
+      projectMemoryEnabled: false,
+      messages: [],
+      executionMode: 'direct',
+      deepResearchMethod: 'none',
+      searchMode: 'offline'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'locale-settings-chat');
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const row = page.locator('#projectNavigationList .project-nav-item[data-project-id="locale-settings-project"]');
+  await row.locator('.project-row-menu summary').click();
+  await row.locator('[data-action="open-project-settings"]').click();
+  await expect(page.locator('#projectSettingsModal')).toBeVisible();
+
+  const name = page.locator('#projectNameInput');
+  const instructions = page.locator('#projectInstructionsInput');
+  await name.fill('Edited project name survives locale');
+  await instructions.fill('Edited project instructions survive locale refresh.');
+  await name.focus();
+
+  await setUiLanguageInPlace(page, 'en');
+  await expect(page.locator('label[for="projectNameInput"]')).not.toHaveText('Название');
+  await expect(page.locator('label[for="projectInstructionsInput"]')).not.toHaveText('Инструкции проекта');
+  await expect(name).toHaveValue('Edited project name survives locale');
+  await expect(instructions).toHaveValue('Edited project instructions survive locale refresh.');
+  await expect(name).toBeFocused();
+
+  await setUiLanguageInPlace(page, 'ru');
+  await expect(page.locator('label[for="projectNameInput"]')).toHaveText('Название');
+  await expect(page.locator('label[for="projectInstructionsInput"]')).toHaveText('Инструкции проекта');
+  await expect(name).toHaveValue('Edited project name survives locale');
+  await expect(instructions).toHaveValue('Edited project instructions survive locale refresh.');
+  await expect(name).toBeFocused();
+
+  await page.locator('#saveProjectSubmit').click();
+  const storedProject = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_projects_v1') || '[]')
+    .find(project => project.id === 'locale-settings-project'));
+  expect(storedProject.name).toBe('Edited project name survives locale');
+  expect(storedProject.instructions).toBe('Edited project instructions survive locale refresh.');
+});
