@@ -568,3 +568,161 @@ test('accepting external project-context disclosure sends the named project cont
   expect(body).toContain('private project instruction sentinel');
   expect(body).toContain('private project memory sentinel');
 });
+
+test('project-only scope blocks shared-memory facts even when global memory is enabled', async ({ page }) => {
+  const outboundBodies = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_global_memory_enabled_v1', 'true');
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'project-only-scope',
+      name: 'Project-only scope',
+      instructions: '',
+      memoryScope: 'project-only',
+      memory: []
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'project-only-scope-chat',
+      title: 'Project-only scope chat',
+      messages: [],
+      projectId: 'project-only-scope',
+      projectMemoryEnabled: false,
+      privateMemoryUsed: false,
+      executionMode: 'direct',
+      processingMode: 'fast',
+      searchMode: 'offline',
+      deepResearchMethod: 'none'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'project-only-scope-chat');
+  });
+  await page.route(/https:\/\/generativelanguage\.googleapis\.com\/.*\/chat\/completions/, async route => {
+    outboundBodies.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Synthetic provider reply.' } }] })
+    });
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  const sharedFact = 'secret scope sentinel omega global fact';
+  await page.evaluate(async fact => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('sharedMemory', 'readwrite');
+      transaction.objectStore('sharedMemory').put({
+        id: 'scope-shared-fact',
+        fact,
+        time: Date.now(),
+        scope: 'shared'
+      }, 'scope-shared-fact');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  }, sharedFact);
+
+  await page.locator('#userInput').fill('Explain scope sentinel omega.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(outboundBodies).toHaveLength(1);
+  expect(JSON.stringify(outboundBodies[0])).not.toContain(sharedFact);
+});
+
+test('project-and-global scope includes shared facts only when explicit global opt-in is enabled', async ({ page }) => {
+  const outboundBodies = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_global_memory_enabled_v1', 'false');
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'project-global-scope',
+      name: 'Project and global scope',
+      instructions: '',
+      memoryScope: 'project-and-global',
+      memory: []
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'project-global-scope-chat',
+      title: 'Project and global scope chat',
+      messages: [],
+      projectId: 'project-global-scope',
+      projectMemoryEnabled: false,
+      privateMemoryUsed: false,
+      executionMode: 'direct',
+      processingMode: 'fast',
+      searchMode: 'offline',
+      deepResearchMethod: 'none'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'project-global-scope-chat');
+  });
+  await page.route(/https:\/\/generativelanguage\.googleapis\.com\/.*\/chat\/completions/, async route => {
+    outboundBodies.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Synthetic provider reply.' } }] })
+    });
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  const sharedFact = 'secret scope sentinel omega global fact';
+  await page.evaluate(async fact => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('sharedMemory', 'readwrite');
+      transaction.objectStore('sharedMemory').put({
+        id: 'scope-shared-fact',
+        fact,
+        time: Date.now(),
+        scope: 'shared'
+      }, 'scope-shared-fact');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  }, sharedFact);
+
+  await page.locator('#userInput').fill('Explain scope sentinel omega.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(outboundBodies).toHaveLength(1);
+  expect(JSON.stringify(outboundBodies[0])).not.toContain(sharedFact);
+
+  await page.evaluate(() => {
+    localStorage.setItem('ai_global_memory_enabled_v1', 'true');
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'project-global-scope-chat',
+      title: 'Project and global scope chat',
+      messages: [],
+      projectId: 'project-global-scope',
+      projectMemoryEnabled: false,
+      privateMemoryUsed: false,
+      executionMode: 'direct',
+      processingMode: 'fast',
+      searchMode: 'offline',
+      deepResearchMethod: 'none'
+    }]));
+  });
+  await page.reload();
+  await page.locator('#userInput').fill('Explain scope sentinel omega.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(outboundBodies).toHaveLength(2);
+  expect(JSON.stringify(outboundBodies[1])).toContain(sharedFact);
+});
