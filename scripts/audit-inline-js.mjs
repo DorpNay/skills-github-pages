@@ -7,8 +7,12 @@ const GLOBAL_OBJECTS = new Set(['window', 'globalThis']);
 const FUNCTION_TYPES = new Set(['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression']);
 
 function attributeValue(attributes, name) {
-  const match = attributes.match(new RegExp('\\b' + name + '\\s*=\\s*(?:"([^"]*)"|\\'([^\\']*)\\'|([^\\s>]+))', 'i'));
-  return match ? (match[1] ?? match[2] ?? match[3] ?? '') : null;
+  const doubleQuoted = attributes.match(new RegExp("\\b" + name + "\\s*=\\s*\"([^\"]*)\"", 'i'));
+  if (doubleQuoted) return doubleQuoted[1];
+  const singleQuoted = attributes.match(new RegExp("\\b" + name + "\\s*=\\s*'([^']*)'", 'i'));
+  if (singleQuoted) return singleQuoted[1];
+  const unquoted = attributes.match(new RegExp("\\b" + name + "\\s*=\\s*([^\\s>]+)", 'i'));
+  return unquoted ? unquoted[1] : null;
 }
 
 function isJavaScriptType(type) {
