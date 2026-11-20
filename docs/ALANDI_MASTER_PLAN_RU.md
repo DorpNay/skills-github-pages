@@ -284,7 +284,7 @@
 - [ ] 27. Add native iOS Safari/VoiceOver language-change check.
 - [ ] 28. Add Windows forced-colors language-change check.
 - [~] 29. Added a RU/EN persisted-locale reload regression that checks initial sidebar labels, Cloudflare help, composer option copy and Research option copy; browser execution pending.
-- [ ] 30. Add language change during Project Settings edit regression.
+- [~] 30. Add language change during Project Settings edit regression; new project fixture edits name/instructions, switches RU→EN→RU while the name field remains focused, verifies both drafts and focus survive, then saves and checks persisted values. Chromium execution pending.
 
 
 ### P0.31 — Memory, project and chat feedback parity (PARTIAL)
