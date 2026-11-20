@@ -326,3 +326,134 @@ test('private chat provider-block feedback follows the English locale', async ({
   await expect(page.locator('#userInput')).toHaveValue(draft);
   expect(modelRequests, 'A private chat must be blocked before any external model request').toEqual([]);
 });
+
+test('shared memory stays out of third-party requests unless global memory is enabled', async ({ page }) => {
+  const outboundBodies = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_global_memory_enabled_v1', 'false');
+  });
+  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+    outboundBodies.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Synthetic provider reply.' } }] })
+    });
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  const sharedFact = 'secret shared memory sentinel omega';
+  await page.evaluate(async fact => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('sharedMemory', 'readwrite');
+      transaction.objectStore('sharedMemory').put({
+        id: 'global-scope-sentinel',
+        fact,
+        time: Date.now(),
+        scope: 'shared'
+      }, 'global-scope-sentinel');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  }, sharedFact);
+
+  await page.locator('#userInput').fill('Please explain sentinel omega.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(outboundBodies).toHaveLength(1);
+  expect(JSON.stringify(outboundBodies[0])).not.toContain(sharedFact);
+});
+
+test('explicitly enabled global memory is included only in the allowed third-party request scope', async ({ page }) => {
+  const outboundBodies = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_global_memory_enabled_v1', 'true');
+  });
+  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+    outboundBodies.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Synthetic provider reply.' } }] })
+    });
+  });
+
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  const sharedFact = 'secret shared memory sentinel omega';
+  await page.evaluate(async fact => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('sharedMemory', 'readwrite');
+      transaction.objectStore('sharedMemory').put({
+        id: 'global-scope-sentinel',
+        fact,
+        time: Date.now(),
+        scope: 'shared'
+      }, 'global-scope-sentinel');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  }, sharedFact);
+
+  await page.locator('#userInput').fill('Please explain sentinel omega.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(outboundBodies).toHaveLength(1);
+  expect(JSON.stringify(outboundBodies[0])).toContain(sharedFact);
+});
+
+test('canceling an explicit shared-memory save leaves the input and stores unchanged', async ({ page }) => {
+  let modelRequests = 0;
+  page.on('request', request => {
+    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+      modelRequests++;
+    }
+  });
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+  const draft = 'Сохрани в общую память: отменённый синтетический факт';
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#userInput').fill(draft);
+  await page.locator('#sendBtn').click();
+
+  const sharedFacts = await page.evaluate(async () => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const result = await new Promise((resolve, reject) => {
+      const request = database.transaction('sharedMemory', 'readonly').objectStore('sharedMemory').getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    database.close();
+    return result;
+  });
+  expect(sharedFacts).toHaveLength(0);
+  await expect(page.locator('#userInput')).toHaveValue(draft);
+  await expect(page.locator('#chatBox')).not.toContainText('отменённый синтетический факт');
+  expect(modelRequests).toBe(0);
+});
