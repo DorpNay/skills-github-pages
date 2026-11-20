@@ -4639,13 +4639,19 @@ permalink: /
       cloudAutoConnectTimer=setTimeout(()=>{cloudAutoConnectTimer=null;if(currentProvider()!=='alandi'){setCloudStatus('disconnected');return;}const cfg=getCloudSettings();if(!cfg.baseUrl||!cfg.model||!cfg.key){setCloudStatus('disconnected');return;}const error=validateCloudBaseUrl(cfg.baseUrl);if(error){setCloudFieldError('cloudBaseUrl',error);setCloudStatus('disconnected');return;}if(isTestingProviderConnection){scheduleCloudAutoConnect();return;}void connectAlandiAServi();},850);
     }
     function clearProviderKey(){
-      const provider=currentProvider();safeSet(providerKeyStorage(provider),'');
+      const provider=currentProvider(),english=getUiLanguage()==='en';
+      const confirmation=english
+        ? 'Remove the selected provider credential from this browser? This does not revoke it with the provider. You can add it again in Settings.'
+        : 'Удалить учётные данные выбранного провайдера из этого браузера? Это не отзывает их у провайдера. Их можно добавить снова в настройках.';
+      if(!confirm(confirmation))return;
+      safeSet(providerKeyStorage(provider),'');
       if (provider !== 'pollinations') safeSet(providerModelCatalogStaleKey(provider), 'true');
       if(provider==='pollinations')clearPollinationsSession();
       if(provider==='cloudflare'){safeSet(STORAGE.cloudflareAccountId,'');$('cloudflareAccountId').value='';$('baseUrl').value='';}
       if(provider==='gemini')safeSet(STORAGE.apiKey,'');
       safeSet('ai_provider_connection_'+provider,'');$('apiKey').value='';
-      updateApiKeyLamp('empty','Ключ удалён из локальных настроек этого браузера.');showToast('Ключ выбранного провайдера удалён');
+      const message=english?'Selected provider credential removed from this browser.':'Учётные данные выбранного провайдера удалены из этого браузера.';
+      updateApiKeyLamp('empty',message);showToast(message);
     }
     function updateOfflineUI() {
       const chat = getCurrentChat();
