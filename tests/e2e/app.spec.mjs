@@ -3680,13 +3680,18 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
       return route.fulfill({ json: {
         run: { run_id: 'run-e2e-success', state: 'succeeded', scope_kind: 'chat', scope_id: scope.chatId },
         output: '<img src=x onerror=alert(1)>Safe text answer',
-        output_available: true, events: []
+        output_available: true,
+        tasks: [{ task_id: 'task-e2e-specialist', task_key: 'model-completion', state: 'succeeded', depends_on: [] }],
+        events: []
       } });
     }
     if (url.pathname === '/v1/agent-runs/run-e2e-success/events') return route.fulfill({ json: {
       run_id: 'run-e2e-success',
-      events: [{ event_id: 1, event_type: 'run_started', occurred_at: Date.parse('2026-11-18T09:32:10.000Z') / 1000, metadata: { stage: 'model-completion' } }],
-      next_after_event_id: 1, state: 'succeeded'
+      events: [
+        { event_id: 1, event_type: 'run_started', occurred_at: Date.parse('2026-11-18T09:32:10.000Z') / 1000, metadata: { stage: 'model-completion' } },
+        { event_id: 2, event_type: 'task_completed', occurred_at: Date.parse('2026-11-18T09:32:11.000Z') / 1000, metadata: { task_key: 'model-completion' } }
+      ],
+      next_after_event_id: 2, state: 'succeeded'
     } });
     return route.fulfill({ status: 404, json: { detail: 'not found' } });
   });
@@ -3703,7 +3708,24 @@ test('AgentRun submits only the explicit prompt and safely renders real events a
   await page.locator('#agentRuntimeStart').click();
   await expect(page.locator('#agentRuntimeStatus')).toContainText('Завершено');
   await expect(page.locator('#agentRuntimeEvents')).toContainText('Выполнение начато');
-  await expect(page.locator('#agentRuntimeEvents time')).toHaveAttribute('datetime', '2026-11-18T09:32:10.000Z');
+  await expect(page.locator('#agentRuntimeEvents time').first()).toHaveAttribute('datetime', '2026-11-18T09:32:10.000Z');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('Задача завершена');
+  await expect(page.locator('#agentRuntimeEvents li[data-event-id]')).toHaveCount(2);
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Специалист');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Завершено');
+  await setUiLanguageInPlace(page, 'en');
+  await expect(page.locator('#agentRuntimeStatus')).toContainText('Completed');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('Execution started');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('Task completed');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Specialist');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Completed');
+  await expect(page.locator('#agentRuntimeEvents li[data-event-id]')).toHaveCount(2);
+  await expect(page.locator('#agentRuntimeEvents li[data-event-id="1"] time')).toHaveAttribute('datetime', '2026-11-18T09:32:10.000Z');
+  await setUiLanguageInPlace(page, 'ru');
+  await expect(page.locator('#agentRuntimeEvents')).toContainText('Выполнение начато');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Специалист');
+  await expect(page.locator('#agentRuntimeTasks')).toContainText('Завершено');
+  await expect(page.locator('#agentRuntimeEvents li[data-event-id]')).toHaveCount(2);
   await expect(page.locator('#agentRuntimeOutput')).toContainText('Safe text answer');
   await expect(page.locator('#agentRuntimeOutput img')).toHaveCount(0);
   expect(submitted).toEqual({
