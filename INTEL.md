@@ -70,6 +70,12 @@ These references are inspiration and acceptance guidance, not dependencies or pr
 
 **Use in aLandi:** borrow patterns, not visual branding or framework dependencies. Keep current HTML/CSS/JS + Jekyll architecture. Convert applicable requirements into focused Playwright assertions and manual native-device gates; no external system's benchmark or compliance claim transfers automatically.
 
+- **W3C WAI-ARIA APG — Dialog (Modal) Pattern:** https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ — modal focus stays inside; Tab/Shift+Tab wrap; Escape closes; focus returns to invoker unless workflow requires a logical next target; role=dialog, aria-modal and visible accessible name are required. Do not claim modal semantics unless the background is actually inert.
+- **USWDS — Modal accessibility tests:** https://designsystem.digital.gov/components/modal/accessibility-tests/ — manual acceptance includes portrait/landscape visibility, keyboard dismissal, focus containment/return, and 400% zoom/reflow. Component-level claims still require tests in the aLandi context.
+- **CMS Design System — Error validation:** https://design.cms.gov/patterns/Forms/error-validation/ — validation-on-submit, error summary plus inline field messages, aria-describedby association, preserve entered values and keep submit available; use concise corrective instructions.
+- **W3C WCAG 2.2 — SC 3.3.1 Error Identification:** https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html — automatically detected input errors must identify the affected item and describe the error in text.
+- **Playwright v1.64.1 — Assertions / expect.poll:** https://playwright.dev/docs/test-assertions and https://playwright.dev/docs/test-assertions#expectpoll — use auto-retrying web-first locator assertions and expect.poll for asynchronous state; avoid fixed sleeps. Context7 resolved the official `/microsoft/playwright/v1.64.1` documentation for assertion patterns.
+
 Repository research is retained below. Treat upstream facts as date-bounded; recheck exact releases and licenses before implementation. Sources are categorized by purpose and disposition; not every item is intended for adoption.
 
 ### Priority upstream reference groups

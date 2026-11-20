@@ -212,7 +212,7 @@
 - [~] 11. Audit thrown errors shown to users for locale-safe messages; project-memory helper and settings-profile import now map unknown/parser/Gateway errors to RU/EN safe copy, but the full thrown-error inventory remains open.
 - [~] 12. Audit async Gateway failure/status messages for locale refresh; helper, local document extraction and local ASR no longer render raw Gateway details, with RU/EN redaction regressions added.
 - [~] 13. Audit provider test/connect/disconnect failure feedback; provider probe failure is localized, redacts echoed credentials, and exposes an aria-busy lifecycle with RU/EN Playwright coverage. The full provider probe/connect/disconnect matrix remains open.
-- [ ] 14. Audit project CRUD and import/export feedback.
+- [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby, while the full CRUD feedback inventory remains open.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
 - [ ] 16. Audit chat CRUD and dialog validation.
 - [ ] 17. Audit trace export/copy/download feedback.
@@ -234,23 +234,23 @@
 - [~] 5. Static inventory found 77 data-action nodes across 69 unique action names.
 - [~] 6. Static audit matched all 69 static action names and 13 generated action names to dispatcher cases/submit path; runtime behavior still pending.
 - [~] 7. Static audit found no orphaned static or generated action names.
-- [ ] 8. Confirm no duplicate delegated listeners are installed on locale changes.
+- [~] 8. Static source audit confirms locale refresh does not reinstall delegated listeners; dynamic actions remain on the shared dispatcher. The 10-cycle RU/EN regression is authored; runtime execution pending.
 - [ ] 9. Confirm destructive actions have clear confirmation or reversible undo.
-- [ ] 10. Confirm async actions have pending/disabled feedback.
+- [~] 10. Provider probe now disables its control and toggles aria-busy through pending/completed states; RU/EN regression added. The full async-action inventory remains open.
 - [ ] 11. Confirm cancel actions abort the corresponding operation.
-- [ ] 12. Confirm close actions restore focus to a connected trigger.
-- [ ] 13. Confirm disclosures expose accurate aria-expanded/open state.
+- [~] 12. Settings modal now shares the Tab/Shift+Tab focus loop, Escape/backdrop close and existing opener restoration; browser regression is authored but not run.
+- [~] 13. Attachment, request-context and voice disclosures synchronize aria-expanded from actual visibility; RU/EN locale regression added, runtime pending.
 - [ ] 14. Confirm selected toggles expose aria-pressed/checked.
-- [ ] 15. Confirm error fields have aria-invalid and aria-describedby.
+- [~] 15. Project create/edit name validation now resolves the actual inline error element and synchronizes aria-invalid/aria-describedby; the full form inventory remains open.
 - [ ] 16. Confirm all visible buttons have non-empty accessible names.
 - [ ] 17. Confirm all form controls have associated labels or accessible names.
-- [ ] 18. Confirm all modals have dialog role, accessible title and description.
+- [~] 18. Settings focus handling is complete for the current modal; Project Settings uses a full-height mobile safe-area sheet and Function panels have bounded viewport height. A complete role/title/description inventory remains open.
 - [ ] 19. Confirm no hidden interactive elements remain tabbable.
-- [ ] 20. Confirm menu actions are keyboard reachable and Escape/outside behavior stable.
+- [~] 20. Outside-click now closes menus without swallowing the clicked action; Function panels remain on the shared dispatcher, with Escape/backdrop behavior and keyboard regression authored. Full menu inventory remains open.
 - [ ] 21. Confirm action buttons do not trigger nested row click handlers twice.
 - [ ] 22. Confirm disabled controls cannot dispatch consequential actions.
-- [ ] 23. Confirm action errors are announced without replacing current draft.
-- [ ] 24. Confirm touch and keyboard interaction have equivalent functionality.
+- [~] 23. Provider request failures now use localized status-based feedback and preserve the draft; the 401 regression asserts the original text remains and raw credentials/details are absent.
+- [~] 24. Mobile navigation, nested menus, attachment actions and composer controls now enforce 44px minimum targets; native-device and complete keyboard parity checks remain open.
 - [ ] 25. Confirm native controls remain operable in forced-colors mode.
 
 ### P0.30 — RU/EN and interaction regression matrix (IMPLEMENTED; browser execution pending)
@@ -283,7 +283,7 @@
 - [ ] 26. Add active stream locale-change regression without aborting generation.
 - [ ] 27. Add native iOS Safari/VoiceOver language-change check.
 - [ ] 28. Add Windows forced-colors language-change check.
-- [ ] 29. Add locale persistence across reload regression.
+- [~] 29. Added a RU/EN persisted-locale reload regression that checks initial sidebar labels, Cloudflare help, composer option copy and Research option copy; browser execution pending.
 - [ ] 30. Add language change during Project Settings edit regression.
 
 
@@ -329,17 +329,17 @@
 - [ ] 10. Audit project memory inheritance and global memory toggles.
 - [ ] 11. Audit file import error messages for path/content disclosure.
 - [~] 12. Audit provider errors for API key/token redaction; Pollinations OAuth, model-catalog and provider-probe feedback no longer echoes backend error details or credentials. Full provider connect/disconnect and external OAuth token-response matrix remains open.
-- [~] 13. Audit Gateway errors for URL/authorization redaction; project-source, helper, document-extraction and ASR feedback no longer exposes backend response details in covered paths.
-- [~] 14. Audit voice/transcription errors for media/body redaction; local ASR Gateway failures now map to localized safe messages, while other voice/AgentRun/trace paths remain open.
-- [ ] 15. Audit AgentRun errors for prompt/task content redaction.
+- [~] 13. Audit Gateway errors for URL/authorization redaction; project-source, helper, document extraction, ASR, voice transcription, TTS, trace-save and chat-request feedback now map covered failures to safe localized messages. Full endpoint inventory remains open.
+- [~] 14. Audit voice/transcription errors for media/body redaction; local ASR, voice transcription and TTS failure details no longer surface raw Gateway bodies. Native capture/recording still needs device verification.
+- [~] 15. Audit AgentRun errors for prompt/task content redaction; UI catches now use the allowlisted agentRuntimeErrorText mapper instead of raw error.message, while task/event/trace content paths still need review.
 - [ ] 16. Audit trace export errors for source/private data redaction.
 - [ ] 17. Confirm confirmations never silently default to approval.
 - [ ] 18. Confirm cancel paths leave persisted data unchanged.
 - [ ] 19. Confirm local-only memory does not enter third-party requests.
 - [ ] 20. Confirm shared memory only enters requests when explicit scope is enabled.
 - [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
-- [ ] 22. Confirm failure feedback does not mutate or clear the user's draft.
-- [ ] 23. Confirm toast/alert copy does not expose raw secrets or private content.
+- [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
+- [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages, while the complete toast inventory remains open.
 - [ ] 24. Verify all privacy prompts in both locales.
 - [ ] 25. Verify user-data export/restore messages distinguish complete vs partial recovery.
 
