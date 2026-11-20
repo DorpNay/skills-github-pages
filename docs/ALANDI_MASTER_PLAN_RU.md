@@ -309,8 +309,8 @@
 - [~] 18. Localize project import size/count limits; 15 MiB, 200 projects, 500 chats, 50,000 messages and 1,000 local chats have explicit RU/EN feedback.
 - [~] 19. Localize project export/import completion toasts; export and import now announce success in the active locale.
 - [~] 20. Localize project source upload/delete/catalog failures and timeouts; raw Gateway diagnostics are no longer shown in status, with RU/EN credential-redaction regression authored.
-- [ ] 21. Localize shared-memory promotion errors from IndexedDB.
-- [ ] 22. Localize memory list loading failures.
+- [~] 21. Localize shared-memory promotion errors from IndexedDB; promotion now uses a strict private-memory read and safe RU/EN feedback for shared-store write failures while retaining the private copy. Regression authored; execution pending.
+- [~] 22. Localize memory list loading failures; UI-only strict reads show a polite `role=status` error and mark unavailable counts instead of reporting a false empty list. Request-context reads retain the existing tolerant fallback. RU/EN regression authored; execution pending.
 - [~] 23. Localize chat rename/move failure feedback; missing/stale project references now use active-locale messages, while rename/move storage failures reuse the existing localized `persistChats()` recovery feedback. Browser regression is authored; execution remains pending.
 - [~] 24. Localize chat import collision/limit details; format, count and collision-safe append behavior now have explicit feedback.
 - [~] 25. Added Playwright coverage for EN personal/shared-memory confirmation copy; RU dialog and project/chat prompt matrix still pending.
@@ -321,7 +321,7 @@
 - [~] 2. Keep personal-memory promotion explicit that the local copy remains.
 - [~] 3. Keep personal-memory command explicit that no shared-memory copy is created.
 - [~] 4. Keep shared-memory command explicit that personal memory is unchanged.
-- [~] 5. Avoid displaying raw internal memory storage exception text.
+- [~] 5. Avoid displaying raw internal memory storage exception text; promotion, shared-memory save/delete and list-read failures now use bounded RU/EN feedback without exposing IndexedDB exception details.
 - [~] 6. Avoid displaying raw chat import exception text.
 - [ ] 7. Audit all confirmations before sending private/project data externally.
 - [ ] 8. Audit every path that transfers personal memory into shared scope.
@@ -436,7 +436,7 @@
 - [~] Первый UI пакет: sidebar Create/section headings/space recovery IMPLEMENTED; остаётся довести desktop row density и проверить focus/scroll/selection persistence. Project Settings уже имеют базовую логическую IA; нужна mobile/action acceptance.
 - [~] Второй UI пакет: основные dialog focus/keyboard сценарии уже присутствуют; остаток — полный menu/popover sweep, chat-row action completeness, composer geometry/keyboard и все form states.
 - [~] Третий UI пакет: Research duplicate controls removed, current method selector/catalogue and Agent topology roadmap IMPLEMENTED; осталось довести Skills/Connectors IA и полную real status-strip semantics. См. P0.12–P0.15.
-- [ ] Fourth UI package: RU/EN, mobile 320–1440, typography/spacing/theme/motion/accessibility, browser matrix and dead-control audit.
+- [~] Fourth UI package: RU/EN, mobile 320–1440, typography/spacing/theme/motion/accessibility, browser matrix and dead-control audit remains the active package; memory IndexedDB read-failure states and promotion feedback are now implemented with RU/EN regression coverage, while the remaining responsive/native/browser matrix is still open.
 - [ ] Only after P0 acceptance: aCodingi/aNoteBooki workspace shells, without broadening studio runtime scope. aSoundi comes later after landing.
 - [ ] At end of landing: run complete package verification and then owner provider consultation.
 
