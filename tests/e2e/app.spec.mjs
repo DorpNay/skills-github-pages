@@ -6834,3 +6834,70 @@ test('chat clone and imported-project fallback titles follow the active locale',
   const originalTitle = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === 'e2e-empty-title')?.title);
   expect(originalTitle).toBe('');
 });
+
+
+test('personal and shared memory read failures are announced instead of shown as empty in RU and EN', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toBeVisible();
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await page.locator('#memoryToolsDetails').evaluate(element => { element.open = true; });
+  await page.locator('#globalMemoryDetails').evaluate(element => { element.open = true; });
+  await page.locator('#personalMemoryDetails').evaluate(element => { element.open = true; });
+  await page.evaluate(() => {
+    const originalTransaction = IDBDatabase.prototype.transaction;
+    window.__failMemoryReads = new Set(['memory', 'sharedMemory']);
+    IDBDatabase.prototype.transaction = function (storeNames, mode, options) {
+      const names = typeof storeNames === 'string' ? [storeNames] : Array.from(storeNames || []);
+      if (mode === 'readonly' && names.some(name => window.__failMemoryReads.has(name))) {
+        throw new DOMException('Synthetic memory read failure', 'UnknownError');
+      }
+      return originalTransaction.call(this, storeNames, mode, options);
+    };
+  });
+
+  for (const [language, privateMessage, sharedMessage, privateSummary, sharedSummary, privateEmpty, sharedEmpty] of [
+    ['ru', 'Личную память не удалось прочитать', 'Общую память не удалось прочитать', 'личных недоступна', 'общих недоступна', 'Нет личных заметок.', 'Нет общих заметок.'],
+    ['en', 'Personal memory could not be loaded', 'Shared memory could not be loaded', 'personal unavailable', 'shared unavailable', 'Нет личных заметок.', 'Нет общих заметок.']
+  ]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.locator('#memoryInput').fill('private read failure ' + language);
+    await page.locator('[data-action="save-memory"]').click();
+    await expect(page.locator('#memoryBox')).toContainText(privateMessage);
+    await expect(page.locator('#memoryBox')).not.toContainText(privateEmpty);
+    await expect(page.locator('#memoryBox')).toHaveAttribute('data-load-state', 'error');
+    await expect(page.locator('#personalMemoryCount')).toHaveText('—');
+    await expect(page.locator('#memoryStatusLine')).toContainText(privateSummary);
+
+    page.once('dialog', dialog => dialog.accept());
+    await page.locator('#sharedMemoryInput').fill('shared read failure ' + language);
+    await page.locator('[data-action="save-shared-memory"]').click();
+    await expect(page.locator('#sharedMemoryBox')).toContainText(sharedMessage);
+    await expect(page.locator('#sharedMemoryBox')).not.toContainText(sharedEmpty);
+    await expect(page.locator('#sharedMemoryBox')).toHaveAttribute('data-load-state', 'error');
+    await expect(page.locator('#sharedMemoryCount')).toHaveText('—');
+    await expect(page.locator('#memoryStatusLine')).toContainText(sharedSummary);
+  }
+
+  await expect(page.locator('#memoryBox [role="status"]')).toHaveCount(1);
+  await expect(page.locator('#sharedMemoryBox [role="status"]')).toHaveCount(1);
+});
+
+test('stale project selection feedback follows the active RU/EN locale', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  for (const [language, expected] of [
+    ['ru', 'Проект не найден.'],
+    ['en', 'Project not found.']
+  ]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    await page.evaluate(() => {
+      const select = document.getElementById('currentProjectSelect');
+      const option = document.createElement('option');
+      option.value = '__missing_project__';
+      option.textContent = 'Missing project';
+      select.appendChild(option);
+      select.value = option.value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    await expect(page.locator('#toast')).toContainText(expected);
+  }
+});
