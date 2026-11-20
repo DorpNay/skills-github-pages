@@ -225,3 +225,104 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
   expect(stores.privateFacts.some(item => item.fact === 'cancelled promotion stays private')).toBeTruthy();
   expect(stores.sharedFacts).toHaveLength(0);
 });
+
+test('private-memory requests fail closed when the durable privacy marker cannot be saved', async ({ page }) => {
+  const modelRequests = [];
+  page.on('request', request => {
+    if (/privacy-gateway\.test|\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_ui_language_v1', 'en');
+    localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_base_url', 'https://privacy-gateway.test');
+  });
+  await page.goto('/');
+  await page.waitForFunction(async () => (await indexedDB.databases())
+    .some(item => item.name === 'AI_Agent_DB_v87' && item.version === 2));
+
+  await page.evaluate(async () => {
+    const database = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('AI_Agent_DB_v87');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction('memory', 'readwrite');
+      transaction.objectStore('memory').put({
+        id: 'privacy-marker-sentinel',
+        fact: 'privacy marker sentinel private memory test fact',
+        time: Date.now(),
+        scope: 'private'
+      }, 'privacy-marker-sentinel');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(transaction.error || new Error('Seed transaction aborted'));
+    });
+    database.close();
+  });
+
+  await page.evaluate(() => {
+    const nativeSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === 'ai_chats_v87') {
+        const storedChats = JSON.parse(String(value));
+        if (storedChats.some(chat => chat?.privateMemoryUsed === true)) {
+          throw new DOMException('Synthetic quota failure', 'QuotaExceededError');
+        }
+      }
+      return nativeSetItem.call(this, key, value);
+    };
+  });
+
+  await page.locator('#userInput').fill('Please explain the privacy marker sentinel.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText(
+    'Personal-memory privacy could not be saved. No model request was sent.'
+  );
+
+  expect(modelRequests, 'Private context must not reach any model when its privacy marker is not durable').toEqual([]);
+  const markerState = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === localStorage.getItem('ai_current_chat_v87'))?.privateMemoryUsed;
+  });
+  expect(markerState).toBeFalsy();
+});
+
+test('private chat provider-block feedback follows the English locale', async ({ page }) => {
+  const modelRequests = [];
+  page.on('request', request => {
+    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_ui_language_v1', 'en');
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'private-english-chat',
+      title: 'Private chat',
+      messages: [],
+      projectId: null,
+      projectMemoryEnabled: false,
+      privateMemoryUsed: true,
+      executionMode: 'direct'
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'private-english-chat');
+  });
+
+  await page.goto('/');
+  const draft = 'Check the privacy boundary for this chat.';
+  await page.locator('#userInput').fill(draft);
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('body')).toContainText(
+    'Third-party providers are blocked for this chat to protect its history.'
+  );
+  await expect(page.locator('#chatBox')).not.toContainText(draft);
+  await expect(page.locator('#userInput')).toHaveValue(draft);
+  expect(modelRequests, 'A private chat must be blocked before any external model request').toEqual([]);
+});
