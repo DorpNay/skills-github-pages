@@ -56,6 +56,20 @@
 
 ## External source register
 
+### Landing UI finish — authoritative design and test references (reviewed 2026-11-20)
+
+These references are inspiration and acceptance guidance, not dependencies or proof of aLandi conformance:
+
+- **W3C — WCAG 2.2:** https://www.w3.org/TR/WCAG22/ — focus not obscured, keyboard order, target size and focus appearance criteria. Apply AA requirements as the baseline; 44×44 CSS px remains a deliberate aLandi touch-target policy, not a claim that WCAG AA universally requires 44px.
+- **W3C WAI — ARIA Authoring Practices Guide:** https://www.w3.org/WAI/ARIA/apg/ and https://www.w3.org/WAI/ARIA/apg/patterns/ — use documented dialog, disclosure, menu-button and keyboard interaction patterns; do not add ARIA roles without implementing their keyboard/state contracts.
+- **USWDS — Form component:** https://designsystem.digital.gov/components/form/ — semantic fieldsets/legends, DOM order matching visual order, aligned validation and explanatory disabled states.
+- **GOV.UK Design System — Validation pattern:** https://design-system.service.gov.uk/patterns/validation/ — preserve entered values, focus an error summary or first invalid field, and pair summary-level guidance with field-level messages.
+- **GitHub Primer — Forms:** https://primer.style/product/ui-patterns/forms/ — concise persistent labels, submit-time validation, aria-invalid, aria-describedby, first-invalid focus and non-redundant helper text.
+- **Material Design 3 — Accessibility / flow:** https://m3.material.io/foundations/designing/flow — keep natural DOM tab order, define initial focus for dialogs and return focus to the invoker after close.
+- **Microsoft Playwright — Assertions:** https://playwright.dev/docs/test-assertions and https://playwright.dev/docs/aria-snapshots — prefer auto-retrying role/name/focus/visibility assertions and ARIA snapshots for deterministic browser acceptance.
+
+**Use in aLandi:** borrow patterns, not visual branding or framework dependencies. Keep current HTML/CSS/JS + Jekyll architecture. Convert applicable requirements into focused Playwright assertions and manual native-device gates; no external system's benchmark or compliance claim transfers automatically.
+
 Repository research is retained below. Treat upstream facts as date-bounded; recheck exact releases and licenses before implementation. Sources are categorized by purpose and disposition; not every item is intended for adoption.
 
 ### Priority upstream reference groups
