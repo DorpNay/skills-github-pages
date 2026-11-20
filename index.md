@@ -3059,7 +3059,7 @@ permalink: /
     }
     function moveCurrentChatToProject(projectId){
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
-      if(projectId&&!target){showToast('Проект не найден.','error');renderProjectUI();return;}
+      if(projectId&&!target){showToast(getUiLanguage()==='en'?'Project not found.':'Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
       const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
@@ -3104,8 +3104,8 @@ permalink: /
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       showToast(getUiLanguage()==='en'?'Project bundle exported.':'Пакет проекта экспортирован.');
     }
-    function sanitizeImportedProjectChat(chat,projectId){
-      return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):'Импортированный чат',projectId,projectMemoryEnabled:false,
+    function sanitizeImportedProjectChat(chat,projectId,english=false){
+      return {id:String(chat.id||projectIdNew()).slice(0,128),title:typeof chat.title==='string'?chat.title.slice(0,160):(english?'Imported chat':'Импортированный чат'),projectId,projectMemoryEnabled:false,
         messages:Array.isArray(chat.messages)?chat.messages.filter(m=>m&&['user','assistant','tool'].includes(m.role)).slice(0,10000).map(m=>({role:m.role,content:typeof m.content==='string'?m.content.slice(0,30000):'',...(typeof m.tool_call_id==='string'?{tool_call_id:m.tool_call_id.slice(0,200)}:{}),...(Array.isArray(m.tool_calls)?{tool_calls:m.tool_calls.slice(0,100)}:{}),...(m.error?{error:true}:{})})):[]};
     }
     async function importProjectBundle(event){
@@ -3136,7 +3136,7 @@ permalink: /
         if(projects.length>=200)reject('projectLimit');
         const totalMessages=bundle.chats.reduce((total,chat)=>total+chat.messages.length,0);
         if(totalMessages>MAX_IMPORTED_MESSAGES)reject('messageLimit');
-        const importedChats=bundle.chats.map(chat=>sanitizeImportedProjectChat(chat,''));
+        const importedChats=bundle.chats.map(chat=>sanitizeImportedProjectChat(chat,'',en));
         if(chats.length+importedChats.length>1000)reject('localChatLimit');
         const now=new Date().toISOString();
         const baseName=bundle.project.name.trim().slice(0,78);
@@ -6787,7 +6787,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       toggleSidebar(false);
     }
     function createNewChatInProject(projectId) {
-      const project=projects.find(item=>item.id===projectId);if(!project){showToast('Проект больше не существует.','error');return;}
+      const project=projects.find(item=>item.id===projectId),english=getUiLanguage()==='en';if(!project){showToast(english?'This project is no longer available.':'Этот проект больше не доступен.','error');return;}
       const chat=createChat('Новый чат · '+project.name,[],project.id);
       updateState([chat,...chats],chat.id);toggleSidebar(false);
     }
@@ -6882,7 +6882,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     }
     function cloneChat(id) {
       const source=chats.find(item=>item.id===id);if(!source)return;
-      const copy=createChat((source.title||'Новый чат')+' — копия',JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
+      const english=getUiLanguage()==='en';const copy=createChat((source.title||(english?'New chat':'Новый чат'))+(english?' — copy':' — копия'),JSON.parse(JSON.stringify(source.messages||[])),source.projectId||null);
       copy.projectMemoryEnabled=false
       const previousChats=chats,previousCurrentId=currentChatId;
       if(!updateState([copy,...chats],copy.id)){chats=previousChats;currentChatId=previousCurrentId;renderChatList();renderActiveChat();renderProjectUI({preserveDraft:true});return;}

@@ -57,6 +57,8 @@
 ## External source register
 
 ### Landing UI finish — authoritative design and test references (reviewed 2026-11-20)
+- **Current root UI slice (2026-11-20):** chat/project fallback-copy fixes retain the existing HTML/JS interaction model and use the already catalogued WCAG 2.2 and WAI-ARIA APG references as design constraints. No UI framework, runtime dependency, provider, or external asset was added; this slice introduces no new upstream claim requiring another URL.
+
 
 These references are inspiration and acceptance guidance, not dependencies or proof of aLandi conformance:
 

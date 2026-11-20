@@ -6792,3 +6792,45 @@ test('chat import validation feedback is localized and leaves existing history u
     expect(after).toEqual(before);
   }
 });
+
+
+test('chat clone and imported-project fallback titles follow the active locale', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => {
+    const now = new Date().toISOString();
+    const chat = { id: 'e2e-empty-title', title: '', projectId: null, messages: [], createdAt: now, updatedAt: now, searchMode: 'offline' };
+    localStorage.setItem('ai_chats_v87', JSON.stringify([chat]));
+    localStorage.setItem('ai_current_chat_v87', chat.id);
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await ensureSidebarOpen(page);
+  const sourceRow = page.locator('#chatList .chat-row[data-chat-id="e2e-empty-title"]');
+  for (const [language, expected] of [['en', 'New chat — copy'], ['ru', 'Новый чат — копия']]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    await sourceRow.locator('.chat-row-menu summary').click();
+    await sourceRow.locator('[data-action="chat-clone"]').click();
+    await expect.poll(async () => page.evaluate(() => {
+      const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+      return chats.find(chat => chat.id !== 'e2e-empty-title')?.title || '';
+    })).toBe(expected);
+  }
+  for (const [language, expected] of [['en', 'Imported chat'], ['ru', 'Импортированный чат']]) {
+    await page.locator('#uiLanguage').selectOption(language);
+    const chatId = 'e2e-project-fallback-' + language;
+    const now = new Date().toISOString();
+    const bundle = {
+      format: 'alandi-project-bundle',
+      version: 1,
+      exportedAt: now,
+      project: { id: 'e2e-project-' + language, name: 'Fallback ' + language, description: '', instructions: '', memoryScope: 'project-only', memory: [], createdAt: now, updatedAt: now },
+      chats: [{ id: chatId, messages: [], createdAt: now, updatedAt: now }]
+    };
+    await page.locator('#importProjectFile').setInputFiles({ name: 'fallback-' + language + '.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(bundle)) });
+    await expect.poll(async () => page.evaluate(id => {
+      const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+      return chats.find(chat => chat.id === id)?.title || '';
+    }, chatId)).toBe(expected);
+  }
+  const originalTitle = await page.evaluate(() => JSON.parse(localStorage.getItem('ai_chats_v87') || '[]').find(chat => chat.id === 'e2e-empty-title')?.title);
+  expect(originalTitle).toBe('');
+});

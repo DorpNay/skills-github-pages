@@ -214,7 +214,7 @@
 - [~] 13. Audit provider test/connect/disconnect failure feedback; provider probe failure is localized, redacts echoed credentials, and exposes an aria-busy lifecycle with RU/EN Playwright coverage. The full provider probe/connect/disconnect matrix remains open.
 - [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby. Existing bundle E2E verifies a new imported project ID/name, imported chat association, and preservation of the source/other project; the full CRUD feedback inventory remains open.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
-- [ ] 16. Audit chat CRUD and dialog validation.
+- [~] 16. Audit chat CRUD and dialog validation; stale project references now show RU/EN feedback, clone titles and missing imported-chat titles use the active locale, and a combined RU/EN regression is added. Remaining: complete persistence-failure and dialog-validation matrix.
 - [ ] 17. Audit trace export/copy/download feedback.
 - [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors and image/video preview failures now use safe localized messages with credential-redaction coverage.
 - [~] 19. Audit Voice/ASR/TTS capability feedback; local document/ASR, voice transcription and TTS errors now map to safe localized messages. Voice capture/TTS capability and full native-device matrix remain open.
@@ -311,7 +311,7 @@
 - [~] 20. Localize project source upload/delete/catalog failures and timeouts; raw Gateway diagnostics are no longer shown in status, with RU/EN credential-redaction regression authored.
 - [ ] 21. Localize shared-memory promotion errors from IndexedDB.
 - [ ] 22. Localize memory list loading failures.
-- [ ] 23. Localize chat rename/move failure feedback.
+- [~] 23. Localize chat rename/move failure feedback; missing/stale project references now use active-locale messages, while rename/move storage failures reuse the existing localized `persistChats()` recovery feedback. Browser regression is authored; execution remains pending.
 - [~] 24. Localize chat import collision/limit details; format, count and collision-safe append behavior now have explicit feedback.
 - [~] 25. Added Playwright coverage for EN personal/shared-memory confirmation copy; RU dialog and project/chat prompt matrix still pending.
 
