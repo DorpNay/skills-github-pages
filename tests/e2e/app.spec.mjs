@@ -7353,11 +7353,29 @@ test('RU → EN → RU language round-trip preserves the draft at 320/390/768/14
     await expect(language).toHaveValue('en');
     await expect(page.locator('#userInput')).toHaveAttribute('placeholder', 'Write a message...');
     await expect(page.locator('#userInput')).toHaveValue(draft);
+    const englishLayout = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      document: document.documentElement.scrollWidth,
+      body: document.body.scrollWidth
+    }));
+    expect(englishLayout.document, 'English document width at ' + width + 'px')
+      .toBeLessThanOrEqual(englishLayout.viewport + 1);
+    expect(englishLayout.body, 'English body width at ' + width + 'px')
+      .toBeLessThanOrEqual(englishLayout.viewport + 1);
 
     await selectLanguage(page, 'ru');
     await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
     await expect(language).toHaveValue('ru');
     await expect(page.locator('#userInput')).toHaveValue(draft);
+    const russianLayout = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      document: document.documentElement.scrollWidth,
+      body: document.body.scrollWidth
+    }));
+    expect(russianLayout.document, 'Russian document width at ' + width + 'px')
+      .toBeLessThanOrEqual(russianLayout.viewport + 1);
+    expect(russianLayout.body, 'Russian body width at ' + width + 'px')
+      .toBeLessThanOrEqual(russianLayout.viewport + 1);
     await expect(page).toHaveURL(initialUrl);
   }
 });
