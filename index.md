@@ -5560,12 +5560,6 @@ let agentRuntimeRefreshPromise = null;
       $('functionPanelModal').classList.add('hidden');
       $('functionsMenuSummary')?.focus();
     }
-    $('functionsMenu')?.addEventListener('click',event=>{
-      const control=event.target.closest('button[data-action="open-function-panel"]');
-      if(!control)return;
-      event.preventDefault();event.stopPropagation();
-      openFunctionPanel(control.dataset.function);
-    });
     document.addEventListener('click', (event) => {
       const toolbarMenus = ['searchModeMenu','functionsMenu'].map(id => $(id)).filter(menu => menu?.open);
       const actionMenus = [...document.querySelectorAll('.chat-row-menu[open]')];
