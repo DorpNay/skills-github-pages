@@ -211,13 +211,13 @@
 - [~] 10. Static audit found no raw alert() calls; all remaining confirm() paths use the active locale or projectSourcesText dictionary.
 - [~] 11. Audit thrown errors shown to users for locale-safe messages; project-memory helper and settings-profile import now map unknown/parser/Gateway errors to RU/EN safe copy, but the full thrown-error inventory remains open.
 - [~] 12. Audit async Gateway failure/status messages for locale refresh; helper, local document extraction and local ASR no longer render raw Gateway details, with RU/EN redaction regressions added.
-- [ ] 13. Audit provider test/connect/disconnect failure feedback.
+- [~] 13. Audit provider test/connect/disconnect failure feedback; Pollinations OAuth callback/token failures and model-catalog errors now use safe localized messages, but provider probe and all settings-state paths still need a full matrix.
 - [ ] 14. Audit project CRUD and import/export feedback.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
 - [ ] 16. Audit chat CRUD and dialog validation.
 - [ ] 17. Audit trace export/copy/download feedback.
-- [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors now use safe localized messages with credential-redaction coverage.
-- [ ] 19. Audit Voice/ASR/TTS capability feedback.
+- [~] 18. Audit attachment parser/extraction warnings and failures; local document/ASR Gateway errors and image/video preview failures now use safe localized messages with credential-redaction coverage.
+- [~] 19. Audit Voice/ASR/TTS capability feedback; local ASR capability/error copy is localized and redacted, while voice capture/TTS and the broader capability matrix remain open.
 - [ ] 20. Audit offline/online mode and connectivity feedback.
 - [ ] 21. Audit storage quota and recovery warning feedback.
 - [ ] 22. Audit all toast messages for locale parity.
@@ -328,7 +328,7 @@
 - [ ] 9. Audit all third-party provider exposure warnings for accurate scope.
 - [ ] 10. Audit project memory inheritance and global memory toggles.
 - [ ] 11. Audit file import error messages for path/content disclosure.
-- [ ] 12. Audit provider errors for API key/token redaction.
+- [~] 12. Audit provider errors for API key/token redaction; Pollinations OAuth callback/token and model-catalog feedback no longer echoes external error detail, but full provider probe/connect/disconnect coverage remains open.
 - [~] 13. Audit Gateway errors for URL/authorization redaction; project-source, helper, document-extraction and ASR feedback no longer exposes backend response details in covered paths.
 - [~] 14. Audit voice/transcription errors for media/body redaction; local ASR Gateway failures now map to localized safe messages, while other voice/AgentRun/trace paths remain open.
 - [ ] 15. Audit AgentRun errors for prompt/task content redaction.
