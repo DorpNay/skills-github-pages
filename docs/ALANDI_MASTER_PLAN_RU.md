@@ -211,7 +211,7 @@
 - [~] 10. Static audit found no raw alert() calls; all remaining confirm() paths use the active locale or projectSourcesText dictionary.
 - [~] 11. Audit thrown errors shown to users for locale-safe messages; project-memory helper and settings-profile import now map unknown/parser/Gateway errors to RU/EN safe copy, but the full thrown-error inventory remains open.
 - [~] 12. Audit async Gateway failure/status messages for locale refresh; helper, local document extraction and local ASR no longer render raw Gateway details, with RU/EN redaction regressions added.
-- [~] 13. Audit provider test/connect/disconnect failure feedback; provider probe failure is localized, redacts echoed credentials, and exposes an aria-busy lifecycle with RU/EN Playwright coverage. The full provider probe/connect/disconnect matrix remains open.
+- [~] 13. Audit provider test/connect/disconnect failure feedback; provider probe failure is localized, redacts echoed credentials, and exposes an aria-busy lifecycle with RU/EN Playwright coverage. The full provider probe/connect/disconnect matrix remains open. The private-chat guard against external providers now uses the active RU/EN locale; a focused English regression is authored, with Chromium execution pending.
 - [~] 14. Audit project CRUD and import/export feedback; project name validation now targets the correct inline error nodes and synchronizes aria-invalid/aria-describedby. Existing bundle E2E verifies a new imported project ID/name, imported chat association, and preservation of the source/other project; the full CRUD feedback inventory remains open.
 - [~] 15. Audit memory CRUD and helper suggestions feedback; helper Gateway failures now use allowlisted localized states and never expose raw backend diagnostics.
 - [~] 16. Audit chat CRUD and dialog validation; stale project references now show RU/EN feedback, clone titles and missing imported-chat titles use the active locale, and a combined RU/EN regression is added. Remaining: complete persistence-failure and dialog-validation matrix.
@@ -335,7 +335,7 @@
 - [~] 16. Audit trace export errors for source/private data redaction; Markdown/JSON download exceptions now map to fixed RU/EN feedback without exposing browser exception details or trace content. Fault-injection regression added; full export/privacy review remains open.
 - [ ] 17. Confirm confirmations never silently default to approval.
 - [ ] 18. Confirm cancel paths leave persisted data unchanged.
-- [ ] 19. Confirm local-only memory does not enter third-party requests.
+- [~] 19. Confirm local-only memory does not enter third-party requests; existing request routing filters private-memory contexts to the first-party aLandi provider. The chat-level `privateMemoryUsed` barrier now fails closed: when its durable browser-storage write fails, generation aborts before any model request and the in-memory marker is restored. Added Playwright fault-injection coverage for an IndexedDB private fact plus localStorage quota failure; Chromium execution remains pending.
 - [ ] 20. Confirm shared memory only enters requests when explicit scope is enabled.
 - [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
 - [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
