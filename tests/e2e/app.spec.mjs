@@ -6911,7 +6911,7 @@ test('visible controls have accessible names and hidden navigation remains inert
         const style = getComputedStyle(element);
         return element.getClientRects().length > 0 && style.display !== 'none' && style.visibility !== 'hidden';
       };
-      const labelledBy = element => (element.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean)
+      const labelledBy = element => (element.getAttribute('aria-labelledby') || '').split(/\s+/).filter(Boolean)
         .map(id => document.getElementById(id)?.textContent || '').join(' ').trim();
       const name = element => element.getAttribute('aria-label')?.trim() || labelledBy(element) ||
         (element.labels ? Array.from(element.labels).map(label => label.textContent || '').join(' ').trim() : '') ||
@@ -6919,7 +6919,7 @@ test('visible controls have accessible names and hidden navigation remains inert
         (['submit', 'button', 'reset'].includes(element.type) ? (element.value || '').trim() : '');
       const buttons = Array.from(document.querySelectorAll('button')).filter(visible);
       const controls = Array.from(document.querySelectorAll('input:not([type="hidden"]),select,textarea')).filter(visible);
-      const hiddenFocusable = Array.from(document.querySelectorAll('[aria-hidden="true"] button,[aria-hidden="true"] a[href],[aria-hidden="true"] input,[aria-hidden="true"] select,[aria-hidden="true"] textarea,[aria-hidden="true"] [tabindex]'))
+      const hiddenFocusable = Array.from(document.querySelectorAll('[aria-hidden="true"] button,[aria-hidden="true"] a[href],[aria-hidden="true"] input,[aria-hidden="true"] select,[aria-hidden="true"] textarea,[aria-hidden="true"] summary,[aria-hidden="true"] [role="button"],[aria-hidden="true"] [tabindex]'))
         .filter(element => visible(element) && element.tabIndex >= 0 && !element.closest('[inert]'));
       return {
         unnamedButtons: buttons.filter(button => !name(button)).map(button => button.outerHTML.slice(0, 180)),
