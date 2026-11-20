@@ -1749,9 +1749,10 @@ permalink: /
       return chats.find((chat) => chat.id === currentChatId) || chats[0];
     }
     function downloadRecoveryBackup() {
-      if (!chatRecoveryBackupKey && !chatStorageCorruptNotBackedUp) throw new Error('Резервная копия истории не найдена.');
+      const en=getUiLanguage()==='en';
+      if (!chatRecoveryBackupKey && !chatStorageCorruptNotBackedUp) throw new Error(en?'Chat recovery backup was not found.':'Резервная копия истории не найдена.');
       const raw = chatRecoveryBackupKey ? safeGet(chatRecoveryBackupKey) : safeGet(STORAGE.chats);
-      if (raw === null) throw new Error('Резервная копия истории недоступна в этом браузере.');
+      if (raw === null) throw new Error(en?'Chat recovery backup is unavailable in this browser.':'Резервная копия истории недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -1761,12 +1762,13 @@ permalink: /
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast('Резервная копия истории скачивается.');
+      showToast(en?'Chat recovery backup is downloading.':'Резервная копия истории скачивается.');
     }
     function downloadProjectRecoveryBackup() {
-      if (!projectRecoveryBackupKey && !projectStorageCorruptNotBackedUp) throw new Error('Резервная копия проектов не найдена.');
+      const en=getUiLanguage()==='en';
+      if (!projectRecoveryBackupKey && !projectStorageCorruptNotBackedUp) throw new Error(en?'Project recovery backup was not found.':'Резервная копия проектов не найдена.');
       const raw = projectRecoveryBackupKey ? safeGet(projectRecoveryBackupKey) : safeGet(STORAGE.projects);
-      if (raw === null) throw new Error('Резервная копия проектов недоступна в этом браузере.');
+      if (raw === null) throw new Error(en?'Project recovery backup is unavailable in this browser.':'Резервная копия проектов недоступна в этом браузере.');
       const blob = new Blob([raw], { type: 'application/json;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -1776,7 +1778,7 @@ permalink: /
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast('Резервная копия проектов скачивается.');
+      showToast(en?'Project recovery backup is downloading.':'Резервная копия проектов скачивается.');
     }
 
     function requestResult(request) {
