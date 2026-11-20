@@ -11,12 +11,10 @@ on:
       - 'tests/audit-inline-js.test.mjs'
       - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/quality-agents.mjs'
-      - 'scripts/audit-inline-js.mjs'
-      - 'tests/audit-inline-js.test.mjs'
-      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/check-action-pinning.mjs'
       - 'scripts/provider-smoke*.mjs'
       - 'scripts/diagnose_model_runtime.sh'
+      - 'lighthouserc.cjs'
       - '.github/workflows/quality-sentinels.yml'
   pull_request:
     branches: [main]
@@ -28,12 +26,10 @@ on:
       - 'tests/audit-inline-js.test.mjs'
       - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/quality-agents.mjs'
-      - 'scripts/audit-inline-js.mjs'
-      - 'tests/audit-inline-js.test.mjs'
-      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/check-action-pinning.mjs'
       - 'scripts/provider-smoke*.mjs'
       - 'scripts/diagnose_model_runtime.sh'
+      - 'lighthouserc.cjs'
       - '.github/workflows/quality-sentinels.yml'
   workflow_dispatch:
     inputs:
@@ -112,6 +108,7 @@ jobs:
   pages-build:
     name: Jekyll build sentinel
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
@@ -127,11 +124,44 @@ jobs:
         with:
           node-version: 24
       - name: Install pinned parser for report-only inline JavaScript audit
-        run: npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund acorn@8.15.0
+        run: npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund acorn@8.15.0 @lhci/cli@0.16.1
       - name: Verify report-only inline JavaScript AST audit
         run: |
           node --test tests/audit-inline-js.test.mjs
           node scripts/audit-inline-js.mjs ./_site/index.html --summary
+      - name: Collect advisory Lighthouse mobile baseline (filesystem only)
+        id: lighthouse
+        continue-on-error: true
+        run: ./node_modules/.bin/lhci autorun --config=./lighthouserc.cjs
+      - name: Summarize Lighthouse lab metrics
+        if: steps.lighthouse.outcome == 'success'
+        run: |
+          node --input-type=module -e '
+            import { readdirSync, readFileSync } from "node:fs";
+            const files = readdirSync(".lighthouseci").filter(name => name.endsWith(".json") && name !== "manifest.json");
+            const reports = files.map(name => JSON.parse(readFileSync(".lighthouseci/" + name, "utf8"))).filter(report => report.audits && report.categories);
+            if (!reports.length) throw new Error("No Lighthouse JSON reports were produced");
+            for (const report of reports) {
+              const metric = id => report.audits[id]?.numericValue ?? null;
+              const category = id => report.categories[id]?.score == null ? null : Math.round(report.categories[id].score * 100);
+              console.log(JSON.stringify({
+                url: report.finalDisplayedUrl,
+                formFactor: report.configSettings?.formFactor ?? "unknown",
+                performance: category("performance"),
+                accessibility: category("accessibility"),
+                bestPractices: category("best-practices"),
+                seo: category("seo"),
+                lcpMs: metric("largest-contentful-paint"),
+                cls: metric("cumulative-layout-shift"),
+                tbtMs: metric("total-blocking-time"),
+                inpMs: metric("interaction-to-next-paint"),
+                fcpMs: metric("first-contentful-paint")
+              }));
+            }
+          '
+      - name: Note Lighthouse baseline unavailable
+        if: steps.lighthouse.outcome != 'success'
+        run: echo "::warning::Lighthouse lab baseline did not complete; no performance budget is enforced."
       - name: Verify generated site artifact
         run: node scripts/quality-agents.mjs build
 
