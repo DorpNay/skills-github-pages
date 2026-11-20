@@ -235,7 +235,7 @@
 - [~] 6. Static audit matched all 69 static action names and 13 generated action names to dispatcher cases/submit path; runtime behavior still pending.
 - [~] 7. Static audit found no orphaned static or generated action names.
 - [~] 8. Static source audit confirms locale refresh does not reinstall delegated listeners; dynamic actions remain on the shared dispatcher. The 10-cycle RU/EN regression is authored; runtime execution pending.
-- [~] 9. Confirm destructive actions have clear confirmation or reversible undo; project-memory item deletion now has an RU/EN native confirmation and an E2E regression for cancel/accept plus persistence. Chat, project, project-source and personal/shared-memory deletion already use confirmations; complete inventory remains open.
+- [~] 9. Confirm destructive actions have clear confirmation or reversible undo; project-memory item deletion and provider credential removal now have RU/EN native confirmations. Credential copy explicitly says browser-local removal does not revoke the provider credential; E2E covers cancel/accept and preserved/cleared field state. Chat, project, project-source and personal/shared-memory deletion already use confirmations; complete inventory remains open.
 - [~] 10. Provider probe now disables its control and toggles aria-busy through pending/completed states; RU/EN regression added. The full async-action inventory remains open.
 - [ ] 11. Confirm cancel actions abort the corresponding operation.
 - [~] 12. Settings modal now shares the Tab/Shift+Tab focus loop, Escape/backdrop close and existing opener restoration; browser regression is authored but not run.
