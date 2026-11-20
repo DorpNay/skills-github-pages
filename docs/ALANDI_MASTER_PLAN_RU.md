@@ -188,13 +188,13 @@
 - [~] 15. Preserve focused request-context checkbox after locale-triggered rebuild; browser test added.
 - [~] 16. Restore attachment remove-button focus when attachment chips are re-rendered.
 - [ ] 17. Verify message action keyboard focus survives in-place relabeling.
-- [ ] 18. Verify long project/chat names remain clipped without horizontal overflow.
+- [~] 18. Verify long project/chat names remain clipped without horizontal overflow; existing 320px regression checks title preservation and bounded row geometry. Locale-specific recheck and Chromium execution remain pending.
 - [ ] 19. Verify five-project request context cap in both locales.
 - [~] 20. Verify no duplicate change handlers after repeated context-menu refresh; added 10-cycle RU/EN regression for composer disclosures and their single Escape-close path.
 - [~] 21. Verify no duplicate project/chat rows after 10 repeated locale switches; added 10-cycle locale idempotency regression, runtime execution pending.
 - [ ] 22. Verify no state loss across chat switch while locale is changed.
 - [~] 23. Synchronize `aria-expanded` from actual menu visibility after locale refresh; regression covers attachment, request-context and voice disclosures.
-- [ ] 24. Verify browser history/deep-link state remain unchanged by locale.
+- [~] 24. Verify browser history/deep-link state remain unchanged by locale; the new round-trip regression checks URL stability through RU→EN→RU at 320/390/768/1440px. `history.state`/deep-link route matrix and Chromium execution remain pending.
 - [~] 25. Added 10-cycle RU/EN regression preserving composer draft, unsupported attachment, localized remove label and keyboard focus.
 
 ### P0.28 — UI action feedback localization (PARTIAL)
@@ -237,7 +237,7 @@
 - [~] 8. Static source audit confirms locale refresh does not reinstall delegated listeners; dynamic actions remain on the shared dispatcher. The 10-cycle RU/EN regression is authored; runtime execution pending.
 - [~] 9. Confirm destructive actions have clear confirmation or reversible undo; project-memory item deletion and provider credential removal now have RU/EN native confirmations. Credential copy explicitly says browser-local removal does not revoke the provider credential; E2E covers cancel/accept and preserved/cleared field state. Chat, project, project-source and personal/shared-memory deletion already use confirmations; complete inventory remains open.
 - [~] 10. Provider probe now disables its control and toggles aria-busy through pending/completed states; RU/EN regression added. The full async-action inventory remains open.
-- [ ] 11. Confirm cancel actions abort the corresponding operation.
+- [~] 11. Confirm cancel actions abort the corresponding operation; existing project-memory deletion and personal→shared promotion tests assert cancel preserves data, while shared-memory and external project-context cancellation tests assert no mutation/no model request. Full action matrix and Chromium execution remain pending.
 - [~] 12. Settings modal now shares the Tab/Shift+Tab focus loop, Escape/backdrop close and existing opener restoration; browser regression is authored but not run.
 - [~] 13. Attachment, request-context and voice disclosures synchronize aria-expanded from actual visibility; RU/EN locale regression added, runtime pending.
 - [~] 14. Confirm selected toggles expose aria-pressed/checked; the Direct/AgentRun execution-mode control now synchronizes `aria-pressed` from the active chat mode, with existing execution-mode E2E asserting false→true. Complete toggle inventory remains open.
@@ -267,20 +267,20 @@
 - [~] 10. DOM audit checks native semantics of data-action controls.
 - [~] 11. DOM audit checks visible button accessible names.
 - [ ] 12. Add active move-chat dialog selection-preservation regression.
-- [ ] 13. Add live request-context selected-project preservation regression.
-- [ ] 14. Add selected attachment preservation regression across locale changes.
+- [~] 13. Add live request-context selected-project preservation regression; the one-shot project-context test confirms selected project context is sent once without changing the active chat project, while locale-focus regression checks the request-context checkbox retains focus after language refresh. Combined selected-state + locale matrix and Chromium execution remain pending.
+- [~] 14. Add selected attachment preservation regression across locale changes; existing ten-cycle RU/EN test preserves the draft, selected attachment, localized remove action and keyboard focus. Chromium execution remains pending.
 - [ ] 15. Add existing message-action aria-label refresh regression.
-- [ ] 16. Add research-trace/retry label refresh regression.
-- [ ] 17. Add tool-call indicator prefix refresh regression.
-- [ ] 18. Add provider/model metadata fallback refresh regression.
+- [~] 16. Add research-trace/retry label refresh regression; historical tool/research metadata test checks localized trace-open/retry labels and unchanged chat history. Chromium execution remains pending.
+- [~] 17. Add tool-call indicator prefix refresh regression; historical metadata test checks RU/EN tool-call prefix without mutating stored history. Chromium execution remains pending.
+- [~] 18. Add provider/model metadata fallback refresh regression; historical metadata test checks localized cache/provider metadata labels while preserving provenance and serialized history. Chromium execution remains pending.
 - [ ] 19. Add AgentRun task/event refresh regression with mocked Gateway.
 - [ ] 20. Add chat-list focus/scroll preservation regression.
-- [ ] 21. Add project-navigation focus preservation regression.
-- [ ] 22. Add 320px locale overflow regression.
-- [ ] 23. Add 768px locale wrapping regression.
-- [ ] 24. Add 1440px locale wrapping regression.
+- [~] 21. Add project-navigation focus preservation regression; existing locale refresh test asserts the focused project navigation control survives list rebuild. Chromium execution remains pending.
+- [~] 22. Add 320px locale overflow regression; RU/EN round-trip test asserts document/body width stays within the viewport at 320px. Chromium execution remains pending.
+- [~] 23. Add 768px locale wrapping regression; RU/EN round-trip test asserts document/body width stays within the viewport at 768px; text-wrap-specific geometry remains pending. Chromium execution remains pending.
+- [~] 24. Add 1440px locale wrapping regression; RU/EN round-trip test asserts document/body width stays within the viewport at 1440px; text-wrap-specific geometry remains pending. Chromium execution remains pending.
 - [~] 25. Added 10-cycle RU/EN idempotency regression for composer draft, attachment focus and disclosure state; browser execution pending.
-- [ ] 26. Add active stream locale-change regression without aborting generation.
+- [~] 26. Add active stream locale-change regression without aborting generation; existing in-flight status test blocks a mock response, switches RU/EN, asserts the request stays active and then completes. Chromium execution remains pending.
 - [ ] 27. Add native iOS Safari/VoiceOver language-change check.
 - [ ] 28. Add Windows forced-colors language-change check.
 - [~] 29. Added a RU/EN persisted-locale reload regression that checks initial sidebar labels, Cloudflare help, composer option copy and Research option copy; browser execution pending.
@@ -324,10 +324,10 @@
 - [~] 5. Avoid displaying raw internal memory storage exception text; promotion, shared-memory save/delete and list-read failures now use bounded RU/EN feedback without exposing IndexedDB exception details.
 - [~] 6. Avoid displaying raw chat import exception text.
 - [~] 7. Audit confirmations before sending private/project data externally; Direct chat now requires localized RU/EN confirmation before sending active-project instructions/memory or request-selected project contexts to any non-aLandi provider. Cancel returns before chat mutation or network request. Accept/cancel mock-provider Playwright tests are authored; Chromium execution pending. File/Notebook/other outbound paths still require inventory.
-- [ ] 8. Audit every path that transfers personal memory into shared scope.
+- [~] 8. Audit every path that transfers personal memory into shared scope; source audit finds one explicit personal→shared transfer function plus two separate manual shared-save paths, each guarded by confirmation and preserving the personal copy on promotion. Promotion-cancel and shared-save-cancel regressions exist; full accept/failure matrix and Chromium execution remain pending.
 - [~] 9. Audit third-party provider exposure warnings for accurate scope; the direct-chat disclosure now names the selected provider and project(s), and explicitly states that project context leaves the aLandi Gateway. Full provider-specific retention/privacy wording and non-chat route inventory remain open.
-- [ ] 10. Audit project memory inheritance and global memory toggles.
-- [ ] 11. Audit file import error messages for path/content disclosure.
+- [~] 10. Audit project-memory inheritance and global-memory toggles; request builder includes shared facts only when global opt-in is true and every active/requested project's memoryScope is `project-and-global` (without project scopes, global opt-in alone is sufficient). Existing tests cover project-scope edits, one-shot project context and shared-memory opt-in off/on; the full cross-product scope matrix remains pending.
+- [~] 11. Audit file-import error messages for path/content disclosure; project-bundle parser and chat-import failures use fixed localized validation messages, with tests asserting raw parser exception details are not surfaced and existing chat history remains unchanged. Complete per-import-path/path-leak matrix and Chromium execution remain pending.
 - [~] 12. Audit provider errors for API key/token redaction; Pollinations OAuth, model-catalog and provider-probe feedback no longer echoes backend error details or credentials. Full provider connect/disconnect and external OAuth token-response matrix remains open.
 - [~] 13. Audit Gateway errors for URL/authorization redaction; project-source, helper, document extraction, ASR, voice transcription, TTS, trace-save and chat-request feedback now map covered failures to safe localized messages. Full endpoint inventory remains open.
 - [~] 14. Audit voice/transcription errors for media/body redaction; local ASR, voice transcription and TTS failure details no longer surface raw Gateway bodies. Native capture/recording still needs device verification.
