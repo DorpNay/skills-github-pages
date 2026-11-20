@@ -457,3 +457,114 @@ test('canceling an explicit shared-memory save leaves the input and stores uncha
   await expect(page.locator('#chatBox')).not.toContainText('отменённый синтетический факт');
   expect(modelRequests).toBe(0);
 });
+
+test('canceling external project-context disclosure preserves the draft and sends no request', async ({ page }) => {
+  const modelRequests = [];
+  let disclosureMessage = '';
+  page.on('request', request => {
+    if (/generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+      modelRequests.push(request.url());
+    }
+  });
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'external-project-consent',
+      name: 'Privacy Project',
+      instructions: 'private project instruction sentinel',
+      memoryScope: 'project-only',
+      memory: [{ id: 'project-memory-sentinel', text: 'private project memory sentinel' }]
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'external-project-chat',
+      title: 'Privacy Project chat',
+      messages: [],
+      projectId: 'external-project-consent',
+      projectMemoryEnabled: true,
+      privateMemoryUsed: false,
+      executionMode: 'direct',
+      processingMode: 'fast',
+      searchMode: 'offline',
+      deepResearchMethod: 'none',
+      multiAgentEnabled: false
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'external-project-chat');
+  });
+
+  await page.goto('/');
+  const draft = 'Use the project context for this request.';
+  await page.locator('#userInput').fill(draft);
+  page.once('dialog', async dialog => {
+    disclosureMessage = dialog.message();
+    await dialog.dismiss();
+  });
+  await page.locator('#sendBtn').click();
+
+  expect(disclosureMessage).toContain('Privacy Project');
+  expect(disclosureMessage).toContain('Google AI Studio');
+  expect(disclosureMessage).toContain('outside the aLandi Gateway');
+  await expect(page.locator('#userInput')).toHaveValue(draft);
+  await expect(page.locator('#chatBox')).not.toContainText(draft);
+  const storedChat = await page.evaluate(() => {
+    const chats = JSON.parse(localStorage.getItem('ai_chats_v87') || '[]');
+    return chats.find(chat => chat.id === 'external-project-chat');
+  });
+  expect(storedChat.messages).toHaveLength(0);
+  expect(storedChat.projectMemoryEnabled).toBeTruthy();
+  expect(modelRequests, 'Canceling project-context disclosure must prevent provider requests').toEqual([]);
+});
+
+test('accepting external project-context disclosure sends the named project context', async ({ page }) => {
+  const outboundBodies = [];
+  const disclosureMessages = [];
+  await page.addInitScript(() => {
+    localStorage.setItem('ai_api_provider', 'gemini');
+    localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
+    localStorage.setItem('ai_projects_v1', JSON.stringify([{
+      id: 'external-project-consent',
+      name: 'Privacy Project',
+      instructions: 'private project instruction sentinel',
+      memoryScope: 'project-only',
+      memory: [{ id: 'project-memory-sentinel', text: 'private project memory sentinel' }]
+    }]));
+    localStorage.setItem('ai_chats_v87', JSON.stringify([{
+      id: 'external-project-chat',
+      title: 'Privacy Project chat',
+      messages: [],
+      projectId: 'external-project-consent',
+      projectMemoryEnabled: true,
+      privateMemoryUsed: false,
+      executionMode: 'direct',
+      processingMode: 'fast',
+      searchMode: 'offline',
+      deepResearchMethod: 'none',
+      multiAgentEnabled: false
+    }]));
+    localStorage.setItem('ai_current_chat_v87', 'external-project-chat');
+  });
+  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+    outboundBodies.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Synthetic provider reply.' } }] })
+    });
+  });
+  page.once('dialog', async dialog => {
+    disclosureMessages.push(dialog.message());
+    await dialog.accept();
+  });
+
+  await page.goto('/');
+  await page.locator('#userInput').fill('Use the project context for this request.');
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
+  expect(disclosureMessages).toHaveLength(1);
+  expect(disclosureMessages[0]).toContain('Privacy Project');
+  expect(outboundBodies).toHaveLength(1);
+  const body = JSON.stringify(outboundBodies[0]);
+  expect(body).toContain('private project instruction sentinel');
+  expect(body).toContain('private project memory sentinel');
+});
