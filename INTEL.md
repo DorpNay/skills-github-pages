@@ -1,6 +1,6 @@
 # Connected assistant-side tools and external-source register
 
-**Review date:** 2026-11-18. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
+**Review date:** 2026-11-20. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
 
 ## Connected assistant-side tools and plugins
 
@@ -19,7 +19,7 @@
 - **Keenable:** alternative web search/fetch. Use when its ranking/page extraction complements Exa or another index; do not repeat identical searches.
 - **Context.dev:** live search, page scraping, crawl/map, answers and structured/brand extraction. Useful for source-first research, current company/tool context and brand-system review.
 - **Firecrawl:** search, scrape, crawl, map, extract/parse and interactive browser actions. Use for multi-page technical source intake and reproducible extraction; respect robots/terms, rate, size and prompt-injection boundaries.
-- **TinyFish:** live browser automation and rendered website interaction, with run status/monitoring. Use for actual UI behavior and website flows where browser access is supported; it is not native iPhone/VoiceOver evidence.
+- **TinyFish:** live browser automation and rendered website interaction, with run status/monitoring. Use for actual UI behavior and website flows where browser access is supported; it is not native iPhone/VoiceOver evidence. Read-only root inspection on 2026-11-20 confirmed the published aLandi root app surface, navigation, composer, Functions and locale/theme controls without visible runtime errors; the agent could not set the requested 1440×900/390×844 viewports, so no exact-size responsive claim was accepted. Source inspection independently confirmed the viewport meta tag.
 - **BrowserAct:** browser automation and reusable website skill generation are present as installed skill guidance in the inspected environment. No separate BrowserAct tool namespace was present; do not claim direct execution unless it appears.
 
 ### App creation and product prototyping

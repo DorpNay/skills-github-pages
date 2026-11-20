@@ -1021,11 +1021,32 @@ test('first outside tap dismisses an open chat row menu without activating the c
   await expect(page.locator('#sidebarOverlay')).toBeVisible();
 });
 
+test('aNoteBooki sidebar link keeps its route and localizes its accessible name', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  const notebookLink = page.locator('#sidebar a[href*="/notebook/"]');
+  await expect(notebookLink).toHaveAttribute('href', /\/notebook\/$/);
+  await expect(notebookLink).toHaveAttribute('aria-label', 'Открыть aNoteBooki Notebook');
+  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
+
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(notebookLink).toHaveAttribute('aria-label', 'Open aNoteBooki Notebook');
+  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Notebook');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+
+  await page.locator('#uiLanguage').selectOption('ru');
+  await expect(notebookLink).toHaveAttribute('aria-label', 'Открыть aNoteBooki Notebook');
+  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+});
+
 test('published app boots with aServi selected and concise navigation', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  await expect(page).toHaveTitle(/AI Mobile Agent/);
+  await expect(page).toHaveTitle('aLandi v10.0');
+  await expect(page.locator('meta[name="application-name"]')).toHaveAttribute('content', 'aLandi');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /персональное AI-пространство/);
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'aLandi v10.0');
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#userInput')).toBeEditable();
   await expect(page.locator('#searchModeSummary')).toBeVisible();
