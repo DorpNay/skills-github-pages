@@ -3,7 +3,7 @@ module.exports = {
     collect: {
       staticDistDir: './_site',
       url: ['http://localhost/'],
-      numberOfRuns: 1,
+      numberOfRuns: 3,
       settings: {
         chromeFlags: '--no-sandbox --disable-dev-shm-usage'
       }

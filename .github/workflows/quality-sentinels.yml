@@ -133,7 +133,7 @@ jobs:
         id: lighthouse
         continue-on-error: true
         run: ./node_modules/.bin/lhci autorun --config=./lighthouserc.cjs
-      - name: Summarize Lighthouse lab metrics
+      - name: Summarize Lighthouse lab metrics and opportunities
         if: steps.lighthouse.outcome == 'success'
         run: |
           node --input-type=module -e '
@@ -141,23 +141,40 @@ jobs:
             const files = readdirSync(".lighthouseci").filter(name => name.endsWith(".json") && name !== "manifest.json");
             const reports = files.map(name => JSON.parse(readFileSync(".lighthouseci/" + name, "utf8"))).filter(report => report.audits && report.categories);
             if (!reports.length) throw new Error("No Lighthouse JSON reports were produced");
-            for (const report of reports) {
-              const metric = id => report.audits[id]?.numericValue ?? null;
-              const category = id => report.categories[id]?.score == null ? null : Math.round(report.categories[id].score * 100);
-              console.log(JSON.stringify({
-                url: report.finalDisplayedUrl,
-                formFactor: report.configSettings?.formFactor ?? "unknown",
-                performance: category("performance"),
-                accessibility: category("accessibility"),
-                bestPractices: category("best-practices"),
-                seo: category("seo"),
-                lcpMs: metric("largest-contentful-paint"),
-                cls: metric("cumulative-layout-shift"),
-                tbtMs: metric("total-blocking-time"),
-                inpMs: metric("interaction-to-next-paint"),
-                fcpMs: metric("first-contentful-paint")
-              }));
-            }
+            const median = values => {
+              const sorted = values.filter(Number.isFinite).sort((a, b) => a - b);
+              return sorted.length ? sorted[Math.floor((sorted.length - 1) / 2)] : null;
+            };
+            const metric = (report, id) => report.audits[id]?.numericValue ?? null;
+            const score = (report, id) => report.categories[id]?.score == null ? null : Math.round(report.categories[id].score * 100);
+            const first = reports[0];
+            const opportunities = Object.values(first.audits)
+              .filter(audit => audit.details?.type === "opportunity" && audit.score !== 1 && (audit.details.overallSavingsMs || 0) > 0)
+              .sort((a, b) => (b.details.overallSavingsMs || 0) - (a.details.overallSavingsMs || 0))
+              .slice(0, 8)
+              .map(audit => ({ id: audit.id, title: audit.title, savingsMs: Math.round(audit.details.overallSavingsMs || 0), displayValue: audit.displayValue ?? null }));
+            const accessibilityIssues = (first.categories.accessibility?.auditRefs || [])
+              .map(ref => first.audits[ref.id])
+              .filter(audit => audit && audit.score !== null && audit.score !== undefined && audit.score < 1)
+              .slice(0, 8)
+              .map(audit => ({ id: audit.id, title: audit.title, score: audit.score, displayValue: audit.displayValue ?? null }));
+            console.log(JSON.stringify({
+              labOnly: true,
+              runs: reports.length,
+              median: {
+                performance: median(reports.map(report => score(report, "performance"))),
+                accessibility: median(reports.map(report => score(report, "accessibility"))),
+                bestPractices: median(reports.map(report => score(report, "best-practices"))),
+                seo: median(reports.map(report => score(report, "seo"))),
+                lcpMs: median(reports.map(report => metric(report, "largest-contentful-paint"))),
+                cls: median(reports.map(report => metric(report, "cumulative-layout-shift"))),
+                tbtMs: median(reports.map(report => metric(report, "total-blocking-time"))),
+                inpMs: median(reports.map(report => metric(report, "interaction-to-next-paint"))),
+                fcpMs: median(reports.map(report => metric(report, "first-contentful-paint")))
+              },
+              firstRunOpportunities: opportunities,
+              firstRunAccessibilityIssues: accessibilityIssues
+            }));
           '
       - name: Note Lighthouse baseline unavailable
         if: steps.lighthouse.outcome != 'success'
