@@ -7,7 +7,13 @@ on:
       - 'index.md'
       - 'tests/e2e/**'
       - 'tests/check-action-pinning.test.mjs'
+      - 'scripts/audit-inline-js.mjs'
+      - 'tests/audit-inline-js.test.mjs'
+      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/quality-agents.mjs'
+      - 'scripts/audit-inline-js.mjs'
+      - 'tests/audit-inline-js.test.mjs'
+      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/check-action-pinning.mjs'
       - 'scripts/provider-smoke*.mjs'
       - 'scripts/diagnose_model_runtime.sh'
@@ -18,7 +24,13 @@ on:
       - 'index.md'
       - 'tests/e2e/**'
       - 'tests/check-action-pinning.test.mjs'
+      - 'scripts/audit-inline-js.mjs'
+      - 'tests/audit-inline-js.test.mjs'
+      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/quality-agents.mjs'
+      - 'scripts/audit-inline-js.mjs'
+      - 'tests/audit-inline-js.test.mjs'
+      - 'tests/fixtures/inline-js-audit*.html'
       - 'scripts/check-action-pinning.mjs'
       - 'scripts/provider-smoke*.mjs'
       - 'scripts/diagnose_model_runtime.sh'
@@ -114,6 +126,12 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
+      - name: Install pinned parser for report-only inline JavaScript audit
+        run: npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund acorn@8.15.0
+      - name: Verify report-only inline JavaScript AST audit
+        run: |
+          node --test tests/audit-inline-js.test.mjs
+          node scripts/audit-inline-js.mjs ./_site/index.html --summary
       - name: Verify generated site artifact
         run: node scripts/quality-agents.mjs build
 
