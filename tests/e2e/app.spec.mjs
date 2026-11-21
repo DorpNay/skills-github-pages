@@ -5642,6 +5642,8 @@ test('selecting a project filters the Chats section and the back arrow restores 
 test('project filter preserves active chat context and header shows personal/project scope in RU and EN', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(() => {
+    // addInitScript also runs on reload; seed once so reload tests exercise persisted app state.
+    if (localStorage.getItem('ai_chats_v87') !== null) return;
     const project = (id, name, memoryScope = 'project-only') => ({
       id, name, description: '', instructions: '', memoryScope,
       memory: [], createdAt: '', updatedAt: ''
@@ -5731,6 +5733,7 @@ test('project filter preserves active chat context and header shows personal/pro
   await expect(contextLabel).toHaveText('Personal chat · no project');
   await page.locator('#uiLanguage').selectOption('ru');
   await expect(contextLabel).toHaveText('Личный чат · без проекта');
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_current_chat_v87'))).toBe('chat-personal');
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#activeChatTitle')).toHaveText('Personal chat');
