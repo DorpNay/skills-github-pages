@@ -19,7 +19,7 @@ permalink: /
   <meta property="og:description" content="aLandi — персональное AI-пространство для чатов, проектов, исследований и работы с источниками.">
   <meta name="color-scheme" content="dark">
   <title>aLandi v10.0</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/tailwind.generated.css">
   <script src="assets/js/offline-shell.js" defer></script>
   <script id="markedRuntime" async src="assets/js/vendor/marked-18.0.14.min.js"></script>
   <script async src="assets/js/vendor/purify-3.4.16.min.js"></script>

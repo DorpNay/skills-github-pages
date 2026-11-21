@@ -208,16 +208,6 @@ jobs:
           npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund tailwindcss@3.4.17 @playwright/test@1.64.1
           npx tailwindcss -c tailwind.config.cjs -i assets/css/tailwind.input.css -o assets/css/tailwind.generated.css --minify
           node scripts/verify-tailwind-output.mjs assets/css/tailwind.generated.css
-      - name: Export one-time generated CSS for the repository snapshot
-        run: |
-          python3 - <<'PY'
-          import base64
-          from pathlib import Path
-          encoded = base64.b64encode(Path("assets/css/tailwind.generated.css").read_bytes()).decode("ascii")
-          print(f"TAILWIND_CSS_BASE64_LENGTH={len(encoded)}")
-          for index, offset in enumerate(range(0, len(encoded), 6000)):
-              print(f"TAILWIND_CSS_B64_{index:03d}={encoded[offset:offset + 6000]}")
-          PY
       - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
           source: ./
@@ -225,7 +215,7 @@ jobs:
       - name: Install pinned root-smoke browser runtime
         run: npx playwright install --with-deps chromium
       - name: Verify root app initializes and delegated controls work
-        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces"
+        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces|root runtime assets stay same-origin and work without a CDN|app shell is available offline after its first successful visit"
 
   lightpanda-smoke:
     if: ${{ inputs.run_lightpanda }}

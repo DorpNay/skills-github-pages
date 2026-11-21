@@ -6,7 +6,7 @@ const CACHE_NAME = 'alandi-shell-' + revision.slice(0, 16);
 const SHELL_PATHS = [
   './', 'notebook/', 'workspace/',
   'assets/js/offline-shell.js',
-  'assets/js/vendor/tailwindcss-3.4.17.js',
+  'assets/css/tailwind.generated.css',
   'assets/js/vendor/marked-18.0.14.min.js',
   'assets/js/vendor/purify-3.4.16.min.js',
   'assets/js/anotebooki-store.js', 'assets/js/anotebooki.js',

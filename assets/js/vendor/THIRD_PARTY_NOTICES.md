@@ -1,11 +1,11 @@
 # Third-party browser runtime assets
 
-These pinned upstream runtime files are served from the same GitHub Pages origin. No runtime CDN request is required for the UI shell, Markdown parsing or HTML sanitization.
+The application shell serves these pinned libraries from the same GitHub Pages origin. No runtime CDN request is required for styling, Markdown parsing or HTML sanitization.
 
-| Asset | Version | Upstream | License |
-|---|---:|---|---|
-| `tailwindcss-3.4.17.js` | 3.4.17 | https://cdn.tailwindcss.com/3.4.17 | MIT |
-| `marked-18.0.14.min.js` | 18.0.14 | https://github.com/markedjs/marked/tree/v18.0.14 | MIT |
-| `purify-3.4.16.min.js` | 3.4.16 | https://github.com/cure53/DOMPurify/tree/3.4.16 | Apache-2.0 OR MPL-2.0 |
+| Asset | Version | Upstream | License | Runtime |
+|---|---:|---|---|---|
+| `tailwind.generated.css` | 3.4.17 | https://github.com/tailwindlabs/tailwindcss/tree/v3.4.17 | MIT | Static CSS compiled from `tailwind.config.cjs` and repository UI sources |
+| `marked-18.0.14.min.js` | 18.0.14 | https://github.com/markedjs/marked/tree/v18.0.14 | MIT | Same-origin browser script |
+| `purify-3.4.16.min.js` | 3.4.16 | https://github.com/cure53/DOMPurify/tree/3.4.16 | Apache-2.0 OR MPL-2.0 | Same-origin browser script |
 
-The versions are pinned in filenames and source URLs. Review upstream advisories and license terms before changing any asset. These files are vendor artifacts, not source-of-truth code; do not edit them manually.
+Tailwind is a build-time dependency only. Regenerate the checked-in CSS with the pinned CLI command in the quality workflow; do not restore the Play CDN runtime in production. Review upstream advisories and license terms before changing any asset.
