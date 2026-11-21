@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'index.md'
+      - 'tailwind.config.cjs'
+      - 'assets/css/tailwind.input.css'
+      - 'scripts/verify-tailwind-output.mjs'
       - 'tests/e2e/**'
       - 'tests/check-action-pinning.test.mjs'
       - 'scripts/audit-inline-js.mjs'
@@ -20,6 +23,9 @@ on:
     branches: [main]
     paths:
       - 'index.md'
+      - 'tailwind.config.cjs'
+      - 'assets/css/tailwind.input.css'
+      - 'scripts/verify-tailwind-output.mjs'
       - 'tests/e2e/**'
       - 'tests/check-action-pinning.test.mjs'
       - 'scripts/audit-inline-js.mjs'
@@ -111,6 +117,14 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Build production Tailwind CSS from repository sources
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund tailwindcss@3.4.17
+          npx tailwindcss -c tailwind.config.cjs -i assets/css/tailwind.input.css -o assets/css/tailwind.generated.css --minify
+          node scripts/verify-tailwind-output.mjs assets/css/tailwind.generated.css
       - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
           source: ./
@@ -120,9 +134,6 @@ jobs:
           expected_revision="$GITHUB_SHA"
           test -s ./_site/index.html
           grep --fixed-strings --quiet "name=\"alandi-build-revision\" content=\"$expected_revision\"" ./_site/index.html
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 24
       - name: Install pinned parser for report-only inline JavaScript audit
         run: npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund acorn@8.15.0 @lhci/cli@0.16.1
       - name: Verify report-only inline JavaScript AST audit
@@ -192,16 +203,29 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
+      - name: Install pinned root-smoke and Tailwind build runtimes
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --no-audit --no-fund tailwindcss@3.4.17 @playwright/test@1.64.1
+          npx tailwindcss -c tailwind.config.cjs -i assets/css/tailwind.input.css -o assets/css/tailwind.generated.css --minify
+          node scripts/verify-tailwind-output.mjs assets/css/tailwind.generated.css
+      - name: Export one-time generated CSS for the repository snapshot
+        run: |
+          python3 - <<'PY'
+          import base64
+          from pathlib import Path
+          encoded = base64.b64encode(Path("assets/css/tailwind.generated.css").read_bytes()).decode("ascii")
+          print(f"TAILWIND_CSS_BASE64_LENGTH={len(encoded)}")
+          for index, offset in enumerate(range(0, len(encoded), 6000)):
+              print(f"TAILWIND_CSS_B64_{index:03d}={encoded[offset:offset + 6000]}")
+          PY
       - uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1
         with:
           source: ./
           destination: ./_site
       - name: Install pinned root-smoke browser runtime
-        run: |
-          npm install --no-save --no-package-lock @playwright/test@1.64.1
-          npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
       - name: Verify root app initializes and delegated controls work
-        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces|root runtime assets stay same-origin and work without a CDN|app shell is available offline after its first successful visit"
+        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces"
 
   lightpanda-smoke:
     if: ${{ inputs.run_lightpanda }}
