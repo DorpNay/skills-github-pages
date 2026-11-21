@@ -1,1 +1,0 @@
-"""aLandi Lite Gateway package."""

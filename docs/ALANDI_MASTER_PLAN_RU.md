@@ -69,6 +69,43 @@ This section supersedes conflicting P1 language that described aCodingi/aNoteBoo
 - [ ] P0.34.8 Preserve free-first public Pages, private server-only autonomy, local/offline capability truth, security/privacy, RU/EN, touch/accessibility and owner-only infrastructure gates.
 - [ ] P0.34.9 Record this correction in NOW.md and INTEL.md; new code acceptance remains separate from the fact that requirements are recorded.
 
+
+### P0.34 — Owner reaffirmation and expanded delivery contract (2026-11-21; SPECIFIED; takes precedence)
+
+This is the owner's repeated, explicit confirmation. It resolves any ambiguity in historical notes: implement the product as a single coherent application, not a collection of primitive menus, links or isolated demos. Preserve the current free-first static Pages client and move privileged compute/data to the owner-controlled server. P0 root/Pages recovery remains the first release gate; P1 through P5 are the required product scope, not optional ideas.
+
+**Exact shared-frame behavior**
+- aLandi, aNoteBooki and aCodingi use the same root page geometry: header, window edges, sidebar width/placement, main conversation pane, composer, dialogs, keyboard/focus behavior and responsive breakpoints remain in the same positions. Only mode theme, navigation data, context and genuine capabilities change.
+- aNoteBooki uses a deliberate Notebook palette. In its sidebar, the Projects region becomes notebook collections/items; the adjacent chat-list region becomes a compact catalogue of real Notebook Studio jobs (podcast, slide deck, chart, diagram, video presentation, report, quiz/flashcards and other enabled conversions). The normal chat stays in place and is strictly grounded in the active notebook plus explicitly included sources. Each job is source-linked, editable where applicable, cancellable, resumable and exportable; unsupported media jobs are visibly unavailable, never decorative.
+- aCodingi uses restrained burgundy/red/black styling with the exact same frame. The normal chat becomes the coding conversation with concise operational status, current task/step, file changes, tool results, tests, diffs, approval prompts, error and stop/resume controls. Do not expose hidden chain-of-thought. The sidebar offers coding tools only when their registry/runtime is actually available.
+- Creating a coding workspace creates a typed Coding Project inside the existing Projects hierarchy. Selecting it opens that project's isolated workspace, sandbox, files, run history and project-bound chat. Switching away/back or leaving a mode must save and restore draft, active identity, source selections, agent configuration, scroll/focus and unfinished run state without cross-project or cross-notebook leakage.
+
+**Navigation invariants**
+- Selecting a normal project shows only that project's chats. Selecting a chat automatically expands and highlights its parent project and filters the list to that project. Selecting a personal/no-project chat selects the no-project scope. Only explicit All Chats may mix project and personal chats. Selecting an already-active project chat after All Chats must still restore its parent scope. Move/clone/delete/project removal/reload/locale/mode changes must reconcile the same canonical state.
+- Project chat membership, currentChatId, selected filter, expanded disclosure, active project, persisted scope and visible list are one transition contract, not separately updated UI fragments.
+
+**Agent, research and learning requirements**
+- Replace truncated/obsolete Agents and Research menus with task-first scenario catalogues and compact, progressive settings: goal/method, depth, source scope, model preference, Skills, tools, permissions, context/memory scope, budgets/deadlines, output, resume/cancel and approval policy. Show only controls backed by a real contract; distinguish available, experimental and unavailable.
+- In ordinary chat, policy-driven routing may use real specialists when complexity or saved chat/project policy justifies it; simple requests remain direct model calls. Chat/project stores versioned agent/team settings and authorized memory references across sessions. The user can inspect, bypass, stop and resume. No fake agents or hidden chain-of-thought persistence.
+- Keep agent bootstrapping separate from model-weight training. Agent bootstrap builds/evaluates a versioned role/profile/Skill from project instructions, granted tools, selected knowledge and examples without changing weights. Weight training is a separate resource/licence-gated workflow with base model immutability, selectable scale/technique (SFT, LoRA/QLoRA, preference methods or full tuning only when justified), dataset validation, held-out eval, metrics, adapter/checkpoint versioning and rollback. Never train production weights from raw chat history by default.
+
+**Autonomy and delivery boundaries**
+- Free public Pages is the static client; owner server is the autonomous compute/data plane. All non-web tasks must run without Pages, GitHub, cloud databases or third-party APIs once the server is installed. Internet search is an explicit online capability for main chat and permitted agents/tools; offline mode must be honest and fully disable remote fetches/fallbacks.
+- Prepare, do not assume: inventory already-acquired small model artifacts and licences; integrate only after checksum/runtime/resource/eval checks. Main large model placement, account registration, VPS/DNS/Tunnel/secrets and production Cloudflare mutations remain owner-controlled and require the appropriate explicit approval/environment.
+- Use the existing large external-source catalogue and connected tools/plugins/skills as a task-specific candidate pool for every package. Select a small best-fit set after current official-source/version/license/security review; do not bulk-install or trust all ~500 entries. Record accepted/rejected/deferred decisions and provenance in INTEL.md.
+
+**New acceptance tasks**
+- [ ] P0.34.10 Shared-frame visual acceptance: pixel/geometry invariants across all three modes at desktop/tablet/phone, with only intended palette/nav/content differences.
+- [ ] P0.34.11 Notebook sidebar contract: collections replace Projects; real Studio job catalogue replaces chat list; normal chat/composer remain in the exact root location; source isolation and citation lineage are tested.
+- [ ] P0.34.12 Coding project contract: create/open/return/switch/restore typed project; per-project workspace root, files, chat, sandbox, runs, tools and grants remain isolated.
+- [ ] P0.34.13 Full navigation lifecycle matrix: project/chat scope, same-active-chat, personal chat, All Chats, move, clone, delete, project deletion, reload, RU/EN and mode transitions; test storage/quota failure and focus/scroll restoration.
+- [ ] P0.34.14 Agents/Research catalogue acceptance: scenarios, settings, real capability availability, permission boundaries, direct-chat baseline, specialist routing, persistent chat profile and run recovery.
+- [ ] P0.34.15 Learning acceptance: agent bootstrap dry-run/eval and separate model-training resource/license preflight, dataset validation, adapter output and rollback contract.
+- [ ] P0.34.16 Offline acceptance: server-only non-web task matrix with network denied except explicitly allowed web-search route; prove no Pages/GitHub/provider/cloud DB dependency.
+- [ ] P0.34.17 External-source/tool traceability: map each implementation package to selected INTEL sources/tools and record exact version/license/security disposition; no blanket dependency adoption.
+
+**Done gate:** do not mark P1–P5 complete because the UI is present or a Pages build is green. Each capability needs a working backend/runtime, deterministic tests, permissions, failure/cancel/recovery, RU/EN and evidence on the exact HEAD. Pages publication, browser runtime, server runtime, model availability and native-device acceptance are separate gates.
+
 ### Incident record — root app controls unavailable (2026-11-21)
 
 - **FACT:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch. The initial repair in 8fbb128 restored the function boundary, but live browser instrumentation then exposed a second bootstrap exception: top-level `applyUiLanguage()` ran before the later `let activeVoiceStatusKey` declaration, causing a temporal-dead-zone ReferenceError inside `refreshVoiceRecordingStatus()`. This aborted the IIFE before delegated click registration. Static Jekyll/Pages success did not detect either runtime fault.
