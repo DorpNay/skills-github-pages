@@ -8,7 +8,7 @@ permalink: /
 <head>
   <meta charset="utf-8">
   <meta name="alandi-build-revision" content="{{ site.github.build_revision }}">
-  <meta name="alandi-service-worker" content="{{ '/sw.js' | relative_url }}">
+  <meta name="alandi-service-worker" content="sw.js">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a1220">
   <meta name="application-name" content="aLandi">
@@ -19,10 +19,10 @@ permalink: /
   <meta property="og:description" content="aLandi — персональное AI-пространство для чатов, проектов, исследований и работы с источниками.">
   <meta name="color-scheme" content="dark">
   <title>aLandi v10.0</title>
-  <script src="{{ '/assets/js/vendor/tailwindcss-3.4.17.js' | relative_url }}"></script>
-  <script src="{{ '/assets/js/offline-shell.js' | relative_url }}" defer></script>
-  <script id="markedRuntime" async src="{{ '/assets/js/vendor/marked-18.0.14.min.js' | relative_url }}"></script>
-  <script async src="{{ '/assets/js/vendor/purify-3.4.16.min.js' | relative_url }}"></script>
+  <script src="assets/js/vendor/tailwindcss-3.4.17.js"></script>
+  <script src="assets/js/offline-shell.js" defer></script>
+  <script id="markedRuntime" async src="assets/js/vendor/marked-18.0.14.min.js"></script>
+  <script async src="assets/js/vendor/purify-3.4.16.min.js"></script>
   <style>
     :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
