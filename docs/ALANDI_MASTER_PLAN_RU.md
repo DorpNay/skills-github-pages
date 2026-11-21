@@ -38,10 +38,10 @@
 
 ### P0.33 — Recovery, автономная публикация и Landing 2.0 expansion (SPECIFIED)
 
-- [ ] P0.33.1 Восстановить root JavaScript bootstrap/delegated actions; проверить реальные Settings, mode, navigation и composer interactions.
-- [ ] P0.33.2 Добавить ранний browser smoke на синтаксис/инициализацию и ключевые клики; включить в доступный CI gate, не оставлять только необязательным ручным запуском.
+- [~] P0.33.1 Root JavaScript bootstrap восстановлен: закрыт Python runtime-load catch; прежний eager `applyUiLanguage()` удалён из top-level до инициализации `activeVoiceStatusKey` (saved locale применяется из `initializeSettings()` после объявления runtime state). Live Pages smoke подтвердил Settings open/close и Quick/Thorough mode переключение без page errors на SHA `dc997572`; navigation/composer/full matrix остаются открыты.
+- [~] P0.33.2 Required Chromium root boot + delegated-control smoke добавлен в push Quality Sentinels job (`root-app-smoke`), а не оставлен optional full-suite input. Run #44886724869 SUCCESS on exact code/test HEAD `dc997572`; broader Chromium suite remains optional and was skipped.
 - [ ] P0.33.3 Проверять каждый release chain: exact main SHA, Pages build artifact, deploy run, опубликованный build revision и live root smoke.
-- [ ] P0.33.4 Зафиксировать workflow contract: GitHub Pages Actions build/deploy остаётся автоматическим; ручной deploy не нужен и не должен подменять push-triggered публикацию.
+- [~] P0.33.4 Push-triggered GitHub Pages build/deploy remained automatic and succeeded as run #44886724596 for `dc997572`; no manual deployment was used. Keep monitoring the chain in subsequent slices.
 - [ ] P0.33.5 Провести аудит всех CDN/runtime fetches; self-host/pin критичные библиотеки и сделать graceful offline/failure behavior.
 - [ ] P0.33.6 Полностью завершить существующие RU/EN, chats, memory, actions, security, element management и responsive/accessibility acceptance P0.1–P0.32.
 - [ ] P0.33.7 Провести полный visible-control inventory: каждый data-action, direct listener, form submit, disclosure и keyboard path связан с реальным handler и E2E.
@@ -57,10 +57,11 @@
 
 ### Incident record — root app controls unavailable (2026-11-21)
 
-- **FACT:** commit 58be3e1 изменил Python runtime-load catch и пропустил закрывающую }. Код после runPythonCode() оказался в недостижимой области функции; глобальный delegated click handler инициализации root UI не регистрировался. Поэтому HTML/CSS/Jekyll build и Pages deploy могли завершаться успешно, хотя кнопки приложения не работали.
-- **IMPLEMENTED:** commit 8fbb128 закрывает catch до объявления Python output и добавляет Playwright regression на Settings open/close и Quick/Thorough mode controls.
-- **NOT YET VERIFIED at record time:** Pages/Quality/Graphify runs for 8fbb128 were queued/in progress; live browser acceptance after publication remains pending until exact deployed SHA and click smoke are confirmed.
-- **PREVENTION:** add a root-app interaction smoke to the required quality gate; Pages build success must never be treated as proof of client runtime correctness.
+- **FACT:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch. The initial repair in 8fbb128 restored the function boundary, but live browser instrumentation then exposed a second bootstrap exception: top-level `applyUiLanguage()` ran before the later `let activeVoiceStatusKey` declaration, causing a temporal-dead-zone ReferenceError inside `refreshVoiceRecordingStatus()`. This aborted the IIFE before delegated click registration. Static Jekyll/Pages success did not detect either runtime fault.
+- **IMPLEMENTED:** 8fbb128 closed the catch. Follow-up b1a8a3f removed the premature top-level locale render; saved locale continues to be applied by `initializeSettings()` after all runtime state declarations. Commit dc997572 adds a required Playwright Chromium root-app smoke to every relevant push Quality Sentinels run, asserting no page errors and real Settings + Quick/Thorough interactions.
+- **VERIFIED:** Quality root-app smoke #44886724869 SUCCESS on code/test HEAD dc997572. Push-triggered Pages run #44886724596 SUCCESS for exact SHA dc997572. Published site reports `alandi-build-revision=dc997572ab4a356aca9b221a344cba06496e35fd`; live browser smoke confirmed Settings opens/closes, Thorough/Quick state toggles, and no page/console errors.
+- **LIMITS:** full Chromium suite, native iOS Safari/VoiceOver, full navigation/composer matrix and server/offline acceptance remain unverified. Graphify #44886658887 SUCCESS on preceding code/test HEAD b1a8a3f, not dc997572.
+- **PREVENTION:** required root interaction smoke is now in CI; Pages build success is not treated as proof of client runtime correctness.
 
 ## 1. Проверенный baseline на момент объединения
 
