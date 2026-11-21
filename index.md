@@ -3139,7 +3139,7 @@ permalink: /
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
       setProjectChatScope(target?.id||'',{expand:true});
       if(!persistChats()){safeAssignOwn(chat,previous);selectedProjectForSettingsId=previousSelected;setProjectChatScope(previousScope,{expand:false});renderProjectUI();renderChatList();return;}
-      renderProjectUI();renderChatList();
+      renderProjectUI();renderProjectNavigation();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
     function addProjectMemory(){
@@ -3176,7 +3176,7 @@ permalink: /
         setProjectChatScope(selectedChat?.projectId||'',{expand:true});
       }
       if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;setProjectChatScope(previousScope,{expand:false});renderProjectUI();renderChatList();renderActiveChat();return;}
-      renderProjectUI();renderChatList();renderActiveChat();
+      renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
     function exportProjectBundle(projectId=null){
@@ -3536,7 +3536,7 @@ permalink: /
         currentChatId = previousCurrentId;
         setProjectChatScope(previousProjectScope,{expand:false});
       }
-      renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
+      renderProjectNavigation(); renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
       return persisted;
     }
     function toggleSidebar(force) {
@@ -7081,7 +7081,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       chat.projectId=projectId;chat.projectMemoryEnabled=false;
       if(chat.id===currentChatId)setProjectChatScope(projectId||'',{expand:true});
       if(!persistChats()){safeAssignOwn(chat,previous);setProjectChatScope(previousScope,{expand:false});renderChatList();renderProjectUI({preserveDraft:true});return;}
-      renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
+      renderProjectNavigation();renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
       showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
     function cloneChat(id) {
