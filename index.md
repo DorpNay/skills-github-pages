@@ -1322,7 +1322,7 @@ permalink: /
       chats: 'ai_chats_v87', current: 'ai_current_chat_v87',
       baseUrl: 'ai_base_url', apiKey: 'ai_api_key', model: 'ai_model_name',
       tavilyKey: 'ai_tavily_key', systemPrompt: 'ai_system_prompt', composerPosition: 'ai_composer_position_v1',
-      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
+      mode: 'ai_processing_mode', multiAgent: 'ai_multi_agent_research', search: 'ai_web_search', searchMode: 'ai_web_search_preset_v1', offline: 'ai_offline_mode', crossProviderFallback: 'ai_cross_provider_fallback', provider: 'ai_api_provider', cloudflareAccountId: 'ai_cloudflare_account_id', projects: 'ai_projects_v1', projectFilter: 'ai_project_chat_filter_v1', globalMemoryEnabled: 'ai_global_memory_enabled_v1'
     };
     const LEGACY_DEFAULT_SYSTEM = 'Ты автономный ИИ-ассистент. Отвечай ясно, проверяй предположения и выдавай структурированные отчёты. Если включён веб-поиск, используй его для актуальной информации.';
     const LEGACY_PROMPT_PLACEHOLDER = 'Свои правила для всех запросов';
@@ -2778,7 +2778,33 @@ permalink: /
       return false;
     }
     let selectedProjectForSettingsId=null;
-    let selectedProjectFilterId=null;
+    let selectedProjectFilterId=(()=>{
+      const saved=safeGet(STORAGE.projectFilter);
+      if(saved===null||saved==='all')return null;
+      if(saved===''||projects.some(project=>project.id===saved))return saved;
+      safeSet(STORAGE.projectFilter,'all');
+      return null;
+    })();
+    function expandProjectChatNavigation(){
+      const projectsList=$('projectNavigationList'),projectToggle=$('projectNavToggle');
+      const chatsContent=$('chatNavigationContent'),chatToggle=$('chatNavToggle');
+      if(projectsList?.classList.contains('hidden'))projectsList.classList.remove('hidden');
+      projectToggle?.setAttribute('aria-expanded','true');
+      const projectChevron=$('projectNavChevron');if(projectChevron)projectChevron.textContent='⌃';
+      if(chatsContent?.classList.contains('hidden'))chatsContent.classList.remove('hidden');
+      chatToggle?.setAttribute('aria-expanded','true');
+      const chatChevron=$('chatNavChevron');if(chatChevron)chatChevron.textContent='⌃';
+    }
+    function setProjectChatScope(projectId,{persist=true,expand=false}={}){
+      let next=projectId===null?null:String(projectId);
+      if(next!==null&&next!==''&&!projects.some(project=>project.id===next))next=null;
+      selectedProjectFilterId=next;
+      if(persist&&!safeSet(STORAGE.projectFilter,next===null?'all':next)){
+        showToast(storageMessage('Не удалось сохранить область навигации. Текущий выбор действует до перезагрузки.','Could not save the navigation scope. The current selection lasts until reload.'),'error');
+      }
+      if(expand)expandProjectChatNavigation();
+      return true;
+    }
     let creatingProject=false;
     let projectSettingsOpener=null;
     function trapProjectModalTab(modal,event){
@@ -3083,9 +3109,9 @@ permalink: /
       const previousProjects=projects.slice(),previousChats=chats.slice(),previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
       const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       const projectChat=createChat((getUiLanguage()==='en'?'New chat · ':'Новый чат · ')+project.name,[],project.id);
-      creatingProject=false;projects=[project,...projects];chats=[projectChat,...chats];currentChatId=projectChat.id;selectedProjectForSettingsId=project.id;selectedProjectFilterId=project.id;
+      creatingProject=false;projects=[project,...projects];chats=[projectChat,...chats];currentChatId=projectChat.id;selectedProjectForSettingsId=project.id;setProjectChatScope(project.id,{expand:true});
       if(!persistProjectsAndChats()){
-        projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;selectedProjectFilterId=previousFilter;creatingProject=previousCreating;
+        projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;selectedProjectForSettingsId=previousSelected;setProjectChatScope(previousFilter,{expand:false});creatingProject=previousCreating;
         renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();return;
       }
       $('projectCreateModal').classList.add('hidden');projectSettingsOpener=null;
@@ -3109,9 +3135,10 @@ permalink: /
       const chat=getCurrentChat(),target=projectId?projects.find(project=>project.id===projectId):null;
       if(projectId&&!target){showToast(getUiLanguage()==='en'?'Project not found.':'Проект не найден.','error');renderProjectUI();return;}
       if(chat.projectId===(target?.id||null))return;
-      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled},previousSelected=selectedProjectForSettingsId;
+      const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled},previousSelected=selectedProjectForSettingsId,previousScope=selectedProjectFilterId;
       chat.projectId=target?.id||null;chat.projectMemoryEnabled=false;selectedProjectForSettingsId=target?.id||null;
-      if(!persistChats()){safeAssignOwn(chat,previous);selectedProjectForSettingsId=previousSelected;renderProjectUI();renderChatList();return;}
+      setProjectChatScope(target?.id||'',{expand:true});
+      if(!persistChats()){safeAssignOwn(chat,previous);selectedProjectForSettingsId=previousSelected;setProjectChatScope(previousScope,{expand:false});renderProjectUI();renderChatList();return;}
       renderProjectUI();renderChatList();
       showToast(target?(getUiLanguage()==='en'?'Chat moved to ':'Чат добавлен в проект: ')+target.name:(getUiLanguage()==='en'?'Chat removed from its project.':'Чат извлечён из проекта.'));
     }
@@ -3140,11 +3167,15 @@ permalink: /
       const count=chats.filter(c=>c.projectId===project.id).length;
       const msg=getUiLanguage()==='en'?'Delete project "'+project.name+'" and '+count+' chats? This cannot be undone.':'Удалить проект «'+project.name+'» вместе с '+count+' чатами? Это действие нельзя отменить.';
       if(!confirm(msg))return;
-      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId;
+      const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousScope=selectedProjectFilterId;
       chats=chats.filter(chat=>chat.projectId!==project.id);if(!chats.length)chats=[createChat()];
       if(!chats.some(chat=>chat.id===currentChatId))currentChatId=chats[0].id;
       projects=projects.filter(item=>item.id!==project.id);
-      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(previousScope===project.id||currentChatId!==previousCurrentId){
+        const selectedChat=chats.find(chat=>chat.id===currentChatId);
+        setProjectChatScope(selectedChat?.projectId||'',{expand:true});
+      }
+      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;setProjectChatScope(previousScope,{expand:false});renderProjectUI();renderChatList();renderActiveChat();return;}
       renderProjectUI();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
@@ -3486,16 +3517,24 @@ permalink: /
     function updateState(nextChats = null, nextCurrentId = null) {
       const previousChats = chats;
       const previousCurrentId = currentChatId;
+      const previousProjectScope = selectedProjectFilterId;
       if (Array.isArray(nextChats)) {
         chats = nextChats.length ? nextChats : [createChat()];
       }
       if (nextCurrentId && chats.some((chat) => chat.id === nextCurrentId)) currentChatId = nextCurrentId;
       if (!chats.some((chat) => chat.id === currentChatId)) currentChatId = chats[0].id;
+      if(currentChatId!==previousCurrentId){
+        const selectedChat=chats.find(chat=>chat.id===currentChatId);
+        setProjectChatScope(selectedChat?.projectId||'',{expand:true});
+      } else if(selectedProjectFilterId!==null&&selectedProjectFilterId!==''&&!projects.some(project=>project.id===selectedProjectFilterId)){
+        setProjectChatScope(null,{expand:false});
+      }
       if ($('modeFast')) syncCurrentChatFunctionSettings();
       const persisted = persistChats();
       if (!persisted) {
         chats = previousChats;
         currentChatId = previousCurrentId;
+        setProjectChatScope(previousProjectScope,{expand:false});
       }
       renderChatList(); renderActiveChat(); renderProjectUI({preserveDraft:true});
       return persisted;
@@ -7038,8 +7077,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       const projectId=$('chatActionProject').value||null;
       if(projectId&&!projects.some(project=>project.id===projectId)){showToast(english?'Project no longer exists.':'Проект больше не существует.','error');return;}
       const previous={projectId:chat.projectId,projectMemoryEnabled:chat.projectMemoryEnabled};
-      chat.projectId=projectId;chat.projectMemoryEnabled=false
-      if(!persistChats()){safeAssignOwn(chat,previous);renderChatList();renderProjectUI({preserveDraft:true});return;}
+      const previousScope=selectedProjectFilterId;
+      chat.projectId=projectId;chat.projectMemoryEnabled=false;
+      if(chat.id===currentChatId)setProjectChatScope(projectId||'',{expand:true});
+      if(!persistChats()){safeAssignOwn(chat,previous);setProjectChatScope(previousScope,{expand:false});renderChatList();renderProjectUI({preserveDraft:true});return;}
       renderChatList();renderProjectUI({preserveDraft:true});closeChatActionDialog();
       showToast(projectId?(english?'Chat moved to project.':'Чат перемещён в проект.'):(english?'Chat detached from project.':'Чат извлечён из проекта.'));
     }
@@ -8017,13 +8058,13 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
           case 'create-project': createProject();break;
           case 'select-project-filter': {
             control.closest('.chat-row-menu')?.removeAttribute('open');
-            selectedProjectFilterId=control.dataset.projectId||null;renderProjectNavigation();renderChatList();
+            setProjectChatScope(control.dataset.projectId||null,{expand:true});renderProjectNavigation();renderChatList();
             const selectedFilter=Array.from($('projectNavigationList').querySelectorAll('[data-action="select-project-filter"]')).find(item=>item.dataset.projectId===selectedProjectFilterId);
             selectedFilter?.focus({preventScroll:true});event.preventDefault();break;
           }
           case 'clear-project-filter': {
             const projectId=control.dataset.projectId||control.closest('.project-nav-item')?.dataset.projectId||'';
-            selectedProjectFilterId=null;renderProjectNavigation();renderChatList();
+            setProjectChatScope(null,{expand:true});renderProjectNavigation();renderChatList();
             $('chatScopeBackButton')?.classList.add('hidden');
             const restoredFilter=Array.from($('projectNavigationList').querySelectorAll('[data-action="select-project-filter"]')).find(item=>item.dataset.projectId===projectId);
             (restoredFilter||$('projectNavToggle'))?.focus({preventScroll:true});event.preventDefault();break;
@@ -8038,8 +8079,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
             $('chatNavToggle').setAttribute('aria-expanded',String(open));$('chatNavChevron').textContent=open?'⌃':'⌄';break;
           }
           case 'projectless-nav': {
-            selectedProjectFilterId='';renderProjectNavigation();renderChatList();
-            $('chatNavigationContent').classList.remove('hidden');$('chatNavToggle').setAttribute('aria-expanded','true');$('chatNavChevron').textContent='⌃';
+            setProjectChatScope('',{expand:true});renderProjectNavigation();renderChatList();
             $('chatSection').scrollIntoView({block:'nearest',behavior:'smooth'});$('chatNavToggle').focus();break;
           }
           case 'open-project-settings': {
