@@ -2799,9 +2799,7 @@ permalink: /
       let next=projectId===null?null:String(projectId);
       if(next!==null&&next!==''&&!projects.some(project=>project.id===next))next=null;
       selectedProjectFilterId=next;
-      if(persist&&!safeSet(STORAGE.projectFilter,next===null?'all':next)){
-        showToast(storageMessage('Не удалось сохранить область навигации. Текущий выбор действует до перезагрузки.','Could not save the navigation scope. The current selection lasts until reload.'),'error');
-      }
+      if(persist)safeSet(STORAGE.projectFilter,next===null?'all':next);
       if(expand)expandProjectChatNavigation();
       return true;
     }
