@@ -215,7 +215,7 @@ jobs:
       - name: Install pinned root-smoke browser runtime
         run: npx playwright install --with-deps chromium
       - name: Verify root app initializes and delegated controls work
-        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces|root runtime assets stay same-origin and work without a CDN|app shell is available offline after its first successful visit"
+        run: npx playwright test --grep "root app binds delegated controls after initial load|aServi web_search tool uses the private SearXNG gateway before external search|aCodingi and aNoteBooki are navigable same-origin workspaces|root runtime assets stay same-origin and work without a CDN|app shell is available offline after its first successful visit|project filter preserves active chat context and header shows personal/project scope in RU and EN|selecting a project filters the Chats section and the back arrow restores all chats"
 
   lightpanda-smoke:
     if: ${{ inputs.run_lightpanda }}
