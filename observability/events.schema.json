@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dorpnay.github.io/skills-github-pages/schemas/observability-events.schema.json",
+  "title": "aLandi privacy-safe event",
+  "description": "Metadata-only event. Prompts, transcripts, user content, tokens, credentials, URLs with query strings, and raw audio must never be emitted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trace_id", "event", "component", "timestamp_ns", "attributes"],
+  "properties": {
+    "trace_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "event": {"type": "string", "minLength": 1, "maxLength": 64},
+    "component": {"type": "string", "minLength": 1, "maxLength": 64},
+    "timestamp_ns": {"type": "integer", "minimum": 1},
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": {"type": "string", "maxLength": 128},
+        "outcome": {"type": "string", "maxLength": 128},
+        "http_method": {"type": "string", "maxLength": 12},
+        "http_status": {"type": "integer", "minimum": 100, "maximum": 599},
+        "route": {"type": "string", "maxLength": 128},
+        "model_tag": {"type": "string", "maxLength": 128},
+        "duration_ms": {"type": "number", "minimum": 0},
+        "bytes_in": {"type": "integer", "minimum": 0},
+        "bytes_out": {"type": "integer", "minimum": 0},
+        "intent": {"type": "string", "maxLength": 64},
+        "tier": {"type": "string", "enum": ["tier0", "tier1", "none"]},
+        "language": {"type": "string", "maxLength": 16},
+        "error_code": {"type": "string", "maxLength": 64}
+      }
+    }
+  }
+}

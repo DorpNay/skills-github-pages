@@ -1,0 +1,19 @@
+schema_version: 1
+name: RAG-Anything
+upstream_repository: https://github.com/HKUDS/RAG-Anything
+upstream_tag: v1.4.1
+upstream_commit: 0ef67b4d476b66407a03a39e5b17e756fc0aef29
+upstream_license: MIT
+license_file: LICENSE
+archive_scope: selected source snapshot; not a complete upstream checkout
+purpose: research/reference only; not an active aLandi runtime dependency
+graphify_excluded: true
+verification_scope: all selected source Git blob SHA-1 values and the MIT LICENSE blob SHA-1 were independently matched against the exact pinned upstream commit; not a full checkout
+reviewed_in_pr: 169
+reviewed_at: 2026-11-08
+verified_at: 2026-11-08
+verified_files:
+  - path: raganything/parser.py
+    upstream_git_blob_sha1: 7cf9bf31ce540d75cdf85e95322d204196fa7ab2
+    local_git_blob_sha1: 7cf9bf31ce540d75cdf85e95322d204196fa7ab2
+    status: exact_blob_match

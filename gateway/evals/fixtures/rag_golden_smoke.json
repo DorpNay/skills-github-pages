@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "description": "Tiny synthetic smoke fixture only; not representative production evaluation data.",
+  "documents": [
+    {
+      "document_id": "oauth-guide",
+      "source_uri": "https://example.test/docs/oauth",
+      "scope": "project",
+      "scope_id": "golden-set",
+      "chunks": [
+        {
+          "chunk_id": "oauth-refresh",
+          "page_number": 2,
+          "content": "OAuth refresh tokens require encrypted storage, careful rotation, and explicit revocation."
+        }
+      ]
+    },
+    {
+      "document_id": "concurrency-guide",
+      "source_uri": "https://example.test/docs/concurrency",
+      "scope": "project",
+      "scope_id": "golden-set",
+      "chunks": [
+        {
+          "chunk_id": "json-patch-revisions",
+          "page_number": 4,
+          "content": "JSON Patch revisions detect stale writes and prevent silent concurrent overwrites."
+        }
+      ]
+    },
+    {
+      "document_id": "runtime-guide",
+      "source_uri": "https://example.test/docs/runtime",
+      "scope": "project",
+      "scope_id": "golden-set",
+      "chunks": [
+        {
+          "chunk_id": "runtime-memory",
+          "page_number": 1,
+          "content": "Model size on disk is not the same as runtime resident memory or KV cache usage."
+        }
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "oauth-refresh-storage",
+      "query": "How should OAuth refresh tokens be stored and rotated?",
+      "scope": "project",
+      "scope_id": "golden-set",
+      "relevant_chunks": [
+        {"document_id": "oauth-guide", "chunk_id": "oauth-refresh"}
+      ]
+    },
+    {
+      "id": "json-patch-concurrency",
+      "query": "How do JSON Patch revisions prevent stale concurrent writes?",
+      "scope": "project",
+      "scope_id": "golden-set",
+      "relevant_chunks": [
+        {"document_id": "concurrency-guide", "chunk_id": "json-patch-revisions"}
+      ]
+    }
+  ]
+}

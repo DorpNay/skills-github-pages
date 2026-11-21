@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "updated": "2026-11-13T09:10Z",
+  "policy": {
+    "storage": "Ollama registry blobs are acquired to GitHub Actions artifacts, never committed to Git or Git LFS.",
+    "verification": "Pin the official registry manifest digest prefix, exact config/layer SHA-256 and byte sizes. The downloader verifies the raw manifest prefix and every blob.",
+    "main_model": "Uncensored main Qwen remains owner-server-only. This manifest downloads the official base 4B comparison and one 2B helper candidate."
+  },
+  "models": [
+    {
+      "id": "qwen35_base_4b",
+      "model": "qwen3.5",
+      "namespace": "library",
+      "tag": "4b",
+      "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3.5/manifests/4b",
+      "total_bytes": 3324173934,
+      "architecture": "qwen35",
+      "parameters": "4.21B",
+      "quantization": "Q4_K_M",
+      "context_tokens": 262144,
+      "capabilities": [
+        "vision",
+        "tools",
+        "thinking"
+      ],
+      "license": "Apache-2.0 (official Ollama registry license layer and upstream Qwen model)",
+      "source_url": "https://ollama.com/library/qwen3.5:4b",
+      "config": {
+        "media_type": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:788a4d94bc3f431ac0cd067005be4b838a09330427962952420b05d10ecf84db",
+        "size_bytes": 177,
+        "filename": "config.json"
+      },
+      "layers": [
+        {
+          "media_type": "application/vnd.ollama.image.model",
+          "digest": "sha256:a9d0a3e1d8c91732a3812becd31f8d4a8ff57414903f226306069f0437e2ac50",
+          "size_bytes": 2648593216,
+          "filename": "model.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.projector",
+          "digest": "sha256:e56a899b1540860385465756dd308c84417410b94dbc1c380adffd20a921ca60",
+          "size_bytes": 675569120,
+          "filename": "mmproj.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.template",
+          "digest": "sha256:b507b9c2f6ca642bffcd06665ea7c91f235fd32daeefdf875a0f938db05fb315",
+          "size_bytes": 13,
+          "filename": "template.txt"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.license",
+          "digest": "sha256:50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32",
+          "size_bytes": 11343,
+          "filename": "LICENSE"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size_bytes": 65,
+          "filename": "params.json"
+        }
+      ],
+      "notes": "Official base checkpoint for the main-model bake-off. Keep as baseline; do not replace the uncensored candidate by assumption. Official registry package includes the vision projector. The Ollama model-page short digest is not the raw registry manifest SHA-256; all config/layer descriptors are pinned individually and the raw manifest hash is recorded during acquisition. Raw registry manifest SHA-256 was recorded from successful run 43395625203.",
+      "model_page_short_digest": "7f3251fa6878",
+      "manifest_sha256": "d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04"
+    },
+    {
+      "id": "qwen35_helper_2b_q4km",
+      "model": "qwen3.5",
+      "namespace": "library",
+      "tag": "2b-q4_K_M",
+      "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3.5/manifests/2b-q4_K_M",
+      "total_bytes": 1945781358,
+      "architecture": "qwen35",
+      "parameters": "1.88B",
+      "quantization": "Q4_K_M",
+      "context_tokens": 262144,
+      "capabilities": [
+        "vision",
+        "tools",
+        "thinking"
+      ],
+      "license": "Apache-2.0 (official Ollama registry license layer and upstream Qwen model)",
+      "source_url": "https://ollama.com/library/qwen3.5:2b-q4_K_M",
+      "config": {
+        "media_type": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:37f57288e2ab61515e0db050eb9eee2d4b25881e49d95e7d20b2809b245d6220",
+        "size_bytes": 177,
+        "filename": "config.json"
+      },
+      "layers": [
+        {
+          "media_type": "application/vnd.ollama.image.model",
+          "digest": "sha256:20cb277f0967ace47b0b5d5658e5e494a88937f7378b74b5a266496400938f4c",
+          "size_bytes": 1274396992,
+          "filename": "model.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.projector",
+          "digest": "sha256:5ddf560e34046fd958b2576324f2a9b57d70f297afe6526958d60a23f3bfc20b",
+          "size_bytes": 671372768,
+          "filename": "mmproj.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.template",
+          "digest": "sha256:b507b9c2f6ca642bffcd06665ea7c91f235fd32daeefdf875a0f938db05fb315",
+          "size_bytes": 13,
+          "filename": "template.txt"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.license",
+          "digest": "sha256:50cbab8a892c5f2993b8c7351a99182507472def3b1374558308605d99b86b32",
+          "size_bytes": 11343,
+          "filename": "LICENSE"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.params",
+          "digest": "sha256:9371364b27a52acac9d87f88bd93c9db1174d8d6ec57f6888925cdc1788871ff",
+          "size_bytes": 65,
+          "filename": "params.json"
+        }
+      ],
+      "notes": "Candidate for one conditional small helper (classification/extraction/compression) and smaller-hardware fallback. Do not load concurrently with the main model on the 8 GB host until memory is measured.",
+      "model_page_short_digest": "1e2d21a4f03a",
+      "manifest_sha256": "1e2d21a4f03ab9e4a9c1976a4b7e88f21de61d65f2c5485d8fde8942be73f1e7"
+    },
+    {
+      "id": "qwen3_embedding_06b_q8_0",
+      "model": "qwen3-embedding",
+      "namespace": "library",
+      "tag": "0.6b-q8_0",
+      "registry_manifest_url": "https://registry.ollama.ai/v2/library/qwen3-embedding/manifests/0.6b-q8_0",
+      "model_page_short_digest": "ac6da0dfba84",
+      "manifest_sha256": null,
+      "total_bytes": 639150858,
+      "architecture": "qwen3",
+      "parameters": "596M",
+      "quantization": "Q8_0",
+      "context_tokens": 32768,
+      "capabilities": [
+        "embedding"
+      ],
+      "license": "Apache-2.0",
+      "source_url": "https://ollama.com/library/qwen3-embedding:0.6b-q8_0",
+      "config": {
+        "media_type": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:9202febed9e2dadac14bca089be90864571336fa9f4375b690a26ed548957fde",
+        "size_bytes": 266,
+        "filename": "config.json"
+      },
+      "layers": [
+        {
+          "media_type": "application/vnd.ollama.image.model",
+          "digest": "sha256:06507c7b42688469c4e7298b0a1e16deff06caf291cf0a5b278c308249c3e439",
+          "size_bytes": 639150592,
+          "filename": "model.gguf"
+        }
+      ],
+      "notes": "Selected compact RAG embedding runtime candidate. Use only on RAG ingest/query paths; do not load on ordinary chat. Q8_0 avoids the larger full-precision 0.6B snapshot."
+    },
+    {
+      "id": "glm_ocr_q8_0",
+      "model": "glm-ocr",
+      "namespace": "library",
+      "tag": "q8_0",
+      "registry_manifest_url": "https://registry.ollama.ai/v2/library/glm-ocr/manifests/q8_0",
+      "model_page_short_digest": "6e5935a916fc",
+      "manifest_sha256": null,
+      "total_bytes": 1819687501,
+      "architecture": "glm4",
+      "parameters": "891M",
+      "quantization": "Q8_0",
+      "context_tokens": 131072,
+      "capabilities": [
+        "vision",
+        "tools"
+      ],
+      "license": "MIT (model weights); Apache-2.0 (official SDK code)",
+      "source_url": "https://ollama.com/library/glm-ocr:q8_0",
+      "config": {
+        "media_type": "application/vnd.docker.container.image.v1+json",
+        "digest": "sha256:ed01de6ff6852a225f6a9ee58bf38076e8c6b7e3a69e0a942986900c9338e625",
+        "size_bytes": 174,
+        "filename": "config.json"
+      },
+      "layers": [
+        {
+          "media_type": "application/vnd.ollama.image.model",
+          "digest": "sha256:573c8850da0126266ba1e63a0ad8253a1257ad82f99295820fc84cfa43bead97",
+          "size_bytes": 950669120,
+          "filename": "model.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.projector",
+          "digest": "sha256:713115ee2f749a4c03627c29ccf71900ed63f219b0c79b562eac15d6d08bcb7b",
+          "size_bytes": 869018176,
+          "filename": "mmproj.gguf"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.template",
+          "digest": "sha256:b507b9c2f6ca642bffcd06665ea7c91f235fd32daeefdf875a0f938db05fb315",
+          "size_bytes": 13,
+          "filename": "template.txt"
+        },
+        {
+          "media_type": "application/vnd.ollama.image.params",
+          "digest": "sha256:ae40a217c1c4002e9358f0f6597a349acaace0cfb95dc53db7ce646d57a56271",
+          "size_bytes": 18,
+          "filename": "params.json"
+        }
+      ],
+      "notes": "Document OCR candidate for Russian/English and complex tables/formulas. Model card lists Russian but not Thai. Use only on document OCR requests; Thai OCR remains Tesseract. Model weights MIT; SDK code Apache-2.0; the separate PP-DocLayoutV3 self-hosted layout dependency is not included."
+    }
+  ],
+  "owner_server_only": [
+    {
+      "id": "qwen35_uncensored_ollama_mirror",
+      "model": "dzgg/Qwen3.5-Uncensored-HauhauCS-Aggressive",
+      "tag": "4b",
+      "pull_command": "ollama pull dzgg/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+      "manifest_digest_prefix": "dd3be4e31ad3",
+      "model_layer_sha256": "464c1dda6a052d909b11d20c31bcb21060e969e334716ba8ed7abf64ca1be10f",
+      "model_layer_bytes": 3376217632,
+      "capabilities": [
+        "vision",
+        "tools",
+        "thinking"
+      ],
+      "status": "owner-server-only-candidate",
+      "notes": "Third-party Ollama registry mirror of the HauhauCS derivative. The mapping to the pinned Hugging Face Q4_K_M + mmproj is not byte-verified. Private-server evaluation only after model/template/license review."
+    }
+  ]
+}

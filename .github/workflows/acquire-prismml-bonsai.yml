@@ -1,0 +1,73 @@
+name: Acquire pinned ternary helper model artifact
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "models/manifest-prismml-bonsai.json"
+      - ".github/workflows/acquire-prismml-bonsai.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prismml-bonsai-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acquire:
+    name: Download and verify pinned PTQ1_0 artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Download immutable model revision and verify provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest="models/manifest-prismml-bonsai.json"
+          repo="$(jq -r '.source.repository' "$manifest")"
+          revision="$(jq -r '.source.revision' "$manifest")"
+          file="$(jq -r '.source.file' "$manifest")"
+          expected_sha="$(jq -r '.source.sha256' "$manifest")"
+          expected_size="$(jq -r '.source.size_bytes' "$manifest")"
+          [[ "$revision" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$expected_sha" =~ ^[a-f0-9]{64}$ ]]
+          [[ "$expected_size" =~ ^[0-9]+$ ]]
+          out="$RUNNER_TEMP/alandi-bonsai-ptq1-0"
+          mkdir -p "$out"
+          base="https://huggingface.co/$repo/resolve/$revision"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 20 --max-time 1200 "$base/$file" --output "$out/$file"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 20 --max-time 120 "$base/SHA256SUMS" --output "$out/SHA256SUMS"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 20 --max-time 120 "$base/LICENSE" --output "$out/LICENSE"
+          grep -F "$expected_sha  $file" "$out/SHA256SUMS" >/dev/null
+          printf '%s  %s\n' "$expected_sha" "$out/$file" | sha256sum --check -
+          actual_size="$(stat -c '%s' "$out/$file")"
+          test "$actual_size" = "$expected_size"
+          cp "$manifest" "$out/manifest.json"
+          cp "$base/README.md" "$out/README.md" 2>/dev/null || true
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          out = Path(os.environ["RUNNER_TEMP"]) / "alandi-bonsai-ptq1-0"
+          metadata = {
+              "status": "SHA256_VERIFIED",
+              "workflow_run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "source_revision": "a6032a5089ac27e96be3a80c7b42d1ad0bd89887",
+              "target_host_installation": "NOT_INSTALLED",
+              "runtime_integration": "NOT_IMPLEMENTED",
+          }
+          (out / "acquisition.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+          PY
+          echo "Verified $file ($actual_size bytes) at immutable revision $revision"
+      - name: Upload verified model artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: alandi-bonsai2-ptq1-0-${{ github.run_id }}
+          path: ${{ runner.temp }}/alandi-bonsai-ptq1-0/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
