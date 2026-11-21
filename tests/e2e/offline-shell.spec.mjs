@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
+const NOTEBOOK_PATH = process.env.LIVE_SITE_URL ? './notebook/' : '/notebook/';
+const CODER_PATH = process.env.LIVE_SITE_URL ? './workspace/' : '/workspace/';
 
 test('app shell is available offline after its first successful visit', async ({ page, context }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
@@ -13,6 +15,12 @@ test('app shell is available offline after its first successful visit', async ({
   await expect(page.locator('#chatBox')).toBeVisible();
   await expect(page.locator('#sidebar')).toBeAttached();
   await page.waitForFunction(() => typeof window.marked?.parse === 'function' && typeof window.DOMPurify?.sanitize === 'function');
+  await page.goto(NOTEBOOK_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: 'aNoteBooki' })).toBeVisible();
+  await page.waitForFunction(() => Boolean(window.AlandiNotebookStore));
+  await page.goto(CODER_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /aCodingi/ })).toBeVisible();
+  await page.waitForFunction(() => Boolean(window.AlandiBrowserLocalProvider));
   const offlineState = await page.evaluate(() => ({
     controlled: Boolean(navigator.serviceWorker.controller),
     revision: document.querySelector('meta[name="alandi-build-revision"]')?.content,
