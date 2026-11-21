@@ -7,7 +7,7 @@ test('root runtime assets stay same-origin and work without a CDN', async ({ pag
   page.on('request', request => {
     if (!['script', 'stylesheet', 'font'].includes(request.resourceType())) return;
     const url = new URL(request.url());
-    if (url.origin !== new URL(APP_PATH, 'http://127.0.0.1').origin && !['http://127.0.0.1', 'http://localhost'].includes(url.origin)) {
+    if (url.origin !== new URL(page.url()).origin) {
       externalRuntimeRequests.push(request.url());
     }
   });
