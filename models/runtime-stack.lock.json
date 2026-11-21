@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_on": "2026-11-13",
+  "updated_on": "2026-11-21",
   "status": "ARTIFACTS_VERIFIED_NOT_INSTALLED",
   "target_profile": {
     "os": "Linux",
@@ -190,89 +190,98 @@
   "acquisition": {
     "state": "VERIFIED_DOWNLOADED_NOT_INSTALLED",
     "external_cache": {
-      "workflow_run": 43420046411,
-      "artifact_name": "alandi-external-model-cache-43420046411",
-      "artifact_id": 14033946209,
-      "artifact_bytes": 6054442377,
-      "artifact_sha256": "a43f068a9e54df4e022c95e29eb1c1618b40a8fc5391166f7e6f1a6a0d6a8682",
+      "workflow_run": 44900155001,
+      "artifact_name": "alandi-external-model-cache-44900155001",
+      "artifact_id": 14705393467,
+      "artifact_bytes": 6054444756,
+      "artifact_sha256": "3afd6a15e74e464dace632ad5e95017ecb9733764ceb77acbd07444889c1174d",
       "package_count": 10,
-      "expires_on": "2026-12-13T11:50:13Z"
+      "expires_on": "2026-12-21T11:40:52Z"
     },
     "ollama_registry": {
-      "workflow_run": 43418126506,
+      "workflow_run": 44900155025,
       "artifact_ids": [
-        14033595112,
-        14033515626,
-        14032792732,
-        14032663412
+        14705752335,
+        14705687482,
+        14706026419,
+        14705427202,
+        14706070685
       ],
       "artifacts": [
         {
-          "id": 14032792732,
-          "name": "alandi-qwen35-base-4b-43418126506",
+          "id": 14705752335,
+          "name": "alandi-qwen35-base-4b-44900155025",
           "size_bytes": 3324184144,
-          "sha256": "d66c97c2139d993a85a4ab4213fd1e7086c7a7aee08d6971fcb1faa699a3371a"
+          "sha256": "d66c97c2139d993a85a4ab4213fd1e7086c7a7aee08d6971fcb1faa699a3371a",
+          "artifact_sha256": "d65c5a761ab94e19812fe38436407366bfe5244105d0d24bac63bb545b969e58"
         },
         {
-          "id": 14032383874,
-          "name": "alandi-qwen35-helper-2b-43418126506",
+          "id": 14705687482,
+          "name": "alandi-qwen35-helper-2b-44900155025",
           "size_bytes": 1945791476,
-          "sha256": "6b1b95dc256a15bde30b691c14dbe38a488733d3130fac54557f86d43947be15"
+          "sha256": "6b1b95dc256a15bde30b691c14dbe38a488733d3130fac54557f86d43947be15",
+          "artifact_sha256": "2ad17fdc30cc372159f369cf3bc63f5ec39a7649492b56cc27ac45bb45b14637"
         },
         {
-          "id": 14033515626,
-          "name": "alandi-qwen3-embedding-06b-q8-0-43418126506",
+          "id": 14706026419,
+          "name": "alandi-qwen3-embedding-06b-q8-0-44900155025",
           "size_bytes": 639156333,
-          "sha256": "fb9030432d515646370c4f471837541e03242bb19103e29bb6807c73030f0df5"
+          "sha256": "fb9030432d515646370c4f471837541e03242bb19103e29bb6807c73030f0df5",
+          "artifact_sha256": "59b6c700fd354fb9044c6163e65910d8f9d471d3b5ed84387e5361a8f703006e"
         },
         {
-          "id": 14032663412,
-          "name": "alandi-glm-ocr-q8-0-43418126506",
+          "id": 14705427202,
+          "name": "alandi-glm-ocr-q8-0-44900155025",
           "size_bytes": 1819696477,
-          "sha256": "dd222da85d699e8de542e2bd252d5b501e5f1bbb5e331c4a3bd509a3360f9220"
+          "sha256": "dd222da85d699e8de542e2bd252d5b501e5f1bbb5e331c4a3bd509a3360f9220",
+          "artifact_sha256": "a0e5709176345ed060788233dfdadda959df406298017cba2883b3246ef1dbf5"
         },
         {
-          "id": 14033595112,
-          "name": "alandi-ollama-helper-lock-43418126506",
-          "size_bytes": 2052,
-          "sha256": "f89e9802e27749c233391b6c2e19fcb1b74f67ec3eae07b57f84852c4438a0a8"
+          "id": 14706070685,
+          "name": "alandi-ollama-helper-lock-44900155025",
+          "size_bytes": 2048,
+          "sha256": "f89e9802e27749c233391b6c2e19fcb1b74f67ec3eae07b57f84852c4438a0a8",
+          "artifact_sha256": "1f3f6cfa9a7e2eed55796624045f5a9c28d476f78484f15c3b44c0767d981f9e"
         }
       ],
       "package_count": 4,
-      "artifact_bytes": 7728830482,
-      "expires_on": "2026-12-13T11:36:20Z"
+      "artifact_bytes": 7728830478,
+      "expires_on": "2026-12-21T11:41:03Z"
     },
-    "total_uploaded_artifact_bytes": 13783272859,
+    "total_uploaded_artifact_bytes": 13783275234,
     "owner_supplied_primary_checkpoint": {
       "status": "NOT_DOWNLOADED_OWNER_SUPPLIED",
       "size_bytes": 2707513696
     },
     "target_installation": "NOT_STARTED_HOST_PLATFORM_NOT_VERIFIED",
     "python_runtime_cache": {
-      "workflow_run": 43423610986,
+      "workflow_run": 44900155000,
       "artifacts": [
         {
-          "id": 14035162009,
-          "name": "alandi-python-runtime-cache-Linux-X64-py3.12-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
-          "size_bytes": 26700700
+          "id": 14705647626,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.12-014b5340b26e06c30a0df8fbcef5301c5dab4d23",
+          "size_bytes": 26725581,
+          "artifact_sha256": "61560d2523e05ace5c666c61eaa1dead1b8ee030c434c9bfb9e18ef6f3dea81a"
         },
         {
-          "id": 14034589425,
-          "name": "alandi-python-runtime-cache-Linux-X64-py3.13-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
-          "size_bytes": 26694782
+          "id": 14706030523,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.13-014b5340b26e06c30a0df8fbcef5301c5dab4d23",
+          "size_bytes": 26718037,
+          "artifact_sha256": "12c9cb038cb2ba1e9d223bf9ff612b20465daae694e90de8399c5f7d43d351ef"
         },
         {
-          "id": 14034429641,
-          "name": "alandi-python-runtime-cache-Linux-X64-py3.14-1760cb0391bd0257737bf72db4ea4c5e01d2dde4",
-          "size_bytes": 26701659
+          "id": 14706095765,
+          "name": "alandi-python-runtime-cache-Linux-X64-py3.14-014b5340b26e06c30a0df8fbcef5301c5dab4d23",
+          "size_bytes": 26715940,
+          "artifact_sha256": "93fd33508bc45b4052c85de3dda4540c41b8181b602d0371e20b807cfc63fe07"
         }
       ],
       "artifact_ids": [
-        14035162009,
-        14034589425,
-        14034429641
+        14705647626,
+        14706030523,
+        14706095765
       ],
-      "artifact_bytes": 80097141,
+      "artifact_bytes": 80159558,
       "python_versions": [
         "3.12",
         "3.13",
@@ -282,8 +291,34 @@
       "uv_version": "0.13.6",
       "offline_sync_verified": true,
       "pip_check_verified": true,
-      "expires_on": "2026-12-13T12:15:31Z"
+      "expires_on": "2026-12-21T11:39:56Z"
     },
-    "total_all_artifact_bytes": 13863370000
+    "total_all_artifact_bytes": 14500045925,
+    "bonsai_helper": {
+      "workflow_run": 44900155036,
+      "artifact_id": 14705039504,
+      "artifact_name": "alandi-bonsai2-ptq1-0-44900155036",
+      "artifact_bytes": 429196247,
+      "artifact_sha256": "ec5944a9de0d4d5eb6a8b3552b505dfdb962f1c9b3163b1cd72a978305c3525c",
+      "model_id": "alandi.fast-helper.ternary-2b.ptq1_0",
+      "model_file_sha256": "36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa",
+      "license": "Apache-2.0",
+      "runtime": "PrismML-Eng/llama.cpp fork; not Ollama/upstream compatible",
+      "install_state": "DOWNLOADED_VERIFIED_NOT_INSTALLED",
+      "expires_on": "2026-12-21T11:39:49Z"
+    },
+    "openshell_runtime": {
+      "workflow_run": 44900155047,
+      "artifact_id": 14705468031,
+      "artifact_name": "openshell-v0.1.8-ubuntu24.04-x86_64",
+      "artifact_bytes": 207414886,
+      "artifact_sha256": "203adb51a68048a6b5300177465a6ac2963fb60def0703475925708ea4bf82d0",
+      "version": "0.1.8",
+      "tag_commit": "f3d976590d3eb1379690a2abaf0f0e26c21d487d",
+      "license": "Apache-2.0",
+      "target": "Ubuntu 24.04 x86_64",
+      "install_state": "CANDIDATE_NOT_INSTALLED",
+      "expires_on": "2026-12-05T11:39:58Z"
+    }
   }
 }

@@ -1,25 +1,22 @@
-# aLandi runtime acquisition and installation guide
+## 0.1 Download the latest verified Actions artifacts (2026-11-21)
 
-Status: SPECIFIED, not installed. This guide assumes a provisional Linux x86_64 host; verify the actual OS, architecture, RAM, disk and GPU before using platform-specific artifacts.
+The refreshed acquisition and provenance workflows passed on source HEAD `014b5340`. These commands download verified staging artifacts; they do not install or enable services. Use an authenticated owner workstation or the verified target host:
 
-## 0. Resource preflight
+    gh run download 44900155001 -R DorpNay/skills-github-pages -n alandi-external-model-cache-44900155001
+    gh run download 44900155025 -R DorpNay/skills-github-pages -n alandi-qwen35-base-4b-44900155025
+    gh run download 44900155025 -R DorpNay/skills-github-pages -n alandi-qwen35-helper-2b-44900155025
+    gh run download 44900155025 -R DorpNay/skills-github-pages -n alandi-qwen3-embedding-06b-q8-0-44900155025
+    gh run download 44900155025 -R DorpNay/skills-github-pages -n alandi-glm-ocr-q8-0-44900155025
+    gh run download 44900155025 -R DorpNay/skills-github-pages -n alandi-ollama-helper-lock-44900155025
+    gh run download 44900155036 -R DorpNay/skills-github-pages -n alandi-bonsai2-ptq1-0-44900155036
+    gh run download 44900155047 -R DorpNay/skills-github-pages -n openshell-v0.1.8-ubuntu24.04-x86_64
+    gh run download 44900155000 -R DorpNay/skills-github-pages -n alandi-python-runtime-cache-Linux-X64-py3.12-014b5340b26e06c30a0df8fbcef5301c5dab4d23
+    gh run download 44900155000 -R DorpNay/skills-github-pages -n alandi-python-runtime-cache-Linux-X64-py3.13-014b5340b26e06c30a0df8fbcef5301c5dab4d23
+    gh run download 44900155000 -R DorpNay/skills-github-pages -n alandi-python-runtime-cache-Linux-X64-py3.14-014b5340b26e06c30a0df8fbcef5301c5dab4d23
 
-Recommended starting disk headroom is at least 30 GB. The complete auxiliary acquisition set totals 6,033,970,026 bytes of external-cache artifacts plus 7,728,793,651 bytes across four official Ollama registry packages (about 13.76 GB before tokenizer/config overhead). The owner-supplied uncensored primary checkpoint adds 2,707,513,696 bytes. Reserve additional room for unpacking, Ollama metadata, build dependencies and logs; do not run downloads if the host lacks free space.
+**Expiry:** OpenShell artifact expires **2026-12-05 11:39:58 UTC**. External model cache, Ollama packages, Bonsai helper and Python caches expire **2026-12-21** (see exact timestamps/digests in `models/runtime-stack.lock.json`). Preserve OpenShell first. GitHub's artifact `digest` is the archive SHA-256; each package also carries its own file checksum manifest. Keep the downloaded ZIPs and extracted folders until the owner has copied and re-verified them in durable storage.
 
-The reference profile is 8 GB RAM, one resident LLM, 4K context and concurrency 1. This is a starting hypothesis, not a benchmark. Do not keep ASR, reranker, embeddings and TTS resident simultaneously without exact-host RSS/PSS measurements.
-
-## 0.1 Download the already verified Actions artifacts
-
-Run on a workstation or the target host with GitHub CLI authenticated (`gh auth login`). These commands download the ZIP artifacts from the completed runs; they do not install anything:
-
-    gh run download 43420046411 -R DorpNay/skills-github-pages -n alandi-external-model-cache-43420046411
-    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen35-base-4b-43418126506
-    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen35-helper-2b-43418126506
-    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-qwen3-embedding-06b-q8-0-43418126506
-    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-glm-ocr-q8-0-43418126506
-    gh run download 43418126506 -R DorpNay/skills-github-pages -n alandi-ollama-helper-lock-43418126506
-
-Keep the downloaded directories and their checksum/lock files intact. The external artifact contains the 10 non-Ollama packages; the four registry artifacts each contain one verified Ollama package. The artifacts expire on 2026-12-13.
+The external cache contains 10 auxiliary packages; Ollama run contains four model packages plus its lock; Bonsai is a separate Apache-2.0 1.88B PTQ1_0 candidate requiring a PrismML llama.cpp fork (not Ollama compatible); OpenShell is a candidate sandbox runtime, not installed. Python cache artifacts are Ubuntu 24.04 x86_64 only. None of these artifacts is a target-host installation.
 
 ## 1. Acquire pinned artifacts
 
@@ -136,7 +133,7 @@ Choose the artifact matching the target's CPython minor version. The current art
 The offline sync is deliberately network-disabled and fails closed if the artifact does not match the lock/platform or lacks a required distribution. Keep the extracted cache until the service is installed and smoke-tested. This cache does not install Ollama, Piper, Whisper, Tesseract binaries, GPU drivers, system packages or optional Qwen-ASR/PyTorch dependencies; those remain separate, host-specific installation steps. Artifacts expire after 30 days; rerun the workflow if needed.
 
 
-## Current verified acquisition artifacts — 2026-11-14
+## Historical verified acquisition artifacts — 2026-11-14 (superseded by §0.1)
 
 These are SHA-verified GitHub Actions staging artifacts, not installed runtimes and not Git-tracked model weights. Model binaries must not be committed to the GitHub Pages source tree or Git LFS.
 
@@ -157,3 +154,14 @@ Verify extracted package inventories before use:
 Choose the Python cache artifact matching the target CPython minor and use it only on Ubuntu 24.04 x86_64. The owner-supplied uncensored Qwen3.5-4B primary checkpoint is excluded from the external cache and must be supplied separately with its pinned SHA. The official Qwen3.5-4B base comparator is present in the Ollama artifact but is not an approved production selection. Do not install any model until the owner confirms the model lane and the actual host's disk/RAM/VRAM fit.
 
 **Retention:** Actions artifacts expire on 2026-12-13. Before expiry, move only required, licensed artifacts to an owner-controlled durable store or the verified target host. Do not place binaries in the Pages source tree.
+
+
+## Latest verified acquisition snapshot — 2026-11-21
+
+- External cache: run 44900155001, artifact 14705393467, 6,054,444,756 bytes, archive SHA-256 `3afd6a15e74e464dace632ad5e95017ecb9733764ceb77acbd07444889c1174d`.
+- Ollama packages + lock: run 44900155025, artifact IDs 14705752335 / 14705687482 / 14706026419 / 14705427202 / 14706070685, 7,728,830,478 bytes total; archive SHA-256 values in `models/runtime-stack.lock.json`.
+- Bonsai helper: run 44900155036, artifact 14705039504, 429,196,247 bytes; model-file SHA-256 `36061ad406df8a4903a6db005be350c50fabfaf717f9ef0acf4b76adcd9929fa`.
+- OpenShell: run 44900155047, artifact 14705468031, 207,414,886 bytes; archive SHA-256 `203adb51a68048a6b5300177465a6ac2963fb60def0703475925708ea4bf82d0`; expires Dec 5.
+- Python runtime caches: run 44900155000, artifact IDs 14705647626 / 14706030523 / 14706095765, 80,159,558 bytes total; offline sync and `pip check` passed for CPython 3.12/3.13/3.14 on Ubuntu 24.04 x86_64.
+
+All artifact acquisitions and the License/Artifact Provenance Gate passed. These are staged, downloadable artifacts only. Target OS/hardware preflight, installation, model loading, sandbox execution and aServi integration remain unverified.
