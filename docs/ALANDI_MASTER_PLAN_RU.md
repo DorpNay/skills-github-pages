@@ -18,6 +18,50 @@
 9. Не выполнять merge, deploy, force-push, rebase/reset, историю переписывать, удалять пользовательские данные, менять хост/провайдер/секреты или платить без отдельного разрешения. Прямые commits в main разрешены.
 10. Work Loop: live orient → inspect minimum surface → acceptance/rollback → implement → focused verification → exact-head/publication checks → update NOW/master/INTEL → concise report.
 
+
+## 0.1 Owner directive — Landing 2.0, автономность и публикация (2026-11-21; SPECIFIED)
+
+Владелец подтвердил следующий обязательный scope. Это требования и задачи, не заявление о готовности или доступности серверов/моделей.
+
+1. **Сначала восстановить root app и автоматическую Pages-публикацию.** Проверять связку main commit → GitHub Actions Pages build → deploy → опубликованный root; Jekyll success сам по себе не доказывает работу браузерного JavaScript. Любой критичный root bootstrap/delegated-handler regression должен ловиться Playwright smoke-тестом.
+2. **Landing 2.0 в main:** завершить все уже перечисленные отдельные пункты локализации RU/EN, чатов, памяти, действий, безопасности, управления элементами, адаптивности, доступности, форм, меню, диалогов, функций и инструментов. Существующие P0.1–P0.32 и P1–P8 сохраняют свои acceptance и статусы; новые пункты не заменяют их.
+3. **Реальная работоспособность:** у каждой видимой кнопки, переключателя, меню, формы и панели должен быть работающий handler/runtime, проверяемое состояние, обратная связь, error/cancel/approval path и тест. Не оставлять декоративные или фиктивные элементы.
+4. **Бесплатная публичная оболочка:** сохранять static HTML/CSS/JS + Jekyll/GitHub Pages и не вводить обязательный платный frontend/runtime. Отдельно учитывать возможные расходы владельца на сервер/железо/регистрации; не создавать платные ресурсы без отдельного согласования.
+5. **Автономность на сервере:** при наличии доступа только к запланированному серверу система должна выполнять задачи, не требующие внешнего поиска, внешних БД, Pages, GitHub, сторонних API или других сервисов. Сервер — допустимый внешний физический контур; web search — явное исключение и отдельная capability.
+6. **Интернет-поиск:** довести реальный поиск как инструмент основного чата и как capability инструментов/моделей/агентов по необходимости; offline режим обязан явно отключать web и не имитировать доступность источников.
+7. **Offline Core:** подготовить переносимый локальный пакет ядра с локальным runtime, persistence, manifest/checksums/licenses, установкой/обновлением/rollback и честной матрицей возможностей без сети. Сохранить local/server switch и запрет скрытой отправки данных/remote fallback.
+8. **Модели:** инвентаризировать уже скачанные малые модели и разрешённые кандидаты; связать их с реальными задачами (routing, helper, embedding/rerank, ASR/TTS/код и т.п.) только после проверки точных артефактов, версий, лицензий, ресурсов, качества и совместимости. Основная крупная модель размещается владельцем на выбранном сервере по отдельной инструкции; не утверждать, что ранее скачанные модели доступны в текущем runtime без проверки.
+9. **Внешние зависимости:** проверить актуальность версий, security advisories, совместимость и улучшения для моделей, библиотек, API, инструментов и runtime по официальным первоисточникам; фиксировать provenance, license, pin, risk и rollback в INTEL.md. По возможности self-host статические зависимости; CDN не должен быть обязательным условием работы уже открытого приложения.
+10. **Cloudflare:** разрешены read-only инвентаризация и безопасная подготовка плана; изменения DNS, Tunnel, Workers, Access, secrets, permissions, платных ресурсов и production routing требуют отдельного точечного согласования.
+11. **Параллельная работа:** независимые repository, research, tests и infra-inventory lanes можно выполнять одновременно; изменения одного файла/ref сериализовать и проверять по точному parent SHA.
+12. **Owner handoff:** в конце предоставить пошаговую инструкцию только для действий владельца: регистрации/аккаунты, секреты через защищённые UI, сервер/ОС, размещение основной модели, запуск сервисов, подключение домена/Tunnel при необходимости, backup/update/rollback и smoke/acceptance. Указывать стоимость/условия/необходимые решения и не просить секреты в чате.
+
+### P0.33 — Recovery, автономная публикация и Landing 2.0 expansion (SPECIFIED)
+
+- [ ] P0.33.1 Восстановить root JavaScript bootstrap/delegated actions; проверить реальные Settings, mode, navigation и composer interactions.
+- [ ] P0.33.2 Добавить ранний browser smoke на синтаксис/инициализацию и ключевые клики; включить в доступный CI gate, не оставлять только необязательным ручным запуском.
+- [ ] P0.33.3 Проверять каждый release chain: exact main SHA, Pages build artifact, deploy run, опубликованный build revision и live root smoke.
+- [ ] P0.33.4 Зафиксировать workflow contract: GitHub Pages Actions build/deploy остаётся автоматическим; ручной deploy не нужен и не должен подменять push-triggered публикацию.
+- [ ] P0.33.5 Провести аудит всех CDN/runtime fetches; self-host/pin критичные библиотеки и сделать graceful offline/failure behavior.
+- [ ] P0.33.6 Полностью завершить существующие RU/EN, chats, memory, actions, security, element management и responsive/accessibility acceptance P0.1–P0.32.
+- [ ] P0.33.7 Провести полный visible-control inventory: каждый data-action, direct listener, form submit, disclosure и keyboard path связан с реальным handler и E2E.
+- [ ] P0.33.8 Проверить автономный server-only путь для чата, локальных файлов/БД, моделей, памяти, tools и agent workflows без внешних API.
+- [ ] P0.33.9 Реализовать реальный web-search route в основном чате и ограниченные, разрешённые web capabilities для tools/agents; проверить online/offline separation.
+- [ ] P0.33.10 Подготовить Offline Core manifest/runtime package, local persistence, dependency closure, integrity checks, update/rollback и capability matrix.
+- [ ] P0.33.11 Инвентаризировать скачанные модели, проверить локальные файлы/хеши/версии/licenses и распределить по задачам только на основе evals и hardware budgets.
+- [ ] P0.33.12 Подготовить main-model server deployment architecture и owner-only runbook; не скачивать/перемещать модели и не менять VPS без доступной среды и отдельного разрешения.
+- [ ] P0.33.13 Провести актуальный version/security/compatibility audit библиотек, API, model runtimes, search, storage и agent tools с официальными источниками и Context7 при version-sensitive API.
+- [ ] P0.33.14 Провести Cloudflare read-only inventory и подготовить безопасный target design; любые account/zone/DNS/Tunnel/secret/paid mutations — owner approval.
+- [ ] P0.33.15 Выполнить end-to-end acceptance на чистом браузерном профиле, затем RU/EN, mobile/desktop, offline/server-only, browser/device и rollback matrices.
+- [ ] P0.33.16 Подготовить owner checklist для регистраций, ключей, сервера, модели, domain/Tunnel, service startup, monitoring, backup и recovery; не хранить credentials в репозитории/чате.
+
+### Incident record — root app controls unavailable (2026-11-21)
+
+- **FACT:** commit 58be3e1 изменил Python runtime-load catch и пропустил закрывающую }. Код после runPythonCode() оказался в недостижимой области функции; глобальный delegated click handler инициализации root UI не регистрировался. Поэтому HTML/CSS/Jekyll build и Pages deploy могли завершаться успешно, хотя кнопки приложения не работали.
+- **IMPLEMENTED:** commit 8fbb128 закрывает catch до объявления Python output и добавляет Playwright regression на Settings open/close и Quick/Thorough mode controls.
+- **NOT YET VERIFIED at record time:** Pages/Quality/Graphify runs for 8fbb128 were queued/in progress; live browser acceptance after publication remains pending until exact deployed SHA and click smoke are confirmed.
+- **PREVENTION:** add a root-app interaction smoke to the required quality gate; Pages build success must never be treated as proof of client runtime correctness.
+
 ## 1. Проверенный baseline на момент объединения
 
 - FACT at consolidation start: main HEAD 42a63dbd6cea81e97e7a577fce159700186771ac; open PRs: 0; open issue #111 (owner/live host release gates) and unrelated #186. Docs consolidation advanced main afterward.
@@ -339,7 +383,7 @@
 - [~] 20. Confirm shared memory only enters requests when explicit scope is enabled; the request builder gates shared facts on the global-memory opt-in and project scope. Mock-provider regressions now assert a shared fact is excluded when opt-in is off and included only when explicitly enabled; project-context consent tests cover both cancel/no-send and accept/expected-context. Chromium execution remains pending.
 - [~] 21. Confirm imported bundles cannot overwrite current state on failed validation; malformed chat records are rejected before mutation and RU/EN storage-invariance regressions were added.
 - [~] 22. Confirm failure feedback does not mutate or clear the user's draft; the 401 provider failure regression asserts that the original composer text remains after the failed request.
-- [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages. Code-copy and Python-runtime load failures now use localized fixed feedback instead of raw browser exception strings; clipboard fallback no longer logs the raw exception, and RU/EN fault-injection Playwright coverage asserts credential-bearing diagnostics are not shown. Full message inventory, recovery/partial-export copy and Chromium execution remain open.
+- [~] 23. Confirm toast/alert copy does not expose raw secrets or private content; helper/document/audio/provider/OAuth/profile/trace paths use bounded safe messages. Code-copy and Python-runtime load failures now use localized fixed feedback instead of raw browser exception strings; clipboard fallback no longer logs the raw exception, and RU/EN fault-injection Playwright coverage asserts credential-bearing diagnostics are not shown. Full message inventory, recovery/partial-export copy and Chromium execution remain open. The root-app boot regression caused by a missing brace in the Python-load catch is separately recorded in §0.1; a delegated-control click regression was added, but exact-head browser execution remains pending.
 - [~] 24. Verify all privacy prompts in both locales; project-memory deletion and provider credential removal confirmations have RU/EN coverage. Remaining native prompt matrix and cancellation invariance still open.
 - [~] 25. Verify user-data export/restore messages distinguish complete vs partial recovery; chat import now classifies lossy normalization (unsupported roles, malformed/non-string content, oversized IDs/titles/content/tool-call lists, excess per-chat messages and missing project associations) and shows explicit RU/EN complete vs partial result copy while preserving existing history. Playwright covers complete/partial imports in both locales and persisted content. Chat/project corruption backup downloads now have RU/EN success copy and E2E verifies exact raw bytes plus source-store invariance in both locales. Chromium execution pending. Raw corruption backups remain byte-preserving and downloadable separately; this is not a general restore/merge UI for raw backups.
 

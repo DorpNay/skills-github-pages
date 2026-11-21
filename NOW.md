@@ -25,6 +25,9 @@ GitHub `main` — источник истины по проекту. Project Sou
 
 Детальные acceptance и исторические пункты — только в мастер-плане.
 
+- **Owner expansion (2026-11-21):** priority is root-app recovery + push-triggered Pages publish, then full Landing 2.0 and server-only autonomy. Required scope now includes RU/EN, chats/memory/actions/security/element controls, real web search in chat and permitted tools/agents, offline Core, verified use of already-downloaded small models, main-model server runbook, version/security audits, safe Cloudflare preparation and owner-only setup instructions. Full SPECIFIED acceptance is recorded as P0.33 in the master plan; no model/server/Cloudflare mutation is implied.
+- **Critical regression:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch, leaving root delegated UI initialization unreachable while Jekyll/Pages could still succeed. Fix + click regression test committed as 8fbb128; verify exact-head Actions and published root before marking restored.
+
 ## Текущий срез landing
 - **IMPLEMENTED в main:** composer 320/360px, мобильная навигация и вложенные меню с 44px targets, root overflow sweep 320–1440px, landscape 844×390, project/settings/dialog safe-area sizing, sticky Functions/Trace headers, keyboard focus return, Functions/Chat Action focus loops, root control system, jump-to-latest и Stop target.
 - **IMPLEMENTED в main:** 30-point landing acceptance matrix P0.21 и 30-point root control matrix P0.25. Элементы с кодом/тестом отмечены PARTIAL `[~]`, пока Chromium/native evidence не получены.
@@ -76,6 +79,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 2. Не читать архив при старте и не создавать второй orienter/master backlog/handoff.
 3. Не путать spec, prototype, UI, downloaded artifact, installed service, loaded model и verified capability.
 4. Не считать E2E написанным тестом, Pages/Graphify — браузерной или iPhone проверкой.
+5. Любое изменение root inline JS проверять на незакрытые блоки и ранний bootstrap; обязательный Playwright smoke должен нажать ключевые controls после холодной загрузки. Успешный Jekyll/Pages build не подтверждает работу event handlers.
 5. Не делать hidden cross-provider fallback/key migration; aServi first-party отделён от third-party providers.
 6. Не показывать фиктивный параллелизм/статусы и не экспонировать внутренние рассуждения.
 7. Не удалять старое до переноса уникальных требований и проверки ссылок; user data не удалять.
@@ -88,7 +92,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Latest main HEAD:** `e8ecb419b5561e25baffe39b7e2595f2de1acb0f`. This slice: `58be3e1` bounded RU/EN client error feedback; `9452487` removed raw clipboard exception logging; `e8ecb41` RU/EN clipboard fault-injection E2E; `9894beb` master-plan evidence; `f7581cb` live checkpoint refresh. No PR merge or manual deployment was performed.
+- **Latest code/test HEAD:** `8fbb128923c55bc4ff106c06966181e48ac6144c`. Fixes the missing brace after the Python runtime-load catch and adds a root delegated-control regression (Settings open/close + Quick/Thorough mode). This commit is the repair candidate; browser and exact-head Actions verification must be checked live. No PR merge or manual deployment was performed.
 - **Actions evidence:** Current HEAD `80fbc08b3ca7d8a3a69e0b500131cb48ed34f42b` is documentation-only after code/test HEAD `e8ecb419b5561e25baffe39b7e2595f2de1acb0f`. Graphify #44831560158 succeeded on code/test HEAD `e8ecb41`; Quality Sentinels #44831560223 was pending there; Pages #44831559455 was still running there and the current-head Pages run #44831639220 is pending. No Chromium, Lightpanda or native iOS/VoiceOver pass is claimed.
 - **P0.26–P0.32 reconciliation:** 185 points total; 184 PARTIAL `[~]`, 1 OPEN `[ ]`, 0 fully accepted. Remaining open point: P0.27.27 native iOS Safari/VoiceOver locale-change check. Browser/native acceptance is still pending for many partial points; see the exact evidence notes in `docs/ALANDI_MASTER_PLAN_RU.md`.
 - **Implemented RU/EN live-state package:** cached Project Sources status re-renders without another Gateway request; voice menu/status re-localize without interrupting MediaRecorder; cancelling one-shot recording closes the panel and stops capture while conversation-turn discard semantics remain; live chat status/timer re-localize without cancelling the in-flight request. Historical tool/provider/cache/research/retry metadata refresh without rewriting stored messages. New/extended Playwright regressions exist; execution pending.
