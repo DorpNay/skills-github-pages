@@ -7897,7 +7897,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
     }
     async function runPythonCode(code) {
       try { await initPyodide(); }
-      catch (_) { return getUiLanguage()==='en'?'Could not load Python runtime. Check network access and reload the page.':'Не удалось загрузить среду Python. Проверьте доступ к сети и перезагрузите страницу.';
+      catch (_) { return getUiLanguage()==='en'?'Could not load Python runtime. Check network access and reload the page.':'Не удалось загрузить среду Python. Проверьте доступ к сети и перезагрузите страницу.'; }
       const stdout = [];
       const stderr = [];
       let result;

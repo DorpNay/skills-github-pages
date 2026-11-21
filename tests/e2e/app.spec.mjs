@@ -7908,3 +7908,21 @@ test('client-facing tool and clipboard failures never expose raw exception diagn
     await expect(page.locator('#toast')).not.toContainText('user:password');
   }
 });
+
+
+test('root app binds delegated controls after initial load', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+
+  const settings = page.locator('#settingsModal');
+  await expect(settings).toBeHidden();
+  await page.locator('[data-action="toggle-settings"]').click();
+  await expect(settings).toBeVisible();
+  await page.locator('#settingsModal [data-action="close-settings"]').click();
+  await expect(settings).toBeHidden();
+
+  await page.locator('#modeDeep').click();
+  await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'false');
+  await page.locator('#modeFast').click();
+  await expect(page.locator('#modeFast')).toHaveAttribute('aria-pressed', 'true');
+});
