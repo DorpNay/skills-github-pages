@@ -7010,8 +7010,11 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       toggleSidebar(false);
     }
     function switchChat(id) {
-      if (!chats.some((chat) => chat.id === id)) return;
-      updateState(null, id); toggleSidebar(false);
+      const selectedChat=chats.find(chat=>chat.id===id);
+      if(!selectedChat)return;
+      // Clicking the already-active chat from All Chats must still restore its parent scope.
+      setProjectChatScope(selectedChat.projectId||'',{expand:true});
+      updateState(null,id);toggleSidebar(false);
     }
     function focusChatRowMenu(id) {
       requestAnimationFrame(()=>{
