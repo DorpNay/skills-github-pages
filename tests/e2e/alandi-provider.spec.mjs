@@ -163,3 +163,61 @@ test('aServi and third-party settings disclosures are mutually exclusive', async
   await expect(aservi).toHaveAttribute('open', '');
   await expect(additional).not.toHaveAttribute('open', '');
 });
+
+test('aServi web_search tool uses the private SearXNG gateway before external search', async ({ page }) => {
+  const chatPayloads = [];
+  const searchRequests = [];
+  const externalSearchRequests = [];
+  await page.route('https://alandi.example.test/**', async route => {
+    const request = route.request();
+    const origin = request.headers().origin || 'https://dorpnay.github.io';
+    const cors = {
+      'access-control-allow-origin': origin,
+      'access-control-allow-methods': 'GET, POST, OPTIONS',
+      'access-control-allow-headers': 'authorization,content-type',
+      'access-control-max-age': '600'
+    };
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors, body: '' });
+    if (request.url().endsWith('/healthz')) return route.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: '{"status":"ok"}' });
+    if (request.url().includes('/v1/models')) return route.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: JSON.stringify({ data: [{ id: 'qwen3.5:4b', context_length: 4096 }] }) });
+    if (request.url().includes('/v1/search/web')) {
+      searchRequests.push({ url: request.url(), authorization: request.headers().authorization });
+      return route.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: JSON.stringify({
+        provider: 'searxng', query: 'current Qwen documentation',
+        results: [{ title: 'Official Qwen documentation', url: 'https://qwen.ai/docs', snippet: 'Official documentation result.' }], count: 1
+      }) });
+    }
+    if (request.url().includes('/v1/chat/completions')) {
+      const payload = request.postDataJSON();
+      chatPayloads.push(payload);
+      const isToolResult = payload.messages?.some(message => message.role === 'tool');
+      const message = isToolResult
+        ? { role: 'assistant', content: 'The official Qwen documentation was found.' }
+        : { role: 'assistant', tool_calls: [{ id: 'call-web-1', type: 'function', function: { name: 'web_search', arguments: JSON.stringify({ query: 'current Qwen documentation' }) } }] };
+      return route.fulfill({ status: 200, headers: cors, contentType: 'application/json', body: JSON.stringify({
+        id: 'aServi-search-test', object: 'chat.completion', model: 'qwen3.5:4b',
+        choices: [{ index: 0, message, finish_reason: isToolResult ? 'stop' : 'tool_calls' }]
+      }) });
+    }
+    return route.fulfill({ status: 404, headers: cors, contentType: 'application/json', body: '{}' });
+  });
+  await page.route('https://api.tavily.com/**', route => { externalSearchRequests.push(route.request().url()); return route.abort(); });
+  await page.route('https://*.wikipedia.org/**', route => { externalSearchRequests.push(route.request().url()); return route.abort(); });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Настройки', exact: true }).click();
+  await page.locator('#cloudBaseUrl').fill('https://alandi.example.test/v1');
+  await page.locator('#cloudModel').fill('qwen3.5:4b');
+  await page.locator('#cloudApiKey').fill('e2e-alandi-search-placeholder-key-0123456789');
+  await page.locator('[data-action="connect-alandi-aservi"]').click();
+  await expect(page.locator('#cloudStatusDot')).toHaveAttribute('data-state', 'connected');
+  await page.locator('[data-action="close-settings"]').click();
+  await chooseSearchMode(page, 'normal');
+  await page.locator('#userInput').fill('Найди официальную документацию Qwen.');
+  await page.locator('#sendBtn').click();
+  await expect(page.locator('#chatBox')).toContainText('The official Qwen documentation was found.', { timeout: 15000 });
+  expect(searchRequests).toHaveLength(1);
+  expect(searchRequests[0].authorization).toBe('Bearer e2e-alandi-search-placeholder-key-0123456789');
+  expect(searchRequests[0].url).toContain('q=current%20Qwen%20documentation');
+  expect(chatPayloads.some(payload => payload.tools?.some(tool => tool.function?.name === 'web_search'))).toBe(true);
+  expect(externalSearchRequests).toEqual([]);
+});

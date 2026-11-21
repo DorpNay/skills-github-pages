@@ -5836,6 +5836,49 @@ let agentRuntimeRefreshPromise = null;
       return header + '\n\n' + usable.map((item, index) => '[Открытый источник ' + (index + 1) + ': ' + item.source + ']\n' + item.result).join('\n\n');
     }
     async function performTavilySearch(query, signal, mode = 'fast') {
+      // First-party aServi searches stay on the configured private gateway when its
+      // optional SearXNG capability is enabled. Third-party providers keep their
+      // existing explicit Tavily/open-source path; no cross-provider fallback occurs.
+      if ((safeGet(STORAGE.provider) || 'alandi') === 'alandi') {
+        let gateway = null;
+        try { gateway = getAlandiGatewayConfig(); } catch (_) { /* no configured aServi route */ }
+        if (gateway) {
+          showLocalizedStatus('liveStatusWebSearch',{query:query.slice(0,120)});
+          let response;
+          try {
+            const limit = mode === 'deep' ? 5 : 3;
+            const endpoint = gateway.baseUrl + '/search/web?q=' + encodeURIComponent(query.slice(0,300)) + '&limit=' + limit;
+            response = await fetch(endpoint, {
+              method: 'GET',
+              headers: { 'Authorization': 'Bearer ' + gateway.key, 'Accept': 'application/json' },
+              cache: 'no-store',
+              signal
+            });
+          } catch (error) {
+            if (error?.name === 'AbortError') throw error;
+            return 'Поиск через aServi сейчас недоступен. Повтори запрос позже или явно выбери другого поискового провайдера.';
+          }
+          // 503 means the operator has not enabled the optional local search service.
+          // Only this configuration state may continue through the user's existing
+          // Tavily key or public-source fallback; runtime/auth failures fail closed.
+          if (response.status !== 503) {
+            if (!response.ok) return 'Поиск через aServi завершился ошибкой (HTTP ' + response.status + '). Внешний поиск автоматически не запускался.';
+            let data;
+            try { data = await response.json(); }
+            catch (_) { return 'Поиск через aServi вернул некорректный ответ. Внешний поиск автоматически не запускался.'; }
+            if (!Array.isArray(data.results)) return 'Поиск через aServi вернул неизвестный формат результата.';
+            const resultLimit = mode === 'deep' ? 5 : 3;
+            const contentLimit = mode === 'deep' ? 1200 : 700;
+            const results = data.results.slice(0, resultLimit).map((result, index) => {
+              const title = String(result?.title || 'Источник').slice(0,180);
+              const url = String(result?.url || '').slice(0,1000);
+              const snippet = String(result?.snippet || '').slice(0,contentLimit);
+              return '[' + (index + 1) + '] ' + title + '\\nURL: ' + url + '\\n' + snippet;
+            });
+            return results.length ? 'Источник: aServi / SearXNG\\n' + results.join('\\n\\n') : 'aServi не нашёл результатов по этому запросу.';
+          }
+        }
+      }
       const key = safeGet(STORAGE.tavilyKey) || '';
       if (!key) return performOpenWebFallback(query, signal, mode);
       showLocalizedStatus('liveStatusWebSearch',{query:query.slice(0,120)});
@@ -5854,8 +5897,7 @@ let agentRuntimeRefreshPromise = null;
       if (!response.ok) return performOpenWebFallback(query, signal, mode, 'HTTP ' + response.status);
       let data;
       try { data = await response.json(); }
-      catch (_) { return performOpenWebFallback(query, signal, mode, 'невалидный JSON');
-      }
+      catch (_) { return performOpenWebFallback(query, signal, mode, 'невалидный JSON'); }
       if (!Array.isArray(data.results) || !data.results.length) return performOpenWebFallback(query, signal, mode, 'нет результатов');
       const resultLimit = mode === 'deep' ? 6 : 3;
       const contentLimit = mode === 'deep' ? 1600 : 800;
