@@ -1,6 +1,6 @@
 # Connected assistant-side tools and external-source register
 
-**Review date:** 2026-11-20. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
+**Review date:** 2026-11-21. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
 
 ## Connected assistant-side tools and plugins
 
@@ -53,6 +53,41 @@
 5. Extract reusable design/implementation ideas; rename and adapt them to aLandi boundaries. Do not copy logos, product copy, assets or whole systems without license review.
 6. No dependency, download, account connection, paid operation, deployment, credential use or server change solely because a plugin suggests it.
 7. Record source, exact version, finding, applicability, risk, decision and evidence here. CANDIDATE is not ACCEPTED; ACCEPTED is not IMPLEMENTED.
+
+## Owner correction and focused upstream review — 2026-11-21
+
+The active product contract is one root application with three shared-frame modes. Notebook and Coder are not separate primitive pages. Their source/agent/coding workflows below are adopted as design patterns only; existing aLandi storage, gateway, EvidenceLedger, AgentRun and permission boundaries remain the system of record. The source register currently contains **662 unique URL strings / 936 URL occurrences** (literal URL inventory count); relevance is selected per task rather than treating all entries as automatically applicable.
+
+### Source-grounded Notebook mode
+
+- [Open Notebook repository](https://github.com/lfnovo/open-notebook) and its [interface overview](https://github.com/lfnovo/open-notebook/blob/main/docs/3-USER-GUIDE/interface-overview.md): multi-notebook organization, source/note/chat columns, selectable context per source, saved sessions, source citations, transformations and podcast workflows. **Adopt patterns, not the full stack/UI:** retain aLandi's single shared app frame and chat position; implement notebook/source selection as a bounded context contract and artifact jobs as a separate output lifecycle.
+- [Mozilla document-to-podcast](https://mozilla-ai.github.io/document-to-podcast/step-by-step-guide/) and [Podcastfy](https://github.com/souzatharsis/podcastfy): candidate reference flows for script/segment/speaker/audio/transcript pipelines. Do not claim podcast availability until local TTS runtime, voice license, render, transcript and export tests pass.
+- [PptxGenJS](https://gitbrent.github.io/PptxGenJS/), [python-pptx](https://python-pptx.readthedocs.io/) and [ECharts](https://echarts.apache.org/en/index.html): candidate presentation/chart artifact libraries. Choose only one fit-for-purpose implementation after browser/server build, offline packaging and license review; do not add all three.
+- [Ragas metrics](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/): candidate retrieval/answer evaluation vocabulary; citation correctness and cross-scope leak tests must remain aLandi-specific.
+
+### Agent orchestration and coding workspace
+
+- [OpenAI Agents SDK — running agents](https://openai.github.io/openai-agents-python/running_agents/), [handoffs](https://openai.github.io/openai-agents-python/handoffs/), [sessions](https://openai.github.io/openai-agents-python/sessions/) and [tracing](https://openai.github.io/openai-agents-python/tracing/): manager-owned specialist calls versus control handoff, client-managed per-session history, serialized resumable RunState/approval and typed run traces. **Patterns only:** do not mix SDK-managed session persistence with aLandi's SQLite history or introduce server-managed OpenAI Conversations into the private local route. Preserve provider-neutral chat state and aLandi's existing AgentRun contracts.
+- [LangGraph checkpointers](https://docs.langchain.com/oss/python/langgraph/checkpointers) and [interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts): durable thread-scoped checkpoints, fault-tolerant continuation, human interrupts and explicit resume. **Pattern only:** reuse existing SQLite AgentRun/Event/Evidence persistence unless measured requirements demonstrate a gap; do not add a second checkpoint store.
+- [OpenHands releases](https://github.com/All-Hands-AI/OpenHands/releases) and [sandbox overview](https://docs.openhands.dev/openhands/usage/sandboxes/overview): latest checked upstream release v1.43.0 (2026-11-20); Docker sandbox is recommended, process mode is explicitly unsafe, and mounted read-write workspace contents are mutable by the agent. Treat as a reference/candidate, not an aLandi dependency. Recheck the upstream organisation/repository, current release and license at adoption time.
+- **aLandi coding decision:** one coder-project record maps to one explicit workspace root and bounded execution environment. Browser File System Access grants are not shell isolation. Before enabling shell/test tools require a real container/VM boundary, read-only default, scoped mounts, egress restrictions, resource limits, approval, diff/rollback and escape tests.
+
+### Agent bootstrapping vs model-weight training
+
+- [Hugging Face TRL SFTTrainer](https://huggingface.co/docs/trl/sft_trainer) and [DPOTrainer](https://huggingface.co/docs/trl/en/dpo_trainer): SFT uses supervised examples; DPO requires chosen/rejected preference data. Dataset schema, chat template and split must be explicit.
+- [Hugging Face PEFT LoRA](https://huggingface.co/docs/peft/main/en/package_reference/lora) and [PEFT model merge API](https://huggingface.co/docs/peft/package_reference/peft_model): LoRA freezes the base and trains low-rank updates; QLoRA-style setups may target all linear layers; adapter save/merge/unload semantics and compatibility need tests.
+- [Axolotl v0.21.1 release](https://github.com/axolotl-ai-cloud/axolotl/releases/tag/v0.21.1), 2026-10-27: source-validated update includes checkpoint/LoRA, eval and tool-calling SFT changes plus dependency/security updates. The release also warns that some checkpoint formats are not backwards resumable; pin exact trainer/container and test checkpoint rollback.
+- [LLaMA-Factory releases](https://github.com/hiyouga/LLaMA-Factory/releases): retain as candidate only; search evidence returned older release entries rather than a reliable current release, so no version pin/adoption decision is made here.
+- [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): candidate low-memory training path; current model, GPU/backend and license compatibility still require exact verification before use.
+- **Critical separation:** agent bootstrap creates a versioned profile from instructions, tool/data grants, selected knowledge and an eval suite; it does not alter weights. Model training is a distinct opt-in job with base checkpoint immutability, lawful/licensed datasets, preflighted hardware, SFT/LoRA/QLoRA/preference stages, held-out task evals, adapter manifest and rollback. Raw private chat history is not training data by default.
+- **Hardware boundary:** the planned 8-GB VPS target is not a training workstation. Training framework references are optional owner workstation/GPU packages; never offer training as runnable on the VPS without preflight evidence.
+
+### Current design decisions
+
+- Direct chat remains the default. Automatic specialist routing is bounded and policy-driven; user can bypass it. Chat/project stores versioned agent/team configuration and approved context references, not hidden reasoning.
+- aNoteBooki replaces the Projects navigation surface with notebook collections and artifact actions while preserving the central chat/composer; the active notebook's selected sources are the only notebook context.
+- aCodingi replaces general navigation with coding project/tools views, retains the same chat position, and opens a project-specific isolated workspace. The existing /workspace/ editor is not an execution sandbox.
+- Model/artifact adapters must be tied to exact local weights, hashes, licenses, runtime compatibility and measured quality/resources. Downloaded GitHub Actions artifacts are temporary staging, not installed host models.
 
 ## External source register
 
@@ -888,7 +923,7 @@ The following 103 distinct URL references were absent from the existing INTEL re
 - **Selected candidate:** OpenShell v0.1.8 (2026-11-10), Apache-2.0. Tag commit `f3d976590d3eb1379690a2abaf0f0e26c21d487d` has a GitHub-verified signature. Official release assets expose SHA-256 digests; the x86_64 Ubuntu package and its gateway/sandbox/supervisor/driver/prover components can be staged without installing them. Sources: https://github.com/NVIDIA/OpenShell/releases/tag/v0.1.8 and https://github.com/NVIDIA/OpenShell.
 - **Why this candidate:** policy-enforced filesystem, network and process boundaries plus endpoint-bound credential brokering and an audit trail. Keep arbitrary shell disabled until host compatibility, policy review and escape/isolation tests pass.
 - **Upgrade caveats:** v0.1.8 rejects filesystem policy paths traversing symlinks inside writable workspaces; static provider credentials require explicit placement metadata for non-Authorization destinations; Python SDK moved to ai-openshell/sdk-python. Review these before authoring policies.
-- **Alternatives:** gVisor remains the OCI application-kernel isolation option (https://gvisor.dev/docs/); OpenHands v1.38.0 is current upstream, but its no-sandbox mode runs the agent directly on the host with full filesystem access (https://github.com/OpenHands/OpenHands/releases/tag/v1.38.0 and https://github.com/OpenHands/OpenHands).
+- **Alternatives:** gVisor remains the OCI application-kernel isolation option (https://gvisor.dev/docs/); OpenHands v1.38.0 was the 2026-11-17 snapshot; the 2026-11-20 release check found v1.43.0. The newer release does not itself authorize adoption., but its no-sandbox mode runs the agent directly on the host with full filesystem access (https://github.com/OpenHands/OpenHands/releases/tag/v1.38.0 and https://github.com/OpenHands/OpenHands).
 - **Decision:** stage only the pinned Ubuntu 24.04 x86_64 OpenShell v0.1.8 assets as a temporary Actions artifact, SHA-256 verify every asset, and do not install until actual target OS/architecture, container/VM support, kernel, disk and RAM are measured. No Git LFS or multi-GB binaries in the Pages source tree.
 
 

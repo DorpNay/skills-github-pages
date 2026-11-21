@@ -1,6 +1,6 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-20 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
+**Срез:** 2026-11-21 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
 
 ## Начало каждой задачи
 1. Прочитать только этот файл (строки 1–100).
@@ -16,17 +16,21 @@
 GitHub `main` — источник истины по проекту. Project Sources синхронизируются вручную; память, чат и старые документы не заменяют live repository.
 
 ## Приоритет владельца
-1. **Сейчас:** закончить root app UI: sidebar, проекты/чаты, composer, меню, forms, dialogs, Functions, responsive, RU/EN, accessibility и visual consistency.
-2. После landing — отдельные workspace routes aCodingi и aNoteBooki, используя уже существующий функционал. aSoundi — позже, отдельной аудиостудией после voice audit.
-3. Затем — chat/modes/models/memory/status/events и request routing.
-4. Далее — реальные Deep Research, AgentRun/subagents, Skills/Connectors, Notebook/Source Vault, converters и Coder runtime.
-5. Потом — Offline Core/local-server switch; voice/ASR/TTS/podcast после landing.
-6. После landing отдельно обсудить с владельцем провайдеры. Не угадывать provider set.
+1. **Сейчас:** root app + автоматическая Pages-публикация; sidebar/project/chat scope transitions, RU/EN, controls, forms, dialogs, accessibility и responsive.
+2. Затем — три режима одной поверхности: aLandi, aNoteBooki (source-grounded chat + Studio), aCodingi (coding chat + per-project isolated workspace), с одинаковым frame и устойчивым возвратом/синхронизацией.
+3. Затем — chat-bound agent settings/memory, policy-driven agent routing, обновлённые каталоги Research/Agents/Skills/Connectors и durable AgentRun.
+4. Затем — Source Vault/Notebook ingestion, conversion, evidence lineage and real artifact jobs.
+5. Затем — Offline Core/server-only acceptance, already-acquired small models and owner runbook; optional agent bootstrap and separate model-weight training workflow. Voice/ASR/TTS/aSoundi remain a later independent package after voice audit.
+6. Provider UX remains a separate owner decision; do not guess the provider set.
 
 Детальные acceptance и исторические пункты — только в мастер-плане.
 
-- **Owner expansion (2026-11-21):** priority is root-app recovery + push-triggered Pages publish, then full Landing 2.0 and server-only autonomy. Required scope now includes RU/EN, chats/memory/actions/security/element controls, real web search in chat and permitted tools/agents, offline Core, verified use of already-downloaded small models, main-model server runbook, version/security audits, safe Cloudflare preparation and owner-only setup instructions. Full SPECIFIED acceptance is recorded as P0.33 in the master plan; no model/server/Cloudflare mutation is implied.
+- **Owner expansion (2026-11-21):** root app + push-triggered Pages; strict Projects/Chats filtering; three full shared-frame modes (aLandi/aNoteBooki/aCodingi); notebook-source-bound chat and artifact Studio; coder chat and per-project sandbox workspace; broader Research/Agent scenario catalogs with chat-persistent settings and policy-driven specialist use; agent bootstrap vs separate weight training; server-only/offline core, acquired small models, online web capability, current source/security audits and owner-only main-model deployment. Binding acceptance is P0.34 and P1–P5 in the master plan. These are specifications until implemented/verified; no model/server/Cloudflare mutation is implied.
 - **Critical regression:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch, leaving root delegated UI initialization unreachable while Jekyll/Pages could still succeed. Fix + click regression test committed as 8fbb128; verify exact-head Actions and published root before marking restored.
+
+## Обязательная навигационная семантика (P0.34)
+- В project-selected scope показывать только чаты проекта; global/no-project чаты не смешивать с проектными. Click Project → project expanded/selected + its chats only. Click project chat → auto-expand/select parent project + same filter + activate chat. Personal chat → no-project scope; only explicit All Chats may mix.
+- currentChatId, selectedProjectFilterId, expanded/selected project, chat/project ownership and persistence must move in one canonical transition. Revalidate after move/clone/delete/reload/mode/locale changes.
 
 ## Текущий срез landing
 - **IMPLEMENTED в main:** composer 320/360px, мобильная навигация и вложенные меню с 44px targets, root overflow sweep 320–1440px, landscape 844×390, project/settings/dialog safe-area sizing, sticky Functions/Trace headers, keyboard focus return, Functions/Chat Action focus loops, root control system, jump-to-latest и Stop target.
@@ -57,7 +61,7 @@ GitHub `main` — источник истины по проекту. Project Sou
 - Quick/Thorough, web breadth/offline, execution topology, Skills, model/provider, memory scope и output format — независимые измерения.
 - Не создавать fake buttons/toggles/progress/agents/connectors/research. Недоступная функция честно помечается blueprint/unavailable.
 - Status показывает реальные события, инструменты, источники, этапы, время, результат/ошибку/approval/cancel. Не раскрывать и не сохранять hidden chain-of-thought.
-- На телефоне UI тонкий и компактный, touch targets не менее 44px; studios — landscape-first desktop-like workspaces даже в portrait.
+- Все три режима сохраняют один и тот же application frame/chat footprint и меняют только theme/nav/context/tool surfaces. На телефоне UI компактный, touch targets не менее 44px; Notebook/Coder workspaces — landscape-first с bounded internal scroll и без длинных растянутых карточек.
 - Upstream reuse: exact source/version, license (code/weights/voice/data/assets), security, provenance, resources и rollback проверяются до принятия.
 
 ## Work Loop
@@ -85,7 +89,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 7. Не удалять старое до переноса уникальных требований и проверки ссылок; user data не удалять.
 
 ## Owner gates
-- Provider set/UX — только после landing; спросить владельца.
+- Provider set/UX — отдельное решение владельца; не угадывать. Новые mode contracts не меняют provider set.
 - Подтверждены названия aCodingi, aNoteBooki, aSoundi; дополнительные studio names/boundaries не выдумывать.
 - «Dessa» в голосовом запросе неоднозначно; идентифицировать upstream точно до выбора.
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
@@ -103,3 +107,11 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - **Infrastructure inventory (read-only, 2026-11-20):** connected Cloudflare account inventory returned zero zones and zero named Tunnels; connected Hostinger VPS inventory returned an empty list. This does not establish whether a Vultr or other-provider VPS exists. No SSH/root host was accessed; no DNS, Tunnel, VPS, secrets, paid resource, model download or server configuration was changed.
 - **Open queues:** PR #187 provider diagnostics remains open/unmerged and DIRTY against main (its base SHA predates current main); do not merge without owner approval. Issue #111 remains the consolidated owner/environment release-gate record; issue #186 is unrelated.
 - **Owner runbook:** the final `Owner runbook — действия после Landing 2.0` section in `docs/ALANDI_MASTER_PLAN_RU.md` remains the operational handoff. GitHub Pages is the static client; FastAPI/aServi + Ollama remain a separate private server contour. Host/DNS/credentials/cost and native-device gates remain owner-only.
+
+
+## Current implementation packages (2026-11-21)
+- Package A: strict project/chat selection transitions + E2E for filtering/auto-expand/highlight/persist/move/clone/delete.
+- Package B: root frame mode controller + theme tokens + mode lifecycle/return state; Notebook and Coder nav/chat context contracts.
+- Package C: chat-bound agent policy/config and Research/Agent method catalog; honest flag-off AgentRun.
+- Package D: Notebook source/artifact lineage and Coder per-project workspace/sandbox contract.
+- Package E: offline dependency closure, acquired artifact verification, local model capability map, training preflight and owner runbook.
