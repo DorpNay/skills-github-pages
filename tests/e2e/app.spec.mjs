@@ -7911,7 +7911,10 @@ test('client-facing tool and clipboard failures never expose raw exception diagn
 
 
 test('root app binds delegated controls after initial load', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(String(error)));
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => pageErrors).toEqual([]);
 
   const settings = page.locator('#settingsModal');
   await expect(settings).toBeHidden();

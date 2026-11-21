@@ -4185,7 +4185,7 @@ permalink: /
       if (themeColor) themeColor.content = safeTheme === 'light' ? '#f4f7f8' : '#08111d';
       updateHomeThemeButton();
     }
-    applyUiLanguage(safeGet('ai_ui_language_v1')||'ru');
+    // initializeSettings() applies the saved locale after all runtime state is initialized.
     $('uiLanguage').addEventListener('change', event => applyUiLanguage(event.target.value));
     $('uiTheme').addEventListener('change', () => {
       applyAppearance($('uiTheme').value, $('uiMotion').value);
