@@ -18,9 +18,9 @@ permalink: /
   <meta property="og:description" content="aLandi — персональное AI-пространство для чатов, проектов, исследований и работы с источниками.">
   <meta name="color-scheme" content="dark">
   <title>aLandi v10.0</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script id="markedRuntime" async src="https://cdn.jsdelivr.net/npm/marked@18.0.14/marked.min.js"></script>
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.4.16/purify.min.js"></script>
+  <script src="{{ '/assets/js/vendor/tailwindcss-3.4.17.js' | relative_url }}"></script>
+  <script id="markedRuntime" async src="{{ '/assets/js/vendor/marked-18.0.14.min.js' | relative_url }}"></script>
+  <script async src="{{ '/assets/js/vendor/purify-3.4.16.min.js' | relative_url }}"></script>
   <style>
     :root { color-scheme: dark; --ink: #e8eefc; --panel: #101827; --line: #273349; }
     html, body { height: 100%; }
