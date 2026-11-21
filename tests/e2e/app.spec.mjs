@@ -5697,20 +5697,47 @@ test('project filter preserves active chat context and header shows personal/pro
   await expect(contextLabel).toContainText('область: проект + общая');
 
   await ensureSidebarOpen(page);
-  await page.locator('#chatScopeBackButton').click();
-  await expect(page.locator('#chatScopeBackButton')).toBeHidden();
-  await expect(page.locator('#chatList .chat-row')).toHaveCount(3);
-  await expect(page.locator('#activeChatTitle')).toHaveText('Beta chat');
-  await expect(contextLabel).toContainText('Beta project');
+  await expect(page.locator('#projectNavToggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#chatNavToggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#projectNavigationList .project-nav-select[data-project-id="project-beta"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="chat-beta"]')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_project_chat_filter_v1'))).toBe('project-beta');
 
+  // An explicit All Chats action restores the mixed view; selecting a project chat
+  // from that view must automatically restore its parent project scope.
+  await page.locator('#chatScopeBackButton').click();
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(3);
+  await page.locator('#chatList [data-action="switch-chat"][data-chat-id="chat-beta"]').click();
+  await expect(page.locator('#activeChatTitle')).toHaveText('Beta chat');
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#projectNavigationList .project-nav-select[data-project-id="project-beta"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="chat-beta"]')).toBeVisible();
+
+  // Selecting a personal chat switches the sidebar to the no-project scope.
+  await page.locator('#chatScopeBackButton').click();
   await page.locator('#chatList [data-action="switch-chat"][data-chat-id="chat-personal"]').click();
   await expect(page.locator('#activeChatTitle')).toHaveText('Personal chat');
   await expect(contextLabel).toHaveAttribute('data-context', 'personal');
   await expect(contextLabel).toHaveText('Личный чат · без проекта');
+  await ensureSidebarOpen(page);
+  await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="chat-personal"]')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_project_chat_filter_v1'))).toBe('');
+
   await page.locator('#uiLanguage').selectOption('en');
   await expect(contextLabel).toHaveText('Personal chat · no project');
   await page.locator('#uiLanguage').selectOption('ru');
   await expect(contextLabel).toHaveText('Личный чат · без проекта');
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#activeChatTitle')).toHaveText('Personal chat');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  await expect(page.locator('#projectlessNavButton')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#chatList .chat-row')).toHaveCount(1);
+  await expect(page.locator('#chatList .chat-row[data-chat-id="chat-personal"]')).toBeVisible();
 });
 
 test('project editing is available through the right-side three-dot action only', async ({ page }) => {
