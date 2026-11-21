@@ -2125,3 +2125,17 @@ These references support the proposed migration and analysis techniques; they do
 - **aLandi disposition:** current AST report provides static payload/parse/AST inventory only; it is not a Lighthouse score, field Web Vitals or runtime benchmark. A one-run mobile Lighthouse CI baseline is now configured against generated _site with filesystem-only output and no public report upload; only after a stable baseline should budgets be introduced. Do not fail builds on uncalibrated thresholds.
 
 - **Pinned CI baseline package:** @lhci/cli 0.16.1 (Apache-2.0, Node >=22.19, Lighthouse 13.6.0); npm registry SHA-512 integrity: sha512-Vh3z9Xkcs4ULrl62NTF9a+c9HL9teyD+dq3TueG4p4oo9ypYbPBb3Ht4YvxHzOyr31rFaiuHqdphpnVZs5SXQw==. CI-only install; reports target filesystem and are not uploaded to public temporary storage. One mobile lab run is advisory, not field CWV and not a release gate.
+
+
+## 2026-11-21 — targeted upstream freshness check for Offline Core / Coder / training
+
+Official release-page snapshot reviewed for planning only; do not blindly update pinned runtime artifacts. Re-run compatibility, license, architecture and regression checks before changing any lock:
+
+- **Ollama:** official releases show stable `v0.40.16`; `v0.40.17-rc0` appears as a release-candidate entry, so keep current lock `0.40.16` until a stable release and target-platform validation are confirmed. https://github.com/ollama/ollama/releases
+- **llama.cpp:** upstream release page shows `b12249` as a pre-release (10 Nov 2026). Treat as a challenger, not an automatic production upgrade; compare exact commit/build backend, tool-call/template compatibility and Qwen3.5 image/projector support. https://github.com/ggml-org/llama.cpp/releases
+- **PEFT:** official stable release `v0.21.3` (13 Nov 2026). Candidate for adapter training; compatibility with the chosen Transformers/TRL/base-model versions still needs a pinned environment smoke. https://github.com/huggingface/peft/releases
+- **TRL:** official release `v1.17.1` (30 Oct 2026). Supports an expanding set of SFT/preference recipes, but large multi-GPU examples do not imply feasibility on the planned 8-GB VPS. https://github.com/huggingface/trl/releases
+- **OpenHands:** official platform release `v1.40.0` (12 Nov 2026). Candidate reference for coding workflow UX/SDK patterns only; do not adopt the full platform as a runtime dependency without isolation, resource and licensing review. https://github.com/All-Hands-AI/OpenHands/releases
+- **gVisor:** official release `20261116.0` (17 Nov 2026), including recent sandbox hardening changes. Candidate sandbox runtime; target kernel, cgroup, filesystem and nested virtualization compatibility must be tested before choosing it over OpenShell/Firecracker. https://github.com/google/gvisor/releases
+
+**Disposition:** current `models/runtime-stack.lock.json` remains pinned to Ollama `0.40.16`; the acquired OpenShell `v0.1.8` artifact is staged only and expires 2026-12-05. No production install, model activation, VPS mutation or dependency upgrade was performed. The current acquisition runs on 2026-11-21 verified the downloaded auxiliary model/runtime caches and license/provenance gate; they remain Actions artifacts, not installed services.
