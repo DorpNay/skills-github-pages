@@ -47,6 +47,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
     { name: 'private.txt', mimeType: 'text/plain', buffer: Buffer.from('PRIVATE_UNSELECTED_SENTINEL must never be transmitted to aServi.') }
   ]);
   await page.locator('#sharedImportForm button[type="submit"]').click();
+  await expect(page.locator('#sharedNotebookStatus')).toContainText(/Текст импортирован локально|Text imported locally/);
   await expect(page.locator('#sharedNotebookSources label')).toHaveCount(2);
   await page.locator('#sharedNotebookSources label').filter({ hasText: 'selected.txt' }).locator('input').check();
 
