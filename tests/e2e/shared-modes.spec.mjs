@@ -1,0 +1,107 @@
+import { test, expect } from '@playwright/test';
+
+const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
+
+async function openSidebar(page) {
+  const sidebar = page.locator('#sidebar');
+  if (await sidebar.evaluate(el => el.classList.contains('-translate-x-full'))) {
+    await page.locator('#appSidebarToggle').click();
+  }
+  await expect(sidebar).not.toHaveClass(/-translate-x-full/);
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+});
+
+test('shared modes preserve the root frame and scope Notebook chat to checked sources', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await expect(page.locator('#sharedModeSwitcher')).toBeVisible();
+  const chatBox = page.locator('#chatBox');
+  const composer = page.locator('#composerFooter');
+  const chatBefore = await chatBox.boundingBox();
+  const composerBefore = await composer.boundingBox();
+  const normalChatText = await chatBox.innerText();
+
+  await page.locator('[data-shared-mode="notebook"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
+  await expect(page.locator('#notebookModePanel')).toBeVisible();
+  await expect(page.locator('#projectPanel')).toBeHidden();
+  await openSidebar(page);
+
+  await page.locator('#sharedNotebookName').fill('Research notebook');
+  await page.locator('#sharedNotebookCreate button[type="submit"]').click();
+  await expect(page.locator('#sharedNotebookList')).toContainText('Research notebook');
+
+  await page.locator('#notebookModePanel details').nth(2).locator('summary').click();
+  await page.locator('#sharedTextFiles').setInputFiles([
+    { name: 'selected.txt', mimeType: 'text/plain', buffer: Buffer.from('Project Orion launch date is 14 March 2027. This selected document is the only allowed evidence.') },
+    { name: 'private.txt', mimeType: 'text/plain', buffer: Buffer.from('PRIVATE_UNSELECTED_SENTINEL must never be transmitted to aServi.') }
+  ]);
+  await page.locator('#sharedImportForm button[type="submit"]').click();
+  await expect(page.locator('#sharedNotebookSources label')).toHaveCount(2);
+  await page.locator('#sharedNotebookSources label').filter({ hasText: 'selected.txt' }).locator('input').check();
+
+  await page.evaluate(() => {
+    localStorage.setItem('ai_alandi_cloud_base_url', 'https://aservi.example.test/v1');
+    localStorage.setItem('ai_api_key_alandi', 'test-only-key');
+    localStorage.setItem('ai_alandi_cloud_model', 'test-model');
+  });
+  let transmittedBody = null;
+  await page.route('https://aservi.example.test/v1/chat/completions', async route => {
+    transmittedBody = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ choices: [{ message: { content: 'The launch date is 14 March 2027 [E1].' } }] })
+    });
+  });
+  page.on('dialog', dialog => dialog.accept());
+  await page.locator('#userInput').fill('What is the Orion launch date?');
+  await page.locator('#sendBtn').click();
+
+  await expect(page.locator('#sharedNotebookStatus')).toContainText('Ответ сохранён');
+  expect(transmittedBody).not.toBeNull();
+  const userPacket = transmittedBody.messages.at(-1).content;
+  expect(userPacket).toContain('14 March 2027');
+  expect(JSON.stringify(transmittedBody)).not.toContain('PRIVATE_UNSELECTED_SENTINEL');
+  await expect(chatBox).toContainText('14 March 2027');
+
+  const chatAfter = await chatBox.boundingBox();
+  const composerAfter = await composer.boundingBox();
+  for (const key of ['x', 'y', 'width', 'height']) {
+    expect(Math.abs(chatAfter[key] - chatBefore[key])).toBeLessThanOrEqual(1);
+    expect(Math.abs(composerAfter[key] - composerBefore[key])).toBeLessThanOrEqual(1);
+  }
+
+  await page.locator('[data-shared-mode="alandi"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
+  await expect(chatBox).toHaveText(normalChatText);
+  await expect(page.locator('#projectPanel')).toBeVisible();
+});
+
+test('aCodingi keeps the shared frame but does not claim an unavailable sandbox', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await expect(page.locator('#sharedModeSwitcher')).toBeVisible();
+  const chatBox = page.locator('#chatBox');
+  const composer = page.locator('#composerFooter');
+  const chatBefore = await chatBox.boundingBox();
+  const composerBefore = await composer.boundingBox();
+
+  await page.locator('[data-shared-mode="coding"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'coding');
+  await expect(page.locator('#codingModePanel')).toBeVisible();
+  await expect(page.locator('#codingModePanel')).toContainText('sandbox');
+  await expect(page.locator('#userInput')).toBeDisabled();
+  await expect(page.locator('#sendBtn')).toBeDisabled();
+
+  const chatAfter = await chatBox.boundingBox();
+  const composerAfter = await composer.boundingBox();
+  for (const key of ['x', 'y', 'width', 'height']) {
+    expect(Math.abs(chatAfter[key] - chatBefore[key])).toBeLessThanOrEqual(1);
+    expect(Math.abs(composerAfter[key] - composerBefore[key])).toBeLessThanOrEqual(1);
+  }
+});
