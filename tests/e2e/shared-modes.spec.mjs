@@ -10,6 +10,14 @@ async function openSidebar(page) {
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
 }
 
+async function closeSidebar(page) {
+  const sidebar = page.locator('#sidebar');
+  if (!(await sidebar.evaluate(el => el.classList.contains('-translate-x-full')))) {
+    await page.locator('#appSidebarToggle').click();
+  }
+  await expect(sidebar).toHaveClass(/-translate-x-full/);
+}
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.clear();
@@ -50,6 +58,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   await expect(page.locator('#sharedNotebookStatus')).toContainText(/Текст импортирован локально|Text imported locally/);
   await expect(page.locator('#sharedNotebookSources label')).toHaveCount(2);
   await page.locator('#sharedNotebookSources label').filter({ hasText: 'selected.txt' }).locator('input').check();
+  await closeSidebar(page);
 
   await page.evaluate(() => {
     localStorage.setItem('ai_alandi_cloud_base_url', 'https://aservi.example.test/v1');
