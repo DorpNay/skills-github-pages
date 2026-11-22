@@ -1,6 +1,6 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-21 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
+**Срез:** 2026-11-22 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
 
 ## Начало каждой задачи
 1. Прочитать только этот файл (строки 1–100).
@@ -27,6 +27,7 @@ GitHub `main` — источник истины по проекту. Project Sou
 
 - **Owner reaffirmation (2026-11-21):** exact three shared-frame modes, Notebook Studio sidebar + source-grounded normal chat, burgundy Coding mode + typed per-project isolated sandbox workspace, strict project/chat filtering and full lifecycle restoration, task-first Research/Agents catalogues, chat-persistent agent profiles, auto specialist routing, separate agent bootstrap and model-weight training, server-only Offline Core and explicit online search. Detailed binding requirements and acceptance P0.34.10–17 + P1–P5 in the master plan. Spec is not implementation. No owner-host, secret, DNS/Tunnel, paid resource or production Cloudflare mutation implied.
 - **Root runtime incident:** missing catch brace and eager locale TDZ bootstrap faults were repaired in commits 8fbb128/b1a8a3f; required root Chromium smoke added in dc997572. Verify current code/test HEAD and published root separately; Jekyll/Pages success alone is not browser-runtime proof.
+- **Shared-frame mode slice (2026-11-22; IMPLEMENTED, exact-head E2E pending):** root `shared-modes.js` is loaded after `alandi:ready` and precached by `sw.js`. `#mode=notebook|coding` shares the root frame and restores normal chat DOM/draft/scroll on exit. Notebook mode reuses `AlandiNotebookStore`: create/list, notes, reference links, TXT/MD/CSV/JSON/HTML import, export, explicit max-8 source selection and consent-gated aServi source Q&A with SHA-256/offset evidence persisted. Studio media jobs remain explicitly unavailable. Coding mode has burgundy shell only; composer is disabled until a real sandbox exists. `tests/e2e/shared-modes.spec.mjs` and required Quality Sentinels smoke grep are added; do not call them VERIFIED until exact-HEAD Actions passes.
 
 ## Обязательная навигационная семантика (P0.34)
 - В project-selected scope показывать только чаты проекта; global/no-project чаты не смешивать с проектными. Click Project → project expanded/selected + its chats only. Click project chat → auto-expand/select parent project + same filter + activate chat. Personal chat → no-project scope; only explicit All Chats may mix.
