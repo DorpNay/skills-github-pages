@@ -27,6 +27,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   const normalChatText = await chatBox.innerText();
 
   await page.locator('[data-shared-mode="notebook"]').click();
+  await expect(page).toHaveURL(/#mode=notebook$/);
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
   await expect(page.locator('#notebookModePanel')).toBeVisible();
   await expect(page.locator('#projectPanel')).toBeHidden();
@@ -81,6 +82,10 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
   await expect(chatBox).toHaveText(normalChatText);
   await expect(page.locator('#projectPanel')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
+  await page.goForward();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
 });
 
 test('aCodingi keeps the shared frame but does not claim an unavailable sandbox', async ({ page }) => {
