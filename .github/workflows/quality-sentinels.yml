@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'index.md'
+      - 'assets/js/**'
+      - 'sw.js'
+      - 'assets/js/**'
+      - 'sw.js'
       - 'tailwind.config.cjs'
       - 'assets/css/tailwind.input.css'
       - 'scripts/verify-tailwind-output.mjs'
