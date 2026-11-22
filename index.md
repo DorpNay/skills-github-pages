@@ -21,6 +21,8 @@ permalink: /
   <title>aLandi v10.0</title>
   <link rel="stylesheet" href="assets/css/tailwind.generated.css">
   <script src="assets/js/offline-shell.js" defer></script>
+  <script src="assets/js/anotebooki-store.js" defer></script>
+  <script src="assets/js/shared-modes.js" defer></script>
   <script id="markedRuntime" async src="assets/js/vendor/marked-18.0.14.min.js"></script>
   <script async src="assets/js/vendor/purify-3.4.16.min.js"></script>
   <style>
@@ -8495,6 +8497,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       await renderSharedMemory();
       updateState(null, currentChatId);
       scheduleStorageHealthCheck();
+      window.dispatchEvent(new Event('alandi:ready'));
       // Pyodide loads only when the user explicitly runs a Python code block.
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
