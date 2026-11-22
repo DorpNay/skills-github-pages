@@ -20,6 +20,10 @@ test.beforeEach(async ({ page }) => {
 test('shared modes preserve the root frame and scope Notebook chat to checked sources', async ({ page }) => {
   await page.goto(APP_PATH);
   await expect(page.locator('#sharedModeSwitcher')).toBeVisible();
+  const input = page.locator('#userInput');
+  const placeholderBefore = await input.getAttribute('placeholder');
+  expect(placeholderBefore).not.toBe('');
+  await input.fill('keep personal draft');
   const chatBox = page.locator('#chatBox');
   const composer = page.locator('#composerFooter');
   const chatBefore = await chatBox.boundingBox();
@@ -82,10 +86,13 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
   await expect(chatBox).toHaveText(normalChatText);
   await expect(page.locator('#projectPanel')).toBeVisible();
+  await expect(input).toHaveValue('keep personal draft');
+  await expect(input).toHaveAttribute('placeholder', placeholderBefore);
   await page.goBack();
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
   await page.goForward();
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
+  await expect(input).toHaveValue('keep personal draft');
 });
 
 test('aCodingi keeps the shared frame but does not claim an unavailable sandbox', async ({ page }) => {
