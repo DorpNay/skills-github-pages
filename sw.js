@@ -9,7 +9,7 @@ const SHELL_PATHS = [
   'assets/css/tailwind.generated.css',
   'assets/js/vendor/marked-18.0.14.min.js',
   'assets/js/vendor/purify-3.4.16.min.js',
-  'assets/js/anotebooki-store.js', 'assets/js/anotebooki.js',
+  'assets/js/anotebooki-store.js', 'assets/js/anotebooki.js', 'assets/js/shared-modes.js',
   'assets/js/browser-local-provider.js', 'workspace/workspace.js'
 ];
 
