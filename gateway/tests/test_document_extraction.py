@@ -328,6 +328,8 @@ def test_document_capabilities_expose_verified_extraction_edges_and_unavailable_
     unavailable_ids = {
         "extract.html",
         "extract.epub",
+        "extract.image_metadata",
+        "extract.url_capture",
         "extract.image_ocr",
         "extract.audio_metadata",
         "extract.video_metadata",
@@ -377,3 +379,15 @@ def test_document_extraction_response_includes_adapter_provenance_without_changi
     assert payload["format_capability"]["output_format"] == "text/plain; charset=utf-8"
     assert payload["format_capability"]["engine_license"] == "PSF-2.0"
     assert payload["format_capability"]["status"] == "available"
+
+
+def test_unavailable_document_extensions_fail_with_the_registry_reason():
+    with client(config(document_extraction_enabled=True)) as app:
+        for filename in ("page.html", "book.epub", "photo.png", "clip.mp4"):
+            response = app.post(
+                f"/v1/documents/extract?filename={filename}",
+                content=b"not-a-supported-extraction-format",
+                headers=AUTH,
+            )
+            assert response.status_code == 415
+            assert response.json()["detail"]
