@@ -9,6 +9,7 @@ import io
 import json
 import logging
 import os
+import platform
 import posixpath
 import re
 import secrets
@@ -20,7 +21,9 @@ import xml.etree.ElementTree as ET  # nosec B405 -- custom parser below rejects 
 from contextlib import asynccontextmanager, closing
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any, AsyncIterator, Mapping
+from importlib.metadata import version as distribution_version
+from types import MappingProxyType
+from typing import Any, AsyncIterator, Callable, Mapping
 from urllib.parse import urlsplit
 
 import httpx
@@ -483,11 +486,279 @@ async def read_limited_body(request: Request, limit: int) -> bytes:
 
 
 
-DOCUMENT_TEXT_EXTENSIONS = {".txt", ".md", ".csv", ".json"}
-DOCUMENT_ARCHIVE_EXTENSIONS = {".docx", ".xlsx"}
-DOCUMENT_ALLOWED_EXTENSIONS = DOCUMENT_TEXT_EXTENSIONS | DOCUMENT_ARCHIVE_EXTENSIONS | {".pdf"}
 DOCUMENT_MAX_ARCHIVE_ENTRIES = 500
 DOCUMENT_MAX_EXPANDED_BYTES = 20 * 1024 * 1024
+DOCUMENT_MAX_COMPRESSION_RATIO = 200
+DOCUMENT_COMPRESSION_RATIO_CHECK_MIN_BYTES = 1024 * 1024
+
+
+@dataclass(frozen=True)
+class DocumentResourceLimits:
+    max_pages: int | None = None
+    max_sheets: int | None = None
+    max_archive_entries: int | None = None
+    max_expanded_archive_bytes: int | None = None
+    max_compression_ratio: int | None = None
+    compression_ratio_check_min_bytes: int | None = None
+
+
+DocumentExtractionAdapter = Callable[[bytes, int], str]
+
+
+@dataclass(frozen=True)
+class DocumentFormatCapability:
+    id: str
+    operation: str
+    input_format: str
+    output_format: str
+    extensions: tuple[str, ...]
+    parser_id: str | None
+    engine: str | None
+    engine_version: str | None
+    engine_license: str | None
+    engine_license_url: str | None
+    fidelity: str
+    limits: DocumentResourceLimits
+    available: bool
+    unavailable_reason: str | None = None
+    adapter: DocumentExtractionAdapter | None = field(default=None, repr=False, compare=False)
+
+
+def _extract_utf8_document(data: bytes, _max_chars: int) -> str:
+    if data.startswith((b"\\xff\\xfe", b"\\xfe\\xff")):
+        raise HTTPException(415, "Only UTF-8 text documents are supported")
+    try:
+        return data.decode("utf-8-sig", errors="strict")
+    except UnicodeDecodeError:
+        raise HTTPException(415, "Text document must be UTF-8 encoded") from None
+
+
+def _extract_pdf_document(data: bytes, max_chars: int) -> str:
+    if not data.startswith(b"%PDF-"):
+        raise HTTPException(400, "PDF signature is invalid")
+    try:
+        reader = PdfReader(io.BytesIO(data), strict=False)
+        if reader.is_encrypted:
+            raise HTTPException(415, "Encrypted PDFs are not supported")
+        if len(reader.pages) > 40:
+            raise HTTPException(413, "PDF exceeds the 40-page extraction limit")
+        parts = []
+        for page in reader.pages:
+            parts.append(page.extract_text() or "")
+            if sum(len(part) for part in parts) > max_chars:
+                break
+        return "\\n\\n".join(parts)
+    except HTTPException:
+        raise
+    except LimitReachedError:
+        raise HTTPException(413, "PDF exceeds a parser safety limit") from None
+    except Exception:
+        raise HTTPException(400, "PDF could not be parsed") from None
+
+
+def _extract_docx_document(data: bytes, _max_chars: int) -> str:
+    if not data.startswith(b"PK"):
+        raise HTTPException(400, "DOCX archive signature is invalid")
+    return _extract_docx(data)
+
+
+def _extract_xlsx_document(data: bytes, _max_chars: int) -> str:
+    if not data.startswith(b"PK"):
+        raise HTTPException(400, "XLSX archive signature is invalid")
+    return _extract_xlsx(data)
+
+
+def _unavailable_document_capability(
+    capability_id: str,
+    operation: str,
+    input_format: str,
+    output_format: str,
+    extensions: tuple[str, ...],
+    reason: str,
+) -> DocumentFormatCapability:
+    return DocumentFormatCapability(
+        id=capability_id,
+        operation=operation,
+        input_format=input_format,
+        output_format=output_format,
+        extensions=extensions,
+        parser_id=None,
+        engine=None,
+        engine_version=None,
+        engine_license=None,
+        engine_license_url=None,
+        fidelity="Not implemented; no output is produced.",
+        limits=DocumentResourceLimits(),
+        available=False,
+        unavailable_reason=reason,
+    )
+
+
+_PYTHON_ENGINE_VERSION = platform.python_version()
+_PYTHON_LICENSE_URL = "https://docs.python.org/3/license.html"
+_PYPDF_ENGINE_VERSION = distribution_version("pypdf")
+_PYPDF_LICENSE_URL = "https://github.com/py-pdf/pypdf/blob/7.1.0/LICENSE"
+_PYPDF_PROJECT_URL = "https://github.com/py-pdf/pypdf/blob/7.1.0/pyproject.toml"
+
+DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
+    DocumentFormatCapability(
+        id="extract.txt", operation="model_facing_extraction", input_format="text/plain",
+        output_format="text/plain; charset=utf-8", extensions=(".txt",), parser_id="local-utf8",
+        engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
+        engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="UTF-8 text; strips an optional BOM and normalizes NUL/outer whitespace, but does not interpret structure.",
+        limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.md", operation="model_facing_extraction", input_format="text/markdown",
+        output_format="text/plain; charset=utf-8", extensions=(".md",), parser_id="local-utf8",
+        engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
+        engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="Markdown source text; strips an optional BOM and normalizes NUL/outer whitespace without rendering Markdown.",
+        limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.csv", operation="model_facing_extraction", input_format="text/csv",
+        output_format="text/plain; charset=utf-8", extensions=(".csv",), parser_id="local-utf8",
+        engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
+        engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="Raw CSV source text; no delimiter inference, table normalization or cell validation is performed.",
+        limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.json", operation="model_facing_extraction", input_format="application/json",
+        output_format="text/plain; charset=utf-8", extensions=(".json",), parser_id="local-utf8",
+        engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
+        engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="Raw JSON source text; JSON syntax/schema are not validated or normalized.",
+        limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.pdf", operation="model_facing_extraction", input_format="application/pdf",
+        output_format="text/plain; charset=utf-8", extensions=(".pdf",), parser_id="local-pypdf",
+        engine="pypdf", engine_version=_PYPDF_ENGINE_VERSION, engine_license="BSD-3-Clause",
+        engine_license_url=_PYPDF_LICENSE_URL,
+        fidelity="Embedded page text in reader order; layout, images, OCR, annotations and form-field fidelity are not preserved.",
+        limits=DocumentResourceLimits(max_pages=40),
+        available=True, adapter=_extract_pdf_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.docx", operation="model_facing_extraction",
+        input_format="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        output_format="text/plain; charset=utf-8", extensions=(".docx",), parser_id="local-docx-xml",
+        engine="python-zipfile-elementtree", engine_version=_PYTHON_ENGINE_VERSION,
+        engine_license="PSF-2.0", engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="Document body paragraphs only; tables, headers/footers, styles, comments, drawings and embedded media are omitted.",
+        limits=DocumentResourceLimits(
+            max_archive_entries=DOCUMENT_MAX_ARCHIVE_ENTRIES,
+            max_expanded_archive_bytes=DOCUMENT_MAX_EXPANDED_BYTES,
+            max_compression_ratio=DOCUMENT_MAX_COMPRESSION_RATIO,
+            compression_ratio_check_min_bytes=DOCUMENT_COMPRESSION_RATIO_CHECK_MIN_BYTES,
+        ),
+        available=True, adapter=_extract_docx_document,
+    ),
+    DocumentFormatCapability(
+        id="extract.xlsx", operation="model_facing_extraction",
+        input_format="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        output_format="text/plain; charset=utf-8", extensions=(".xlsx",), parser_id="local-xlsx-xml",
+        engine="python-zipfile-elementtree", engine_version=_PYTHON_ENGINE_VERSION,
+        engine_license="PSF-2.0", engine_license_url=_PYTHON_LICENSE_URL,
+        fidelity="Cell values, addresses and sheet names for up to 20 sheets; formulas, styles, charts, drawings and embedded objects are not preserved.",
+        limits=DocumentResourceLimits(
+            max_sheets=20,
+            max_archive_entries=DOCUMENT_MAX_ARCHIVE_ENTRIES,
+            max_expanded_archive_bytes=DOCUMENT_MAX_EXPANDED_BYTES,
+            max_compression_ratio=DOCUMENT_MAX_COMPRESSION_RATIO,
+            compression_ratio_check_min_bytes=DOCUMENT_COMPRESSION_RATIO_CHECK_MIN_BYTES,
+        ),
+        available=True, adapter=_extract_xlsx_document,
+    ),
+    _unavailable_document_capability(
+        "extract.html", "model_facing_extraction", "text/html", "text/plain; charset=utf-8",
+        (".html",), "HTML parsing/sanitization is not implemented by the local document extractor.",
+    ),
+    _unavailable_document_capability(
+        "extract.epub", "model_facing_extraction", "application/epub+zip", "text/plain; charset=utf-8",
+        (".epub",), "No EPUB/book parser is installed or fixture-verified.",
+    ),
+    _unavailable_document_capability(
+        "extract.image_ocr", "ocr", "image/*", "text/plain; charset=utf-8",
+        (".png", ".jpg", ".jpeg", ".webp"), "No local image OCR adapter or licensed model weights are configured.",
+    ),
+    _unavailable_document_capability(
+        "extract.audio_metadata", "media_metadata", "audio/*", "application/json",
+        (".wav", ".mp3", ".m4a", ".ogg"), "No audio metadata adapter is registered in the document extraction path; ASR is a separate capability.",
+    ),
+    _unavailable_document_capability(
+        "extract.video_metadata", "media_metadata", "video/*", "application/json",
+        (".mp4", ".mov", ".mkv", ".webm"), "No local video metadata adapter is configured or fixture-verified.",
+    ),
+    _unavailable_document_capability(
+        "extract.scanned_pdf_ocr", "ocr", "application/pdf (scanned/no text layer)",
+        "text/plain; charset=utf-8", (),
+        "No OCR engine is configured; image-only PDFs return 422 when no extractable text is found.",
+    ),
+)
+
+DOCUMENT_EXTRACTION_REGISTRY: Mapping[str, DocumentFormatCapability] = MappingProxyType({
+    extension: capability
+    for capability in DOCUMENT_FORMAT_CAPABILITIES
+    if capability.available and capability.adapter is not None
+    for extension in capability.extensions
+})
+DOCUMENT_ALLOWED_EXTENSIONS = frozenset(DOCUMENT_EXTRACTION_REGISTRY)
+
+
+def document_format_capability_payload(
+    capability: DocumentFormatCapability, settings: Settings
+) -> dict[str, Any]:
+    if not capability.available:
+        status = "unavailable"
+        unavailable_reason = capability.unavailable_reason
+    elif settings.document_extraction_enabled:
+        status = "available"
+        unavailable_reason = None
+    else:
+        status = "disabled"
+        unavailable_reason = "Local document extraction is disabled by ALANDI_DOCUMENT_EXTRACTION_ENABLED."
+    limits = {
+        "max_input_bytes": settings.document_extraction_max_bytes,
+        "max_output_characters": settings.document_extraction_max_chars,
+        "max_pages": capability.limits.max_pages,
+        "max_sheets": capability.limits.max_sheets,
+        "max_archive_entries": capability.limits.max_archive_entries,
+        "max_expanded_archive_bytes": capability.limits.max_expanded_archive_bytes,
+        "max_compression_ratio": capability.limits.max_compression_ratio,
+        "compression_ratio_check_min_bytes": capability.limits.compression_ratio_check_min_bytes,
+    }
+    return {
+        "id": capability.id,
+        "operation": capability.operation,
+        "input_format": capability.input_format,
+        "output_format": capability.output_format,
+        "extensions": list(capability.extensions),
+        "parser_id": capability.parser_id,
+        "engine": capability.engine,
+        "engine_version": capability.engine_version,
+        "engine_license": capability.engine_license,
+        "engine_license_url": capability.engine_license_url,
+        "fidelity": capability.fidelity,
+        "limits": limits,
+        "available": capability.available,
+        "status": status,
+        "unavailable_reason": unavailable_reason,
+    }
+
+
+def document_conversion_capability_payload() -> dict[str, Any]:
+    return {
+        "available": False,
+        "status": "unavailable",
+        "unavailable_reason": (
+            "No user-facing conversion adapter or durable artifact-job pipeline is implemented; "
+            "model-facing extraction returns derived text and is not a file conversion."
+        ),
+    }
 
 
 def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfile.ZipInfo]]:
@@ -516,7 +787,8 @@ def _bounded_zip_entries(data: bytes) -> tuple[zipfile.ZipFile, dict[str, zipfil
         if total > DOCUMENT_MAX_EXPANDED_BYTES:
             archive.close()
             raise HTTPException(413, "Expanded document archive exceeds the permitted size")
-        if entry.file_size > 1024 * 1024 and entry.file_size > max(entry.compress_size, 1) * 200:
+        if (entry.file_size > DOCUMENT_COMPRESSION_RATIO_CHECK_MIN_BYTES
+                and entry.file_size > max(entry.compress_size, 1) * DOCUMENT_MAX_COMPRESSION_RATIO):
             archive.close()
             raise HTTPException(413, "Document archive compression ratio is too high")
         indexed[name] = entry
@@ -558,7 +830,7 @@ def _extract_docx(data: bytes) -> str:
             value = "".join(node.text or "" for node in paragraph.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
             if value:
                 texts.append(value)
-        return "\n".join(texts)
+        return "\\n".join(texts)
     finally:
         archive.close()
 
@@ -610,63 +882,34 @@ def _extract_xlsx(data: bytes) -> str:
                         values.append(f"{cell.attrib.get('r', '')}={value}")
                 if values:
                     output.append(" | ".join(values))
-        return "\n".join(output)
+        return "\\n".join(output)
     finally:
         archive.close()
 
 
 def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[str, str]:
     extension = os.path.splitext(filename)[1].lower()
-    if extension not in DOCUMENT_ALLOWED_EXTENSIONS:
+    capability = DOCUMENT_EXTRACTION_REGISTRY.get(extension)
+    if capability is None or capability.adapter is None or capability.parser_id is None:
+        unavailable = next(
+            (
+                item for item in DOCUMENT_FORMAT_CAPABILITIES
+                if extension in item.extensions and not item.available
+            ),
+            None,
+        )
+        if unavailable is not None:
+            raise HTTPException(415, unavailable.unavailable_reason or "Document format is unavailable")
         raise HTTPException(415, "Supported formats: PDF, DOCX, XLSX, TXT, MD, CSV and JSON")
     if not data:
         raise HTTPException(400, "Document body is empty")
-    if extension in DOCUMENT_TEXT_EXTENSIONS:
-        if data.startswith((b"\xff\xfe", b"\xfe\xff")):
-            raise HTTPException(415, "Only UTF-8 text documents are supported")
-        try:
-            text = data.decode("utf-8-sig", errors="strict")
-        except UnicodeDecodeError:
-            raise HTTPException(415, "Text document must be UTF-8 encoded") from None
-        parser = "local-utf8"
-    elif extension == ".pdf":
-        if not data.startswith(b"%PDF-"):
-            raise HTTPException(400, "PDF signature is invalid")
-        try:
-            reader = PdfReader(io.BytesIO(data), strict=False)
-            if reader.is_encrypted:
-                raise HTTPException(415, "Encrypted PDFs are not supported")
-            if len(reader.pages) > 40:
-                raise HTTPException(413, "PDF exceeds the 40-page extraction limit")
-            parts = []
-            for page in reader.pages:
-                parts.append(page.extract_text() or "")
-                if sum(len(part) for part in parts) > max_chars:
-                    break
-            text = "\n\n".join(parts)
-        except HTTPException:
-            raise
-        except LimitReachedError:
-            raise HTTPException(413, "PDF exceeds a parser safety limit") from None
-        except Exception:
-            raise HTTPException(400, "PDF could not be parsed") from None
-        parser = "local-pypdf"
-    elif extension == ".docx":
-        if not data.startswith(b"PK"):
-            raise HTTPException(400, "DOCX archive signature is invalid")
-        text = _extract_docx(data)
-        parser = "local-docx-xml"
-    else:
-        if not data.startswith(b"PK"):
-            raise HTTPException(400, "XLSX archive signature is invalid")
-        text = _extract_xlsx(data)
-        parser = "local-xlsx-xml"
-    text = text.replace("\x00", "").strip()
+    text = capability.adapter(data, max_chars)
+    text = text.replace("\\x00", "").strip()
     if not text:
         raise HTTPException(422, "No extractable text was found; scanned PDFs need a separate local OCR runtime")
     if len(text) > max_chars:
         text = text[:max_chars]
-    return text, parser
+    return text, capability.parser_id
 
 HELPER_CANDIDATE_JSON_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -1076,7 +1319,14 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
                     and os.path.isfile(os.path.join(config.audio_speech_data_dir, voice_id + ".onnx.json"))
                 ] if config.audio_speech_enabled else [],
             },
-            "documents": {"extraction": config.document_extraction_enabled},
+            "documents": {
+                "extraction": config.document_extraction_enabled,
+                "format_capabilities": [
+                    document_format_capability_payload(item, config)
+                    for item in DOCUMENT_FORMAT_CAPABILITIES
+                ],
+                "conversion": document_conversion_capability_payload(),
+            },
             "connectors": {"github_app": config.github_app_enabled},
             "rag": {"enabled": config.rag_enabled, "evidence_ledger": config.rag_enabled},
             "agent_runs": {"enabled": config.agent_runs_enabled, "worker_concurrency": 1, "tools_enabled": False},
@@ -1731,8 +1981,14 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
         text, parser = await asyncio.to_thread(
             extract_local_document, filename, data, config.document_extraction_max_chars
         )
-        return JSONResponse({"filename": filename, "text": text, "parser": parser, "characters": len(text)},
-                            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
+        capability = DOCUMENT_EXTRACTION_REGISTRY[os.path.splitext(filename)[1].lower()]
+        return JSONResponse({
+            "filename": filename,
+            "text": text,
+            "parser": parser,
+            "format_capability": document_format_capability_payload(capability, config),
+            "characters": len(text),
+        }, headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
 
     @app.post("/v1/audio/transcriptions")
     @local_audio_limited(config)
