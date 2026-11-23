@@ -7,6 +7,7 @@
 ### GitHub and engineering workflow
 
 - **GitHub MCP (89 tools in the inspected session):** canonical repository read/write; inspect branches, commits, trees, files, diffs, PRs, issues and Actions; create blobs/trees/commits and guarded non-force ref updates. Use first for project truth. All edits must use current parent SHA and expected SHA. Do not merge/deploy/force-push/rebase/reset.
+- **aLandi dev-support Skill:** repository-local Agent Skill at `.github/skills/alandi-dev-support/SKILL.md` for compatible coding-agent clients. It guides repository navigation, implementation, checks and safe host/cloud boundaries; it adds no tool connection, credentials, permissions or production access.
 - **Superpowers Skills:** brainstorming, writing-plans, executing-plans, TDD, systematic debugging, review, verification-before-completion, worktree guidance and skill authoring. Process guidance only; no independent subagent executor is present in the current tool surface. Use brief/fast versions compatible with owner preference, avoid repeated questioning when request is explicit.
 - **Stark AI Developer Skills:** architecture zoom/compass, spec interviewer, draw.io diagrams and visual reports. Use for bounded architecture, ADR and complex system maps; not a replacement for repository evidence or owner authority.
 - **Code Skill:** write/review/fix/optimize code in supported languages. Skill guidance, not a separate repository executor.
