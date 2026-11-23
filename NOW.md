@@ -120,7 +120,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Repository checkpoint before this NOW update:** `dbd85b34df7fe496c28f1a7d345168e884735fb4` (source taxonomy and master-plan evidence update); code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
+- **Repository checkpoint before this NOW update:** `56fde9f21bcffbad676a08000c5aa729e4baac69` (INTEL license/source corrections); preceding plan checkpoint `dbd85b34df7fe496c28f1a7d345168e884735fb4`; code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
 - **Open work:** required Quality Sentinels rerun after sidebar test-helper correction; P0 root/landing acceptance remains first priority. P1–P5 remain required roadmap packages, but no upstream source can skip landing gates or architecture/license/eval checks.
 - **Do not claim:** full browser matrix, native iOS/VoiceOver, production VPS, Agent Relay execution, installed Voicebox/Needle/Ghost runtimes, accepted provider roster or Koara hosting.
 
