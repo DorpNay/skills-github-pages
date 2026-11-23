@@ -29,8 +29,8 @@ GitHub `main` — источник истины по проекту. Project Sou
 
 Полный индекс и первичная оценка новых источников находятся в `INTEL.md`, раздел **Source map by capability**. На каждый пакет берём только профильные источники:
 - File intake/conversion: Filee (route graph, bounded converter chains, job queue, safe staging/cleanup, resource limits); Meetily — отдельный ASR/meeting vertical.
-- Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Oh My OpenAgent — hold до проверки лицензии.
-- Voice: Voicebox/Meetily — будущий P6; tiny-voca — только English-only low-priority candidate.
+- Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Oh My OpenAgent — direct code reuse REJECT (restrictive Business Use License); independent implementation only.
+- Voice: Voicebox (repo MIT; per-engine/weight licenses separate) / Meetily — future P6; tiny-voca — English-only low-priority candidate.
 - Web UI/UX: Modern Web Guidance 1.0 — приоритетный task-scoped reference; Astryx — дизайн-паттерны, без миграции на React/StyleX.
 - Browser verification: Chrome DevTools MCP — dev-only, isolated browser profile; Playwright остаётся CI baseline.
 - Small models: Needle 2 — eval candidate; Ghost Infer — only with compatible NVIDIA host.
