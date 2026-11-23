@@ -517,6 +517,7 @@ class DocumentFormatCapability:
     engine_version: str | None
     engine_license: str | None
     engine_license_url: str | None
+    engine_source_urls: tuple[str, ...]
     fidelity: str
     limits: DocumentResourceLimits
     available: bool
@@ -587,6 +588,7 @@ def _unavailable_document_capability(
         engine_version=None,
         engine_license=None,
         engine_license_url=None,
+        engine_source_urls=(),
         fidelity="Not implemented; no output is produced.",
         limits=DocumentResourceLimits(),
         available=False,
@@ -594,8 +596,13 @@ def _unavailable_document_capability(
     )
 
 
-_PYTHON_ENGINE_VERSION = platform.python_version()
+_PYTHON_ENGINE_VERSION = f"{platform.python_implementation()} {platform.python_version()}"
 _PYTHON_LICENSE_URL = "https://docs.python.org/3/license.html"
+_PYTHON_CODECS_SOURCE_URLS = ("https://docs.python.org/3/library/codecs.html",)
+_PYTHON_OOXML_SOURCE_URLS = (
+    "https://docs.python.org/3/library/zipfile.html",
+    "https://docs.python.org/3/library/xml.etree.elementtree.html",
+)
 _PYPDF_ENGINE_VERSION = distribution_version("pypdf")
 _PYPDF_LICENSE_URL = "https://github.com/py-pdf/pypdf/blob/7.1.0/LICENSE"
 
@@ -604,7 +611,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         id="extract.txt", operation="model_facing_extraction", input_format="text/plain",
         output_format="text/plain; charset=utf-8", extensions=(".txt",), parser_id="local-utf8",
         engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
-        engine_license_url=_PYTHON_LICENSE_URL,
+        engine_license_url=_PYTHON_LICENSE_URL, engine_source_urls=_PYTHON_CODECS_SOURCE_URLS,
         fidelity="UTF-8 text; strips an optional BOM and normalizes NUL/outer whitespace, but does not interpret structure.",
         limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
     ),
@@ -612,7 +619,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         id="extract.md", operation="model_facing_extraction", input_format="text/markdown",
         output_format="text/plain; charset=utf-8", extensions=(".md",), parser_id="local-utf8",
         engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
-        engine_license_url=_PYTHON_LICENSE_URL,
+        engine_license_url=_PYTHON_LICENSE_URL, engine_source_urls=_PYTHON_CODECS_SOURCE_URLS,
         fidelity="Markdown source text; strips an optional BOM and normalizes NUL/outer whitespace without rendering Markdown.",
         limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
     ),
@@ -620,7 +627,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         id="extract.csv", operation="model_facing_extraction", input_format="text/csv",
         output_format="text/plain; charset=utf-8", extensions=(".csv",), parser_id="local-utf8",
         engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
-        engine_license_url=_PYTHON_LICENSE_URL,
+        engine_license_url=_PYTHON_LICENSE_URL, engine_source_urls=_PYTHON_CODECS_SOURCE_URLS,
         fidelity="Raw CSV source text; no delimiter inference, table normalization or cell validation is performed.",
         limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
     ),
@@ -628,7 +635,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         id="extract.json", operation="model_facing_extraction", input_format="application/json",
         output_format="text/plain; charset=utf-8", extensions=(".json",), parser_id="local-utf8",
         engine="python-codecs", engine_version=_PYTHON_ENGINE_VERSION, engine_license="PSF-2.0",
-        engine_license_url=_PYTHON_LICENSE_URL,
+        engine_license_url=_PYTHON_LICENSE_URL, engine_source_urls=_PYTHON_CODECS_SOURCE_URLS,
         fidelity="Raw JSON source text; JSON syntax/schema are not validated or normalized.",
         limits=DocumentResourceLimits(), available=True, adapter=_extract_utf8_document,
     ),
@@ -636,7 +643,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         id="extract.pdf", operation="model_facing_extraction", input_format="application/pdf",
         output_format="text/plain; charset=utf-8", extensions=(".pdf",), parser_id="local-pypdf",
         engine="pypdf", engine_version=_PYPDF_ENGINE_VERSION, engine_license="BSD-3-Clause",
-        engine_license_url=_PYPDF_LICENSE_URL,
+        engine_license_url=_PYPDF_LICENSE_URL, engine_source_urls=("https://github.com/py-pdf/pypdf",),
         fidelity="Embedded page text in reader order; layout, images, OCR, annotations and form-field fidelity are not preserved.",
         limits=DocumentResourceLimits(max_pages=40),
         available=True, adapter=_extract_pdf_document,
@@ -647,6 +654,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         output_format="text/plain; charset=utf-8", extensions=(".docx",), parser_id="local-docx-xml",
         engine="python-zipfile-elementtree", engine_version=_PYTHON_ENGINE_VERSION,
         engine_license="PSF-2.0", engine_license_url=_PYTHON_LICENSE_URL,
+        engine_source_urls=_PYTHON_OOXML_SOURCE_URLS,
         fidelity="Document body paragraphs only; tables, headers/footers, styles, comments, drawings and embedded media are omitted.",
         limits=DocumentResourceLimits(
             max_archive_entries=DOCUMENT_MAX_ARCHIVE_ENTRIES,
@@ -662,6 +670,7 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         output_format="text/plain; charset=utf-8", extensions=(".xlsx",), parser_id="local-xlsx-xml",
         engine="python-zipfile-elementtree", engine_version=_PYTHON_ENGINE_VERSION,
         engine_license="PSF-2.0", engine_license_url=_PYTHON_LICENSE_URL,
+        engine_source_urls=_PYTHON_OOXML_SOURCE_URLS,
         fidelity="Cell values, addresses and sheet names for up to 20 sheets; formulas, styles, charts, drawings and embedded objects are not preserved.",
         limits=DocumentResourceLimits(
             max_sheets=20,
@@ -705,9 +714,6 @@ DOCUMENT_EXTRACTION_REGISTRY: Mapping[str, DocumentFormatCapability] = MappingPr
     if capability.available and capability.adapter is not None
     for extension in capability.extensions
 })
-DOCUMENT_ALLOWED_EXTENSIONS = frozenset(DOCUMENT_EXTRACTION_REGISTRY)
-
-
 def document_format_capability_payload(
     capability: DocumentFormatCapability, settings: Settings
 ) -> dict[str, Any]:
@@ -741,6 +747,7 @@ def document_format_capability_payload(
         "engine_version": capability.engine_version,
         "engine_license": capability.engine_license,
         "engine_license_url": capability.engine_license_url,
+        "engine_source_urls": list(capability.engine_source_urls),
         "fidelity": capability.fidelity,
         "limits": limits,
         "available": capability.available,
