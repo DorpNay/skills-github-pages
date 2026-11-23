@@ -147,7 +147,10 @@ test('aCodingi keeps the shared frame but does not claim an unavailable sandbox'
 
 test('shared modes preserve the root frame and scope Notebook chat to checked sources when selection storage is unavailable', async ({ page }) => {
   await page.goto(APP_PATH);
-  await page.evaluate(() => localStorage.setItem('ai_ui_language_v1', 'en'));
+  await page.evaluate(() => {
+    document.documentElement.lang = 'en';
+    localStorage.setItem('ai_ui_language_v1', 'en');
+  });
   await page.locator('[data-shared-mode="notebook"]').click();
   await expect(page.locator('#notebookModePanel')).toBeVisible();
   await openSidebar(page);
