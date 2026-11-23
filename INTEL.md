@@ -44,6 +44,26 @@
 - **Automations:** create reminders, monitoring and recurring tasks when explicitly requested/accepted. Not a background coding agent and cannot promise later delivery of code.
 - **Files / Skills / user settings:** ChatGPT-side context/file and skill utilities, not aLandi product connectors or runtime permissions.
 
+## aLandi capability map — workstreams P0–P8
+
+This is the product-level decomposition. The active delivery order remains the master plan's order; a source group does not override a release gate.
+
+| Direction | aLandi scope / outcome | Canonical project references | External source groups to review |
+|---|---|---|---|
+| **P0 — Root app / landing completion** | Public browser shell, navigation, visual hierarchy, responsive behavior, RU/EN, accessible interactions and release-ready landing | `docs/ALANDI_MASTER_PLAN_RU.md` P0; `index.md`; `assets/css/**`; `assets/js/**`; `tests/e2e/**` | Astryx; T3 Code; Voyager; Modern Web Guidance; Chrome DevTools MCP |
+| **P1 — Unified shell and modes** | One shell for aLandi, aNoteBooki and aCodingi; shared navigation, composer and mode contracts | Master plan P1; root app UI/runtime and shared-mode tests | T3 Code; Astryx; Voyager; Modern Web Guidance |
+| **P2 — Chat, context, routing and memory** | Chat/history continuity, model/provider routing, context assembly, memory scope, local inference adapters and model capability contracts | Master plan P2; `docs/ALANDI_MASTER_CONTEXT_RU.md`; `docs/PROJECT_STATE.yaml`; `DECISIONS.md`; relevant model/gateway code | EGM; Oh My OpenAgent (license-rejected for direct reuse); DSH provider patterns; Needle 2/3; Ghost Infer |
+| **P3 — Research, agents, skills, connectors and coding execution** | Deep Research, agent profiles and handoffs, Skill Factory, permissioned connectors, isolated aCodingi workspace/run/review | Master plan P3; `docs/DEEP_RESEARCH_2_RESEARCH_PLAN_RU.md`; `docs/AGENT_PLATFORM_BLUEPRINT_RU.md`; `docs/AGENT_SKILL_FACTORY_AND_AGENT_BUILDER_RU.md`; `AGENTS.md` | EGM; T3 Code; Voyager; Craft Anything (dev-only/security-deferred); Oh My OpenAgent (no code reuse); Chrome DevTools MCP |
+| **P4 — Notebook, Source Vault, ingestion and Studio artifacts** | File upload/import/export, text extraction, conversion, indexing, evidence lineage, notebook Q&A, artifact jobs and export | Master plan P4; `docs/LOCAL_SOURCE_VAULT_AND_MULTIMODAL_CONVERSION_RU.md`; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md`; relevant storage/parser code and tests | Filee; Altered Audio Editor; Meetily; MediaWiki/Wikipedia; Craft Anything only for isolated dev inspection |
+| **P5 — Offline Core, local/server operation and portable models** | Private aServi/Ollama contour, offline task behavior, portable model/runtime packages, local/server parity, backup/restore and VPS readiness | Master plan P5; `docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md`; `docs/PRE_LAUNCH_STACK_RU.md`; `models/runtime-install.md`; `AGENTS.md` | Cactus/Needle; Ghost Infer; Koara; DSH only as an isolated third-party lane; provider/hosting comparisons |
+| **P6 — Voice and audio** | ASR, VAD, TTS, streaming/half-duplex, speaker controls, audio files and voice studio | Master plan P6; `docs/VOICE_2_RESEARCH_RU.md`; `docs/VOICE_DOCUMENT_READINESS_AUDIT_RU.md` | Voicebox; Meetily; Altered Audio Editor; Altered.ai; Tiny-voca; Cactus Whistle |
+| **P7 — External provider owner session** | Owner-controlled selection of third-party providers, terms, keys, data routes, quotas and fallbacks | Master plan P7; provider decisions and `INTEL.md` | DSH; individual upstream provider docs; Koara is hosting, not an inference provider |
+| **P8 — Release and owner-only gates** | Exact-head checks, release evidence, deployment, domain/Tunnel/credentials, billing, live VPS and native-device acceptance | Master plan P8 and owner runbook; `LOOP.md`; `AGENTS.md`; `EVALS.md` | GitHub Actions; Chrome DevTools MCP; official host/provider documentation |
+
+**Cross-cutting engineering disciplines:** file/media safety, least privilege, provenance, licensing, supply chain, test/eval, accessibility, localization, cost/latency and rollback apply to every workstream. Canonical rules live in `AGENTS.md`, `LOOP.md`, `DECISIONS.md`, `EVALS.md` and the relevant implementation guide; do not duplicate them in each feature.
+
+**Execution rule:** P0 remains the current release blocker. Complete the P0 acceptance gates before starting new P1–P5 feature integrations; research may run in parallel, but accepted upstream methods must be translated into a bounded project-specific change and eval before code adoption. P6/P7 remain after landing unless the owner explicitly reprioritizes them.
+
 ## Source map by capability — owner additions and focused review (2026-11-23)
 
 This is the category index for the external-source catalogue. The large legacy URL register remains below in task-oriented sections; use this map to route each implementation packet to the right source group. A source being listed is not an adoption decision.
