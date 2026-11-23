@@ -686,6 +686,14 @@ DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
         (".html",), "HTML parsing/sanitization is not implemented by the local document extractor.",
     ),
     _unavailable_document_capability(
+        "extract.image_metadata", "media_metadata", "image/*", "application/json",
+        (".png", ".jpg", ".jpeg", ".webp"), "No local image metadata adapter is configured or fixture-verified.",
+    ),
+    _unavailable_document_capability(
+        "extract.url_capture", "url_capture", "text/uri-list", "text/html",
+        (), "No SSRF-guarded URL capture adapter is registered in the gateway.",
+    ),
+    _unavailable_document_capability(
         "extract.epub", "model_facing_extraction", "application/epub+zip", "text/plain; charset=utf-8",
         (".epub",), "No EPUB/book parser is installed or fixture-verified.",
     ),
