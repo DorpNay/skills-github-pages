@@ -9,7 +9,8 @@ test('aCodingi and aNoteBooki are navigable same-origin workspaces', async ({ pa
   page.on('pageerror', error => errors.push(String(error)));
   await page.goto(ROOT, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#sidebar a[href*="/workspace/"]')).toHaveCount(1);
-  await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(1);
+  await expect(page.locator('#sidebar [data-action="open-notebook-mode"]')).toHaveCount(1);
+  await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(0);
   await page.goto(CODER, { waitUntil: 'domcontentloaded' });
   await expect(page).toHaveTitle(/aCodingi/);
   await expect(page.getByRole('heading', { name: /aCodingi/ })).toBeVisible();
