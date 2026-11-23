@@ -152,6 +152,33 @@ This is the category index for the external-source catalogue. The large legacy U
 | Wikipedia/MediaWiki | external knowledge | ADAPT API etiquette/licensing; not “Wenwiko” |
 | Nota / Wenwiko / KL | unresolved | HOLD pending exact identity; KL divergence is a metric, not a source/project |
 
+## P0/P1 interface and browser-source review — 2026-11-23
+
+This is a focused primary-source review for the current landing/shared-frame work, not a blanket dependency approval.
+
+### Selected upstream evidence and decisions
+
+- **Modern Web Guidance** — [source](https://github.com/GoogleChrome/modern-web-guidance-src), [published guide](https://developer.chrome.com/docs/modern-web-guidance). The source repo describes token-efficient, task-scoped guide retrieval with evals and Baseline-aware fallbacks; Node.js 22+ is required for its CLI. Apache-2.0 code; guide content is CC-BY-4.0. Reviewed guide snapshots: navigation drawer `cff5f7c9`, app menus `dbf37711`, dialog `d9c4d8a6`, declarative dialog/popover control `b7e8e288`, state-preserving DOM moves `0001fcc8`, design-token reactivity `d7e7c3d2`, responsive design `7d4cb98c`, INP diagnostics `f519b43d`, IME-safe Enter `c0b20175`.
+  - **ADAPT for P0:** native `<dialog>` is the default modal primitive where its lifecycle matches the interaction; it supplies top-layer, inert background, focus containment/return and Escape handling. Do not add redundant `role=dialog`, `aria-modal` or custom focus traps to native modal dialogs. Existing custom div overlays are not mass-migrated until a per-dialog lifecycle/compatibility matrix is passed.
+  - **ADAPT for sidebar:** drawer guidance distinguishes a drawer-only dialog from a drawer that also acts as a persistent sidebar; the latter uses a manual popover and changes its role with state. Review current sidebar semantics before migration; preserve its explicit Close, Escape, backdrop, focus return and inertness contract.
+  - **KEEP current menu model:** the app-menus guide says `role=menubar` is only for a true application menu bar with one tab stop and arrow-key navigation, not a few independent toolbar disclosures. Do not relabel current Functions/Search controls as a menubar.
+  - **ADAPT design-token guidance conservatively:** container style queries are not recommended for core behavior until Baseline support is sufficient; encode core density/theme variants with existing data attributes/custom properties. Avoid experimental CSS `@function` for core styling.
+  - **ADAPT responsive/performance guidance:** prefer dynamic viewport units for mobile chrome, component/container-aware layouts where supported, and measure INP as input delay + processing + presentation delay. Long Animation Frames can distinguish style/layout costs; avoid heavyweight always-on profiling.
+  - **ALREADY PRESENT:** shared Notebook Enter handling checks `event.isComposing`, matching the IME-safe guide. Preserve this guard in every chat/search/rename submit shortcut.
+  - **CONDITIONAL:** `moveBefore()` preserves focus/iframe/animation state during reparenting, but requires feature detection and fallback. Use only when moving a live stateful element; do not add it to one-time initialization moves without a demonstrated state-loss bug.
+- **Astryx** — [MIT source](https://github.com/meta/astryx), README snapshot `fe27aafe`, LICENSE `72c89ba0`. Current README says beta, React 19+ / StyleX, 150+ accessible components, theme CSS variables and source swizzling. **ADAPT design-token, accessible component API and agent-readable documentation patterns only. NO React/StyleX migration** of the static Jekyll/Tailwind app; dependency/stack mismatch outweighs component count.
+- **T3 Code** — [MIT source](https://github.com/pingdotgg/t3code), README `24dc0f8f`, LICENSE `55ee675b`; source-control docs `ba951c3f`, permission modes `60c403e3`, remote access `051445f0`. High-value P1/P3 patterns: one thread per bounded task, isolated worktree, thread-scoped diff and branch comparison, explicit review/commit/push/PR actions, cross-device approval and per-thread permission mode. **ADAPT UX/flow, not its runtime.** Do not inherit T3's initial Full Access default; aLandi stays least-privilege and owner-approved.
+- **Voyager** — [GPL-3.0 source](https://github.com/voyager-crew/voyager), README `8224293a`, LICENSE `c3fd6e30`, Create Mode guide `0cbff886`. Its core separation is site adapters → reusable primitives → declarative JSON manifests + CSS; plugin DOM operations use semantic keys, do not execute plugin-owned code, and changes are reversible. Its authoring lifecycle is generate → inspect exact effects/scope → explicit install → update/disable/remove. **ADAPT these independent architecture and review patterns for future P3 Skills/Connectors/extension surfaces; do not copy GPL code into the proprietary app without a deliberate copyleft decision.**
+- **Chrome DevTools MCP** — [Apache-2.0 source](https://github.com/ChromeDevTools/chrome-devtools-mcp), README `2dca1a05`, package `1.13.0` (`eeaf89dd`). Offers live DOM/browser automation, console/network inspection, screenshots and performance traces. Its README warns that the MCP client can inspect and modify all browser data; usage statistics are enabled by default and performance tools may send trace URLs to CrUX. **DEV-ONLY candidate:** isolated clean browser profile, no personal/account data, pass `--no-usage-statistics --no-performance-crux`; Playwright remains CI acceptance baseline. Not connected/installed in this session.
+  
+### P0/P1 integration decision
+
+1. Keep the existing static Jekyll/Tailwind stack; no wholesale Astryx/T3/Voyager import.
+2. Use Modern Web Guidance as a task-scoped review/eval source before changing dialogs, drawer, responsive CSS, input handling or performance behavior.
+3. Keep each shared mode inside the root app; navigation affordances must switch mode state rather than silently send users to a legacy standalone route. Direct legacy URLs may remain for compatibility while their sidebar shortcut uses the shared-mode controller.
+4. P3 may adopt T3's isolated worktree/diff/approval model and Voyager's declarative, reversible, preview-before-install contract, but only after the aLandi-native permission and plugin schemas are specified.
+5. No dependency, runtime package, external browser service or third-party code was installed/imported by this review.
+
 ## Plugin-selection protocol
 
 1. Start from the requirement and missing capability, not from the plugin name. Check whether a current aLandi implementation already covers it.
