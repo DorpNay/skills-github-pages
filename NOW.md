@@ -27,7 +27,7 @@ GitHub `main` — источник истины по проекту. Project Sou
 
 ## Карта направлений внешних источников — 2026-11-23
 
-Полный индекс и первичная оценка новых источников находятся в `INTEL.md`, раздел **Source map by capability**. На каждый пакет берём только профильные источники:
+Карта направлений самого продукта P0–P8 и первичная оценка новых источников находятся в `INTEL.md`, разделы **aLandi capability map** и **Source map by capability**. На каждый пакет берём только профильные источники:
 - File intake/conversion: Filee (route graph, bounded converter chains, job queue, safe staging/cleanup, resource limits) + Altered Audio Editor (audio batch/export validation, deterministic rendering; GPL-3.0 code not copied); Meetily — separate ASR/meeting vertical.
 - Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Craft Anything — dev-only inspection/rebuild accelerator under security/legal isolation; Oh My OpenAgent — direct code reuse REJECT (restrictive Business Use License); independent implementation only.
 - Voice: Voicebox (repo MIT; per-engine/weight licenses separate) / Meetily — future P6; tiny-voca — English-only low-priority candidate.
@@ -120,7 +120,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Repository checkpoint before this NOW update:** `f61904e4aa578d235e86ed1d725d653c65c633ee` (INTEL marks the audit scope honestly as PARTIAL); source mapping for Altered/Craft Anything `df8e5c85b2a8f35d75cc22cfd798cab79a98454c`; Koara hosting qualification `82ac04f2573d829df2be51d116f56592509d461c`; master-plan smoke/source-triage update `16902917b4928355a2cf00260ce1eddb5e1954ef`; code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
+- **Repository checkpoint before this NOW update:** `e043f22098580286386786d5f5c41c7f112a3082` (P0–P8 capability taxonomy + source map); prior audit-scope checkpoint `f61904e4aa578d235e86ed1d725d653c65c633ee`; code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
 - **Audit scope:** the new owner-supplied names have a first-pass capability map; the full legacy INTEL catalogue has NOT yet been reviewed source-by-source. Keep every legacy category OPEN until its complete source list and license/security dispositions are checked.
 - **Verification:** Quality Sentinels #45109233339 SUCCESS on exact code/test HEAD `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`; required root Chromium smoke 12/12 in 18.5s. Graphify #45109233282 and Pages build/deploy #45109233066 also SUCCESS on that SHA. The later commits are documentation-only; check the latest Pages build on current main before any subsequent code change. Full Chromium suite and native device matrix remain unverified. P0 root/landing acceptance remains first priority; P1–P5 remain required after landing gates.
 - **Do not claim:** full browser matrix, native iOS/VoiceOver, production VPS, Agent Relay execution, installed Voicebox/Needle/Ghost runtimes, accepted provider roster or Koara hosting.
