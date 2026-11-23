@@ -1,6 +1,6 @@
 # Connected assistant-side tools and external-source register
 
-**Review date:** 2026-11-21. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
+**Review date:** 2026-11-23. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
 
 ## Connected assistant-side tools and plugins
 
@@ -43,6 +43,83 @@
 - **Plugin Management:** search plugin catalogue, inspect dependencies/permissions and propose installs. Connection/installation requires explicit owner action.
 - **Automations:** create reminders, monitoring and recurring tasks when explicitly requested/accepted. Not a background coding agent and cannot promise later delivery of code.
 - **Files / Skills / user settings:** ChatGPT-side context/file and skill utilities, not aLandi product connectors or runtime permissions.
+
+## Source map by capability — owner additions and focused review (2026-11-23)
+
+This is the category index for the external-source catalogue. The large legacy URL register remains below in task-oriented sections; use this map to route each implementation packet to the right source group. A source being listed is not an adoption decision.
+
+### 1. File ingestion, conversion, parsing and source extraction
+
+- **[KnifeLemon/Filee](https://github.com/KnifeLemon/Filee)** — desktop converter (MIT; release v2.5.0, 2026-11-16; latest checked). Not a drop-in browser/server dependency: Avalonia/.NET desktop app with optional engines. Strong patterns to adapt in P4: converter graph + bounded Dijkstra route planner (max 3 hops), per-engine concurrency, queue/job contracts, staged intermediates, output-path reservation, source-preserving default, cancellation cleanup only for job-owned paths, explicit format capability reasons, and hard size/decompression/resource limits. Its 2.5.0 release fixed three security advisories and adds safeguards against memory/disk/time expansion attacks. Recheck third-party engine licenses separately; MIT for Filee does not relicense bundled converters.
+- **[Zackriya-Solutions/meetily](https://github.com/Zackriya-Solutions/meetily)** — local meeting/audio transcription and summaries (MIT; v0.5.0, 2026-11-13). This belongs primarily to P6 ASR, with reusable audio import/resampling, engine cleanup, diarization and local-processing patterns; not a general document converter. Current official description supports local Whisper/Parakeet and speaker diarization; do not assume every model weight/dataset shares the repository license.
+- **[Wikimedia / MediaWiki API](https://www.mediawiki.org/wiki/API:Main_page)** — external knowledge retrieval, not a local file parser. Use a meaningful application User-Agent/contact, concurrency ≤3, obey 429 Retry-After and per-API licensing/attribution. Current 2026 rate limits are subject to change. “Wenwiko” is not yet resolved as a separate source name.
+
+### 2. Agent orchestration, handoffs, coding workspaces and review
+
+- **[Google Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model)** — Apache-2.0; latest checked release v0.1.1 (2026-11-06). Best practice: context-rich design session produces a self-contained specification; fresh zero-context reviewers test comprehension, adversarially find gaps and perform implementation-readiness checks; owner resolves trade-offs. Adapt as a review protocol for P2/P3 and implementation packets, not as a new runtime. Its reviewers require genuinely fresh subagent contexts; this session's Agent Relay workspace is not connected and Terminal has no connected devices, so native EGM execution is currently unavailable.
+- **[code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent)** — candidate orchestration harness (formerly oh-my-opencode; TypeScript, OpenCode-oriented, parallel agents and persistent memory). License status is unresolved/NOASSERTION in current discovery; inspect LICENSE.md and package/runtime contracts before any code reuse. Do not install or copy it as-is. Extract only bounded routing, model-by-task configuration and recovery patterns after license and permission review.
+- **[Voyager Crew / Nagi-ovo/voyager](https://github.com/Nagi-ovo/voyager)** — browser-extension enhancement suite for ChatGPT/Claude/Gemini and other chat pages; GPL-3.0. Valuable architectural idea: separate site-specific semantic adapters, reusable primitives and declarative JSON plugins; plugin operations are constrained rather than arbitrary executable scripts, and site selectors are abstracted behind semantic keys. Use as a security/extension design reference; do not copy GPL code into aLandi without a deliberate distribution/license decision.
+- **[pingdotgg/t3code](https://github.com/pingdotgg/t3code)** — MIT; latest stable checked v0.1.9 (2026-11-11), with newer nightly builds. Coding-agent control plane: one interface for multiple local agents, thread/worktree isolation, shared desktop/web/mobile views, diff-first review and explicit approvals/remote pairing. Strong P1/P3 UX and workflow reference, but its local agent host/Electron stack is not a replacement for aLandi's static browser client and private gateway.
+- **[Google OpenHands](https://github.com/All-Hands-AI/OpenHands)** remains the existing coding/sandbox reference in the earlier register; compare only against the aLandi per-project isolation and least-privilege acceptance, not by feature count.
+
+### 3. Voice, speech recognition, synthesis and meeting audio
+
+- **[jamiepine/voicebox](https://github.com/jamiepine/voicebox)** — local-first voice studio, release list shows v0.5.0. Covers dictation/STT, TTS/voice cloning, multiple engines and MCP voice workflows. Desktop-first Tauri/Rust + React/TypeScript, with a web/API mode; useful for future P6 engine-adapter, job/progress, chunking and local-model lifecycle patterns. Exact license and each engine/voice/weight license still require file-level verification before reuse.
+- **[n4ze3m/tiny-voca](https://github.com/n4ze3m/tiny-voca)** — Apache-2.0 code/weights; CC-BY-4.0 dataset. Tiny 4.5M-parameter / ~18 MB browser/ONNX CPU TTS, but English-only, two fixed voices, no cloning and no streaming. Candidate for a lightweight English demo/fallback only; not a Russian/Thai voice solution and not a priority for aLandi's multilingual P6 acceptance.
+- **Meetily** also belongs here for local ASR/diarization; its primary product is meeting capture, not general voice conversation. Preserve separation between ASR, VAD, TTS, speaker identity and podcast rendering.
+
+### 4. Interface design system, frontend engineering guidance and accessibility
+
+- **[Meta Astryx](https://github.com/meta/astryx)** — MIT; latest checked v0.7.15 (2026-11-12). React 19+ / StyleX design system with composable accessible components, themes, CSS-variable overrides, CLI documentation/codemods and agent-facing docs. aLandi is vanilla HTML/CSS/JS, so do not add React/StyleX just to adopt it. Extract design-token, component-contract, density/theme and accessible interaction patterns; benchmark any selected behavior against the current stack.
+- **[GoogleChrome/modern-web-guidance-src](https://github.com/GoogleChrome/modern-web-guidance-src)** — source repository for Modern Web Guidance 1.0, with expert-curated skills, Baseline compatibility and public eval/calibration process. Code is Apache-2.0; guide content under guides/ is CC-BY-4.0. This is the strongest candidate for a task-scoped frontend engineering reference: retrieve only the relevant guide before HTML/CSS/client-JS work, and use its eval/calibration pattern. Anonymous telemetry is documented; opt out with DISABLE_TELEMETRY=1 if installing the CLI in an approved agent environment. Not a product runtime dependency.
+
+### 5. Browser automation, debugging and performance verification
+
+- **[ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp)** — Apache-2.0; MCP server + CLI for Chrome DevTools inspection, automation, network/console debugging, traces and performance. Strong dev-only verification candidate for the browser lane, not a production feature. Its client can inspect/modify all data in the connected browser; use an isolated test profile. Usage statistics are enabled by default (disable with --no-usage-statistics); CrUX trace lookup can be disabled with --no-performance-crux. Keep Playwright as deterministic CI baseline.
+
+### 6. Small-model inference, local execution and structured extraction
+
+- **[Cactus Compute Needle 2](https://huggingface.co/Cactus-Compute/needle2)** — Apache-2.0 model card; 45M parameters, ~14 MB artifact and ~28 MB session RAM per the current model card. Designed for tool calling/device use and structured extraction on constrained devices. Candidate for P2/P5 routing or extraction only after exact artifact/runtime, language, tool-schema and RU/EN/TH golden-eval checks; tiny size alone does not prove useful quality. Repository: [cactus-compute/needle](https://github.com/cactus-compute/needle).
+- **[affifuddin-hazam/ghost-infer](https://github.com/affifuddin-hazam/ghost-infer)** — dual Apache-2.0/MIT; Rust local GGUF inference, OpenAI-compatible server, NVIDIA CUDA and desktop UI. README reports high GPU throughput on consumer NVIDIA hardware, but target profile is Windows/NVIDIA/AVX2 and one model/one user. Not a fit for the 8-GB CPU/unknown-GPU VPS baseline unless target hardware proves compatible. Treat benchmark figures as upstream claims until reproduced on identical hardware.
+- **[Google Elephant-Goldfish Model](https://github.com/google/elephant-goldfish-model)** is a specification/review workflow, not an inference model.
+
+### 7. External model providers and keyless access
+
+- **[Ebony-Vinyl/dsh-our-free-model](https://github.com/Ebony-Vinyl/dsh-our-free-model)** — DSH plugin, current README identifies scoped package @ebony-vinyl/dsh-our-free-model@2.8.3. It exposes third-party free lanes (including OpenCode Zen/Kilo public gateway/EAC) without user API-key setup and also documents a separate 76-provider bring-your-own-key registry. Important distinction: the plugin is a client, not the model provider; free capacity can be throttled, changed or withdrawn, and at least one upstream says prompts may be logged/used to improve services. Never send secrets, personal data, private files or trade secrets through such lanes. The repository itself warns that a similarly named unscoped npm package is a modified third-party repackaging. Repository license and full upstream terms must be verified before any code reuse.
+- **aLandi disposition:** this is a strong research candidate for a separate optional external-provider adapter, not an aServi replacement. Design 4–6 provider slots only after each provider is independently verified for ownership, endpoint, no-registration path, rate/usage terms, privacy/logging, retention, model identity, regional access, reliability and fallback semantics. No hidden cross-provider fallback; explicit user selection/consent and a hard boundary from private server/local context. At present no 4–6 provider set is accepted.
+
+### 8. Hosting and server-provider candidates
+
+- **[Koara.cloud](https://koara.cloud/)** — commercial VPS/dedicated hosting candidate. Public pages advertise VDS/VPS from 239 RUB/month and dedicated-server DDoS/SLA claims; these are marketing claims, not verified availability, support, contractual SLA, data residency, backup or security evidence. Keep DEFERRED until target region, ownership, support, billing, snapshot/backup, network, acceptable-use terms and measured hardware are compared with the current owner-host options. No account or server was created.
+
+### 9. Metrics, knowledge sources and unresolved names
+
+- **KL divergence** is a mathematical distribution-distance metric, not an agent framework or a generic answer-quality score. It can be useful for policy/model distribution drift in training/evaluation, but requires a well-defined reference distribution, direction, support/smoothing and a meaningful threshold. No specific upstream project was identified for the separate name “KL”.
+- **“Nota”** is ambiguous. The only high-confidence search match was an unrelated RYO-crypto trading-agent project; it is not accepted as the intended source.
+- **“Wenwiko”** is unresolved; no authoritative project/site match was found. Wikipedia itself is mapped to Wikimedia/MediaWiki above. Ask for the exact URL/repository before attributing functionality to Wenwiko.
+- **“KL”** is unresolved as a separate source name; do not silently conflate it with KL divergence.
+
+### First-pass disposition
+
+| Source | Direction | Initial disposition |
+|---|---|---|
+| Filee | file conversion/ingestion | ADAPT algorithms and safety contracts; no whole desktop-app import |
+| Meetily | ASR/meeting audio | DEFER to P6; inspect local engines and model licenses |
+| Voyager | browser/site plugins | ADAPT declarative plugin boundary; GPL-3.0 code not copied |
+| Oh My OpenAgent | orchestration | DEFER pending license/runtime/security audit |
+| Voicebox | ASR/TTS/voice studio | RESEARCH candidate for P6; exact licenses/weights still open |
+| DSH free model | keyless external providers | RESEARCH only; sensitive data prohibited; no accepted provider set |
+| EGM | specification/review | ADAPT fresh-context review method; runtime unavailable in this session |
+| T3 Code | coding UX/control plane | ADAPT UX/worktree/approval patterns; no platform replacement |
+| Tiny-voca | small TTS | LOW priority; English-only |
+| Koara.cloud | hosting | DEFER pending contractual/region/hardware comparison |
+| Astryx | design system | ADAPT selected UX patterns; no React migration |
+| Modern Web Guidance | web engineering | PRIORITY reference for future UI/client-JS changes |
+| Chrome DevTools MCP | browser verification | DEV-ONLY candidate; isolated profile and telemetry controls |
+| Needle 2 | compact tool/extraction model | EVAL candidate; no runtime enablement |
+| Ghost Infer | local inference | DEFER unless compatible NVIDIA host is confirmed |
+| Wikipedia/MediaWiki | external knowledge | ADAPT API etiquette/licensing; not “Wenwiko” |
+| Nota / Wenwiko / KL | unresolved | HOLD pending exact identity |
 
 ## Plugin-selection protocol
 
