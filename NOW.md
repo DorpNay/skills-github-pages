@@ -28,8 +28,8 @@ GitHub `main` — источник истины по проекту. Project Sou
 ## Карта направлений внешних источников — 2026-11-23
 
 Полный индекс и первичная оценка новых источников находятся в `INTEL.md`, раздел **Source map by capability**. На каждый пакет берём только профильные источники:
-- File intake/conversion: Filee (route graph, bounded converter chains, job queue, safe staging/cleanup, resource limits); Meetily — отдельный ASR/meeting vertical.
-- Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Oh My OpenAgent — direct code reuse REJECT (restrictive Business Use License); independent implementation only.
+- File intake/conversion: Filee (route graph, bounded converter chains, job queue, safe staging/cleanup, resource limits) + Altered Audio Editor (audio batch/export validation, deterministic rendering; GPL-3.0 code not copied); Meetily — separate ASR/meeting vertical.
+- Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Craft Anything — dev-only inspection/rebuild accelerator under security/legal isolation; Oh My OpenAgent — direct code reuse REJECT (restrictive Business Use License); independent implementation only.
 - Voice: Voicebox (repo MIT; per-engine/weight licenses separate) / Meetily — future P6; tiny-voca — English-only low-priority candidate.
 - Web UI/UX: Modern Web Guidance 1.0 — приоритетный task-scoped reference; Astryx — дизайн-паттерны, без миграции на React/StyleX.
 - Browser verification: Chrome DevTools MCP — dev-only, isolated browser profile; Playwright остаётся CI baseline.
@@ -120,7 +120,7 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 
 ## Последний проверенный checkpoint
 
-- **Repository checkpoint before this NOW update:** `82ac04f2573d829df2be51d116f56592509d461c` (Koara hosting candidate qualification); master-plan smoke/source-triage update `16902917b4928355a2cf00260ce1eddb5e1954ef`; code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
+- **Repository checkpoint before this NOW update:** `df8e5c85b2a8f35d75cc22cfd798cab79a98454c` (Altered/Craft Anything source mapping); Koara hosting qualification `82ac04f2573d829df2be51d116f56592509d461c`; master-plan smoke/source-triage update `16902917b4928355a2cf00260ce1eddb5e1954ef`; code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
 - **Verification:** Quality Sentinels #45109233339 SUCCESS on exact code/test HEAD `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`; required root Chromium smoke 12/12 in 18.5s. Graphify #45109233282 and Pages build/deploy #45109233066 also SUCCESS on that SHA. The later commits are documentation-only; check the latest Pages build on current main before any subsequent code change. Full Chromium suite and native device matrix remain unverified. P0 root/landing acceptance remains first priority; P1–P5 remain required after landing gates.
 - **Do not claim:** full browser matrix, native iOS/VoiceOver, production VPS, Agent Relay execution, installed Voicebox/Needle/Ghost runtimes, accepted provider roster or Koara hosting.
 
