@@ -1,6 +1,6 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-22 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
+**Срез:** 2026-11-23 · **Канонический репозиторий:** `DorpNay/skills-github-pages` · **Рабочая ветка:** `main`
 
 ## Начало каждой задачи
 1. Прочитать только этот файл (строки 1–100).
@@ -24,6 +24,28 @@ GitHub `main` — источник истины по проекту. Project Sou
 6. Provider UX remains a separate owner decision; do not guess the provider set.
 
 Детальные acceptance и исторические пункты — только в мастер-плане.
+
+## Карта направлений внешних источников — 2026-11-23
+
+Полный индекс и первичная оценка новых источников находятся в `INTEL.md`, раздел **Source map by capability**. На каждый пакет берём только профильные источники:
+- File intake/conversion: Filee (route graph, bounded converter chains, job queue, safe staging/cleanup, resource limits); Meetily — отдельный ASR/meeting vertical.
+- Agent orchestration/coding UX: EGM (fresh-context specification review), T3 Code (thread/worktree/diff/approval UX), Voyager (declarative site plugins); Oh My OpenAgent — hold до проверки лицензии.
+- Voice: Voicebox/Meetily — будущий P6; tiny-voca — только English-only low-priority candidate.
+- Web UI/UX: Modern Web Guidance 1.0 — приоритетный task-scoped reference; Astryx — дизайн-паттерны, без миграции на React/StyleX.
+- Browser verification: Chrome DevTools MCP — dev-only, isolated browser profile; Playwright остаётся CI baseline.
+- Small models: Needle 2 — eval candidate; Ghost Infer — only with compatible NVIDIA host.
+- Providers: DSH — исследовательский кандидат для keyless third-party lanes; no private prompts/secrets; 4–6 provider roster ещё не утверждён.
+- Hosting: Koara — deferred до сравнения региона/условий/резервирования/железа.
+- Wikimedia: MediaWiki API с User-Agent, rate limits и license/attribution checks.
+- Nota, Wenwiko и отдельное имя KL остаются неоднозначными; не приписывать им функции до точных URL.
+
+## Последняя инженерная коррекция — 2026-11-23
+
+- Required Quality Sentinels на exact code/test HEAD `a860933d5fefb845500dee7b0e56b59c3278437e` упал в `tests/e2e/shared-modes.spec.mjs`: helper `closeSidebar()` нажимал верхний `#appSidebarToggle`, перекрытый открытой sidebar. Исправлено в commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`: тест закрывает sidebar через видимую кнопку `[data-action="close-sidebar"]`. На момент записи exact-head rerun запущен, но ещё не VERIFIED.
+- Документальная карта источников добавлена в `INTEL.md`; P0.34.17 обновлён в мастер-плане как PARTIAL. Ни один внешний проект не добавлен в runtime/dependencies.
+- Agent Relay: workspace не подключён; Terminal Commands: список устройств пуст. Поэтому независимый coding subagent и локальный shell/device execution в этой сессии недоступны. GitHub MCP read/write и Exa/Context.dev/Firecrawl research доступны. Не заявлять параллельное выполнение агентами без реальных connected workers.
+- PR #187 остаётся открытым и не слитым; issues #111 и #186 остаются открытыми. Не менять их scope без отдельной необходимости.
+
 
 - **Owner reaffirmation (2026-11-21):** exact three shared-frame modes, Notebook Studio sidebar + source-grounded normal chat, burgundy Coding mode + typed per-project isolated sandbox workspace, strict project/chat filtering and full lifecycle restoration, task-first Research/Agents catalogues, chat-persistent agent profiles, auto specialist routing, separate agent bootstrap and model-weight training, server-only Offline Core and explicit online search. Detailed binding requirements and acceptance P0.34.10–17 + P1–P5 in the master plan. Spec is not implementation. No owner-host, secret, DNS/Tunnel, paid resource or production Cloudflare mutation implied.
 - **Root runtime incident:** missing catch brace and eager locale TDZ bootstrap faults were repaired in commits 8fbb128/b1a8a3f; required root Chromium smoke added in dc997572. Verify current code/test HEAD and published root separately; Jekyll/Pages success alone is not browser-runtime proof.
@@ -97,6 +119,12 @@ CLASSIFY → ORIENT → INSPECT → PLAN → CHANGE → VERIFY → RECORD → RE
 - Live VPS, credentials, paid accounts, hardware и native device verification требуют соответствующей owner environment/action.
 
 ## Последний проверенный checkpoint
+
+- **Repository checkpoint before this NOW update:** `dbd85b34df7fe496c28f1a7d345168e884735fb4` (source taxonomy and master-plan evidence update); code/test fix commit `2f608e609f1f2b00bd6625ec62f7a1a3996c0af6`. Re-read live main SHA and exact-head Actions before any code change.
+- **Open work:** required Quality Sentinels rerun after sidebar test-helper correction; P0 root/landing acceptance remains first priority. P1–P5 remain required roadmap packages, but no upstream source can skip landing gates or architecture/license/eval checks.
+- **Do not claim:** full browser matrix, native iOS/VoiceOver, production VPS, Agent Relay execution, installed Voicebox/Needle/Ghost runtimes, accepted provider roster or Koara hosting.
+
+
 
 - **Latest exact code/test HEAD:** `58b7465a958855651ecb95dd562f42319e9c9738`. Quality Sentinels #44900882759 SUCCESS: Integrity, Security, Context, Jekyll exact-artifact SHA and required root-app Chromium smoke, 10/10 tests in 16.4s. It covers project/chat filtering, same-active-chat scope, personal chat persistence, project deletion isolation, long-list scroll/focus (3px subpixel tolerance), keyboard menu/clone/delete-cancel, same-origin vendor assets and offline shell. The preceding #44900606374 failure was a strict 2px scroll rounding assertion; the bounded tolerance is in test only. Pages build/deploy #44900882308 SUCCESS and Graphify #44900882741 SUCCESS on exact code/test HEAD. Latest main HEAD `b4089566dfe0359f49b7f6eeaac8b3e5291c5a96` includes read-only Cloudflare inventory; Pages deploy #44901426524 SUCCESS. Model inventory/runtime-lock gate #44901175865 SUCCESS on source HEAD `53c3334d`. Full Chromium suite, Lightpanda, Published-release contract and independent live published-site click check remain skipped/unverified. TinyFish live browser run could not start because connected wallet balance was negative; no payment/top-up was made. No PR merge or manual deployment was performed.
 - **Recovery verification (2026-11-21):** required root-app Chromium smoke #44886724869 passed on `dc997572`; Pages deploy #44886724596 passed for the same SHA; live browser confirmed build revision, Settings open/close, Quick/Thorough switching and zero page/console errors. Full Chromium suite and native iOS/VoiceOver remain unverified. Owner scope is recorded as SPECIFIED P0.33 in the master plan.
