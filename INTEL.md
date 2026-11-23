@@ -48,6 +48,9 @@
 
 This is the category index for the external-source catalogue. The large legacy URL register remains below in task-oriented sections; use this map to route each implementation packet to the right source group. A source being listed is not an adoption decision.
 
+**Audit maturity:** this pass maps the owner's new names and checks a focused set of high-value sources. It is not yet a complete source-by-source audit of every legacy entry in the catalogue; each legacy capability group remains OPEN until its complete source list has been reviewed and dispositions recorded. Do not treat the map as a completed implementation blueprint.
+
+
 ### 1. File ingestion, conversion, parsing and source extraction
 
 - **[GeekCast Radio / altered-audio-editor](https://github.com/geekcastradio/altered-audio-editor)** — likely interpretation of the owner's “Altered” reference in the file/audio-conversion context. GPL-3.0-or-later, pre-1.0 and actively changing; Windows 10/11 is the primary supported target, Linux/macOS builds are experimental. This is an audio editor, not a general document converter. Strong P4/P6 techniques: batch conversion with metadata preservation, per-file progress, versioned JSON schemas, deterministic rendering, export read-back validation using ffprobe/flac -t, loudness checks, immutable source clips, session backups, and isolated VST3 processes. It reports no account, telemetry or app-initiated network calls; verify from source before relying on that claim. GPL-3.0 means no direct code import without an explicit licensing/distribution decision.
