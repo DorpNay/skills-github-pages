@@ -189,6 +189,48 @@ The model selects a supported conversion intent; server-side code chooses only a
 - [FFmpeg](https://ffmpeg.org/)
 
 
+
+## 2026-11-23 — Filee and Altered source review; P4 boundary refinement
+
+### Current aLandi extraction baseline (live `main` inspection)
+
+This is the existing **model-facing extraction** path, not a user-facing file-conversion service:
+
+- `POST /v1/documents/extract?filename=…`; disabled by default (`ALANDI_DOCUMENT_EXTRACTION_ENABLED=false` unless explicitly enabled).
+- Accepted extensions: `.pdf`, `.docx`, `.xlsx`, `.txt`, `.md`, `.csv`, `.json`. Text must decode as UTF-8; PDF checks the `%PDF-` signature; OOXML checks the ZIP signature and required package parts.
+- Default request-body cap: 8 MiB; extracted-text cap: 80,000 characters; PDF cap: 40 pages.
+- OOXML archive guard: at most 500 entries, at most 20 MiB expanded bytes, rejects unsafe/absolute/backslash/`..` paths, duplicate names and encrypted entries, and rejects suspicious high compression ratios for large entries. XML parser explicitly rejects DTD/entity declarations; XLSX relationship targets are normalized and constrained to the package.
+- Extraction runs through `asyncio.to_thread`, does not persist the upload as a file, and returns `Cache-Control: no-store`. Scanned PDFs correctly report no extractable text; OCR is a separate future local runtime.
+- `POST /v1/rag/ingest` is a separate interface accepting an already normalized JSON document/chunk payload with document/source IDs and scope; it is not a raw-file converter or durable artifact-job API.
+
+**Gap confirmed:** the code still has a fixed extension allowlist and format-specific extraction functions. It does not yet define a typed input/output format-pair registry, a multi-step conversion planner, a queued/cancellable user artifact job, or a general conversion/download endpoint. Keep extraction and user-visible conversion as separate products and security contracts.
+
+### Filee practices to adapt in aLandi — no Filee runtime import
+
+[Filee](https://github.com/KnifeLemon/Filee) v2.5.0 is MIT and desktop Avalonia/.NET, so it is not a browser or FastAPI drop-in. Its useful contribution is its **converter-system design**:
+
+1. Represent each converter as a typed edge: accepted input format(s), produced output format(s), engine/version, explicit capability reason, fidelity/loss characteristics, resource profile and separate license/provenance.
+2. Plan only registered paths. A bounded Dijkstra route with a maximum of three hops is a reasonable initial policy to evaluate; tie-breaking and edge cost must be deterministic. Never infer a path just because two extensions appear in a UI list.
+3. Execute an approved path as one job with step-level progress, a per-engine concurrency limit, cancellation and wall-clock/resource budgets. Do not put all converters behind one unbounded queue.
+4. Stage outputs in a private job-owned directory. Reserve output IDs/paths before execution; never overwrite the source by default. On cancellation/failure clean only intermediates created by that job; keep shared or pre-existing artifacts untouched.
+5. Adapters receive immutable input and allocate new outputs through a scoped allocator. External executables use fixed argument arrays (no shell), fixed operator-configured binary paths, no ambient PATH lookup, timeout/cancel/reap and no model-controlled command/URL/flags.
+6. Any downloadable optional engine must be pinned by upstream release, URL, SHA-256 and byte size; engine licensing is independent from the MIT license of Filee itself.
+7. Validate the completed output by reading it back (signature/parser/format test, and `ffprobe` or equivalent for media), calculate an artifact hash, preserve metadata where promised, record warnings and state clearly when conversion is lossy. A deterministic output claim requires fixture-based reproducibility tests.
+
+Filee v2.5.0 also documents three security fixes involving crafted documents/archives, memory/disk/time expansion and installer path/privilege boundaries. That reinforces the existing P4 requirement: enforce archive entry, expanded-byte, compression-ratio, page/pixel/duration, output-size, CPU and wall-clock limits **per format and per conversion step**, not only an HTTP upload-size cap.
+
+### Altered Audio Editor — audio-specific reference only
+
+[Altered Audio Editor](https://github.com/geekcastradio/altered-audio-editor) v0.63.0 (2026-11-22) is GPL-3.0/GPL-3.0-or-later and pre-1.0; Windows is primary while Linux/macOS are experimental. It is not a general document converter. Its local audio pipeline can inform future P6/aSoundi design: immutable source clips, versioned session state, deterministic rendering, metadata-aware batch jobs, per-file progress, output read-back validation and explicit known-limitations. **Do not copy its GPL code** into the core project. Keep any future audio converter adapter/license review distinct from document extraction and from commercial Altered.ai.
+
+### P4 decision and acceptance packet
+
+- **ADAPT now as design:** typed format capability registry and explicit unavailable reasons; immutable source/artifact IDs; bounded conversion graph; per-engine queue; job-owned staging/cleanup; cancel/retry/recovery; output verification/provenance.
+- **DEFER implementation until the user-visible artifact contract is ready:** define target formats, artifact persistence/retention, quota ownership, job status/events, cancellation semantics and export/download access before adding a converter executable or a large framework.
+- **No new dependencies selected:** keep current pypdf and small OOXML/text parsers as the extraction baseline. Benchmark MarkItDown/Docling/Unstructured only against a RU/EN/TH golden corpus and exact target-host RSS/latency/accuracy before replacing any parser.
+- **Required evals:** malformed/valid files by format; RU/EN/TH and mixed scripts; scanned and text PDFs; DOCX styles/tables; XLSX formulas/shared strings/sheets; archive bombs/traversal/duplicate/DTD; cancellation at each conversion step; crash cleanup; idempotent retry; source immutability; output parse/read-back; artifact hash/provenance; measured p50/p95, peak RSS, disk expansion and exact engine version/license.
+
+
 ## 2026-11-02 — Conversion adapter registry and VERT decision
 
 ### Normalized conversion pipeline
