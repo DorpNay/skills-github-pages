@@ -4,9 +4,11 @@ const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
 async function openSidebar(page) {
   const sidebar = page.locator('#sidebar');
-  if (await sidebar.evaluate(el => el.classList.contains('-translate-x-full'))) {
-    await page.locator('#appSidebarToggle').click();
+  const toggle = page.locator('#appSidebarToggle');
+  if (await toggle.getAttribute('aria-expanded') !== 'true') {
+    await toggle.click();
   }
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
 }
 
