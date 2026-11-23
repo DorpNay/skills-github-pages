@@ -525,7 +525,7 @@ class DocumentFormatCapability:
 
 
 def _extract_utf8_document(data: bytes, _max_chars: int) -> str:
-    if data.startswith((b"\\xff\\xfe", b"\\xfe\\xff")):
+    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
         raise HTTPException(415, "Only UTF-8 text documents are supported")
     try:
         return data.decode("utf-8-sig", errors="strict")
@@ -547,7 +547,7 @@ def _extract_pdf_document(data: bytes, max_chars: int) -> str:
             parts.append(page.extract_text() or "")
             if sum(len(part) for part in parts) > max_chars:
                 break
-        return "\\n\\n".join(parts)
+        return "\n\n".join(parts)
     except HTTPException:
         raise
     except LimitReachedError:
@@ -598,7 +598,6 @@ _PYTHON_ENGINE_VERSION = platform.python_version()
 _PYTHON_LICENSE_URL = "https://docs.python.org/3/license.html"
 _PYPDF_ENGINE_VERSION = distribution_version("pypdf")
 _PYPDF_LICENSE_URL = "https://github.com/py-pdf/pypdf/blob/7.1.0/LICENSE"
-_PYPDF_PROJECT_URL = "https://github.com/py-pdf/pypdf/blob/7.1.0/pyproject.toml"
 
 DOCUMENT_FORMAT_CAPABILITIES: tuple[DocumentFormatCapability, ...] = (
     DocumentFormatCapability(
@@ -830,7 +829,7 @@ def _extract_docx(data: bytes) -> str:
             value = "".join(node.text or "" for node in paragraph.iter("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"))
             if value:
                 texts.append(value)
-        return "\\n".join(texts)
+        return "\n".join(texts)
     finally:
         archive.close()
 
@@ -882,7 +881,7 @@ def _extract_xlsx(data: bytes) -> str:
                         values.append(f"{cell.attrib.get('r', '')}={value}")
                 if values:
                     output.append(" | ".join(values))
-        return "\\n".join(output)
+        return "\n".join(output)
     finally:
         archive.close()
 
@@ -904,7 +903,7 @@ def extract_local_document(filename: str, data: bytes, max_chars: int) -> tuple[
     if not data:
         raise HTTPException(400, "Document body is empty")
     text = capability.adapter(data, max_chars)
-    text = text.replace("\\x00", "").strip()
+    text = text.replace("\x00", "").strip()
     if not text:
         raise HTTPException(422, "No extractable text was found; scanned PDFs need a separate local OCR runtime")
     if len(text) > max_chars:
