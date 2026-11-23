@@ -15,7 +15,7 @@ async function openSidebar(page) {
 async function closeSidebar(page) {
   const sidebar = page.locator('#sidebar');
   if (!(await sidebar.evaluate(el => el.classList.contains('-translate-x-full')))) {
-    await page.locator('#appSidebarToggle').click();
+    await sidebar.locator('[data-action="close-sidebar"]').click();
   }
   await expect(sidebar).toHaveClass(/-translate-x-full/);
 }
