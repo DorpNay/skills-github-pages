@@ -27,6 +27,21 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test('Notebook sidebar shortcut stays inside the shared root application', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await openSidebar(page);
+  const shortcut = page.locator('#sidebar [data-action="open-notebook-mode"]');
+  await expect(shortcut).toBeVisible();
+  await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(0);
+
+  await shortcut.click();
+  await expect(page).toHaveURL(/#mode=notebook$/);
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
+  await expect(page.locator('#notebookModePanel')).toBeVisible();
+  await expect(page.locator('#projectPanel')).toBeHidden();
+  await expect(page.locator('#chatBox')).toBeVisible();
+});
+
 test('shared modes preserve the root frame and scope Notebook chat to checked sources', async ({ page }) => {
   await page.goto(APP_PATH);
   await expect(page.locator('#sharedModeSwitcher')).toBeVisible();
