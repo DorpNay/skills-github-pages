@@ -129,25 +129,28 @@ This is the category index for the external-source catalogue. The large legacy U
 
 ### First-pass disposition
 
-| Source | Direction | Initial disposition |
+| Source | Direction | Current disposition |
 |---|---|---|
-| Filee | file conversion/ingestion | ADAPT algorithms and safety contracts; no whole desktop-app import |\n| Altered Audio Editor | audio editing/conversion | ADAPT deterministic export/batch-validation patterns; GPL-3.0 code not copied |\n| Craft Anything | dev-only implementation inspection/rebuild | SECURITY DEFER; isolated workspace and legal review only |
-| Meetily | ASR/meeting audio | DEFER to P6; inspect local engines and model licenses |\n| Altered.ai | commercial voice editing/morphing | UX reference only; commercial/API/privacy terms separate |
-| Voyager | browser/site plugins | ADAPT declarative plugin boundary; GPL-3.0 code not copied |
-| Oh My OpenAgent | orchestration | DEFER pending license/runtime/security audit |
-| Voicebox | ASR/TTS/voice studio | RESEARCH candidate for P6; exact licenses/weights still open |
-| DSH free model | keyless external providers | RESEARCH only; sensitive data prohibited; no accepted provider set |
-| EGM | specification/review | ADAPT fresh-context review method; runtime unavailable in this session |
-| T3 Code | coding UX/control plane | ADAPT UX/worktree/approval patterns; no platform replacement |
-| Tiny-voca | small TTS | LOW priority; English-only |
-| Koara.cloud | hosting | SHORTLIST for 8-GB plan comparison; SLA 99.98% vs 99.9% page discrepancy unresolved |
-| Astryx | design system | ADAPT selected UX patterns; no React migration |
-| Modern Web Guidance | web engineering | PRIORITY reference for future UI/client-JS changes |
-| Chrome DevTools MCP | browser verification | DEV-ONLY candidate; isolated profile and telemetry controls |
-| Needle 2 | compact tool/extraction model | EVAL candidate; no runtime enablement |
-| Ghost Infer | local inference | DEFER unless compatible NVIDIA host is confirmed |
+| Filee | file conversion/ingestion | **ADAPT** bounded Dijkstra route graph, max-3-hop converter paths, per-engine queue limits, isolated staging, reserved output paths, source-preserving default and job-owned cleanup; no desktop-app import |
+| Altered Audio Editor | audio editing/conversion | **ADAPT patterns only**: deterministic render, metadata-preserving batch, export read-back validation; GPL-3.0 code not copied |
+| Craft Anything | dev-only implementation inspection/rebuild | **SECURITY DEFER**; use only in isolated disposable workspace after legal/security review; never execute against canonical checkout or production data |
+| Meetily | ASR/meeting audio | **DEFER to P6**; local ASR/audio import patterns only; cloud summary sends transcript to selected provider; PRO features and model/data licenses separate |
+| Altered.ai | commercial voice editing/morphing | UX reference only; commercial/API/privacy terms separate |
+| Voyager | browser/site plugins | **ADAPT** declarative JSON+CSS plugin boundary and checked primitives; GPL-3.0 code not copied |
+| Oh My OpenAgent | orchestration | **REJECT direct code reuse/distribution** under checked Business Use License unless separately relicensed in writing; independent implementation only |
+| Voicebox | ASR/TTS/voice studio | **ADAPT patterns for P6**; repository code MIT verified; every engine/model/voice/weight has a separate license gate |
+| DSH free model | keyless external providers | **RESEARCH only**; plugin MIT verified but upstream provider terms/privacy/capacity are independent; sensitive data prohibited; no accepted provider set |
+| EGM | specification/review | **ADAPT fresh-context spec review**; native execution unavailable because no launch targets are connected |
+| T3 Code | coding UX/control plane | **ADAPT UX/worktree/approval patterns**; MIT; no platform replacement |
+| Tiny-voca | small TTS | LOW priority; English-only, not RU/TH acceptance |
+| Koara.cloud | hosting | SHORTLIST for 8-GB plan comparison; SLA 99.98% vs 99.9% discrepancy unresolved; no provisioning |
+| Astryx | design system | **ADAPT selected UX patterns**; MIT; no React/StyleX migration |
+| Modern Web Guidance | web engineering | PRIORITY task-scoped reference; Apache-2.0 code / CC-BY-4.0 guide content |
+| Chrome DevTools MCP | browser verification | DEV-ONLY candidate; isolated profile and telemetry controls; Playwright remains CI baseline |
+| Needle 2 | compact tool/extraction model | EVAL candidate only; exact artifact/runtime and RU/EN/TH quality unverified |
+| Ghost Infer | local inference | DEFER unless compatible NVIDIA host and memory budget are confirmed |
 | Wikipedia/MediaWiki | external knowledge | ADAPT API etiquette/licensing; not “Wenwiko” |
-| Nota / Wenwiko / KL | unresolved | HOLD pending exact identity |
+| Nota / Wenwiko / KL | unresolved | HOLD pending exact identity; KL divergence is a metric, not a source/project |
 
 ## Plugin-selection protocol
 
