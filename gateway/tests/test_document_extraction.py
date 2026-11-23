@@ -74,14 +74,17 @@ def test_capabilities_require_auth_and_only_report_enabled_flags():
         response = app.get("/v1/capabilities", headers=AUTH)
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"
-    assert response.json() == {
+    payload = response.json()
+    assert {key: value for key, value in payload.items() if key != "documents"} == {
         "search": {"searxng": False},
         "audio": {"transcription": True, "speech": False, "speech_voices": []},
-        "documents": {"extraction": True},
         "connectors": {"github_app": False},
         "rag": {"enabled": False, "evidence_ledger": False},
         "agent_runs": {"enabled": False, "worker_concurrency": 1, "tools_enabled": False},
     }
+    assert payload["documents"]["extraction"] is True
+    assert payload["documents"]["format_capabilities"]
+    assert payload["documents"]["conversion"]["status"] == "unavailable"
 
 
     with client(config()) as app:
@@ -308,6 +311,8 @@ def test_document_capabilities_expose_verified_extraction_edges_and_unavailable_
         assert item["engine_version"]
         assert item["engine_license"]
         assert item["engine_license_url"].startswith("https://")
+        assert item["engine_source_urls"]
+        assert all(url.startswith("https://") for url in item["engine_source_urls"])
         assert item["fidelity"]
         assert isinstance(item["limits"], dict)
         assert item["limits"]["max_input_bytes"] == 8 * 1024 * 1024
