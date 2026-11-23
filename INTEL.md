@@ -90,7 +90,7 @@ This is the category index for the external-source catalogue. The large legacy U
 
 ### 8. Hosting and server-provider candidates
 
-- **[Koara.cloud](https://koara.cloud/)** — commercial VPS/dedicated hosting candidate. Public pages advertise VDS/VPS from 239 RUB/month and dedicated-server DDoS/SLA claims; these are marketing claims, not verified availability, support, contractual SLA, data residency, backup or security evidence. Keep DEFERRED until target region, ownership, support, billing, snapshot/backup, network, acceptable-use terms and measured hardware are compared with the current owner-host options. No account or server was created.
+- **[Koara.cloud](https://koara.cloud/)** — commercial VPS/dedicated hosting candidate. Official VDS page currently lists Frankfurt KVM plans; DE-3 is 4 vCPU (Ryzen 9 5950X), 8 GB RAM, 96 GB NVMe, 1 Gbps at 1,049 RUB/month, with START plans from 279 RUB/month. The VDS page advertises 99.98% availability; the provider's About page states 99.9%, so the SLA claim is internally inconsistent and must be checked against the actual contract. The legal entity is Sculk Software LLC; official pages show Germany and Russia locations. **Disposition: shortlist for comparison** against the planned 8-GB host, not accepted. Verify jurisdiction/data location, SLA exclusions/credits, backup/snapshots, console/recovery, DDoS scope, support response, acceptable-use, CPU steal/benchmarks and total renewal price. No account or server was created.
 
 ### 9. Metrics, knowledge sources and unresolved names
 
@@ -112,7 +112,7 @@ This is the category index for the external-source catalogue. The large legacy U
 | EGM | specification/review | ADAPT fresh-context review method; runtime unavailable in this session |
 | T3 Code | coding UX/control plane | ADAPT UX/worktree/approval patterns; no platform replacement |
 | Tiny-voca | small TTS | LOW priority; English-only |
-| Koara.cloud | hosting | DEFER pending contractual/region/hardware comparison |
+| Koara.cloud | hosting | SHORTLIST for 8-GB plan comparison; SLA 99.98% vs 99.9% page discrepancy unresolved |
 | Astryx | design system | ADAPT selected UX patterns; no React migration |
 | Modern Web Guidance | web engineering | PRIORITY reference for future UI/client-JS changes |
 | Chrome DevTools MCP | browser verification | DEV-ONLY candidate; isolated profile and telemetry controls |
