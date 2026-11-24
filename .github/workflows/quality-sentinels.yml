@@ -248,10 +248,11 @@ jobs:
           APP_URL=http://127.0.0.1:4173/ node scripts/lightpanda-smoke.mjs
 
   browser-e2e:
-    if: ${{ inputs.run_chromium }}
+    # Every UI PR must execute the full built-app Chromium regression suite; manual runs remain opt-in.
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.run_chromium) }}
     name: Real Chromium browser regression tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -270,7 +271,7 @@ jobs:
       - name: Exercise the built app in Chromium
         run: npx playwright test --grep-invert "live public site serves the app shell and basic chat controls"
       - name: Wait for the published site to respond
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.verify_live_pages)
         run: |
           for attempt in $(seq 1 18); do
             if curl --fail --silent --show-error --location --max-time 15 "https://dorpnay.github.io/skills-github-pages/?smoke=$GITHUB_SHA" -o /dev/null; then
@@ -283,7 +284,7 @@ jobs:
           echo "Published GitHub Pages did not become available in time."
           exit 1
       - name: Test the actual published site in Chromium
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.verify_live_pages)
         env:
           LIVE_SITE_URL: https://dorpnay.github.io/skills-github-pages/
         run: npx playwright test tests/e2e/live-site.spec.mjs
