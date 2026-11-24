@@ -29,6 +29,8 @@ From a network-enabled workstation/server:
 
 The GitHub Actions artifact above is already downloaded and verified; use the `gh run download` commands in §0.1 instead of re-running network acquisition when staging it on the target host.
 
+For raw GitHub artifacts, the downloader resumes an existing `.partial` file with HTTP Range only when the server returns a matching `Content-Range`; endpoints that ignore Range restart safely. A transient transport interruption retains bounded partial bytes for the next run. The completed file is checked against its pinned size and SHA-256/Git blob SHA-1 before atomic promotion to the final package path. Hugging Face snapshots continue to use `snapshot_download` at the pinned revision. These are checksum pins, not upstream digital signatures; target-host installation/activation remains a separate owner-reviewed step.
+
 This downloads the Ollama runtime archive, Piper wheel, Qwen vision projector, Qwen reranker and ASR weights, Whisper model, VAD, Piper RU/EN voices and Tesseract RU/EN/TH data. The full HF Qwen3 embedding weights are not downloaded; the official Ollama Q8_0 model is the runtime selection. The main uncensored Qwen Q4_K_M checkpoint is deliberately excluded for owner upload. The full HF Qwen3 embedding checkpoint is provenance-only; the smaller official Ollama Q8_0 model is selected instead.
 
 All cache files remain outside Git. SHA256SUMS.local is generated for every downloaded package; the pinned primary files are checked against SHA-256 or upstream Git blob SHA-1 plus exact size. Main-branch Actions also stage the same acquisition set as temporary downloadable artifacts (30-day retention); verify run completion and artifact SHA manifests before copying to the target host.
