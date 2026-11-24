@@ -155,6 +155,7 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 - [~] P0.20 Final UI acceptance: exact application/test HEAD `8e2a03ef1e0be751ae5ca49efc714a7b36f692a8` on main: Quality Sentinels #44672296672 SUCCESS (Jekyll, Integrity, Security, Context PASS), Graphify #44672296604 SUCCESS, Pages build/deploy #44672296035 SUCCESS. Chromium, Lightpanda, independent static analysis and published-release contract were SKIPPED; no E2E pass is claimed. TinyFish post-deployment smoke #42f29d9d-aa38-4df7-93b0-a1401c0dd65e confirmed aLandi v10.0, RU→EN→RU and Functions labels, no visible page/runtime errors. It could not open voice disclosure/sidebar and exposed no viewport/build SHA; Project Sources and those controls remain UNVERIFIED. The RU/EN live-state package adds cached Project Sources, active voice capture, in-flight request status/timer and historical metadata regressions; Chromium execution remains pending. Complete 320–1440px matrix and native iPhone Safari/VoiceOver remain open. PR #187 remains DIRTY and is not merged.
 
 ### P0.21 — 30-point landing acceptance matrix (all items remain open until exact evidence)
+- [~] **Browser release gate updated in PR #195:** every UI pull request runs the full built-app Playwright Chromium suite (35-minute ceiling); live published Pages checks are separated from PR validation and run only on main push or explicit `workflow_dispatch` opt-in. Exact PR-head execution is pending; this changes gate activation, not test results.
 
 **Mobile and responsive geometry**
 
@@ -538,8 +539,8 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 
 ### P8 — Release and owner-only gates
 
-- [ ] P8.1 Run the appropriate focused fast and browser checks at the end of implementation packages; no weakening assertions or safety gates.
-- [ ] P8.2 Exact current HEAD CI, Pages publish marker and root routes after each material main package.
+- [ ] P8.1 Run the appropriate focused fast and browser checks at the end of implementation packages; no weakening assertions or safety gates. PR #195 also makes the full built-app Chromium suite automatic for UI PRs and separates live Pages checks; exact-head result pending.
+- [ ] P8.2 Exact current HEAD CI, Pages publish marker and root routes after each material main package. PR #195 also makes the full built-app Chromium suite automatic for UI PRs and separates live Pages checks; exact-head result pending.
 - [ ] P8.3 Owner-run VPS/Tunnel/Ollama/OS/hardware/model/DB/readiness/cold-warm latency and RAM/PSS evidence.
 - [ ] P8.4 Permissioned RU/EN/TH golden datasets; benchmark main model, agent, RAG, Coder, ASR/TTS and adversarial cases.
 - [ ] P8.5 Security/supply chain: main ruleset, action pins, CSP/SRI, secrets, CORS/SSRF, sandbox escape, backup/restore.
