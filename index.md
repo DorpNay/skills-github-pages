@@ -4535,7 +4535,8 @@ permalink: /
           const response=await fetch(buildApiUrl(baseUrl),{method:'POST',headers,body:JSON.stringify({model:candidateModel,messages:[{role:'user',content:'Reply with exactly OK. No other words.'}],max_tokens:8,stream:false}),cache:'no-store',signal:controller.signal});
           const raw=await response.text();let payload=null;try{payload=JSON.parse(raw);}catch(_){}
           if(!response.ok){
-            const detail=String(payload?.error?.message||payload?.message||raw||'').slice(0,240).replaceAll(key||'\u0000','[скрытый ключ]');
+            const redactedKey=english?'[redacted key]':'[скрытый ключ]';
+            const detail=String(payload?.error?.message||payload?.message||raw||'').slice(0,240).replaceAll(key||'\u0000',redactedKey);
             const error=new Error('HTTP '+response.status+(detail?': '+detail:''));error.status=response.status;error.details=detail;
             error.modelUnavailable=[400,404].includes(response.status)&&/(model|deployment)/i.test(detail)&&/(not found|unknown|invalid model|does not exist|unsupported model|not available|no such model|not accessible|no route found)/i.test(detail);
             throw error;
