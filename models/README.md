@@ -13,7 +13,7 @@ The main-branch GitHub Actions workflows acquire the complete pinned auxiliary s
 
 For a network-enabled host, use `python scripts/download_ollama_registry_models.py --manifest models/manifest-ollama-registry.json --output-dir ~/.cache/alandi/ollama-packages --timeout 900` to acquire the four pinned registry packages. Install each verified package only after target-host review with `python scripts/install_ollama_registry_model.py --package-dir <package-dir> --models-dir <OLLAMA_MODELS>`. The primary uncensored Qwen3.5-4B Q4_K_M checkpoint remains owner-supplied; its vision projector is acquired separately. The full HF embedding weights are pinned for provenance but not downloaded; the smaller official Ollama Q8_0 model is the runtime choice.
 
-The downloader pins immutable upstream revisions, verifies exact file sizes and SHA-256 for Hugging Face LFS objects, and verifies Git blob SHA-1 + size for raw GitHub artifacts. It does not execute downloaded files. Keep the accompanying model cards and voice provenance metadata.
+The downloader pins immutable upstream revisions, resumes interrupted raw GitHub transfers with validated HTTP Range/Content-Range, verifies exact size plus SHA-256/Git blob SHA-1 before atomic promotion, and uses `snapshot_download` for pinned Hugging Face snapshots. It does not execute downloaded files. Keep the accompanying model cards and voice provenance metadata.
 
 ## Artifact acquisition state
 
