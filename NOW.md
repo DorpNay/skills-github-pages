@@ -41,7 +41,7 @@ GitHub `main` — источник истины по проекту. Project Sou
 
 ## Последняя инженерная коррекция — 2026-11-25
 
-- **VERIFIED — live main:** `dec5e1c3fbfa8df3d8b3ca164655defe0f8821c4` (после squash merge PR #193). Открытый PR: #187; открытые issues: #111 и #186.
+- **VERIFIED — live main:** `dec5e1c3fbfa8df3d8b3ca164655defe0f8821c4` (после squash merge PR #193). Открытые PR: #187 (HOLD) и #194 (этот documentation checkpoint, CI pending); открытые issues: #111 и #186.
 - **IMPLEMENTED + exact-head CI VERIFIED — PR #193:** Notebook source selection теперь записывается до изменения in-memory state; при corrupt/unwritable localStorage UI возвращает последнее persisted selection и показывает RU/EN feedback. Merge commit `dec5e1c3fbfa8df3d8b3ca164655defe0f8821c4`; проверенный PR head `218241e553f63c4464706a8c167c1377c81fb7c5`. Quality Sentinels: Integrity, root app boot/interaction smoke, Context, Jekyll и Security — PASS; Graphify — PASS. Dedicated/full Chromium regression, Ruff/Lightpanda и Published Pages contract были SKIPPED. Не утверждать их запуск.
 - **IMPLEMENTED + exact-head CI VERIFIED — PR #191:** immutable format-capability registry для TXT/MD/CSV/JSON/PDF/DOCX/XLSX extraction в main. Это partial P4.6, не конвертер: bounded conversion graph, queues, private staging, durable jobs/artifacts, cancellation/cleanup и read-back остаются OPEN.
 - **SOURCE MAP — PR #189:** upstream source catalogue и license boundaries merged in main; полный аудит исторического каталога и неоднозначные Nota/Wenwiko/KL identities остаются OPEN/HOLD.
