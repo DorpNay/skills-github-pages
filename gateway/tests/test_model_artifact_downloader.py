@@ -322,3 +322,22 @@ def test_download_url_promotes_only_a_complete_verified_416_partial(tmp_path: Pa
     assert opener.request.get_header("Range") == f"bytes={len(payload)}-"
     assert target.read_bytes() == payload
 
+def test_download_url_rejects_symlinked_partial_path(tmp_path: Path, monkeypatch) -> None:
+    target = tmp_path / "artifact.bin"
+    outside = tmp_path / "outside.bin"
+    outside.write_bytes(b"do-not-touch")
+    target.with_name(target.name + ".partial").symlink_to(outside)
+    response = _FakeArtifactResponse(b"replacement", status=200)
+    _install_fake_artifact_response(monkeypatch, response)
+
+    try:
+        MODULE.download_url(
+            "https://raw.githubusercontent.com/example/artifact.bin", target, 11
+        )
+    except ValueError as exc:
+        assert "Unsafe partial artifact path" in str(exc)
+    else:
+        raise AssertionError("Symlinked partial path was accepted")
+    assert outside.read_bytes() == b"do-not-touch"
+    assert not target.exists()
+
