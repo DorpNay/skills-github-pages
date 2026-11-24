@@ -144,3 +144,50 @@ test('aCodingi keeps the shared frame but does not claim an unavailable sandbox'
     expect(Math.abs(composerAfter[key] - composerBefore[key])).toBeLessThanOrEqual(1);
   }
 });
+
+
+test('shared modes preserve the root frame and scope Notebook chat to checked sources when selection storage is unavailable', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await page.evaluate(() => {
+    document.documentElement.lang = 'en';
+    localStorage.setItem('ai_ui_language_v1', 'en');
+  });
+  await page.locator('[data-shared-mode="notebook"]').click();
+  await expect(page.locator('#notebookModePanel')).toBeVisible();
+  await openSidebar(page);
+
+  await page.locator('#sharedNotebookName').fill('Storage failure notebook');
+  await page.locator('#sharedNotebookCreate button[type="submit"]').click();
+  await expect(page.locator('#sharedNotebookList')).toContainText('Storage failure notebook');
+
+  await page.locator('#notebookModePanel details').first().locator('summary').click();
+  await page.locator('#sharedNoteTitle').fill('Persisted source');
+  await page.locator('#sharedNoteBody').fill('This source is selected before storage becomes unavailable.');
+  await page.locator('#sharedNoteForm button[type="submit"]').click();
+  const checkbox = page.locator('#sharedNotebookSources label').filter({ hasText: 'Persisted source' }).locator('input');
+  await expect(checkbox).toBeVisible();
+  await checkbox.check();
+  await expect(checkbox).toBeChecked();
+
+  const persistedBeforeFailure = await page.evaluate(() => (
+    localStorage.getItem('ai_shared_notebook_sources_v1')
+  ));
+  expect(persistedBeforeFailure).not.toBeNull();
+
+  await page.evaluate(() => {
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key, value) {
+      if (key === 'ai_shared_notebook_sources_v1') {
+        throw new DOMException('Quota exceeded', 'QuotaExceededError');
+      }
+      return Reflect.apply(originalSetItem, this, [key, value]);
+    };
+  });
+
+  await checkbox.click();
+  await expect(checkbox).toBeChecked();
+  await expect(page.locator('#sharedNotebookStatus')).toContainText('Could not save source selection');
+  await expect.poll(() => page.evaluate(() => (
+    localStorage.getItem('ai_shared_notebook_sources_v1')
+  ))).toBe(persistedBeforeFailure);
+});
