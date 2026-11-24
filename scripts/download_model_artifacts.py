@@ -6,9 +6,11 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -118,16 +120,58 @@ class GitHubRedirectHandler(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def download_url(url: str, target: Path, expected_size: int | None) -> None:
+def _verify_download_candidate(
+    path: Path,
+    *,
+    expected_size: int | None,
+    expected_sha256: str | None,
+    expected_git_blob_sha1: str | None,
+) -> None:
+    actual_size = path.stat().st_size
+    if expected_size is not None and actual_size != expected_size:
+        raise ValueError(
+            f"Downloaded size mismatch for {path.name}: expected {expected_size}, got {actual_size}"
+        )
+    sha256, git_sha1 = hashes(path, actual_size)
+    if expected_sha256 and sha256.lower() != expected_sha256.lower():
+        path.unlink(missing_ok=True)
+        raise ValueError(f"Downloaded SHA-256 mismatch for {path.name}")
+    if expected_git_blob_sha1 and git_sha1.lower() != expected_git_blob_sha1.lower():
+        path.unlink(missing_ok=True)
+        raise ValueError(f"Downloaded Git blob SHA-1 mismatch for {path.name}")
+
+
+def download_url(
+    url: str,
+    target: Path,
+    expected_size: int | None,
+    expected_sha256: str | None = None,
+    expected_git_blob_sha1: str | None = None,
+) -> None:
     initial = urlsplit(url)
     if initial.scheme != "https" or initial.hostname not in {"github.com", "raw.githubusercontent.com"}:
         raise ValueError(f"Unexpected GitHub artifact source URL: {url!r}")
     target.parent.mkdir(parents=True, exist_ok=True)
     partial = target.with_name(target.name + ".partial")
-    request = urllib.request.Request(url, headers={"User-Agent": "aLandi-model-artifact-fetcher/1.0"})
+    offset = partial.stat().st_size if partial.is_file() else 0
+    if expected_size is not None and offset > expected_size:
+        partial.unlink(missing_ok=True)
+        offset = 0
+
+    headers = {"User-Agent": "aLandi-model-artifact-fetcher/1.0"}
+    if offset:
+        headers["Range"] = f"bytes={offset}-"
+    request = urllib.request.Request(url, headers=headers)
+    opener = urllib.request.build_opener(GitHubRedirectHandler())
     try:
-        opener = urllib.request.build_opener(GitHubRedirectHandler())
-        with opener.open(request, timeout=90) as response, partial.open("wb") as output:
+        try:
+            response = opener.open(request, timeout=90)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 416:
+                raise
+            response = exc
+
+        with response:
             final = urlsplit(response.geturl())
             allowed_final_hosts = {
                 "github.com",
@@ -137,20 +181,82 @@ def download_url(url: str, target: Path, expected_size: int | None) -> None:
             }
             if final.scheme != "https" or final.hostname not in allowed_final_hosts:
                 raise ValueError(f"Unexpected GitHub artifact redirect host: {final.hostname}")
-            total = 0
-            while True:
-                block = response.read(1024 * 1024)
-                if not block:
-                    break
-                total += len(block)
-                if expected_size is not None and total > expected_size:
-                    raise ValueError("Artifact download exceeded its pinned size")
-                output.write(block)
+
+            status = response.getcode() or 200
+            if status == 416:
+                content_range = response.headers.get("Content-Range", "")
+                match = re.fullmatch(r"bytes \\*/(\\d+)", content_range)
+                if (
+                    expected_size is None
+                    or offset != expected_size
+                    or match is None
+                    or int(match.group(1)) != expected_size
+                ):
+                    raise ValueError("Server rejected the resume range before the pinned artifact was complete")
+                _verify_download_candidate(
+                    partial,
+                    expected_size=expected_size,
+                    expected_sha256=expected_sha256,
+                    expected_git_blob_sha1=expected_git_blob_sha1,
+                )
+                partial.replace(target)
+                return
+
+            if status == 206:
+                content_range = response.headers.get("Content-Range", "")
+                match = re.fullmatch(r"bytes (\\d+)-(\\d+)/(\\d+|\\*)", content_range)
+                if match is None:
+                    raise ValueError("Server returned an invalid Content-Range for a resumed artifact")
+                range_start, range_end = int(match.group(1)), int(match.group(2))
+                range_total = match.group(3)
+                if range_start != offset or range_end < range_start:
+                    raise ValueError("Server returned a Content-Range that does not match the partial file")
+                if expected_size is not None and (range_total == "*" or int(range_total) != expected_size):
+                    raise ValueError("Server Content-Range total does not match the pinned artifact size")
+                if not offset and range_start != 0:
+                    raise ValueError("Server returned a non-zero range for a fresh artifact")
+                write_mode = "ab" if offset else "wb"
+            elif status == 200:
+                # Some GitHub-compatible endpoints ignore Range. Restart safely rather than append a full body.
+                offset = 0
+                range_end = None
+                write_mode = "wb"
+            else:
+                raise ValueError(f"Unexpected HTTP status for artifact download: {status}")
+
+            written = offset
+            with partial.open(write_mode) as output:
+                while True:
+                    block = response.read(1024 * 1024)
+                    if not block:
+                        break
+                    next_size = written + len(block)
+                    if expected_size is not None and next_size > expected_size:
+                        partial.unlink(missing_ok=True)
+                        raise ValueError("Artifact download exceeded its pinned size")
+                    if status == 206 and next_size > range_end + 1:
+                        raise ValueError("Artifact response exceeded its declared Content-Range")
+                    output.write(block)
+                    written = next_size
+                output.flush()
+                os.fsync(output.fileno())
+
         if expected_size is not None and partial.stat().st_size != expected_size:
-            raise ValueError(f"Downloaded size mismatch for {target.name}: expected {expected_size}, got {partial.stat().st_size}")
+            raise ValueError(
+                f"Incomplete artifact download for {target.name}: expected {expected_size}, "
+                f"received {partial.stat().st_size}; partial file retained for resume"
+            )
+        _verify_download_candidate(
+            partial,
+            expected_size=expected_size,
+            expected_sha256=expected_sha256,
+            expected_git_blob_sha1=expected_git_blob_sha1,
+        )
         partial.replace(target)
     except Exception:
-        partial.unlink(missing_ok=True)
+        # Preserve bounded partial bytes after transient transport failures so the next run can use Range.
+        if expected_size is not None and partial.exists() and partial.stat().st_size > expected_size:
+            partial.unlink(missing_ok=True)
         raise
 
 def ollama_digest_matches(output: str, package: dict[str, Any]) -> tuple[bool, str]:
@@ -314,7 +420,7 @@ def main() -> int:
                 if ok:
                     continue
                 try:
-                    download_url(item["url"], target, item.get("size_bytes"))
+                    download_url(item["url"], target, item.get("size_bytes"), item.get("sha256"), item.get("git_blob_sha1"))
                 except Exception as exc:
                     failures.append(f"{package['id']}/{item['path']}: download failed: {exc}")
                     print(f"FAIL {failures[-1]}", file=sys.stderr)
