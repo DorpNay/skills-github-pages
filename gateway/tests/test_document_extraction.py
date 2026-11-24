@@ -74,14 +74,17 @@ def test_capabilities_require_auth_and_only_report_enabled_flags():
         response = app.get("/v1/capabilities", headers=AUTH)
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-store"
-    assert response.json() == {
+    payload = response.json()
+    assert {key: value for key, value in payload.items() if key != "documents"} == {
         "search": {"searxng": False},
         "audio": {"transcription": True, "speech": False, "speech_voices": []},
-        "documents": {"extraction": True},
         "connectors": {"github_app": False},
         "rag": {"enabled": False, "evidence_ledger": False},
         "agent_runs": {"enabled": False, "worker_concurrency": 1, "tools_enabled": False},
     }
+    assert payload["documents"]["extraction"] is True
+    assert payload["documents"]["format_capabilities"]
+    assert payload["documents"]["conversion"]["status"] == "unavailable"
 
 
     with client(config()) as app:
@@ -267,3 +270,124 @@ def test_rejects_duplicate_zip_entry_names():
         )
     assert response.status_code == 400
     assert response.json()["detail"] == "Document archive contains duplicate entry names"
+
+
+def test_document_capabilities_expose_verified_extraction_edges_and_unavailable_paths():
+    with client(config(document_extraction_enabled=True)) as app:
+        response = app.get("/v1/capabilities", headers=AUTH)
+
+    assert response.status_code == 200
+    documents = response.json()["documents"]
+    assert documents["extraction"] is True
+    formats = {item["id"]: item for item in documents["format_capabilities"]}
+
+    expected = {
+        "extract.txt": ("text/plain", ".txt", "local-utf8"),
+        "extract.md": ("text/markdown", ".md", "local-utf8"),
+        "extract.csv": ("text/csv", ".csv", "local-utf8"),
+        "extract.json": ("application/json", ".json", "local-utf8"),
+        "extract.pdf": ("application/pdf", ".pdf", "local-pypdf"),
+        "extract.docx": (
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ".docx",
+            "local-docx-xml",
+        ),
+        "extract.xlsx": (
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".xlsx",
+            "local-xlsx-xml",
+        ),
+    }
+    for capability_id, (input_format, extension, parser_id) in expected.items():
+        item = formats[capability_id]
+        assert item["operation"] == "model_facing_extraction"
+        assert item["input_format"] == input_format
+        assert item["output_format"] == "text/plain; charset=utf-8"
+        assert item["extensions"] == [extension]
+        assert item["parser_id"] == parser_id
+        assert item["status"] == "available"
+        assert item["available"] is True
+        assert item["engine"]
+        assert item["engine_version"]
+        assert item["engine_license"]
+        assert item["engine_license_url"].startswith("https://")
+        assert item["engine_source_urls"]
+        assert all(url.startswith("https://") for url in item["engine_source_urls"])
+        assert item["fidelity"]
+        assert isinstance(item["limits"], dict)
+        assert item["limits"]["max_input_bytes"] == 8 * 1024 * 1024
+        assert item["limits"]["max_output_characters"] == 80_000
+
+    assert formats["extract.pdf"]["engine"] == "pypdf"
+    assert formats["extract.pdf"]["engine_license"] == "BSD-3-Clause"
+    assert formats["extract.pdf"]["limits"]["max_pages"] == 40
+    assert formats["extract.docx"]["engine_license"] == "PSF-2.0"
+    assert formats["extract.docx"]["limits"]["max_archive_entries"] == 500
+    assert formats["extract.xlsx"]["limits"]["max_sheets"] == 20
+
+    unavailable_ids = {
+        "extract.html",
+        "extract.epub",
+        "extract.image_metadata",
+        "extract.url_capture",
+        "extract.image_ocr",
+        "extract.audio_metadata",
+        "extract.video_metadata",
+        "extract.scanned_pdf_ocr",
+    }
+    for capability_id in unavailable_ids:
+        item = formats[capability_id]
+        assert item["available"] is False
+        assert item["status"] == "unavailable"
+        assert item["unavailable_reason"]
+
+    conversion = documents["conversion"]
+    assert conversion["available"] is False
+    assert conversion["status"] == "unavailable"
+    assert "artifact" in conversion["unavailable_reason"].lower()
+    assert "extraction" in conversion["unavailable_reason"].lower()
+
+
+def test_document_capabilities_report_disabled_extraction_without_hiding_format_contracts():
+    with client(config(document_extraction_enabled=False)) as app:
+        response = app.get("/v1/capabilities", headers=AUTH)
+
+    assert response.status_code == 200
+    documents = response.json()["documents"]
+    assert documents["extraction"] is False
+    formats = {item["id"]: item for item in documents["format_capabilities"]}
+    assert formats["extract.pdf"]["available"] is True
+    assert formats["extract.pdf"]["status"] == "disabled"
+    assert "disabled" in formats["extract.pdf"]["unavailable_reason"].lower()
+    assert formats["extract.epub"]["status"] == "unavailable"
+
+
+def test_document_extraction_response_includes_adapter_provenance_without_changing_parser_id():
+    with client(config(document_extraction_enabled=True)) as app:
+        response = app.post(
+            "/v1/documents/extract?filename=notes.md",
+            content=b"# Source note\n",
+            headers=AUTH,
+        )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["text"] == "# Source note"
+    assert payload["parser"] == "local-utf8"
+    assert payload["format_capability"]["id"] == "extract.md"
+    assert payload["format_capability"]["input_format"] == "text/markdown"
+    assert payload["format_capability"]["output_format"] == "text/plain; charset=utf-8"
+    assert payload["format_capability"]["engine_license"] == "PSF-2.0"
+    assert payload["format_capability"]["status"] == "available"
+
+
+def test_unavailable_document_extensions_fail_with_the_registry_reason():
+    with client(config(document_extraction_enabled=True)) as app:
+        for filename in ("page.html", "book.epub", "photo.png", "clip.mp4"):
+            response = app.post(
+                f"/v1/documents/extract?filename={filename}",
+                content=b"not-a-supported-extraction-format",
+                headers=AUTH,
+            )
+            assert response.status_code == 415
+            assert response.json()["detail"]
