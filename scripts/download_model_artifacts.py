@@ -153,6 +153,8 @@ def download_url(
         raise ValueError(f"Unexpected GitHub artifact source URL: {url!r}")
     target.parent.mkdir(parents=True, exist_ok=True)
     partial = target.with_name(target.name + ".partial")
+    if partial.is_symlink() or (partial.exists() and not partial.is_file()):
+        raise ValueError(f"Unsafe partial artifact path: {partial}")
     offset = partial.stat().st_size if partial.is_file() else 0
     if expected_size is not None and offset > expected_size:
         partial.unlink(missing_ok=True)
