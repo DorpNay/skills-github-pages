@@ -185,7 +185,7 @@ def download_url(
             status = response.getcode() or 200
             if status == 416:
                 content_range = response.headers.get("Content-Range", "")
-                match = re.fullmatch(r"bytes \\*/(\\d+)", content_range)
+                match = re.fullmatch(r"bytes \*/(\d+)", content_range)
                 if (
                     expected_size is None
                     or offset != expected_size
@@ -204,7 +204,7 @@ def download_url(
 
             if status == 206:
                 content_range = response.headers.get("Content-Range", "")
-                match = re.fullmatch(r"bytes (\\d+)-(\\d+)/(\\d+|\\*)", content_range)
+                match = re.fullmatch(r"bytes (\d+)-(\d+)/(\d+|\*)", content_range)
                 if match is None:
                     raise ValueError("Server returned an invalid Content-Range for a resumed artifact")
                 range_start, range_end = int(match.group(1)), int(match.group(2))
@@ -241,6 +241,10 @@ def download_url(
                 output.flush()
                 os.fsync(output.fileno())
 
+        if status == 206 and partial.stat().st_size != range_end + 1:
+            raise ValueError(
+                f"Incomplete range response for {target.name}; partial file retained for resume"
+            )
         if expected_size is not None and partial.stat().st_size != expected_size:
             raise ValueError(
                 f"Incomplete artifact download for {target.name}: expected {expected_size}, "
