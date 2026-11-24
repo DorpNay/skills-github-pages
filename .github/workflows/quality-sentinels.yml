@@ -249,7 +249,7 @@ jobs:
 
   browser-e2e:
     # Every UI PR must execute the full built-app Chromium regression suite; manual runs remain opt-in.
-    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.run_chromium) }}
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_chromium) }}
     name: Real Chromium browser regression tests
     runs-on: ubuntu-latest
     timeout-minutes: 35
