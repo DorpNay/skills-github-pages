@@ -269,3 +269,63 @@ All generated code must be reviewed for semantics, accessibility, responsive lay
 ### VERT
 
 [VERT](https://github.com/VERT-sh/VERT) is AGPL-3.0 and [vertd](https://github.com/VERT-sh/vertd) is GPL-3.0. Treat these as strong copyleft deployment decisions, not neutral drop-in utilities. Benchmark permissive alternatives first; if VERT is still selected, require a separate legal/license review, process boundary and explicit owner approval. No VERT code or service is adopted by this research PR.
+
+
+## 2026-11-24 — File-ingestion source-group audit (primary upstream refresh)
+
+**Scope:** Filee, MarkItDown, Docling, Unstructured, Pandoc, LibreOffice, FFmpeg, VERT/vertd, browser-WASM approaches, plus the current aLandi extraction implementation. This is a source-group review, not a claim that every URL in the legacy catalogue has been audited. Upstream versions below are the versions visible in the official sources at this review; recheck before pinning or installation.
+
+### Findings by source
+
+| Source | Verified upstream boundary | Reusable design / best fit | aLandi disposition |
+|---|---|---|---|
+| [KnifeLemon/Filee](https://github.com/KnifeLemon/Filee) | v2.5.0; MIT for Filee itself. Avalonia/.NET desktop app; optional converters/engines have independent licenses. | Typed converter edges, explicit format registry, weighted Dijkstra with max 3 hops, route-specific constraints, stable converter IDs, engine availability status, per-engine semaphores, job progress/cancel, private work folder, output path reservation and source-preserving default. ProcessRunner uses fixed argument lists, no shell, timeout/cancellation and explicit engine discovery. | **ADAPT architecture, not runtime.** Do not copy the desktop application wholesale. Important caveat from current source: its Channel queue is unbounded and each job may fan out to processor-count parallelism; the server must instead use bounded admission, global/per-tenant quotas, per-engine concurrency and explicit overload responses. Its single-user local trust model is not a multi-tenant service security model. |
+| [Microsoft MarkItDown](https://github.com/microsoft/markitdown) | Latest release visible in official Releases: v0.1.9; MIT. Optional format extras/plugins. README explicitly says operations run with current process privileges and warns to sanitize untrusted inputs. | Narrow format adapters and conversion to Markdown; use stream/local entry points where possible, choose only needed converters, pin exact extras. Good benchmark candidate for common office/web/structured-text extraction. | **BENCHMARK, not default dependency.** It is optimized for LLM/text analysis, not high-fidelity human-facing conversion. Do not pass arbitrary URLs or user paths to it; isolate and pass bounded bytes/streams. |
+| [Docling](https://github.com/docling-project/docling) | Current main package metadata observed at v2.151.1; MIT code. Official supported-formats matrix includes PDF, modern/legacy Office, ODF, EPUB, Markdown/HTML, images, audio/video, email and more; some paths require LibreOffice, FFmpeg, audio/ASR extras or model assets. | Rich document representation, layout/reading order, table structure, OCR and export to Markdown/JSON/HTML; best candidate for a separate high-fidelity extraction worker. | **OPTIONAL HEAVY WORKER, deferred.** Broad format count is not a guarantee of identical quality or light runtime. Exact extras, model weights/licenses, CPU/RAM, cold-start, page latency and RU/EN/TH quality must be measured on the target host before enabling. |
+| [Unstructured](https://github.com/Unstructured-IO/unstructured) | Apache-2.0 project; format-specific partitions often depend on external binaries/libraries and optional services. | Partitioning, chunking and ETL patterns for a later RAG ingestion pipeline. | **DEFER.** Too broad for the current minimal extraction path; compare only if P4 retrieval/partitioning evaluations show a concrete gap. |
+| [Pandoc](https://github.com/jgm/pandoc) | GPL-2.0; broad markup reader/writer ecosystem. PDF output depends on a separate backend/toolchain. | AST-based rich markup transformations and explicit reader/writer pairs. | **OPTIONAL isolated adapter.** Strong for Markdown/HTML/EPUB/office markup, not OCR or visual office fidelity. GPL distribution review required. |
+| [LibreOffice](https://www.libreoffice.org/) | Headless office conversion is possible; distribution includes multiple components/licenses and platform/font dependencies. | DOCX/XLSX/PPTX ↔ PDF/ODF rendering where fidelity tests pass. | **OPTIONAL isolated process.** Separate user profile and temp directory, fixed CLI arguments, macros disabled, no network, CPU/RAM/time/output quotas; inspect exact packaged binaries and notices. |
+| [FFmpeg](https://ffmpeg.org/) | Core licensing is LGPL when built accordingly; optional GPL components and codec libraries can change the effective distribution obligations. | Audio/video demux, transcode, stream metadata, thumbnail/waveform and subtitle pipelines. | **P6/P4 media adapter only after build provenance.** Pin exact build/configuration and codec set; sandbox subprocess, restrict protocols, stream count, duration, dimensions, threads and output bytes. |
+| [VERT](https://github.com/vert-sh/vert) / [vertd](https://github.com/vert-sh/vertd) | VERT AGPL-3.0; vertd GPL-3.0. Current FAQ says non-video processing is on-device but official video flow uploads to its server; self-hosted Rust/FFmpeg daemon is available. Homepage's broad local-processing wording must not override the more specific FAQ. | Excellent local-first converter UX, format-pair discovery/settings, browser-WASM processing, separate heavy media daemon. | **UX/architecture reference only.** No wholesale UI/code/service adoption. Copyleft and external-request behavior conflict with current no-hidden-upload boundary unless separately approved. |
+| Browser-WASM engines | Per-library licenses and browser support/memory limits vary. | Small image/PDF/archive transforms can remain private and avoid server load. | **PILOT one narrow family only.** Capability detection, worker isolation, memory caps, cancellation, same-origin pinned assets and output read-back required. Browser availability is not a server conversion capability. |
+
+### Cross-source synthesis — recommended aLandi design
+
+1. **Keep two independent products:** (A) model-facing extraction/normalization into text or structured evidence; (B) user-facing conversion producing a new downloadable artifact. Never label extraction as conversion and never replace the original.
+2. **One typed capability registry:** each adapter declares exact input/output MIME pair, extension hints, signature detector, parser/engine version, license/source, fidelity/loss, limits, availability reason and test-fixture ID. Extension lists are UI hints only; signature and MIME checks remain server-side.
+3. **Bounded route planning:** only registered edges; deterministic weighted route, initial maximum 3 hops; reject loops and format-specific forbidden edges; record the complete planned route before execution. Cost should include fidelity loss, CPU/RAM, duration and trust class, not just hop count.
+4. **Bounded durable jobs:** bounded admission queue; global and per-user concurrency; per-engine semaphores; job idempotency; explicit queued/running/cancelling/completed/failed/cancelled states; progress per step; retry only when idempotency and cleanup are proven. Do not copy Filee's unbounded Channel or CPU-count fan-out into a shared server.
+5. **Private staging and output ownership:** immutable source artifact; job-scoped directory with restrictive permissions; reserve destination ID before work; cleanup only paths owned by the job; never overwrite original; clean on success/failure/cancel/timeout/process crash recovery.
+6. **Sandbox external engines:** no network by default; no shell; fixed executable allowlist and argument builder; minimal filesystem; no ambient PATH discovery; macros/scripts disabled; subprocess timeout/kill/reap; independent resource budgets per hop.
+7. **Validate output:** read back with the declared output parser/signature checker; hash output; record MIME/size/engine/version/warnings/fidelity; preserve page/sheet/slide/time offsets and source hash. A successful process exit alone is not a valid artifact.
+8. **Choose engines by evidence:** keep current pypdf + bounded OOXML/text extraction as fast path; benchmark MarkItDown on a representative RU/EN/TH corpus; reserve Docling for complex layout/OCR only if its quality gain justifies model and memory costs; keep Pandoc/LibreOffice/FFmpeg as separate user-facing conversion families.
+
+### Source review caveats
+
+- MarkItDown's current-process I/O warning is a security boundary, not a minor deployment note. A parser process must not be able to read arbitrary gateway files or reach internal URLs.
+- Docling's format matrix includes optional dependencies and model-backed paths. Capability must be registered per exact installed adapter/extras/model, not inferred from the upstream umbrella project's format table.
+- Filee is an excellent systems reference, but its local desktop assumptions (single user, local filesystem, interactive process) must be reworked for a shared FastAPI gateway.
+- VERT's homepage and FAQ are not equally precise about server-side video. Use the FAQ and deployment configuration as the operative privacy evidence.
+- No new package, converter binary, OCR model, media model, browser-WASM bundle or upstream code was installed/copied in this audit.
+
+### Relation to current aLandi implementation
+
+- Main currently has the small model-facing extraction route and no general user-facing conversion/download job pipeline.
+- Draft PR #190 adds the first typed capability registry for fixture-backed TXT/MD/CSV/JSON/PDF/DOCX/XLSX extraction only; it is not merged and does not implement the converter graph, queue, artifact lifecycle or external engine sandbox described above.
+- P4.6 remains OPEN. P0 landing/release acceptance remains the active delivery blocker; this research can inform the later P4 packet without reordering the release gate.
+
+### Primary upstream sources inspected
+
+- [Filee v2.5.0 release](https://github.com/KnifeLemon/Filee/releases/tag/v2.5.0)
+- [Filee architecture](https://github.com/KnifeLemon/Filee/blob/master/docs/ARCHITECTURE.md)
+- [Filee route planner](https://github.com/KnifeLemon/Filee/blob/master/src/Filee.Core/Conversion/RoutePlanner.cs)
+- [Filee job queue](https://github.com/KnifeLemon/Filee/blob/master/src/Filee.Core/Conversion/JobQueue.cs)
+- [Filee converter-authoring contract](https://github.com/KnifeLemon/Filee/blob/master/docs/ADDING-A-CONVERTER.md)
+- [MarkItDown README/security](https://github.com/microsoft/markitdown)
+- [MarkItDown releases](https://github.com/microsoft/markitdown/releases)
+- [Docling package metadata](https://github.com/docling-project/docling/blob/main/packages/docling/pyproject.toml)
+- [Docling supported formats](https://docling-project.github.io/docling/usage/supported_formats/)
+- [Docling model catalogue](https://docling-project.github.io/docling/usage/model_catalog/)
+- [VERT FAQ](https://github.com/vert-sh/vert/blob/main/docs/FAQ.md)
+- [VERT video conversion](https://github.com/vert-sh/vert/blob/main/docs/VIDEO_CONVERSION.md)
+- [VERT license](https://github.com/vert-sh/vert/blob/main/LICENSE) · [vertd license](https://github.com/vert-sh/vertd/blob/main/LICENSE)
