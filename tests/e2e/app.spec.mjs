@@ -1047,22 +1047,26 @@ test('chat and AgentRun status accessible names follow the active RU/EN locale',
   }
 });
 
-test('aNoteBooki sidebar link keeps its route and localizes its accessible name', async ({ page }) => {
+test('aNoteBooki sidebar shortcut uses the shared mode and localizes its accessible name', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const notebookLink = page.locator('#sidebar a[href*="/notebook/"]');
-  await expect(notebookLink).toHaveAttribute('href', /\/notebook\/$/);
-  await expect(notebookLink).toHaveAttribute('aria-label', 'Открыть aNoteBooki Notebook');
-  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const notebookShortcut = page.locator('#sidebar [data-action="open-notebook-mode"]');
+  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki');
+  await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
 
   await page.locator('#uiLanguage').selectOption('en');
-  await expect(notebookLink).toHaveAttribute('aria-label', 'Open aNoteBooki Notebook');
-  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Notebook');
+  await expect(notebookShortcut).toHaveAccessibleName('Open aNoteBooki');
+  await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Notebook');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 
   await page.locator('#uiLanguage').selectOption('ru');
-  await expect(notebookLink).toHaveAttribute('aria-label', 'Открыть aNoteBooki Notebook');
-  await expect(notebookLink.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
+  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki');
+  await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
+
+  await notebookShortcut.click();
+  await expect(page).toHaveURL(/#mode=notebook$/);
+  await expect(page.locator('#notebookModePanel')).toBeVisible();
 });
 
 test('published app boots with aServi selected and concise navigation', async ({ page }) => {
