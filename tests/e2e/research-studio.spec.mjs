@@ -48,9 +48,14 @@ test('Functions menu opens Agents and Skills and keeps Research method separate 
   await method.selectOption('multi_step_evidence_report');
   await expect(method).toHaveValue('multi_step_evidence_report');
   await expect(researchPanel.locator('#researchMethodStatus')).toContainText('Метод выбран для этого чата');
+  await modal.locator('[data-action="close-function-panel"]').first().click();
+  await expect(modal).toBeHidden();
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_processing_mode'))).toBe('deep');
-  await expect(method).toHaveValue('multi_step_evidence_report');
+  await page.locator('#functionsMenuSummary').click();
+  await menu.locator('[data-function="research"]').click();
+  await expect(modal).toBeVisible();
+  await expect(researchPanel.locator('#deepResearchMethodSelect')).toHaveValue('multi_step_evidence_report');
   await expect(page.locator('#chatBox .message')).toHaveCount(0);
 });
