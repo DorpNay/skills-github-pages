@@ -1,9 +1,31 @@
 import { test, expect } from '@playwright/test';
 
+function isModelInferenceRequest(request) {
+  if (request.method() !== 'POST') return false;
+  const url = new URL(request.url());
+  return /\/chat\/completions(?:\/|$)/i.test(url.pathname) && request.postData() !== null;
+}
+
+test('provider catalog discovery is not counted as model inference', async () => {
+  const catalogGet = {
+    method: () => 'GET',
+    url: () => 'https://generativelanguage.googleapis.com/v1beta/models',
+    postData: () => null
+  };
+  const inferencePost = {
+    method: () => 'POST',
+    url: () => 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+    postData: () => '{"messages":[]}'
+  };
+
+  expect(isModelInferenceRequest(catalogGet)).toBe(false);
+  expect(isModelInferenceRequest(inferencePost)).toBe(true);
+});
+
 test('explicit remember commands stay in browser memory stores and do not call a provider', async ({ page }) => {
   const modelRequests = [];
   page.on('request', request => {
-    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -42,7 +64,7 @@ test('explicit remember commands stay in browser memory stores and do not call a
 test('explicit shared-memory command requires confirmation and uses a separate store', async ({ page }) => {
   const modelRequests = [];
   page.on('request', request => {
-    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -79,7 +101,7 @@ test('explicit shared-memory command requires confirmation and uses a separate s
 test('a chat marked private cannot be sent to an external provider after reload', async ({ page }) => {
   const modelRequests = [];
   page.on('request', request => {
-    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -229,7 +251,7 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
 test('private-memory requests fail closed when the durable privacy marker cannot be saved', async ({ page }) => {
   const modelRequests = [];
   page.on('request', request => {
-    if (/privacy-gateway\.test|\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -294,7 +316,7 @@ test('private-memory requests fail closed when the durable privacy marker cannot
 test('private chat provider-block feedback follows the English locale', async ({ page }) => {
   const modelRequests = [];
   page.on('request', request => {
-    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -334,7 +356,7 @@ test('shared memory stays out of third-party requests unless global memory is en
     localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
     localStorage.setItem('ai_global_memory_enabled_v1', 'false');
   });
-  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+  await page.route(/https:\/\/generativelanguage\.googleapis\.com\/.*\/chat\/completions(?:\?.*)?$/i, async route => {
     outboundBodies.push(route.request().postDataJSON());
     await route.fulfill({
       status: 200,
@@ -382,7 +404,7 @@ test('explicitly enabled global memory is included only in the allowed third-par
     localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
     localStorage.setItem('ai_global_memory_enabled_v1', 'true');
   });
-  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+  await page.route(/https:\/\/generativelanguage\.googleapis\.com\/.*\/chat\/completions(?:\?.*)?$/i, async route => {
     outboundBodies.push(route.request().postDataJSON());
     await route.fulfill({
       status: 200,
@@ -426,7 +448,7 @@ test('explicitly enabled global memory is included only in the allowed third-par
 test('canceling an explicit shared-memory save leaves the input and stores unchanged', async ({ page }) => {
   let modelRequests = 0;
   page.on('request', request => {
-    if (/\/v1\/chat\/completions|generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests++;
     }
   });
@@ -462,7 +484,7 @@ test('canceling external project-context disclosure preserves the draft and send
   const modelRequests = [];
   let disclosureMessage = '';
   page.on('request', request => {
-    if (/generativelanguage\.googleapis\.com|api\.groq\.com|openrouter\.ai|api\.x\.ai|api\.kilo\.ai/i.test(request.url())) {
+    if (isModelInferenceRequest(request)) {
       modelRequests.push(request.url());
     }
   });
@@ -543,7 +565,7 @@ test('accepting external project-context disclosure sends the named project cont
     }]));
     localStorage.setItem('ai_current_chat_v87', 'external-project-chat');
   });
-  await page.route('https://generativelanguage.googleapis.com/**', async route => {
+  await page.route(/https:\/\/generativelanguage\.googleapis\.com\/.*\/chat\/completions(?:\?.*)?$/i, async route => {
     outboundBodies.push(route.request().postDataJSON());
     await route.fulfill({
       status: 200,
