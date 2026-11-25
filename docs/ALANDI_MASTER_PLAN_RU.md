@@ -212,6 +212,14 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 | Repository About metadata, Pages policy and owner-only host/secret/billing/DNS/Tunnel actions | NOW, P8, issue #111 | OWNER GATE; About description still requires manual owner update |
 | Reversible experiments outside core, off by default, measured, kill criteria and rollback | 0.3.13, LOOP.md | SPECIFIED |
 
+### 0.5 Project Sources / N₂O archive reconciliation (2026-11-25; FACT + OWNER DECISION OPEN)
+
+- Live `AGENTS.md` is the active engineering contract and already implements the current entry protocol: read `NOW.md` lines 1–100, verify live main and open queues, then use the master plan and INTEL. The uploaded AGENTS snapshot is older and must not replace the live file.
+- Live `LOOP.md`, `docs/ALANDI_N2O_CORE_RU.md`, `docs/ALANDI_N2O_KNOWLEDGE_LOOP_RU.md`, `docs/ALANDI_N2O_CHATGPT_SOURCES_RU.md` and `docs/ALANDI_CHATGPT_PROJECT_INSTRUCTIONS_RU.md` are archive stubs dated 2026-11-18. The uploaded v1.1 files are useful historical source material, not current repository policy.
+- Current canonical working documents remain exactly `NOW.md`, `docs/ALANDI_MASTER_PLAN_RU.md` and `INTEL.md`; `AGENTS.md` is the active engineering entry contract. Do not create a competing backlog, resurrect old orienters or silently restore a second knowledge workflow.
+- N₂O concepts that remain compatible (owner authority, evidence maturity, no hidden-reasoning storage, reversible changes, knowledge deduplication and explicit promotion) are applied through the current contract. **Whether to restore a separate N₂O document set is an unresolved owner decision**; no restoration is made in this pass.
+- Project Sources and Project Instructions are manually maintained. Replace stale uploaded copies from the live repository; do not assume GitHub updates the Project automatically.
+
 ### Incident record — root app controls unavailable (2026-11-21)
 
 - **FACT:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch. The initial repair in 8fbb128 restored the function boundary, but live browser instrumentation then exposed a second bootstrap exception: top-level `applyUiLanguage()` ran before the later `let activeVoiceStatusKey` declaration, causing a temporal-dead-zone ReferenceError inside `refreshVoiceRecordingStatus()`. This aborted the IIFE before delegated click registration. Static Jekyll/Pages success did not detect either runtime fault.
