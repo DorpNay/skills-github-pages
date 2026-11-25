@@ -236,7 +236,7 @@ permalink: /
     @media (max-width:380px) {
       #inputArea { flex-wrap:wrap;align-items:stretch;column-gap:6px;row-gap:6px; }
       #inputArea .composer-tool { order:0;flex:0 0 44px; }
-      #inputArea #userInput { order:1;flex:1 1 calc(100% - 50px);width:calc(100% - 50px);min-width:0; }
+      #inputArea #userInput { order:1;flex:1 1 calc(100% - 52px);width:calc(100% - 52px);min-width:0; }
       #inputArea #sendBtn,#inputArea #stopBtn { order:2;flex:0 0 44px; }
     }
     @media (prefers-reduced-transparency:reduce) { .toolbar-menu-panel { background:var(--ui-surface);backdrop-filter:none;-webkit-backdrop-filter:none; } }
@@ -1081,8 +1081,8 @@ permalink: /
       <button type="button" data-action="attach-text-file" id="attachTextButton" aria-label="Добавить вложение" title="Выбрать фото, видео или файл любого формата" aria-expanded="false" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">＋</button>
       <input type="file" id="mediaAttachmentInput" class="hidden" accept="image/*,video/*" multiple>
       <input type="file" id="textAttachmentInput" class="hidden" multiple>
-      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
       <button id="voiceUnavailableButton" type="button" aria-label="Открыть режимы голоса" aria-expanded="false" title="Нажми, чтобы открыть режимы голоса" class="composer-tool rounded-xl border border-gray-700 px-3 py-2.5">◉</button>
+      <textarea id="userInput" rows="1" maxlength="30000" placeholder="Напиши сообщение..." aria-label="Сообщение" data-i18n-placeholder="composerPlaceholder" class="flex-1 min-w-0 bg-gray-900 border border-gray-700 px-3 py-2.5 rounded-xl text-base outline-none resize-none max-h-32"></textarea>
       <button id="sendBtn" type="button" data-action="send" class="bg-blue-600 hover:bg-blue-500 px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Отправить сообщение">➤</button>
       <button id="stopBtn" type="button" data-action="stop" class="hidden composer-stop px-3 py-2.5 rounded-xl font-bold text-sm shrink-0" aria-label="Остановить генерацию">⏹</button>
     </div>
@@ -1622,6 +1622,7 @@ permalink: /
             projectId: typeof item.projectId === 'string' ? item.projectId.slice(0, 128) : null,
             projectMemoryEnabled: item.projectMemoryEnabled === true,
             searchMode: ['normal','more','offline'].includes(item.searchMode) ? item.searchMode : undefined,
+            skillPreset: ['auto','planning','research','code-review','data-analysis','agent-systems','multimodal','custom'].includes(item.skillPreset) ? item.skillPreset : 'auto',
             deepResearchMethod: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod : (item.multiAgentEnabled === true ? 'multi_step_evidence_report' : 'none'),
             multiAgentEnabled: ['none','multi_step_evidence_report'].includes(item.deepResearchMethod) ? item.deepResearchMethod === 'multi_step_evidence_report' : item.multiAgentEnabled === true,
             agentRuntimeStrategy: ['single','team_review','coder_review'].includes(item.agentRuntimeStrategy) ? item.agentRuntimeStrategy : 'single',

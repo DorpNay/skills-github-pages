@@ -4613,7 +4613,7 @@ test('Functions menu exposes four truthful independent panels with blurred backd
   await expect(roadmap).toBeVisible();
   await expect(roadmap).not.toHaveAttribute('open', '');
   await roadmap.locator('summary').click();
-  for (const method of ['Comparative research','Literature review','Claim and fact checking','Source quality and freshness audit','Technical due diligence']) {
+  for (const method of ['Сравнительное исследование','Обзор литературы','Проверка утверждений и фактов','Аудит качества и свежести источников','Технический due diligence']) {
     await expect(roadmap).toContainText(method);
   }
   await expect(roadmap.locator('button, input, select, textarea')).toHaveCount(0);
@@ -7725,6 +7725,10 @@ test('Project Settings preserves edited fields while the interface language chan
   });
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await ensureSidebarOpen(page);
+  const projectNavigation = page.locator('#projectNavigationList');
+  if (await projectNavigation.evaluate(element => element.classList.contains('hidden'))) {
+    await page.locator('#projectNavToggle').click();
+  }
   const row = page.locator('#projectNavigationList .project-nav-item[data-project-id="locale-settings-project"]');
   await row.locator('.project-row-menu summary').click();
   await row.locator('[data-action="open-project-settings"]').click();
