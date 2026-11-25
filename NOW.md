@@ -1,6 +1,7 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main` · **Live HEAD:** `f45eedb6b3b877ea695a7064189ef1c7333bcd2c`
+**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
+**Последний подтверждённый main SHA до этого NOW-only checkpoint:** `48c192e379e26f9d4f419f4041bc730733cdbc1c` (parent of this checkpoint update). Это не self-referential HEAD: на входе всегда читать live `refs/heads/main` и не выводить SHA из текста NOW.
 **Последний application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Между ним и текущим HEAD — документационные, тестовые и instruction-only изменения; runtime app code не менялся.
 
 ## Старт новой задачи
