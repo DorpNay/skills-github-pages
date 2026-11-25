@@ -8392,11 +8392,10 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       if(event.shiftKey&&(document.activeElement===first||!modal.contains(document.activeElement))){event.preventDefault();last.focus();}
       else if(!event.shiftKey&&(document.activeElement===last||!modal.contains(document.activeElement))){event.preventDefault();first.focus();}
     });
-    ['projectCreateModal','projectSettingsModal','settingsModal'].forEach(id=>{
+    ['projectCreateModal','projectSettingsModal'].forEach(id=>{
       const modal=$(id);
       modal.addEventListener('keydown',event=>trapProjectModalTab(modal,event));
     });
-    $('settingsModal').addEventListener('click',event=>{if(event.target===$('settingsModal'))toggleSettings(false);});
     $('functionPanelModal').addEventListener('click', event => { if (event.target === $('functionPanelModal')) closeFunctionPanel(); });
     document.addEventListener('keydown', (event) => {
       const functionModal = $('functionPanelModal');
