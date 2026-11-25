@@ -2,7 +2,20 @@ import { test, expect } from '@playwright/test';
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 const NOTEBOOK_PATH = process.env.LIVE_SITE_URL ? './notebook/' : '/notebook/';
 
-test('root navigation exposes the dedicated aNoteBooki route', async ({ page }) => { await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' }); await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(1); });
+test('root navigation opens aNoteBooki as a shared application mode', async ({ page }) => {
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-action="toggle-sidebar"]').click();
+  const shortcut = page.locator('#sidebar [data-action="open-notebook-mode"]');
+  await expect(shortcut).toBeVisible();
+  await expect(shortcut).toHaveAccessibleName('Открыть aNoteBooki Notebook');
+  await expect(page.locator('#sidebar a[href*="/notebook/"]')).toHaveCount(0);
+  await shortcut.click();
+  await expect(page).toHaveURL(/#mode=notebook$/);
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
+  await expect(page.locator('#notebookModePanel')).toBeVisible();
+  await expect(page.locator('#projectPanel')).toBeHidden();
+  await expect(page.locator('#chatBox')).toBeVisible();
+});
 
 test('aNoteBooki persists notes and URL references locally with project/chat provenance', async ({ page }) => {
   let sourceFetches = 0;
