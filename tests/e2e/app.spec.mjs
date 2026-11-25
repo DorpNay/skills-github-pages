@@ -1051,16 +1051,16 @@ test('aNoteBooki sidebar shortcut uses the shared mode and localizes its accessi
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   await page.locator('[data-action="toggle-sidebar"]').click();
   const notebookShortcut = page.locator('#sidebar [data-action="open-notebook-mode"]');
-  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki');
+  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki Notebook');
   await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
 
   await page.locator('#uiLanguage').selectOption('en');
-  await expect(notebookShortcut).toHaveAccessibleName('Open aNoteBooki');
+  await expect(notebookShortcut).toHaveAccessibleName('Open aNoteBooki Notebook');
   await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Notebook');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 
   await page.locator('#uiLanguage').selectOption('ru');
-  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki');
+  await expect(notebookShortcut).toHaveAccessibleName('Открыть aNoteBooki Notebook');
   await expect(notebookShortcut.locator('[data-i18n="notebookLinkDescriptor"]')).toHaveText('Блокнот');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
 
