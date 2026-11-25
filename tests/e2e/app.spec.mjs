@@ -629,7 +629,10 @@ test('Research and Agent function panels update their dynamic copy when language
   });
   await expect(page.locator('#deepResearchMethodSelect option[value="none"]')).toHaveText('Direct chat');
   await expect(page.locator('#deepResearchMethodSelect option[value="multi_step_evidence_report"]')).toHaveText('Multi-step evidence report');
-  await expect(page.locator('[data-action="select-processing-mode"]')).toHaveText('Enable “Thorough” mode');
+  await expect(page.locator('#researchWorkflowHelp')).toContainText('Quick/Thorough effort and web access remain separate chat controls; independent agents are not created.');
+  await expect(page.locator('#researchFunctionSettings [data-action="select-processing-mode"]')).toHaveCount(0);
+  await expect(page.locator('#modeFast')).toBeVisible();
+  await expect(page.locator('#modeDeep')).toBeVisible();
 
   await page.locator('#functionPanelModal .function-panel-close').click();
   await page.locator('#functionsMenu > summary').click();
@@ -657,7 +660,7 @@ test('additional Settings controls, privacy copy and transfer actions localize i
 
   await page.locator('#uiLanguage').selectOption('en');
   await expect(page.locator('#uiMotion option[value="auto"]')).toHaveText('Auto');
-  await expect(page.locator('#uiMotion option[value="reduced"]')).toHaveText('Reduce');
+  await expect(page.locator('#uiMotion option[value="reduced"]')).toHaveText('Reduce motion');
   await expect(page.locator('#composerPosition option[value="top"]')).toHaveText('Top, below mode controls');
   await expect(page.locator('#systemPromptInput')).toHaveAttribute('placeholder', 'Your rules for all requests');
   await expect(page.locator('#editSystemPrompt')).toHaveAccessibleName('Edit system prompt');
@@ -693,7 +696,7 @@ test('third-party provider settings labels and controls localize in RU and EN', 
   await page.locator('#providerPreset').selectOption('pollinations');
   await expect(page.locator('[data-action="connect-pollinations"]')).toHaveText('Connect Pollinations account · PKCE');
   await expect(page.locator('[data-action="test-connection"]')).toHaveText('Test connection and model');
-  await expect(page.locator('#apiKey')).toHaveAttribute('placeholder', 'API key');
+  await expect(page.locator('#apiKey')).toHaveAttribute('placeholder', 'App Key · pk_…');
   await expect(page.locator('#modelName')).toHaveAttribute('placeholder', 'Model ID');
 });
 
