@@ -1,56 +1,56 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main` · **Live HEAD:** `6ed6f576c8e652dfd335f98c98d4be35d6adf0de`
-**Последний application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Текущий HEAD содержит AGENTS v2, requirements/UX traceability и RU/EN provider-probe credential-redaction regression; полный Quality/Chromium прогон на `6ed6f576` ещё выполняется/ожидается. На старте следующей задачи всё равно повторно получить live main SHA.
+**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main` · **Live HEAD:** `f45eedb6b3b877ea695a7064189ef1c7333bcd2c`
+**Последний application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Между ним и текущим HEAD — документационные, тестовые и instruction-only изменения; runtime app code не менялся.
 
 ## Старт новой задачи
 1. Прочитать только root `NOW.md`, строки 1–100.
-2. Одним пакетом получить live `main` SHA, открытые PR/issues и Actions/checks **на этом SHA**.
-3. По задаче открыть нужный раздел `docs/ALANDI_MASTER_PLAN_RU.md` и профильные источники из `INTEL.md`.
-4. Читать только связанные исходники/тесты. Не восстанавливать legacy orienter bundles и не создавать параллельные очереди.
+2. Одним пакетом проверить live `main` SHA, открытые PR/issues и Actions/checks на exact HEAD.
+3. Открыть нужные разделы мастер-плана, `INTEL.md`, owning spec и связанного кода.
+4. Не перечитывать проект и не восстанавливать архивные orienters, если релевантный контекст не изменился.
 
-## Три канонических рабочих документа
-- **NOW.md** — компактный первый вход, приоритет, live checkpoint и ближайшее действие.
-- **docs/ALANDI_MASTER_PLAN_RU.md** — полный список всех требований, P0–P8, acceptance, незакрытых задач и истории.
-- **INTEL.md** — внешний source map, версии/лицензии/provenance и подключённые assistant-side инструменты.
-GitHub `main` — источник истины. Project Sources и Project Instructions синхронизируются вручную.
+## Канонические документы
+- `AGENTS.md` — **AI Engineer Project Instruction v4.0**, полный инженерный контракт + authority boundaries (145 строк; 16,610 символов).
+- `NOW.md` — короткий exact checkpoint, приоритеты, блокеры, ближайшее действие (этот файл, ≤100 строк).
+- `docs/ALANDI_MASTER_PLAN_RU.md` — единственный активный requirements/P0–P8/acceptance registry.
+- `INTEL.md` — актуальные источники, версии, лицензии, риски, verdicts.
+Supporting ADR/specs/tests/runbooks допустимы; не создавать вторую governance-инструкцию или backlog.
 
-## Зафиксированная директива владельца — 2026-11-25
-- **Цель:** довести все применимые срезы и задания P0–P8 до реальной реализации; начинать с Landing/P0, затем P1–P5 core, затем P6 voice/audio и P7 provider review, после — P8 release. Не заменять существующие P0.1–P0.35/P1–P8 новыми общими задачами.
-- **Main-first:** работать в `main` связными, но небольшими обратимыми commits; до каждого write проверять точный HEAD/parent и использовать expected-SHA guard. Не создавать лишние PR/ветки. Существующие PR/ветки сначала сверять и переносить только доказанно полезные минимальные изменения; не merge/close/delete/force-push/rebase/reset без отдельного основания и разрешения.
-- **Pages — неприкосновенно:** не менять workflow автоматической Pages-публикации, её триггеры, build/deploy, настройки публикации и не инициировать ручной deploy. Тестовые workflow допустимы только отдельно и без побочного изменения автопостинга.
-- **Upstream reuse override:** допускается перенести целую зрелую систему/подсистему, если это быстрее и эффективнее, чем переписывание, и она встраивается без нарушения контрактов. До переноса проверить лицензию всего дерева/транзитивных компонентов/weights, security advisories, актуальный commit/release, runtime/API, изоляцию/permissions, данные и retention, размер/ресурсы, offline fit, миграцию, поддержку, тесты/eval и rollback. Чётко различать code copy, адаптацию и заимствование принципа. Не тащить framework/runtime только ради визуального сходства.
-- **Исследование по каждому P0–P8:** использовать актуальные официальные primary sources, upstream repositories/releases, versioned docs, security advisories и реальные tool/plugin/skill contracts. Сравнивать не только feature list, но и стоимость, ограничения, лицензии, reliability, privacy, cancellation/recovery и переносимость. Записывать результат и disposition в существующий `INTEL.md`.
-- **Артефакты и кэш:** скачивать/собирать зависимости, небольшие модели, runtime и fixtures только с зафиксированным URL/version/SHA-256/size/license/provenance; проверять распаковку и offline closure. В публичный репозиторий помещать только redistributable, size-bounded файлы; не раскрывать материалы в Pages output. Непубличные/тяжёлые артефакты — в проверяемый artifact/cache с инструкцией владельцу. **Самую большую основную модель не скачивать.** Не коммитить секреты, приватные данные и артефакты с неизвестными правами.
-- **Параллельность:** параллелить независимые source reviews, read-only inspections и тестовые/eval-пакеты; сериализовать изменения одного файла и Git ref. Реальных Relay workers сейчас не обнаружено — не заявлять агентную параллельную работу без доступного target и readiness.
-- **Закрытие:** SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED ≠ AVAILABLE LIVE. Задание закрывается только после кода/артефакта, нужных failure/cancel/security tests и точной проверки. VPS, секреты, платежи, DNS/Tunnel, настоящий микрофон/устройство и production deployment — отдельные owner gates; не имитировать PASS.
+Project Instructions / Sources в ChatGPT синхронизируются вручную. Полный `AGENTS.md` не помещается в поле Project Instructions; прикреплять его как Project Source и держать в поле короткую инструкцию-ссылку на live canon. Не утверждать, что Project Source обновлён, пока владелец не заменил его в UI.
+
+## Зафиксированные решения владельца
+- **N₂O / LOOP:** окончательно остаются архивными по решению владельца от 2026-11-25. Не восстанавливать N₂O Core/Knowledge Loop/Sources и старые orienters; не навязывать фиксированные четыре стадии. Полезные принципы встроены в адаптивный `AGENTS.md` v4.0.
+- **Main-first:** малые связные обратимые commits прямо в `main`; перед записью проверять exact parent/head и использовать expected-SHA guard. Не создавать PR ради ритуала.
+- **Pages:** auto-publish workflow/triggers/settings неприкосновенны; обычный push может запускать штатную публикацию, manual deploy запрещён без отдельного разрешения.
+- **Upstream reuse:** разрешено переносить зрелую целую систему, если она реально лучше переписывания и пройдёт license/security/runtime/data/offline/rollback gate. Основную большую модель не скачивать.
+- **aNoteBooki:** после стабильной полезной базы заморозить; приоритет P0 UI, реальный aCodingi и Offline Core.
 
 ## Очерёдность P0–P8
-- **P0:** root landing, navigation, RU/EN, controls, forms/dialogs, responsive, keyboard/screen-reader/accessibility, lifecycle/security feedback.
-- **P1:** общая оболочка aLandi / aNoteBooki / aCodingi; реальные Notebook/Studio и изолированные Coding Projects.
-- **P2:** direct-chat baseline, контекст/память, policy routing моделей/специалистов и continuity.
-- **P3:** Deep Research, Agents, Skills, connectors, durable runs, approvals, sandbox и отдельные bootstrap/training flows.
-- **P4:** Source Vault, safe ingestion, converter graph, evidence lineage и resumable artifact jobs.
-- **P5:** installable Offline Core, local/server parity, pinned artifacts, rollback и server-only acceptance.
-- **P6:** voice/audio: ASR, VAD, TTS, capture, jobs и лицензии весов.
-- **P7:** provider selection, data policy, privacy/retention, quotas, reliability — только после owner decision.
-- **P8:** release/host/security/infrastructure gates; owner-only части остаются отдельными блокерами.
+- **P0:** root landing, UI/RU-EN, accessibility, responsive, keyboard/SR, lifecycle, security и полная browser acceptance.
+- **P1:** общий root frame; aCodingi первым, aNoteBooki frozen baseline.
+- **P2:** direct-chat, context/memory, routing и continuity.
+- **P3:** Deep Research, agents/subagents, Skills, connectors, durable runs, approval/sandbox, bootstrap и отдельное model training.
+- **P4:** Source Vault, safe ingestion/converter graph, stable artifacts, lineage, File Library/export.
+- **P5:** installable Offline Core, local/server parity, pinned artifacts, update/rollback.
+- **P6:** voice/audio ASR/VAD/TTS и device/weights acceptance.
+- **P7:** providers, live catalogs, privacy/retention, cost/quotas, exclusive routing.
+- **P8:** release/hosting/security/governance; owner-only gates остаются открытыми.
+Текущий порядок исполнения — в ближайшем действии ниже; исторические backlog пункты не удалять без reconciliation.
 
-## Live state — проверено 2026-11-25 (parent checkpoint `e58933f869ac4adb697268c06611adfb37508779`)
-
-- **FACT — application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Это SHA с последней полной Quality Sentinels проверкой; следующий commit `a5423012a4f499531e66607c1103078ae735192f` меняет только документацию и Jekyll title/description.
-- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) and #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`) remain open and non-mergeable/stale. The provider credential-redaction code and full-Chromium workflow behavior from #195 are already present in current main; its missing RU/EN regression test was recreated directly on main at `6ed6f576`. Do not merge either PR; retain read-only until a full diff audit proves unique remaining value. #187 has a much older base and a large divergent tree; no wholesale cherry-pick.
-- **FACT — issue queue:** #111 (owner/live-host/release gates) remains open. #186 (unrelated GitHub Skills exercise) was closed as `not_planned` with an explanatory comment; this removes a non-product queue item, not an aLandi requirement.
-- **FACT — Project Sources / N₂O decision:** live `AGENTS.md` is now the 121-line v2.0 adaptive engineering contract. Owner explicitly decided on 2026-11-25 to keep N₂O Core / Knowledge Loop / Sources and old LOOP/orienter files archived because they are outdated. Do not restore them or require a fixed four-stage loop; apply useful evidence, safety, owner-authority, deduplication and knowledge-capture practices through `AGENTS.md`, `NOW.md`, master plan and `INTEL.md`. The uploaded `AGENTS.md` / N₂O files are stale copies; live archive stubs and current instruction must be manually synced into Project Sources.
-
-- **FACT — exact current HEAD `6ed6f576c8e652dfd335f98c98d4be35d6adf0de`:** commit adds only `tests/e2e/app.spec.mjs` and `docs/ALANDI_MASTER_PLAN_RU.md`. Graphify run [45621154725](https://github.com/DorpNay/skills-github-pages/actions/runs/45621154725) **SUCCESS**; Pages build/deploy/report run [45621152308](https://github.com/DorpNay/skills-github-pages/actions/runs/45621152308) **SUCCESS**. Quality Sentinels run [45621154437](https://github.com/DorpNay/skills-github-pages/actions/runs/45621154437) had Security, Integrity and Context **PASS** at the last check; Jekyll, required root smoke and full Chromium were still running. Lightpanda, independent static analysis and published-site contract were skipped by this workflow invocation. Do not claim full browser acceptance until the exact run completes.
-- **FACT — Chromium triage detail:** run #45553470306 contains 45 unique failing cases plus retry log duplicates (213 passed, 1 flaky). Proven assertion drift examples: English status expected vs Russian actual; hard-coded toast copy differs despite equivalent current copy; legacy page-title expectation differs from current aLandi title; English disclosure phrase expected vs Russian actual. Other failures are genuine candidates around modal focus, touch/menu geometry, provider/mock flow, voice lifecycle, persistence rollback and privacy-memory outbound request counts. Classify and reproduce individually; do not treat all failures as product bugs or all as stale tests.
-- **FACT — exact-code Quality Sentinels:** run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) на `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` — Jekyll, Security, Integrity, Context и required root app boot/interaction smoke **PASS**; Real Chromium **FAIL: 45 tests failed, 213 passed, 1 flaky** (22.8m); Lightpanda, independent static analysis и Published Pages release contract — **SKIPPED**. Ошибки затрагивают provider/catalog, voice, AgentRun, mobile touch/menu, sidebar/projects/chats, storage rollback, keyboard/focus, locale и reduced-motion; причины требуют отдельного triage.
-- **FACT — earlier docs checkpoints:** Pages build/deploy/report succeeded on `a5423012` (run `45593553349`), `382095a` (run `45594089465`), `47a49643` (run `45594959839`), `e58933f` (run `45598538751`), `23af30f` (run `45598934990`) and `0b0cee5` (run `45620128744`). Each was docs/instruction-only evidence and does not replace full browser acceptance.
-- **FACT — Pages policy and metadata:** Jekyll title/description обновлены. GitHub repository About description всё ещё содержит starter boilerplate: “Exercise: Create a site or blog from your GitHub repositories with GitHub Pages”. Доступные GitHub actions не предоставляют редактирование repo description; owner action: вручную заменить на “An offline-first AI workspace project focused on private local/server execution and optional online tools.” До коммерческого SaaS использования повторно проверить GitHub Pages policy.
-- **FACT — governance:** live branch API показывает `protected=false`, без required checks/review protection. Это остаётся owner/settings gate issue #111; настройки репозитория не менялись.
-- **FACT — Pages workflow:** штатная автопубликация не редактировалась и была запущена обычным push; ручной deploy не выполнялся. Published browser/revision contract на code baseline был skipped.
-- **OPEN:** Quality/Chromium run `45621154437` is running on exact HEAD; the previous full app baseline `191b2dac` remains red (45 failed, 213 passed, 1 flaky). iOS Safari/VoiceOver, native Windows forced-colors, real VPS/Ollama and network-denied server-only Offline Core are not verified; Relay worker readiness not confirmed.
+## Live state — verified 2026-11-25
+- **FACT — current exact main HEAD:** `f45eedb6b3b877ea695a7064189ef1c7333bcd2c`. This commit updates only `AGENTS.md` and `docs/ALANDI_MASTER_PLAN_RU.md`.
+- **FACT — AGENTS v4.0:** полный текст владельца добавлен в `AGENTS.md` без сокращения; согласованы supporting ADR/specs, task-scoped authorization, no-skip flaky-test handling, N₂O archive decision и owner-gated external effects. The repository-aligned instruction contains 16,610 characters / 145 lines.
+- **FACT — P3.6 new acceptance:** contract-first API/event schema (Pydantic → generated typed client), idempotent creation, SQLite WAL append-only event journal, per-run `event_seq` / `last_event_seq`, resume by `run_id` + cursor and default-off risky surfaces — **SPECIFIED, not VERIFIED**. Current `gateway/agent_runtime/store.py` has file-backed SQLite run/task/event tables, idempotency and `event_id`; its connection setup does not enable WAL. A generated typed client and immutable append-only/retention contract are not proven. Migration from `event_id` must be compatible.
+- **FACT — exact HEAD Pages:** run [45627857297](https://github.com/DorpNay/skills-github-pages/actions/runs/45627857297) build/deploy/report — **SUCCESS**. This is static publication evidence only, not app runtime acceptance.
+- **FACT — latest full Quality Sentinel:** run [45621154437](https://github.com/DorpNay/skills-github-pages/actions/runs/45621154437), test SHA `6ed6f576c8e652dfd335f98c98d4be35d6adf0de` — **FAIL** in real Chromium. Jekyll, Security, Integrity, Context and required root app boot/interaction smoke passed; Chromium failed. The run was before current docs-only HEAD; no Quality suite is claimed on `f45eedb6`.
+- **FACT — failure triage evidence:** privacy tests include a missing aServi API key in the fail-closed fixture; three Gemini privacy tests count all host requests and mistake GET model-catalog discovery (`postDataJSON() === null`) for inference POST. Filter inference method/payload; preserve zero-leak and payload-scope assertions. Other failures include real candidates in focus restoration, project/chat filtering, mobile touch geometry, voice lifecycle and storage rollback, plus stale locale/copy/title expectations. Do not blanket-classify or loosen assertions.
+- **FACT — previous baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` Quality Sentinel run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) reported 213 passed, 45 unique failed, 1 flaky. Reconcile retry duplicates before counting later run results.
+- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) and #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`) remain open and are not to be auto-merged/closed. Provider redaction + full-Chromium workflow behavior from #195 already exist in main; do not merge stale PRs wholesale.
+- **FACT — issue queue:** #111 remains open for owner/live-host/release gates. Unrelated imported issue #186 was closed as `not_planned` with comment.
+- **FACT — governance:** `main` is not protected and has no required checks/review rules; tracked by #111. Do not change repository settings without owner approval.
+- **FACT — Project Sources:** manual mirror only. Uploaded `AGENTS.md` and prior N₂O/LOOP copies are stale; the owner must replace the project source with live v4.0 `AGENTS.md`. The current chat Project Instructions field should contain a short pointer, not the full file.
 
 ## Ближайшее действие
-Довести классификацию и исправление unique Chromium failures на точном текущем HEAD; не ослаблять security/privacy assertions и не скрывать продуктовые дефекты. После полного browser acceptance — P0.35 mode/header/palette, затем P1 Coding + P3 orchestration + P5 Offline Core. PR #195/#187 остаются read-only; доказанные необходимые части уже переносить в main минимальными commits, не merge старые PR. Pages auto-publish не менять.
+1. Продолжить P0 Chromium triage на exact current main; сначала исправить privacy fixtures/request filtering, затем локальные assertion drift, затем реальные focus/navigation/mobile/voice/storage дефекты. На каждом баге — repro → minimal fix → focused test → full Chromium on exact HEAD. Не снижать privacy/security assertions и не исключать тесты.
+2. После полного browser acceptance — P0.35 header/mode selector/themes; затем P1 Coding + P3 orchestration foundation + P5 Offline Core. Notebook Studio remains frozen.
+3. После каждого существенного commit обновлять этот checkpoint и проверять Pages auto-publish; не делать manual deploy.
