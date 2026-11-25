@@ -733,7 +733,7 @@ permalink: /
     #projectPanel { flex:1 1 0!important;min-height:0;max-height:none!important;overflow:hidden; }
     #projectPanel:has(#projectNavigationList:not(.hidden)) { flex:1 1 0!important;max-height:none!important; }
     #projectPanel:has(#projectNavigationList.hidden) { flex:0 0 auto!important; }
-    #projectNavigationList { max-height:none!important; }
+    #projectNavigationList { max-height:min(34dvh,300px)!important;overflow-y:auto!important;overscroll-behavior:contain; }
     #chatSection { flex:1 1 0!important;min-height:0; }
     #functionPanelModal > section { max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);overflow-y:auto; }
     @media (max-width:640px) {
