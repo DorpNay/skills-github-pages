@@ -1,6 +1,6 @@
 # Connected assistant-side tools and external-source register
 
-**Review date:** 2026-11-23. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
+**Review date:** 2026-11-25. This file is the single aLandi catalog of upstream research and assistant-side plugins/tools. Repository integration status is always determined by live GitHub, not by this catalogue.
 
 ## Connected assistant-side tools and plugins
 
@@ -2325,3 +2325,87 @@ Official release-page snapshot reviewed for planning only; do not blindly update
 - **gVisor:** official release `20261116.0` (17 Nov 2026), including recent sandbox hardening changes. Candidate sandbox runtime; target kernel, cgroup, filesystem and nested virtualization compatibility must be tested before choosing it over OpenShell/Firecracker. https://github.com/google/gvisor/releases
 
 **Disposition:** current `models/runtime-stack.lock.json` remains pinned to Ollama `0.40.16`; the acquired OpenShell `v0.1.8` artifact is staged only and expires 2026-12-05. No production install, model activation, VPS mutation or dependency upgrade was performed. The current acquisition runs on 2026-11-21 verified the downloaded auxiliary model/runtime caches and license/provenance gate; they remain Actions artifacts, not installed services.
+
+
+## 2026-11-25 — Owner source sweep, brand system, free-first hosting and visual/runtime candidates
+
+**Status policy:** this section records a deduplicated intake of the owner's list. A name in this table is not an approval to install, copy code, download weights, or expose a product capability. Use COPY / ADAPT / INSPIRE / DEFER / REJECT only after exact repository/version, complete source and model/data license, notices, security advisories, runtime, resource, privacy, telemetry, offline closure and rollback have been checked. Several owner-supplied names are ambiguous; preserve their wording until a canonical project URL is identified.
+
+### Primary-source findings that affect decisions
+
+- **Tiffany Blue®:** Tiffany states that the color has been a registered trademark since 1998 and that “1837 Blue” is a proprietary Pantone color created exclusively for Tiffany and not publicly available as a standard swatch. Do not use an internet-guessed hex as the aLandi logo color or claim official equivalence. Sample the actual owner-provided aLandi emblem asset and document its contrast pairs. Source: https://press.tiffany.com/our-story/tiffany-blue/
+- **WCAG 2.2:** ordinary text contrast ≥4.5:1; large text ≥3:1; color must not be the only visual cue. Source: https://www.w3.org/TR/WCAG22/
+- **Motion safety:** W3C SC 2.3.3 (AAA) says interaction-triggered non-essential animation can be disabled; guidance recommends respecting prefers-reduced-motion or providing a global control. Use short restrained transitions and no essential state conveyed only by animation. Source: https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions
+- **GoogleChrome Modern Web Guidance:** maintainer source says project code Apache-2.0 and guides CC-BY-4.0; guides cover modern browser behavior, a11y, performance and offline local retrieval. The CLI documents telemetry, so do not add the CLI as a runtime dependency; prefer reviewed guides/local snapshots and assess telemetry before developer-tool use. Sources: https://github.com/GoogleChrome/modern-web-guidance and https://github.com/GoogleChrome/modern-web-guidance-src . Initial disposition: INSPIRE / selectively ADAPT for P0/P1 browser, keyboard, forms, animation and responsive eval.
+- **GitHub Pages free plan and policy:** Pages is available for public repositories on GitHub Free, but official limitations state that Pages is not intended/allowed as free hosting for online business, e-commerce or a website primarily facilitating commercial transactions or commercial SaaS. Keep aLandi Pages as the free static client/landing under its current allowed use; before monetizing/positioning the site as hosted SaaS, re-check policy and choose compliant hosting. It is not an inference/runtime host. Source: https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
+- **Google Cloud Free Trial:** new customers may receive $300 Welcome credit for 90 days, with restrictions. During a non-billable trial, VMs cannot use GPUs; when credit is exhausted or 90 days elapse, trial resources stop unless the owner upgrades. Google's documentation also lists restrictions on using the $300 credit for some Gemini/managed generative AI services for signups/upgrades on or after 2026-11-16. Treat this as temporary evaluation credit, not free perpetual compute or the default offline host. Sources: https://cloud.google.com/signup-faqs and https://docs.cloud.google.com/free/docs/free-cloud-features
+- **Oracle Cloud Always Free:** official page currently lists an Ampere A1 allowance equivalent to up to 2 OCPUs / 12 GB memory per tenancy, subject to region/shape limits and capacity; out-of-capacity errors can prevent creation. Candidate for lightweight CPU services or orchestration tests only, not assumed inference capacity, GPU or guaranteed availability. Sources: https://www.oracle.com/cloud/free/ and https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+- **Anthropic Skills:** official anthropics/skills repository contains SKILL.md-based examples; many are Apache-2.0, but inspect the exact skill folder and embedded assets before copying. Disposition: INSPIRE / selective ADAPT for Skill Library conventions. Source: https://github.com/anthropics/skills
+- **NVIDIA Auto-ontology:** official repository describes semantic/graph reasoning and deterministic query generation; Apache-2.0 at repository level. Candidate for ontology/RAG/source relationship experiments, not a new mandatory data service. Require offline import, dependency, explainability and 8-GB profile eval. Source: https://github.com/NVIDIA/AutoOntology (verify canonical repository and release before pinning).
+- **Maxun:** upstream describes a self-hostable visual website-to-API/web automation product and uses AGPL-3.0. Candidate reference for permitted web research automation only; inspect copyleft obligations and isolate browser/network permissions before any code reuse. Source: https://github.com/getmaxun/maxun
+- **MOSS-TTS v1.5:** upstream model page says 31 languages, zero-shot voice cloning and Apache-2.0; the current public HF repository listing is about 17 GB. Research candidate for larger hardware, not a small Offline Core dependency or an 8-GB default. Require exact model/config hashes, full data/voice terms, target-device benchmarks and RU/EN/TH listening evaluation. Sources: https://www.moss.cn/en/models/moss-tts and https://huggingface.co/OpenMOSS-Team/MOSS-TTS-v1.5
+- **Chatterbox:** upstream README says the project was retired in August 2026; the public code remains MIT but is no longer maintained or supported. Keep as historical benchmark/research material only; do not select as a production voice dependency without an explicit maintenance fork and security owner. Source: https://github.com/resemble-ai/chatterbox
+- **Google Flow Music:** official Google help pages describe an account-based online service with region/age and credits/subscription terms. It is not an offline model/runtime and must not be a core dependency. Source: https://support.google.com/flow/answer/16353334 (revalidate exact page and availability at use time).
+- **Nemotron Transcribe:** NVIDIA public NIM/model information identifies a GPU-oriented model family; software/container terms and model-weight terms are distinct. Candidate only for a future GPU host, not the planned small CPU/server package. Source: https://build.nvidia.com/nvidia/nemotron-speech-streaming-asr (verify exact SKU/release before selection).
+- **Qwen-Image 2.1 and ACE-Step 1.5:** owner-provided candidates need exact immutable release, code license, weight license, dataset terms, inference runtime and hardware profile checked independently. Do not assign one blanket license to code and checkpoints. Sources: https://github.com/QwenLM/Qwen-Image and https://github.com/ace-step/ACE-Step-1.5 (confirm tag/branch and asset terms before caching).
+- **Ollama API:** keep the current private local Ollama route as baseline until a measured alternative wins. Official API docs distinguish local localhost:11434 from cloud routes; cloud API use requires a key. Source: https://github.com/ollama/ollama/blob/main/docs/api/introduction.mdx
+
+### Owner-supplied source list — deduplicated intake and disposition
+
+| Owner wording / project | Current catalogue state | Initial disposition / next gate |
+|---|---|---|
+| elephant-goldfish-model | Already catalogued | Recheck exact upstream/version/license for a specific graph/ontology slice; do not duplicate |
+| NVIDIA/auto-ontology | Source-validated at repository level | INSPIRE / candidate ADAPT for P3/P4; pin exact repo/release, license tree, dependencies and local eval |
+| GoogleChrome/modern-web-guidance-src | Already catalogued; official repo and guide license reviewed above | INSPIRE / selective ADAPT for P0/P1, no runtime CLI dependency |
+| Anthropic/skills | Source-validated | INSPIRE / selective ADAPT Skill Library; per-skill license and script review |
+| Freebuff | Not uniquely resolved | CANDIDATE; need canonical URL/product identity |
+| Storybook | Not yet recorded as pinned candidate | INSPIRE candidate for component states/visual interaction tests; review license, test setup and vanilla-JS applicability |
+| Zonos 3 | Ambiguous label/version | CANDIDATE for multilingual TTS; identify exact repository/model and separate code/weights/data licenses |
+| MAI Image 2.7 | Ambiguous exact model identity/version | CANDIDATE; identify official publisher/model card and inference availability |
+| Polity | Ambiguous name | CANDIDATE; resolve canonical URL and intended scope |
+| Maxun | Source validated; AGPL-3.0 | INSPIRE / isolated ADAPT only after legal review; isolate browser permissions |
+| SensENova Loop 9B | Ambiguous spelling/variant | CANDIDATE; confirm publisher, model ID, license, quantizations and runtime |
+| furkankly/zoetrope | Exact upstream not verified | CANDIDATE; resolve URL/repository and purpose |
+| h9zdev/WireTapper | Exact upstream not verified | CANDIDATE; resolve URL/repository and security posture |
+| WanGP | Exact target/version not yet accepted | CANDIDATE for media workflow UX only after repo, license, model ecosystem and security checks |
+| LFM3-Omni | Exact model card/version not yet pinned | CANDIDATE for multimodal/voice; verify publisher, weights, languages and CPU/RAM |
+| Open Generative AI | Ambiguous project/entity | CANDIDATE; resolve exact source |
+| OpenCut | Multiple similar projects/name ambiguity | CANDIDATE; resolve official repository and license before considering reuse |
+| Nemotron Transcribe | Source family noted above | DEFER for current small host; GPU/resource/license gate first |
+| VibeVoice ASR | Already catalogued; current note says published language set does not cover Russian/Thai | INSPIRE / optional non-RU helper only, not primary RU/TH speech |
+| Qwen-Image 2.1 | Candidate; exact artifact/terms not pinned | CANDIDATE for optional image generation/editing; not core/offline default |
+| Krea 2 | Product/version ambiguous and likely service-dependent | CANDIDATE; verify API, model terms, cost and retention; no cloud dependency for offline mode |
+| MOSS-TTS v1.5 | Source validated above; ~17 GB listed | CANDIDATE for larger hardware, not default 8-GB artifact |
+| ChatterBox | Upstream marked retired/unmaintained since Aug 2026 | DEFER / historical benchmark, not a maintained production runtime |
+| ACE-Step 1.5 | Official source candidate | CANDIDATE for optional music generation; verify model/weight/dataset license and hardware |
+| Google Flow Music | Online service, account/region/credit constraints | INSPIRE only for workflow; no local runtime assumption |
+| KnifeLemon/Filee | Already catalogued; Filee v2.5.0 reviewed as MIT desktop-converter reference | ADAPT bounded conversion pipeline after current tag/platform checks; preserve staging/cancel/cleanup |
+| voyager-crew/voyager | Already catalogued; prior note records GPL-3.0 | INSPIRE only; no direct code copy absent compatible license decision |
+| code-yeongyu/oh-my-openagent | Already catalogued; prior license analysis rejects direct reuse under Business Use License | REJECT direct copy; inspect patterns only if terms allow |
+| dsh-our-free-model | Already catalogued | INSPIRE provider catalog/probe patterns only; public free gateways must not receive private prompts by default |
+| storytold/craft-anything | Already catalogued; early-alpha inspection/rebuild tooling | DEFER / dev-only isolated study; legal review, sandbox and generated-code tests first |
+| W enwik9 / Wikipedia | Wikipedia already mapped; W enwik9 not uniquely resolved | CANDIDATE offline corpus; verify exact corpus, compression, edition, license, update and search index |
+| lynx | Ambiguous package/project name | CANDIDATE; resolve exact project and intended role |
+| chrome-devtools-mcp | Already mapped | INSPIRE / developer-only; never grant production browser DevTools privilege |
+| AG-UI protocol | Already mapped; event semantics inform current durable-event projection | ADAPT protocol concepts only; current aLandi event journal remains canonical absent ADR/eval |
+| VoxCPM2 | Already catalogued as deferred; request on 2026-11-25 reopens source research | REOPENED CANDIDATE, research only until exact license/size/runtime/language tests; do not install |
+| Memorilla | Already catalogued; documented training workflow targets H100 80-GB CUDA | RESEARCH candidate only, not the planned 8-GB host |
+| Magic UI | Not yet recorded as pinned source | INSPIRE candidate for motion patterns; review license and React/Tailwind runtime cost |
+| shadcn UI | Already mentioned as structural reference | INSPIRE only; retain vanilla implementation absent measured migration decision |
+| UI Verse | Community catalog name not pinned | CANDIDATE; inspect each component license/provenance |
+| animejs | Not yet pinned | CANDIDATE for isolated motion prototype; prefer CSS/Web Animations unless sequencing proves value |
+| Kiri | Already present | Reconcile exact intended project/version before use |
+| Astryx | Already present in P0/P1 candidate map | INSPIRE candidate; select task-specific patterns, not wholesale runtime |
+| Needle 2 | Already present; general multilingual use deferred pending schema/lifecycle tests | DEFER as general model; constrained isolated extraction/tool JSON benchmark only |
+
+### Follow-up source intake order
+
+1. P0/P1: actual emblem sampling, Modern Web Guidance, Storybook, shadcn/Magic UI/UI Verse, animejs; compare native implementation against one optional animation library and a11y/responsive goldens.
+2. P1/P3: Anthropic Skills, AG-UI, existing AgentRun event contracts, NVIDIA AutoOntology, Voyager / Oh My OpenAgent / DSH / Craft Anything license and boundary review.
+3. P4/P5: Filee converter patterns, W enwik9/Wikipedia corpus feasibility, local file APIs, artifact cache and offline closure.
+4. P6: MOSS-TTS, LFM3-Omni, Zonos 3, VibeVoice, Chatterbox, VoxCPM2, Nemotron Transcribe; exact RU/EN/TH WER/naturalness, model size, voice consent, runtime, licenses, hardware and real-device tests.
+5. Optional multimodal generation: Qwen-Image 2.1, MAI Image 2.7, WanGP, Krea 2, OpenCut, ACE-Step 1.5 and Google Flow Music; keep cloud-only services outside offline core.
+6. P7/P8: provider catalogs, zero-cost reachability, free-tier terms, data retention, hosting trial limits and owner cost/region gates.
+
+**Acquisition rule:** do not bulk-download this list. Download only artifacts chosen for a named acceptance test, pin SHA-256/size/license/source/target, verify offline closure, and keep the biggest main model owner-supplied. The source sweep is not a claim that any new model, provider, framework or image asset has been installed.
+

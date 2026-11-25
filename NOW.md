@@ -36,16 +36,16 @@ GitHub `main` — источник истины. Project Sources и Project Inst
 - **P7:** provider selection, data policy, privacy/retention, quotas, reliability — только после owner decision.
 - **P8:** release/host/security/infrastructure gates; owner-only части остаются отдельными блокерами.
 
-## Live state — проверено 2026-11-25
+## Live state — проверено 2026-11-25 (live main)
 
-- **main:** `61211bde6e05b038854cd7d41b48837e2393d6df`; последний commit обновил E2E Research Studio test: effort toggle проверяется вне modal, сохранение выбранного метода повторно подтверждается при открытии Research.
-- **Открытые PR:** #195 (provider diagnostics + full Chromium gate; head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) и #187 (старый provider diagnostics PR; head `c951585d5a411a0099a229c074cb5d8ed1168fff`). Оба не переносить целиком и не считать готовыми к merge; изучать diff/checks и переносить только подтверждённые полезные изменения.
-- **Открытые issues:** #111 — release/owner environment gates; #186 — внешняя GitHub Skills exercise, не продуктовая задача.
-- **Exact-main Quality Sentinels:** run [45552243734](https://github.com/DorpNay/skills-github-pages/actions/runs/45552243734) на `61211bde6e05b038854cd7d41b48837e2393d6df` — **Jekyll build, Context, Security, Integrity и Required root app boot/interaction smoke: PASS**.
-- **Условия, не PASS:** Real Chromium browser regression, independent static analysis, Lightpanda smoke и Published Pages release contract в том же run — **SKIPPED**. Поэтому полный Chromium и опубликованный сайт на этом SHA не подтверждены.
-- **Pages auto-publish:** не изменялся этим срезом. Кодовые commits в main всё равно могут активировать штатный автоматический Pages workflow; ручной deploy не выполнялся.
-- **Branch protection:** текущая конфигурация required checks/review не подтверждена; предыдущая проверка rulesets вернула пустой список, classic branch-protection endpoint — 403 для интеграции.
-- **Agent Relay:** не заявлять параллельное выполнение, пока не подтверждены живой worker, repo scope и readiness.
-- **Не проверено:** полный Chromium на main; текущая live Pages browser/revision contract; iOS Safari/VoiceOver; Windows forced-colors; настоящая VPS/Tunnel/Ollama/model загрузка; реальный server-only network-denied сценарий.
+- **FACT — main:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` (commit: ci(p0): require full Chromium regression on main and UI PRs; parent `f408f56f4551f8e48aa8984bb03676da22658789`). Обновлять этот SHA после каждого успешного документационного/кодового commit.
+- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) и #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`). Не merge/close/переносить вслепую; проверять diff, exact-head checks и переносить только узкие подтверждённые исправления.
+- **FACT — issue queue:** #111 (owner/live-host/release gates) и #186 (постороннее упражнение GitHub Skills). Не закрывать для очистки списка.
+- **FACT — exact-main Quality Sentinels:** run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) на `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` — Jekyll, Security, Integrity, Context и required root app boot/interaction smoke **PASS**; Real Chromium **FAIL: 45 tests failed, 213 passed, 1 flaky** (22.8m); Lightpanda, independent static analysis и Published Pages release contract — **SKIPPED**. Список ошибок включает provider/catalog, voice, AgentRun, mobile touch/menu, sidebar/projects/chats, storage rollback, keyboard/focus, locale и reduced-motion coverage; каждую причину нужно triage, а не считать 45 одинаковыми дефектами.
+- **FACT — Pages:** штатная автоматическая deploy job для этого SHA завершилась success (run [45553468312](https://github.com/DorpNay/skills-github-pages/actions/runs/45553468312)); отдельный published browser/revision contract в Quality Sentinels был skipped. Это не доказательство полного browser acceptance опубликованной страницы. Pages workflow/settings не менялись этим аудитом; ручной deploy не выполнялся.
+- **FACT — governance:** live branch API показывает `protected=false`, без required checks/review protection. Это остаётся owner/settings gate issue #111; настройки репозитория не менялись.
+- **FACT — source freshness:** `INTEL.md` ранее датирован 2026-11-23; новый source sweep от 2026-11-25 фиксирует первичные источники и candidates. Текущая основная модель, VPS, DNS/Tunnel, реальные voice devices и iOS Safari/VoiceOver всё ещё требуют отдельной live проверки.
+- **OPEN:** полный Chromium на точном main SHA не проходит; опубликованный revision/browser contract skipped; iOS Safari/VoiceOver/Windows forced-colors и real VPS/Ollama/server-only offline acceptance не проверены; Relay worker readiness не подтверждена.
+
 ## Ближайшее действие
-Продолжить P0 acceptance на `61211bde`: изучить PR #195/#187 без merge, получить полный exact-main Chromium run (сейчас job skipped), исправить подтверждённые app/runtime дефекты и синхронизировать проверки. Параллельно освежить профильные primary-source packs P1–P8 в INTEL; Pages auto-publish workflow не менять.
+Сначала triage/fix 45 Chromium failures на текущем main и добиться exact-head full-browser acceptance; затем выполнить bounded P0.35 mode/header/palette/UI slice с RU/EN, reduced-motion, touch и responsive regression. После этого P1 Coding + P3 orchestration + P5 Offline Core. PR #195/#187 — только read-only review/targeted перенос отдельных подтверждённых исправлений, без merge/close. Pages auto-publish workflow не менять.

@@ -1,6 +1,6 @@
 theme: minima
-title: DorpNay's GitHub Pages
-description: Personal site and project notes published with GitHub Pages
+title: aLandi — Local-first AI Workspace
+description: An offline-first AI workspace designed around private local execution, with optional server and explicitly enabled online integrations
 author: DorpNay
 url: "https://DorpNay.github.io"
 baseurl: "/skills-github-pages"
