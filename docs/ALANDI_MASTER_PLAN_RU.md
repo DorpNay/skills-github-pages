@@ -172,6 +172,46 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 
 **Design and release gates:** no palette or motion change may weaken existing high contrast, focus visibility, touch access, reduced-motion, RU/EN, iOS or browser lifecycle behavior. Keep experimental visual effects behind an optional feature flag until comparable screenshots and interaction tests pass.
 
+### 0.4 Owner requirement traceability — consolidated sweep (2026-11-25; SPECIFIED)
+
+Эта карта — проверка полноты требований владельца, а не дополнительная очередь и не статус реализации. Она связывает исходные пожелания с единственным активным acceptance; при изменении приоритета обновлять соответствующий раздел, а не создавать дубликат.
+
+| Owner requirement / intent | Canonical acceptance / destination | Current disposition |
+|---|---|---|
+| aLandi naming: lowercase `a` + `i` frame, Land = grounding in private offline environment; aCodingi/aNoteBooki | 0.3.3, P0.35.4, P1 | SPECIFIED; naming review may refine names, not erase the concept |
+| Two logo directions: abstract grounded/interwoven mark and custom wordmark; accessible switch in header, double-click only as shortcut | 0.3.3, P0.35.4, P0.35.12 | SPECIFIED; no final logo assets yet |
+| Graphite/silver dark + pearl/silver light, emblem-derived turquoise, contrast and restrained motion | 0.3.1, P0.35.2–P0.35.3 | SPECIFIED; emblem asset sampling and visual acceptance open |
+| Thin active-mode strip, equal three-way expansion, cell-division transition, fast return signal, auto-collapse, two-click selection/collapse semantics | 0.3.2, P0.35.1 | SPECIFIED; state-machine implementation and lifecycle tests open |
+| Stable clock/header geometry, project/chat title layout, untitled-label behavior | 0.3.4, P0.35.5 | SPECIFIED; responsive/locale/zoom acceptance open |
+| Dynamic Projects/Chats height, hierarchy, selection feedback and strict identity/scope | 0.3.5, P0.35.6, P0.34.13 | SPECIFIED/PARTIAL; full lifecycle matrix open |
+| Smaller visual controls without smaller hit areas; message actions at card edge | 0.3.6, P0.35.7 | SPECIFIED; geometry and accessibility acceptance open |
+| Additional Settings order, default collapsed groups, storage/backup/restore/export policy | 0.3.7, P0.35.8, P5 | SPECIFIED; implementation and conflict/retention policy open |
+| Shared aLandi/aNoteBooki/aCodingi frame; Notebook can freeze after useful stable baseline | P0.34, P1, P4, 0.3.11 | SPECIFIED/PARTIAL; Notebook Studio expansion intentionally deferred |
+| NotebookLM/Gemini Notebook-inspired source-grounded notebook, citations, notes and later Studio outputs | P0.34 shared-frame contract, P1, P4.9–P4.11 | SPECIFIED; use as behavioral inspiration only; Notebook remains frozen until priority returns |
+| Cursor-like full coding IDE: project tree, multi-file edit, diff, terminal/test/build/debug, task chat and rollback | P1, P3.10, P0.34.12 | SPECIFIED; current Coding mode is shell-only, not a full coder |
+| ComfyUI-like node/graph workflow UX for real multi-step pipelines, not decorative agent boxes | P3.13 (added), P3.2–P3.6 | SPECIFIED; only for workflows with typed executable contracts |
+| Direct chat remains zero-overhead; model/provider/draft/attachment/voice/project continuity | P2, P1 addendum | SPECIFIED; routing and visibility lifecycle acceptance open |
+| True multi-agent/subagent orchestration, delegated work, durable runs, objective real-time state, replay/resume/cancel | P3.4–P3.7, P0.35.11 | SPECIFIED/PROTOTYPE; independent workers and durable production lifecycle not yet VERIFIED |
+| Skill Library and versioned agent profiles with provenance, permission boundaries and rollback | P3.8, P3 addendum | SPECIFIED; lifecycle implementation/evals open |
+| Separate agent bootstrap vs model-weight training; consented datasets, held-out eval, adapters and selectable only after pass | P0.34.6, P3.11–P3.12 | SPECIFIED; training runtime not implemented |
+| Pre-upload destination/name/path and conversion target; fidelity warnings; resumable job | P4.6, P4 addendum | SPECIFIED/PARTIAL; extraction registry is not the user-facing converter pipeline |
+| Stable-ID File Library, versions/derivation lineage, sort/filter by date/chat/project/type/size/source/status | P4.1, P4.6, P4 addendum | SPECIFIED; artifact UI/index lifecycle open |
+| Per-project file sandbox grants, own-folder/full managed sandbox/explicit device paths, revoke/audit | P3.10, P4 addendum | SPECIFIED; no arbitrary file access |
+| Office import/export/preview via LibreOffice only after license/size/isolation/platform gate | P4 addendum | SPECIFIED; optional and unavailable until validated |
+| Offline Core, device folder hierarchy, stable IDs, atomic writes, backup/restore, relocation across local/server/VPS/models | P5.1–P5.12, P5 addendum | SPECIFIED/PARTIAL; package acquisition subset only, target-host acceptance open |
+| Small downloadable local knowledge databases and versioned coding/API reference packs | P5.15 (added), P4.8, INTEL | SPECIFIED; package selection, licenses, hashes and retrieval eval open |
+| Local/browser voice input and playback where runtime exists; voice cannot reset third-party provider | P0.35.9, P6 addendum | SPECIFIED; real browser/device capability matrix open |
+| Personal voice cloning only from authorized recordings, explicit consent, local default, delete/export/preview, multilingual quality eval | P6 addendum, P6.1–P6.8 | SPECIFIED; adapters disabled pending artifact/device gates |
+| Five trusted external providers + custom adapter, truly free/reachable catalog, live discovery and capability summary | P7 addendum | SPECIFIED; owner provider decision and live verification pending |
+| Confirm route switch, isolate provider credentials from aServi, bounded same-provider retries, no silent cross-provider prompt transfer | P7.2–P7.6, P2 | SPECIFIED; regression matrix open |
+| Voice overlay/backdrop dismissal and preservation of external provider/model/key | P0.35.9, P6 addendum | SPECIFIED; reproduce and test |
+| iPhone native picker deduplication only when behavior is identical; test real Safari | P0.35.10, P0.21.27 | SPECIFIED; native device gate open |
+| Real status panes and collapsible safe rationale; never expose hidden chain-of-thought | P0.35.11, P3.6, P3 addendum | SPECIFIED; event replay and UI projection acceptance open |
+| Free-first static Pages client, private server autonomy, explicit online web-search exception | 0.1, 0.3.12, P0.33, P5.2 | SPECIFIED/PARTIAL; server-only acceptance open |
+| Review all external candidates and complete code/model/data licenses, advisories, resource and offline fit | 0.2, P0.34.7, INTEL | SPECIFIED/PARTIAL; task-specific primary-source packs remain per-slice gates |
+| Repository About metadata, Pages policy and owner-only host/secret/billing/DNS/Tunnel actions | NOW, P8, issue #111 | OWNER GATE; About description still requires manual owner update |
+| Reversible experiments outside core, off by default, measured, kill criteria and rollback | 0.3.13, LOOP.md | SPECIFIED |
+
 ### Incident record — root app controls unavailable (2026-11-21)
 
 - **FACT:** commit 58be3e1 omitted the closing brace after the Python runtime-load catch. The initial repair in 8fbb128 restored the function boundary, but live browser instrumentation then exposed a second bootstrap exception: top-level `applyUiLanguage()` ran before the later `let activeVoiceStatusKey` declaration, causing a temporal-dead-zone ReferenceError inside `refreshVoiceRecordingStatus()`. This aborted the IIFE before delegated click registration. Static Jekyll/Pages success did not detect either runtime fault.
@@ -580,6 +620,8 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 - [ ] P5.12 **Owner handoff:** exact account/registration, domain/DNS/Tunnel, OS/security, secret placement through UI, disk preparation, model acquisition/placement, service enable/start, backups, monitoring, upgrades, rollback and smoke instructions; identify owner-only work, price assumptions and unresolved hardware choices.
 - [x] P5.13 **Pages continuity (static client):** automatic build/deploy and exact revision marker verified for code/test HEAD `58b7465a`, model-gate HEAD `53c3334d` and latest main HEAD `b4089566`; required smoke verifies root boot, same-origin pinned assets and offline shell after first successful visit. Separate live published-site click/revision check remains open under P0.33.3; no VPS/Tunnel deployment is implied.
 - [~] P5.14 **Preserve acquired model cache before expiry:** inventory and download commands are current in `models/runtime-install.md`; lock/archive SHA-256, exact IDs, sizes, target OS and expiries are recorded in `models/runtime-stack.lock.json`. External cache run `44900155001` / artifact `14705393467` (6.05 GB); Ollama run `44900155025` (four packages + lock, 7.73 GB); Bonsai run `44900155036` (429 MB); OpenShell v0.1.8 run `44900155047` (207 MB); Python caches run `44900155000` (80 MB). License/provenance/runtime-inventory gate #44901175865 passed. External cache refresh #44901084396 completed and produced duplicate verified artifact `14705619951` (6,054,446,752 bytes, archive SHA-256 `696c704787265e0684a42129a32d7dcd26d58ff1503a27e4784a3f698ef7806c`, expires 2026-12-21 11:53:03Z). Canonical lock/runbook still points to `44900155001` to avoid another download triggered only by metadata refresh; both archives are valid staging copies. OpenShell expires 2026-12-05; others 2026-12-21. None is installed on target host. Owner must copy to durable storage before expiry and verify host OS/architecture/disk before installation.
+- [ ] **P5.15 Offline knowledge and coding-reference packs:** support opt-in, compact, independently versioned local packs for selected programming languages/frameworks/API references and small domain databases/indexes. Each pack must declare canonical source, upstream version/commit, content license/NOTICE, SHA-256, size, language, update date, target runtime, dependencies, retrieval/index format and rollback/removal path. Keep docset/content licenses separate from the viewer/runtime license; no blanket redistribution assumption. Do not bundle broad corpora by default, put packs in public Pages output, or download without owner consent. Acceptance: network-denied lookup, exact version/source attribution, update/rollback, size budget and RU/EN/TH retrieval golden tests where applicable. Zeal/Dash docsets are research candidates, not a required runtime.
+
 ### P6 — Voice and audio (после landing)
 
 - [ ] P6.1 Re-audit all existing VoiceStudio/Whisper/Vosk/Qwen ASR/Piper/Silero VAD/TTS artefacts and runtimes; distinguish downloaded vs installed vs loaded vs verified.
@@ -617,6 +659,8 @@ Do not create a parallel backlog. These details refine the existing P1–P8 sect
 ### P1 — Shared modes and Coding workspace
 - Keep one root shell and one persisted mode contract. In the expanded mode bar, aCodingi and aNoteBooki are adjacent equal-size buttons with distinct mode accents; ordinary aLandi uses the emblem-derived turquoise. The collapsed strip always identifies the active mode.
 - aNoteBooki may remain visually/functionally frozen after its current stable local-first baseline. Do not expand Studio catalogue/runtime until P0, real coding and Offline Core priorities are met.
+- **Cursor-inspired coding UX (INSPIRE, not clone):** provide a project tree, coding conversation, multi-file editor, inline diff/review, task/terminal output, test/build/debug results, stop/resume and checkpoint/rollback. The experience must be backed by P1/P3 sandbox and permission contracts; never copy proprietary Cursor code or route private work to cloud agents by default.
+- **NotebookLM/Gemini Notebook-inspired UX (INSPIRE, later):** keep source-grounded notebook Q&A, explicit source selection, citations/evidence, notes and derived artifacts. Preserve the freeze rule: do not expand Notebook Studio until P0, real Coding and Offline Core are accepted.
 - aCodingi must become a real project-aware coding agent: create/edit/delete files, inspect trees, design and implement whole projects, run tests/builds/debugging, present diffs and explain results. It is not limited to patching selected text. Every operation is bound to typed Coding Project, sandbox, tool contract, resource budget and explicit file/network scope.
 
 ### P2 — Direct chat and model routing
@@ -628,6 +672,8 @@ Do not create a parallel backlog. These details refine the existing P1–P8 sect
 - Provide a Library area for reviewed Skill packages and versioned agent profiles with scoped memory references. Imported packages remain inert until license/security/permission review. A role/profile is not an independent worker unless a real runtime/lease exists.
 - Keep two separate workflows: (a) create/bootstrap an agent from instructions, Skills, examples and granted tools without changing base weights; (b) train/adapt model weights using an isolated dataset, explicit material selection, resource/size estimate, licence and consent checks, train/validation/test split, checkpoint/adapter versioning, evaluation and rollback. Training must not learn from all chat history by default. A trained adapter/model is selectable only after registry, compatibility and eval pass.
 - A collapsible “why/status” view may show a short safe rationale, chosen method, sources and events, but must never disclose or persist raw hidden chain-of-thought.
+
+- [ ] **P3.13 ComfyUI-inspired visual workflow canvas:** offer a node/edge editor only for genuine multi-step workflows (research, conversion, media generation or agent pipelines) whose nodes have typed input/output contracts, permissions, dependencies, budgets and executable handlers. Persist versioned graphs; validate before run; expose queue, step attribution, error, retry, cancel and artifact outputs. Keep ordinary chat and simple workflows linear; no decorative graph, fake parallelism or ComfyUI runtime dependency by default. Reuse graph UX concepts only; review ComfyUI release/license/security before any code/runtime reuse.
 
 ### P4 — File ingestion, converter, Library and exports
 - Before upload, let the user set destination name/path and optional conversion target; show fidelity/loss warnings and a real capability reason. The final “Upload files” action starts a durable, resumable job only after these fields are confirmed.

@@ -1,6 +1,6 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
+**Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main` · **Live HEAD:** `47a49643aa6f59f7eebde04f35f0843dc5e9db16`
 **Последний полностью проверенный application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Поверх него выполнен документационный/Jekyll metadata commit `a5423012a4f499531e66607c1103078ae735192f`; при старте следующей задачи заново получить текущий live `main` SHA.
 
 ## Старт новой задачи
@@ -36,13 +36,13 @@ GitHub `main` — источник истины. Project Sources и Project Inst
 - **P7:** provider selection, data policy, privacy/retention, quotas, reliability — только после owner decision.
 - **P8:** release/host/security/infrastructure gates; owner-only части остаются отдельными блокерами.
 
-## Live state — проверено 2026-11-25 (main docs snapshot)
+## Live state — проверено 2026-11-25 (main HEAD `47a49643aa6f59f7eebde04f35f0843dc5e9db16`)
 
 - **FACT — application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Это SHA с последней полной Quality Sentinels проверкой; следующий commit `a5423012a4f499531e66607c1103078ae735192f` меняет только документацию и Jekyll title/description.
-- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) и #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`). Не merge/close/переносить вслепую; проверять diff, exact-head checks и переносить только узкие подтверждённые исправления.
+- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) и #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`) остаются открытыми; оба `mergeable=false` при последнем чтении. Не merge/close/переносить вслепую; проверять diff, exact-head checks и переносить только узкие подтверждённые исправления.
 - **FACT — issue queue:** #111 (owner/live-host/release gates) и #186 (постороннее упражнение GitHub Skills). Не закрывать для очистки списка.
 
-- **FACT — latest main documentation checkpoint:** `382095aab11789ea1b7a1b4409b4d664274b3539`. This is a docs/source-disposition-only child of `a5423012a4f499531e66607c1103078ae735192f`; exact HEAD build/deploy/report status all **SUCCESS** in Pages run [45594089465](https://github.com/DorpNay/skills-github-pages/actions/runs/45594089465). Application code is unchanged from `191b2dac`.
+- **FACT — latest main documentation checkpoint:** `47a49643aa6f59f7eebde04f35f0843dc5e9db16` (live HEAD; docs-only child of `382095aab11789ea1b7a1b4409b4d664274b3539`). Pages run [45594959839](https://github.com/DorpNay/skills-github-pages/actions/runs/45594959839) completed `build`, `report-build-status` and `deploy` with **SUCCESS** on this exact HEAD. Application code remains unchanged from `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`; no full Chromium/Quality Sentinels run is claimed on `47a49643`.
 - **FACT — Chromium triage detail:** run #45553470306 contains 45 unique failing cases plus retry log duplicates (213 passed, 1 flaky). Proven assertion drift examples: English status expected vs Russian actual; hard-coded toast copy differs despite equivalent current copy; legacy page-title expectation differs from current aLandi title; English disclosure phrase expected vs Russian actual. Other failures are genuine candidates around modal focus, touch/menu geometry, provider/mock flow, voice lifecycle, persistence rollback and privacy-memory outbound request counts. Classify and reproduce individually; do not treat all failures as product bugs or all as stale tests.
 - **FACT — exact-code Quality Sentinels:** run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) на `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` — Jekyll, Security, Integrity, Context и required root app boot/interaction smoke **PASS**; Real Chromium **FAIL: 45 tests failed, 213 passed, 1 flaky** (22.8m); Lightpanda, independent static analysis и Published Pages release contract — **SKIPPED**. Ошибки затрагивают provider/catalog, voice, AgentRun, mobile touch/menu, sidebar/projects/chats, storage rollback, keyboard/focus, locale и reduced-motion; причины требуют отдельного triage.
 - **FACT — docs/Jekyll commit:** run [45593553349](https://github.com/DorpNay/skills-github-pages/actions/runs/45593553349) на `a5423012a4f499531e66607c1103078ae735192f` — Pages build, deploy и report-build-status **SUCCESS**; source/orientation correction commit `382095aab11789ea1b7a1b4409b4d664274b3539` также прошёл все три exact-HEAD checks в run [45594089465](https://github.com/DorpNay/skills-github-pages/actions/runs/45594089465). Этот docs-only commit не заменяет неуспешную полную Chromium проверку на application-code baseline.
@@ -52,4 +52,4 @@ GitHub `main` — источник истины. Project Sources и Project Inst
 - **OPEN:** full Chromium на application-code baseline не проходит; iOS Safari/VoiceOver/Windows forced-colors и real VPS/Ollama/server-only offline acceptance не проверены; Relay worker readiness не подтверждена.
 
 ## Ближайшее действие
-Начать с разбора и исправления Chromium failures на последнем application-code baseline; добиться exact-head full-browser acceptance, затем выполнить bounded P0.35 mode/header/palette slice. После этого P1 Coding + P3 orchestration + P5 Offline Core. PR #195/#187 — read-only review и перенос только доказанных отдельных исправлений, без merge/close. Pages auto-publish workflow не менять.
+Начать с разбора и исправления Chromium failures на application-code baseline `191b2dac`; добиться exact-head full-browser acceptance, затем выполнить bounded P0.35 mode/header/palette slice. Не считать Pages run `45594959839` заменой browser acceptance. После этого P1 Coding + P3 orchestration + P5 Offline Core. PR #195/#187 — read-only review и перенос только доказанных отдельных исправлений, без merge/close. Pages auto-publish workflow не менять.
