@@ -732,6 +732,7 @@ permalink: /
     /* Root landing acceptance: balanced navigation, mobile targets and safe-area sheets. */
     #projectPanel { flex:1 1 0!important;min-height:0;max-height:none!important;overflow:hidden; }
     #projectPanel:has(#projectNavigationList:not(.hidden)) { flex:1 1 0!important;max-height:none!important; }
+    #projectPanel:has(#projectNavigationList.hidden) { flex:0 0 auto!important; }
     #projectNavigationList { max-height:none!important; }
     #chatSection { flex:1 1 0!important;min-height:0; }
     #functionPanelModal > section { max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);overflow-y:auto; }
