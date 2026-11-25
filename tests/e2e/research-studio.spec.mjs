@@ -17,7 +17,7 @@ test('retired Research Studio stays absent while owner-approved Functions menu i
   await expect(menu.locator('[data-function="connectors"]')).toBeVisible();
 });
 
-test('Functions menu opens Agents and Skills panels and Deep Research selects Thorough without sending', async ({ page }) => {
+test('Functions menu opens Agents and Skills and keeps Research method separate from Thorough effort', async ({ page }) => {
   await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
   const menu = page.locator('#functionsMenu');
   await page.locator('#functionsMenuSummary').click();
@@ -43,8 +43,14 @@ test('Functions menu opens Agents and Skills panels and Deep Research selects Th
   const researchPanel = page.locator('#researchFunctionSettings');
   await expect(modal).toBeVisible();
   await expect(researchPanel).toBeVisible();
-  await researchPanel.locator('[data-action="select-processing-mode"][data-processing-mode="deep"]').click();
+  const method = researchPanel.locator('#deepResearchMethodSelect');
+  await expect(method).toHaveValue('none');
+  await method.selectOption('multi_step_evidence_report');
+  await expect(method).toHaveValue('multi_step_evidence_report');
+  await expect(researchPanel.locator('#researchMethodStatus')).toContainText('Method selected for this chat');
+  await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_processing_mode'))).toBe('deep');
+  await expect(method).toHaveValue('multi_step_evidence_report');
   await expect(page.locator('#chatBox .message')).toHaveCount(0);
 });
