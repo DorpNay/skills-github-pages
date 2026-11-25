@@ -170,6 +170,52 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 
 - [ ] **P0.35.13 Exact Chromium baseline triage (code/test baseline `191b2dac`; run `45553470306`):** classify each unique failure once (do not double-count Playwright retry output); separate product defect, stale assertion/text contract, locale nondeterminism, mock/route setup error, geometry/tolerance issue, browser/harness limitation and genuine flaky test. First confirmed examples: expected English `Completed` while page is Russian `Завершено`; exact Russian toast copy assertions disagree with current semantically equivalent copy; old multimodal title expects `AI Mobile Agent` while page uses `aLandi v10.0`; disclosure text assertion expects English while page is Russian. These are test-contract mismatches only where explicit locale/semantic equivalence is verified, not permission to weaken user-facing behavior. Actual interaction candidates include modal focus restoration, mobile composer/touch target, nested menu dismissal, provider probe/catalog deletion, voice recording lifecycle, chat/project storage rollback and privacy-memory request counts. Reproduce each on clean storage and current `main`, inspect trace/screenshot/console/network; add focused deterministic tests; preserve real permission/security/privacy checks. Never solve by skipping tests, broadening timeouts, deleting assertions, or accepting unverified cross-provider sends. Exit gate: unique failures triaged, focused regression passes, full exact-HEAD Chromium passes, retries/flakes documented with evidence.
 
+
+**Triage snapshot — 2026-11-25 (run #45553470306; exact code/test SHA `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`).** Raw Chromium job log was re-read, not inferred from its summary. Reporter summary: **213 passed, 45 failed, 1 flaky** over 22.8 minutes; output contains 46 numbered failure entries because retry/flaky reporting must be deduplicated before counting. Initial classification below is investigative, not a declaration that every item is a product defect:
+
+| Test / observed failure | Initial classification | Required action |
+|---|---|---|
+| `app.spec.mjs:1178` API auth feedback | stale copy assertion: actual RU message includes HTTP 401 and a more specific provider-key hint | update assertion to current localized semantic contract; keep prompt-preservation check |
+| `:1202` provider catalog/key deletion | unresolved async/route/dialog timeout | trace requests, modal state and confirmation lifecycle |
+| `:1556` historical cache metadata | metadata fixture/render mismatch: DOM only exposed provider/model, not expected cache HIT | trace fixture-to-render metadata contract |
+| `:2219` project bundles | focus restoration failure | product candidate; inspect dialog close/return focus |
+| `:2907` active voice recording | capture/status lifecycle timeout | separate unavailable-device fixture from real lifecycle defect |
+| `:3326` request-only project context | expected mock response, actual aServi-unconfigured greeting | inspect provider state, route matching and fail-closed contract |
+| `:3458` toast semantics | stale copy assertion; actual Russian validation is semantically equivalent | test role/polarity and current localized meaning |
+| `:3654` AgentRun | locale mismatch: RU page expected English `Completed`, actual `Завершено` | make assertion locale-aware; retain state/event assertions |
+| `:4263` narrow composer | real geometry candidate at 320 CSS px | inspect layout and fix, do not relax 44px or draft usability |
+| `:4295` nested menu/touch | interaction timeout | inspect open/close and hit-target path |
+| `:4456` toolbar disclosure | focus return failure | product candidate; restore invoker focus |
+| `:4481` Functions panels | expected panel content differs from current structure | compare actual runtime catalogue and truthful capability labels |
+| `:4715`, `:4767` settings import rollback | stale error-copy assertions; current message is more specific | update copy assertion only; preserve rollback and key-isolation checks |
+| `:4885` skill/agent setters | timeout under failing storage | reproduce rollback and state restoration |
+| `:5333` mobile dialogs | strict locator matches two close controls | scope test to intended header close control; separately decide if duplicate UX is desirable |
+| `:5442` settings modal | focus trap/restore failure | product candidate; repair keyboard lifecycle |
+| `:5513` sidebar balance | historical equal-height assertion conflicts with owner's newer content-driven sizing requirement | replace obsolete equal-height test with dynamic-height/no-wasted-space acceptance |
+| `:6164`, `:6197`, `:6256` custom Agent/Skill fields | selection, visibility and timeout failures | inspect field state machine/persistence; do not mark unavailable fields as working |
+| `:6466` projectless filter | expected 1 chat, rendered 9 | high-priority navigation-scope candidate; verify fixture and currentChat/project contract |
+| `:6683` keyboard order | voice control not reached at expected Tab position | inspect focusability, hidden/disabled capability state and accessible order |
+| `:6737` RU/EN Agent summary | test expects obsolete fixed-stage wording; owner explicitly rejected mandatory four-step workflow | remove fixed-stage assumption and test meaningful locale/state content instead |
+| `:6777`, `:7400` composer placeholder | stale/unstable literal placeholder expectations | inspect `composerPlaceholder` dictionary and viewport-specific placeholder policy |
+| `:6800` locale refresh | project/request-context focus lost | product candidate; preserve element identity/focus after rerender |
+| `:6839`, `:7283` memory confirmations | dialog interaction timeout | inspect native dialog sequencing and action dispatch |
+| `:6929` reduced motion | CSS computed time serialization differs (`1e-05s` vs `0.01ms`) | assert normalized numeric duration, not browser serialization |
+| `:6954` dynamic locale options | strict locator matches two close controls | scope locator to modal header; retain Escape/backdrop behavior tests |
+| `:7239` accessible controls | timeout in inventory | identify exact control and hidden-navigation state from trace |
+| `:7370` recovery warning | stale error-copy assertion | assert current localized warning, backup visibility and byte preservation |
+| `:7443` request-context cap | timeout | inspect selected-project fixture and cap/rejection flow |
+| `:7608` chat-list scroll/focus | scroll shifts 11px during RU/EN rebuild | inspect row-height changes; preserve visual anchor, do not hide arbitrary drift with large tolerance |
+| `:7650` Project Settings locale changes | edit/focus timeout | inspect modal rebuild and draft preservation |
+| `:7873` backup downloads | download/click timeout | inspect fixture storage, browser download event and backup bytes |
+| `multimodal-skill.spec.mjs:12` | stale title `AI Mobile Agent`; actual title is `aLandi v10.0` | update brand/title assertion while retaining specialist-skill behavior |
+| `privacy-memory.spec.mjs:167` | cancel promotion timeout | reproduce cancel path; verify private fact remains private |
+| `:229` fail-closed privacy marker | expected blocked request message, actual welcome/unconfigured provider state | verify fixture setup and prove zero outbound model requests |
+| `:330`, `:378`, `:518`, `:640` memory/provider scope | observed outbound request counts differ from fixture expectation | inspect actual network timeline and privacy boundary; never change expected count without evidence |
+| `:461` external project disclosure | RU disclosure text compared with English phrase | set intended locale or assert locale-specific equivalent; preserve disclosure and no-send-on-cancel |
+| `context-budget.spec.mjs:14` | retained history differs from expected `OLD_TURN_7` | inspect token budget/retention algorithm and fixture model context; do not loosen privacy/context cap |
+
+**Triage priority:** first settle privacy/network-boundary and context-budget tests (#40–46), then focus restoration/navigation (#4, #11, #17, #22, #23, #26), then mobile geometry (#9, #10), storage rollback and project/skill state, then assertion-contract cleanup. Any test-only correction must preserve or strengthen what is actually proven. Do not close this gate until each unique case has one evidence-backed classification and the complete exact-HEAD Chromium run passes.
+
 **Design and release gates:** no palette or motion change may weaken existing high contrast, focus visibility, touch access, reduced-motion, RU/EN, iOS or browser lifecycle behavior. Keep experimental visual effects behind an optional feature flag until comparable screenshots and interaction tests pass.
 
 ### 0.4 Owner requirement traceability — consolidated sweep (2026-11-25; SPECIFIED)
