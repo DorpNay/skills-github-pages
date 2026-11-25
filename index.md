@@ -2651,7 +2651,24 @@ permalink: /
         }
         row.appendChild(actions);
       }
-      if (!isUser && message.providerInfo) { const meta=document.createElement('div'); meta.className='message-model-meta'; const r=message.providerInfo; meta.dataset.providerLabel=String(r.providerLabel||r.provider||''); meta.dataset.modelName=String(r.model||''); meta.dataset.requestedModel=String(r.requestedModel||''); meta.dataset.provider=String(r.provider||''); meta.dataset.cacheStatus=String(r.cacheStatus||''); row.className+=' flex-col items-start'; row.appendChild(meta); }
+      if (!isUser && message.providerInfo) {
+        const meta=document.createElement('div');meta.className='message-model-meta';
+        const r=message.providerInfo;
+        meta.dataset.providerLabel=String(r.providerLabel||r.provider||'');
+        meta.dataset.modelName=String(r.model||'');
+        meta.dataset.requestedModel=String(r.requestedModel||'');
+        meta.dataset.provider=String(r.provider||'');
+        meta.dataset.cacheStatus=String(r.cacheStatus||'');
+        const english=getUiLanguage()==='en';
+        const provider=meta.dataset.providerLabel||meta.dataset.provider||(english?'Unknown provider':'Провайдер неизвестен');
+        const model=meta.dataset.modelName||(english?'model not specified':'модель не указана');
+        const requested=meta.dataset.requestedModel&&meta.dataset.requestedModel!==meta.dataset.modelName
+          ?(english?' (requested ':' (запрошена ')+meta.dataset.requestedModel+')':'';
+        const cache=meta.dataset.provider==='alandi'&&meta.dataset.cacheStatus
+          ?(english?' · cache ':' · кэш ')+meta.dataset.cacheStatus:'';
+        meta.textContent=provider+' · '+model+requested+cache;
+        row.className+=' flex-col items-start';row.appendChild(meta);
+      }
       if (!isUser && message.researchTrace) {
         const actions = document.createElement('div'); actions.className = 'flex flex-wrap gap-2 mt-1';
         const button = document.createElement('button'); button.type = 'button'; button.dataset.action = 'open-trace'; button.dataset.traceId = message.researchTrace.id || '';
