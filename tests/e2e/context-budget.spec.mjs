@@ -2,15 +2,6 @@ import { test, expect } from '@playwright/test';
 
 const APP_PATH = process.env.LIVE_SITE_URL ? './' : '/';
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => {
-    if (sessionStorage.getItem('e2e-budget-cleaned') !== '1') {
-      localStorage.clear();
-      sessionStorage.setItem('e2e-budget-cleaned', '1');
-    }
-  });
-});
-
 test('known model context window bounds retained conversation history', async ({ page }) => {
   let sent = null;
   await page.route('https://api.example.test/v1/models', route => route.fulfill({
@@ -33,16 +24,17 @@ test('known model context window bounds retained conversation history', async ({
     });
   });
 
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const messages = Array.from({ length: 8 }, (_, i) => [
+  const history = Array.from({ length: 8 }, (_, i) => [
     { role: 'user', content: 'OLD_TURN_' + i + ' ' + 'x'.repeat(650) },
     { role: 'assistant', content: 'OLD_REPLY_' + i + ' ' + 'y'.repeat(200) }
   ]).flat();
-  await page.evaluate(items => {
+  await page.addInitScript(items => {
+    localStorage.clear();
     localStorage.setItem('ai_chats_v87', JSON.stringify([{ id: 'budget-chat', title: 'Budget', messages: items }]));
     localStorage.setItem('ai_current_chat_v87', 'budget-chat');
-  }, messages);
-  await page.reload({ waitUntil: 'domcontentloaded' });
+  }, history);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('OLD_TURN_7');
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
@@ -87,16 +79,18 @@ test('large model context retains history beyond the old global caps', async ({ 
     });
   });
 
-  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
-  const messages = Array.from({ length: 40 }, (_, i) => [
+  const history = Array.from({ length: 40 }, (_, i) => [
     { role: 'user', content: 'OLD_TURN_' + i + ' ' + 'x'.repeat(700) },
     { role: 'assistant', content: 'OLD_REPLY_' + i + ' ' + 'y'.repeat(200) }
   ]).flat();
-  await page.evaluate(items => {
+  await page.addInitScript(items => {
+    localStorage.clear();
     localStorage.setItem('ai_chats_v87', JSON.stringify([{ id: 'large-budget-chat', title: 'Large budget', messages: items }]));
     localStorage.setItem('ai_current_chat_v87', 'large-budget-chat');
-  }, messages);
-  await page.reload({ waitUntil: 'domcontentloaded' });
+  }, history);
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#chatBox')).toContainText('OLD_TURN_0');
+  await expect(page.locator('#chatBox')).toContainText('OLD_TURN_39');
   await page.getByRole('button', { name: 'Настройки', exact: true }).click();
   await page.locator('#legacyProviderSettings > summary').click();
   await page.locator('#providerPreset').selectOption('custom');
