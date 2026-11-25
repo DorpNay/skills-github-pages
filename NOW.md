@@ -1,7 +1,7 @@
 # aLandi — NOW / единственный ориентир
 
 **Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
-**Последняя live-контрольная точка при записи:** `5b89051749b01be776868d75ecfea46371ac9ee1` (parent `dec5e1c3fbfa8df3d8b3ca164655defe0f8821c4`).
+**Последняя live-контрольная точка при записи:** `61211bde6e05b038854cd7d41b48837e2393d6df` (parent `33387c348fe9273190157c9253876d7a3731076b`).
 
 ## Старт новой задачи
 1. Прочитать только root `NOW.md`, строки 1–100.
@@ -37,14 +37,15 @@ GitHub `main` — источник истины. Project Sources и Project Inst
 - **P8:** release/host/security/infrastructure gates; owner-only части остаются отдельными блокерами.
 
 ## Live state — проверено 2026-11-25
-- **main:** `5b89051749b01be776868d75ecfea46371ac9ee1`; последний commit добавил resumable checksum-verified model artifact downloads и symlink-path safety.
-- **Открытые PR:** #195 (provider diagnostics + полный Chromium gate; head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`, 15 commits ahead / 1 behind live main, Quality run failed); #187 (старый provider-diagnostics PR, base `484c3b9b4570e110f8bc4584bab322c80c37803c`, не mergeable на последней проверке). Ни один не считать готовым к merge.
-- **Открытые issues:** #111 — release/owner environment gates; #186 — сторонняя GitHub Skills exercise, не продуктовая задача.
-- **main Actions:** шесть опубликованных workflow runs на точном HEAD завершились success: Pages build/deploy, Graphify, Python Gateway/runtime caches and artifact provenance/acquisition. Это не подтверждает full Chromium, native device или live VPS/Tunnel.
-- **Chromium:** full run PR #195 на его exact head завершился **201 passed / 58 failed (26.8 min)**. В числе failures — устаревший Notebook route selector, RU expectation для HTTP 401, locator collision, Research selector и другие runtime/timeouts. Не переносить PR целиком; синхронизировать тесты с актуальным UX и исправить подтверждённые регрессии.
-- **Branch protection:** rulesets endpoint вернул пустой список, classic branch-protection endpoint — 403 для интеграции. Настроенные required checks/review на `main` не подтверждены.
-- **Agent Relay:** live agents, launch targets и shared sessions не обнаружены. BrowserAct CLI в предыдущем срезе не установился из-за DNS; не повторять тот же install без изменения условий.
-- **Не проверено:** текущая live Pages версия после HEAD, полная Chromium suite на main, iOS Safari/VoiceOver, Windows forced-colors, настоящая VPS/Tunnel/Ollama/model загрузка, реальный server-only network-denied сценарий.
 
+- **main:** `61211bde6e05b038854cd7d41b48837e2393d6df`; последний commit обновил E2E Research Studio test: effort toggle проверяется вне modal, сохранение выбранного метода повторно подтверждается при открытии Research.
+- **Открытые PR:** #195 (provider diagnostics + full Chromium gate; head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) и #187 (старый provider diagnostics PR; head `c951585d5a411a0099a229c074cb5d8ed1168fff`). Оба не переносить целиком и не считать готовыми к merge; изучать diff/checks и переносить только подтверждённые полезные изменения.
+- **Открытые issues:** #111 — release/owner environment gates; #186 — внешняя GitHub Skills exercise, не продуктовая задача.
+- **Exact-main Quality Sentinels:** run [45552243734](https://github.com/DorpNay/skills-github-pages/actions/runs/45552243734) на `61211bde6e05b038854cd7d41b48837e2393d6df` — **Jekyll build, Context, Security, Integrity и Required root app boot/interaction smoke: PASS**.
+- **Условия, не PASS:** Real Chromium browser regression, independent static analysis, Lightpanda smoke и Published Pages release contract в том же run — **SKIPPED**. Поэтому полный Chromium и опубликованный сайт на этом SHA не подтверждены.
+- **Pages auto-publish:** не изменялся этим срезом. Кодовые commits в main всё равно могут активировать штатный автоматический Pages workflow; ручной deploy не выполнялся.
+- **Branch protection:** текущая конфигурация required checks/review не подтверждена; предыдущая проверка rulesets вернула пустой список, classic branch-protection endpoint — 403 для интеграции.
+- **Agent Relay:** не заявлять параллельное выполнение, пока не подтверждены живой worker, repo scope и readiness.
+- **Не проверено:** полный Chromium на main; текущая live Pages browser/revision contract; iOS Safari/VoiceOver; Windows forced-colors; настоящая VPS/Tunnel/Ollama/model загрузка; реальный server-only network-denied сценарий.
 ## Ближайшее действие
-Завершить P0 acceptance: разобрать точные Chromium failures на актуальном main, синхронизировать устаревшие E2E с shared-mode UI, исправить причинные runtime дефекты, а затем получить полный exact-main Chromium pass. Не менять Pages auto-publish workflow.
+Продолжить P0 acceptance на `61211bde`: изучить PR #195/#187 без merge, получить полный exact-main Chromium run (сейчас job skipped), исправить подтверждённые app/runtime дефекты и синхронизировать проверки. Параллельно освежить профильные primary-source packs P1–P8 в INTEL; Pages auto-publish workflow не менять.
