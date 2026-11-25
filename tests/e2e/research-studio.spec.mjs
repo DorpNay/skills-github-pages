@@ -47,7 +47,7 @@ test('Functions menu opens Agents and Skills and keeps Research method separate 
   await expect(method).toHaveValue('none');
   await method.selectOption('multi_step_evidence_report');
   await expect(method).toHaveValue('multi_step_evidence_report');
-  await expect(researchPanel.locator('#researchMethodStatus')).toContainText('Method selected for this chat');
+  await expect(researchPanel.locator('#researchMethodStatus')).toContainText('Selected for this chat');
   await page.locator('#modeDeep').click();
   await expect(page.locator('#modeDeep')).toHaveAttribute('aria-pressed', 'true');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_processing_mode'))).toBe('deep');
