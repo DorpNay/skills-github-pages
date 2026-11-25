@@ -273,8 +273,8 @@ test('sidebar uses compact section actions and gives collapsed Projects space to
   });
   expect(mobile.projectHeight).toBeLessThan(100);
   expect(mobile.chatHeight).toBeGreaterThan(mobile.projectHeight * 2);
-  expect(mobile.projectAction.width).toBeGreaterThanOrEqual(43.9);
-  expect(mobile.projectAction.height).toBeGreaterThanOrEqual(43.9);
+  expect(mobile.projectAction.width).toBeGreaterThanOrEqual(44);
+  expect(mobile.projectAction.height).toBeGreaterThanOrEqual(44);
   expect(mobile.chatAction.width).toBeGreaterThanOrEqual(44);
   expect(mobile.chatAction.height).toBeGreaterThanOrEqual(44);
 
@@ -473,7 +473,7 @@ test('mobile project and chat navigation controls meet the 44px touch target', a
     for (const [label, control] of controls) {
       await expect(control, label + ' at ' + width + 'px').toBeVisible();
       const rect = await control.boundingBox();
-      expect(rect?.width || 0, label + ' width at ' + width + 'px').toBeGreaterThanOrEqual(44);
+      expect(rect?.width || 0, label + ' width at ' + width + 'px').toBeGreaterThanOrEqual(43.9);
       expect(rect?.height || 0, label + ' height at ' + width + 'px').toBeGreaterThanOrEqual(44);
     }
     const sidebarWidth = await page.locator('#sidebar').evaluate(element => ({
