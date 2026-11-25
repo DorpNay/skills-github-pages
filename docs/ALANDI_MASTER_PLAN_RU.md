@@ -216,6 +216,8 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 
 **Triage priority:** first settle privacy/network-boundary and context-budget tests (#40–46), then focus restoration/navigation (#4, #11, #17, #22, #23, #26), then mobile geometry (#9, #10), storage rollback and project/skill state, then assertion-contract cleanup. Any test-only correction must preserve or strengthen what is actually proven. Do not close this gate until each unique case has one evidence-backed classification and the complete exact-HEAD Chromium run passes.
 
+**Follow-up — 2026-11-25 (test-only commit `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`; PARTIAL VERIFIED):** the privacy E2E harness now distinguishes inference POSTs from model-catalog GET discovery and limits Gemini mocks to the chat-completions endpoint. The exact-head Quality run [45631537259](https://github.com/DorpNay/skills-github-pages/actions/runs/45631537259) has Context, Integrity, Security, Jekyll and required root-app smoke **SUCCESS**; full Chromium remains **IN PROGRESS**. Pages auto-publication run [45631535874](https://github.com/DorpNay/skills-github-pages/actions/runs/45631535874) is **SUCCESS**. This corrects test classification only; do not promote privacy/browser acceptance or close P0.35.13 until full Chromium and remaining failure triage pass.
+
 **Design and release gates:** no palette or motion change may weaken existing high contrast, focus visibility, touch access, reduced-motion, RU/EN, iOS or browser lifecycle behavior. Keep experimental visual effects behind an optional feature flag until comparable screenshots and interaction tests pass.
 
 ### 0.4 Owner requirement traceability — consolidated sweep (2026-11-25; SPECIFIED)

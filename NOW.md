@@ -1,8 +1,8 @@
 # aLandi — NOW / единственный ориентир
 
 **Срез:** 2026-11-25 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
-**Последний подтверждённый main SHA до этого NOW-only checkpoint:** `48c192e379e26f9d4f419f4041bc730733cdbc1c` (parent of this checkpoint update). Это не self-referential HEAD: на входе всегда читать live `refs/heads/main` и не выводить SHA из текста NOW.
-**Последний application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Между ним и текущим HEAD — документационные, тестовые и instruction-only изменения; runtime app code не менялся.
+**Последний подтверждённый main SHA до этого NOW-only checkpoint:** `3e37db95b34c4d49ab9fc5f16e525d5a217be2de` (parent of this checkpoint update).
+**Последний application-code baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`. Последний test-only baseline: `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`; runtime app code не менялся.
 
 ## Старт новой задачи
 1. Прочитать только root `NOW.md`, строки 1–100.
@@ -39,19 +39,18 @@ Project Instructions / Sources в ChatGPT синхронизируются вр�
 Текущий порядок исполнения — в ближайшем действии ниже; исторические backlog пункты не удалять без reconciliation.
 
 ## Live state — verified 2026-11-25
-- **FACT — current exact main HEAD:** `f45eedb6b3b877ea695a7064189ef1c7333bcd2c`. This commit updates only `AGENTS.md` and `docs/ALANDI_MASTER_PLAN_RU.md`.
-- **FACT — AGENTS v4.0:** полный текст владельца добавлен в `AGENTS.md` без сокращения; согласованы supporting ADR/specs, task-scoped authorization, no-skip flaky-test handling, N₂O archive decision и owner-gated external effects. The repository-aligned instruction contains 16,610 characters / 145 lines.
-- **FACT — P3.6 new acceptance:** contract-first API/event schema (Pydantic → generated typed client), idempotent creation, SQLite WAL append-only event journal, per-run `event_seq` / `last_event_seq`, resume by `run_id` + cursor and default-off risky surfaces — **SPECIFIED, not VERIFIED**. Current `gateway/agent_runtime/store.py` has file-backed SQLite run/task/event tables, idempotency and `event_id`; its connection setup does not enable WAL. A generated typed client and immutable append-only/retention contract are not proven. Migration from `event_id` must be compatible.
-- **FACT — exact HEAD Pages:** run [45627857297](https://github.com/DorpNay/skills-github-pages/actions/runs/45627857297) build/deploy/report — **SUCCESS**. This is static publication evidence only, not app runtime acceptance.
-- **FACT — latest full Quality Sentinel:** run [45621154437](https://github.com/DorpNay/skills-github-pages/actions/runs/45621154437), test SHA `6ed6f576c8e652dfd335f98c98d4be35d6adf0de` — **FAIL** in real Chromium. Jekyll, Security, Integrity, Context and required root app boot/interaction smoke passed; Chromium failed. The run was before current docs-only HEAD; no Quality suite is claimed on `f45eedb6`.
-- **FACT — failure triage evidence:** privacy tests include a missing aServi API key in the fail-closed fixture; three Gemini privacy tests count all host requests and mistake GET model-catalog discovery (`postDataJSON() === null`) for inference POST. Filter inference method/payload; preserve zero-leak and payload-scope assertions. Other failures include real candidates in focus restoration, project/chat filtering, mobile touch geometry, voice lifecycle and storage rollback, plus stale locale/copy/title expectations. Do not blanket-classify or loosen assertions.
-- **FACT — previous baseline:** `191b2dac602273a2c3c4a2d80fbd722acadf6cd1` Quality Sentinel run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) reported 213 passed, 45 unique failed, 1 flaky. Reconcile retry duplicates before counting later run results.
-- **FACT — PR queue:** #195 (head `4a2718e305bf1f57dee38d867d07511d63ac1e9c`) and #187 (head `c951585d5a411a0099a229c074cb5d8ed1168fff`) remain open and are not to be auto-merged/closed. Provider redaction + full-Chromium workflow behavior from #195 already exist in main; do not merge stale PRs wholesale.
-- **FACT — issue queue:** #111 remains open for owner/live-host/release gates. Unrelated imported issue #186 was closed as `not_planned` with comment.
-- **FACT — governance:** `main` is not protected and has no required checks/review rules; tracked by #111. Do not change repository settings without owner approval.
-- **FACT — Project Sources:** manual mirror only. Uploaded `AGENTS.md` and prior N₂O/LOOP copies are stale; the owner must replace the project source with live v4.0 `AGENTS.md`. The current chat Project Instructions field should contain a short pointer, not the full file.
+- **FACT — exact main parent of this checkpoint:** `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`. The test-only commit changes `tests/e2e/privacy-memory.spec.mjs`; application runtime code is unchanged.
+- **FACT — P0 privacy regression implemented:** provider inference is now counted only for POST requests with a `/chat/completions` path and a request body. Gemini catalog GET discovery is not mistaken for user-message inference. Three broad Gemini route mocks now intercept only the chat-completions endpoint. Zero-leak, private-chat, explicit-consent and payload-scope assertions remain intact. Added a deterministic GET-vs-POST regression test.
+- **FACT — exact-head Quality Sentinels:** run [45631537259](https://github.com/DorpNay/skills-github-pages/actions/runs/45631537259) on `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`: Context, Integrity, Security, Jekyll and required root-app smoke **SUCCESS**; real Chromium browser regression **IN PROGRESS** at last read. Lightpanda, independent static analysis and separate Published Pages release contract were **SKIPPED**.
+- **FACT — exact-head Pages auto-publication:** run [45631535874](https://github.com/DorpNay/skills-github-pages/actions/runs/45631535874) on `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`: build, report and deploy **SUCCESS**. This is Pages pipeline evidence, not a substitute for full Chromium or owner-host acceptance.
+- **FACT — previous Chromium failure baseline:** run [45553470306](https://github.com/DorpNay/skills-github-pages/actions/runs/45553470306) on `191b2dac602273a2c3c4a2d80fbd722acadf6cd1`: 213 passed, 45 unique failed, 1 flaky. The raw log confirms the context-budget failure sent only `LATEST_TURN` instead of retaining `OLD_TURN_7`; investigate the real system-prompt/context-budget input before changing assertions.
+- **FACT — open PRs:** #195 and #187 remain open and diverged from current main. Main already contains provider-probe RU/EN diagnostics, credential redaction, busy-state recovery and the push/PR Chromium gate. Do not merge stale PRs wholesale or close them without separate authorization.
+- **FACT — open issue:** #111 remains the consolidated owner/live-host/release gate.
+- **FACT — governance:** Pages auto-publish is untouched. No manual deployment, PR merge/close, branch deletion, ruleset/permissions change, infrastructure change or purchase was performed.
+- **FACT — Project Sources:** manual mirror only. The owner must replace stale uploaded sources with live `AGENTS.md` v4.0; do not claim UI synchronization.
 
 ## Ближайшее действие
-1. Продолжить P0 Chromium triage на exact current main; сначала исправить privacy fixtures/request filtering, затем локальные assertion drift, затем реальные focus/navigation/mobile/voice/storage дефекты. На каждом баге — repro → minimal fix → focused test → full Chromium on exact HEAD. Не снижать privacy/security assertions и не исключать тесты.
-2. После полного browser acceptance — P0.35 header/mode selector/themes; затем P1 Coding + P3 orchestration foundation + P5 Offline Core. Notebook Studio remains frozen.
-3. После каждого существенного commit обновлять этот checkpoint и проверять Pages auto-publish; не делать manual deploy.
+1. Дождаться завершения full Chromium run `45631537259` на exact SHA `3e37db95b34c4d49ab9fc5f16e525d5a217be2de`; получить уникальные ошибки/trace и triage, не считать in-progress VERIFIED.
+2. Следующим проверить context-budget fixture (tests/e2e/context-budget.spec.mjs) против реального system prompt, selected model и contextLength; не ослаблять критерии сохранения истории.
+3. Затем продолжить P0 focus/navigation/mobile/voice/storage triage; закрыть P0 только после полного exact-head Chromium и нужной live-browser acceptance. После этого — P1 Coding, P3 orchestration foundation и P5 Offline Core.
+4. После каждого существенного commit обновлять checkpoint и проверять штатный Pages auto-publish; manual deploy запрещён.
