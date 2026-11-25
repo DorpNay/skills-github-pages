@@ -1244,7 +1244,7 @@ permalink: /
           <textarea id="agentTeamCustomScenario" maxlength="1000" rows="2" class="advanced-control function-panel-field w-full resize-y rounded-lg border" placeholder="Опиши сценарий команды"></textarea>
           <textarea id="agentCustomRoles" maxlength="1500" rows="3" class="advanced-control function-panel-field w-full resize-y rounded-lg border" placeholder="Роли и обязанности, по одной на строку"></textarea>
         </div>
-        <p class="function-panel-notice function-panel-notice-warning p-2 text-[10px] leading-relaxed function-panel-muted">Команда — сохраняемый blueprint. Runtime сейчас выполняет четыре фиксированных этапа на одной выбранной модели; создание 50 независимых агентов ещё не реализовано.</p>
+        <p class="function-panel-notice function-panel-notice-warning p-2 text-[10px] leading-relaxed function-panel-muted">Команда — сохраняемый blueprint, а не число активных workers. Обычные задачи выполняются напрямую; для подходящих сложных исследовательских запросов доступен ограниченный последовательный workflow. Это не параллельный рой; 50 независимых агентов не создаются.</p>
           <p id="agentConfigSummary" class="function-panel-muted text-[10px]" aria-live="polite"></p>
         </section>
         <details id="agentTopologyRoadmapDetails" class="function-panel-card">
@@ -2231,6 +2231,8 @@ permalink: /
         renderAgentRuntimeTasks(agentRuntimeLastTasks);
         renderAgentRunChatTasks(agentRunChatLastTasks);
         renderAgentRunChatStatus(agentRuntimeActiveRun,agentRuntimeActiveRun?.latestSnapshot);
+        const latestRunState=agentRuntimeActiveRun?.latestSnapshot?.run?.state||getCurrentChat()?.agentRunStatusSummary?.state;
+        if(latestRunState)$('agentRuntimeStatus').textContent=agentRuntimeStatusText(latestRunState);
         refreshAgentRuntimeEventLanguage();
       }
       if(!$('researchFunctionSettings').classList.contains('hidden'))renderResearchConfiguration();
@@ -4806,7 +4808,7 @@ permalink: /
       if([ ...$('agentRuntimeStrategy').options ].some(option=>option.value===chat.agentRuntimeStrategy))$('agentRuntimeStrategy').value=chat.agentRuntimeStrategy;
       renderAgentRuntimeStrategyHelp(chat.agentRuntimeStrategy);
       $('agentCustomFields').classList.toggle('hidden',chat.agentTeamScenario!=='custom'&&chat.agentRolePreset!=='custom');
-      $('agentConfigSummary').textContent=getUiLanguage()==='en'?'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 fixed stages':'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · runtime: 4 фиксированных этапа';
+      $('agentConfigSummary').textContent=getUiLanguage()==='en'?'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · Direct by default; research workflow for complex tasks':'Blueprint: '+chat.agentTeamSize+' · '+chat.agentTeamScenario+' · '+chat.agentRolePreset+' · прямой режим по умолчанию; исследовательский workflow для сложных задач';
     }
     function persistAgentConfiguration(){
       const chat=getCurrentChat();if(!chat)return;ensureChatFunctionSettings(chat);

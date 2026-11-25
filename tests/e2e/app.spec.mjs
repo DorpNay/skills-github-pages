@@ -1194,8 +1194,8 @@ test('API authentication errors are shown without losing the original user promp
   await page.locator('#userInput').fill('E2E auth error preservation check');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('E2E auth error preservation check');
-  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен.', { timeout: 15000 });
-  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ.');
+  await expect(page.locator('#chatBox')).toContainText('Запрос не выполнен (HTTP 401).', { timeout: 15000 });
+  await expect(page.locator('#chatBox')).toContainText('Проверьте API-ключ провайдера.');
   await expect.poll(async () => await page.locator('#chatBox').locator('.message-model-meta').count()).toBe(0);
 });
 
@@ -6796,13 +6796,16 @@ test('live RU EN switching refreshes open runtime surfaces without losing drafts
   await page.locator('#functionPanelModal .function-panel-close').click();
   await page.locator('#functionsMenu > summary').click();
   await page.locator('[data-action="open-function-panel"][data-function="agents"]').click();
-  await expect(page.locator('#agentConfigSummary')).toContainText('фиксированных этапа');
+  await expect(page.locator('#agentConfigSummary')).toContainText('прямой режим по умолчанию');
+  await expect(page.locator('#agentConfigSummary')).toContainText('для сложных задач');
   await page.locator('#uiLanguage').selectOption('en');
-  await expect(page.locator('#agentConfigSummary')).toContainText('fixed stages');
+  await expect(page.locator('#agentConfigSummary')).toContainText('Direct by default');
+  await expect(page.locator('#agentConfigSummary')).toContainText('for complex tasks');
   await expect(page.locator('#agentTeamSizeValue')).toHaveText('4 roles');
   await expect(page.locator('#agentRuntimeStrategyHelp')).toContainText('One task');
   await page.locator('#uiLanguage').selectOption('ru');
-  await expect(page.locator('#agentConfigSummary')).toContainText('фиксированных этапа');
+  await expect(page.locator('#agentConfigSummary')).toContainText('прямой режим по умолчанию');
+  await expect(page.locator('#agentConfigSummary')).toContainText('для сложных задач');
   await expect(page.locator('#agentTeamSizeValue')).toHaveText('4 роли');
 
   await page.locator('#functionPanelModal .function-panel-close').click();
