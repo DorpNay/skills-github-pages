@@ -3392,6 +3392,7 @@ test('request-only project context is sent once and does not change the active c
   await page.locator('#modelName').fill('context-e2e');await page.locator('#apiKey').fill('e2e-context-key');
   await page.locator('[data-action="save-settings"]').click();
   await page.locator('#settingsModal .settings-header-actions [data-action="close-settings"]').click();
+  page.on('dialog',dialog=>dialog.accept());
   await expect(page.locator('#currentProjectSelect')).toHaveValue('project-alpha');
   await page.locator('#contextPickerButton').click();
   await page.locator('#requestProjectChecks input[data-request-project-id="project-beta"]').check();

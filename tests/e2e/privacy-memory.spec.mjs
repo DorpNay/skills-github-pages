@@ -213,8 +213,8 @@ test('canceling private-to-shared promotion keeps the fact private', async ({ pa
   });
   await page.reload();
 
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.evaluate(() => {
-    document.getElementById('sidebar')?.classList.remove('-translate-x-full');
     const projectDetails = document.getElementById('projectManagerDetails');
     const memoryDetails = document.getElementById('memoryToolsDetails');
     const personalDetails = document.getElementById('personalMemoryDetails');
@@ -259,6 +259,7 @@ test('private-memory requests fail closed when the durable privacy marker cannot
   await page.addInitScript(() => {
     localStorage.setItem('ai_ui_language_v1', 'en');
     localStorage.setItem('ai_api_provider', 'alandi');
+    localStorage.setItem('ai_api_key_alandi', 'synthetic-e2e-key');
     localStorage.setItem('ai_base_url', 'https://privacy-gateway.test');
   });
   await page.goto('/');
@@ -489,6 +490,7 @@ test('canceling external project-context disclosure preserves the draft and send
     }
   });
   await page.addInitScript(() => {
+    localStorage.setItem('ai_ui_language_v1', 'en');
     localStorage.setItem('ai_api_provider', 'gemini');
     localStorage.setItem('ai_api_key', 'synthetic-e2e-key');
     localStorage.setItem('ai_projects_v1', JSON.stringify([{
@@ -742,7 +744,7 @@ test('project-and-global scope includes shared facts only when explicit global o
     }]));
   });
   await page.reload();
-  await page.locator('#userInput').fill('Explain scope sentinel omega.');
+  await page.locator('#userInput').fill('Explain scope sentinel omega after global opt-in.');
   await page.locator('#sendBtn').click();
   await expect(page.locator('#chatBox')).toContainText('Synthetic provider reply.');
   expect(outboundBodies).toHaveLength(2);
