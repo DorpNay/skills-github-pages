@@ -1,4 +1,6 @@
 """Offline lifecycle and recovery tests for the experimental AgentRun store."""
+import sqlite3
+
 import pytest
 
 from gateway.agent_runtime.store import (
@@ -633,3 +635,13 @@ def test_failed_task_prevents_claiming_its_dependent_task(tmp_path):
     assert store.fail_task(claim=claim, error_code="source_failed", retryable=False, now=106)["state"] == "failed"
     assert store.claim_task(run_id=run["run_id"], worker_id="dag-worker", now=107) is None
     assert store.get_task(dependent["task_id"])["state"] == "queued"
+
+
+def test_file_backed_agent_run_store_uses_wal_without_weakening_sync(tmp_path):
+    store = AgentRunStore(tmp_path / "wal.sqlite3")
+    store.initialize()
+    with sqlite3.connect(store.path) as db:
+        journal_mode = db.execute("PRAGMA journal_mode").fetchone()[0]
+        synchronous = db.execute("PRAGMA synchronous").fetchone()[0]
+    assert journal_mode.lower() == "wal"
+    assert synchronous == 2  # FULL remains enabled for durable run/event commits.

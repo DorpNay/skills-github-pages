@@ -90,13 +90,19 @@ self.addEventListener('fetch', event => {
     if (!navigation) {
       const cached = await cache.match(key);
       if (cached) return cached;
-      const response = await fetch(request);
-      if (response.ok && response.type === 'basic') await cache.put(key, response.clone());
-      if (!response.ok) {
+      try {
+        const response = await fetch(request);
+        if (response.ok && response.type === 'basic') await cache.put(key, response.clone());
+        if (!response.ok) {
+          const previous = await matchPreviousCache(key);
+          if (previous) return previous;
+        }
+        return response;
+      } catch (error) {
         const previous = await matchPreviousCache(key);
         if (previous) return previous;
+        throw error;
       }
-      return response;
     }
     try {
       const response = await fetch(request);

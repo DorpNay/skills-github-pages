@@ -1,7 +1,7 @@
 # aLandi — NOW / единственный ориентир
 
 **Срез:** 2026-11-28 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
-**Последний функциональный HEAD:** `30b3e3644937da1234f8f161a2d83b0d3f99c096`. Следующий коммит этого checkpoint — docs-only child; функциональные изменения продолжаются только fast-forward от него.
+**Последний функциональный HEAD:** `eca91fc013bf8664957a83a18bb0fee09d1cf532`. Следующий функциональный срез — fast-forward child после exact-head CI.
 **Канонический контракт:** root `AGENTS.md` v4.0; P0–P8 acceptance — `docs/ALANDI_MASTER_PLAN_RU.md`; источники/лицензии/verdicts — `INTEL.md`.
 
 ## Governance
@@ -14,19 +14,19 @@
 
 ## Текущее состояние
 - **P0:** root app — единственный публичный клиент. Старый baseline SHA `65564d1…` имел 230 passed / 32 failed Chromium; не переносить автоматически на новые HEAD.
-- **P1.5 — PARTIAL:** Coding Projects в canonical `ai_projects_v1`; dedicated chat, instructions, reload persistence, typed bundle import/export, scoped workspace handoff. Per-project directory handles и event metadata хранятся в IndexedDB; permission проверяется повторно и запрашивается только по user gesture. Recovery snapshots привязаны к project ID; чужой snapshot нельзя восстановить даже при одинаковом имени папки. Metadata export исключает handle и file contents.
+- **P1.5 — PARTIAL:** Coding Projects в canonical `ai_projects_v1`; dedicated chat, instructions, reload persistence, typed bundle import/export, scoped workspace handoff. Per-project directory handles и event metadata хранятся в IndexedDB; permission проверяется повторно и запрашивается только по user gesture. Recovery snapshots привязаны к project ID; чужой snapshot нельзя восстановить даже при одинаковом имени папки. Activity timeline показывает последние allowlisted события. Metadata export исключает handle и file contents.
 - **aCodingi:** браузерный редактор поддерживает выбранные файлы, diff, explicit approval и local recovery. Реальный sandbox, shell/test runner, agent edits, Git worktrees/branches и durable run approvals не реализованы.
 - **aNoteBooki:** shared shell, IndexedDB Notebook, source-grounded chat только по явно выбранным источникам. Studio jobs без runtime честно unavailable.
-- **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; клиентский event replay, approvals и реальный isolated runtime открыты.
-- **P5.7 — PARTIAL:** SW кэширует public shell/static assets, исключает sensitive API/auth; сохраняет предыдущий revision cache и использует его как fallback для отсутствующих legacy assets. Offline dependency closure, integrity installer, quota/eviction and network-disabled proof открыты.
+- **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; WAL включён без ослабления FULL synchronous durability. Client replay/cursor contract, approvals and real isolated runtime остаются открыты.
+- **P5.7 — PARTIAL:** SW кэширует public shell/static assets, исключает sensitive API/auth; сохраняет предыдущий revision cache и использует его как fallback для отсутствующих legacy assets при HTTP-ошибках и сетевых сбоях. Offline Core показывает browser storage/quota и запрашивает persistent storage только по клику. Offline dependency closure, integrity installer, quota/eviction and network-disabled proof открыты.
 - **P6–P8:** продолжать по существующим acceptance criteria, не плодить backlog.
 - **Открытые очереди:** PR #195, PR #187, issue #111 — не merge/close без отдельного решения.
 
 ## Exact-head evidence
-- **Functional HEAD:** `30b3e3644937da1234f8f161a2d83b0d3f99c096`.
-- **Quality Sentinels:** run [#46077858206](https://github.com/DorpNay/skills-github-pages/actions/runs/46077858206) pending at checkpoint.
-- **Pages build/deployment:** run [#46077857712](https://github.com/DorpNay/skills-github-pages/actions/runs/46077857712) queued at checkpoint.
-- **Graphify:** run [#46077858392](https://github.com/DorpNay/skills-github-pages/actions/runs/46077858392) queued at checkpoint.
+- **Current code parent:** `eca91fc013bf8664957a83a18bb0fee09d1cf532`.
+- **Quality Sentinels:** run [#46078010104](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010104) in progress at checkpoint.
+- **Pages build/deployment:** run [#46078010031](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010031) completed successfully.
+- **Graphify:** run [#46078010063](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010063) completed successfully.
 - CI, published Pages browser, owner host/model/VPS and native-device permission evidence are separate environments.
 
 ## Следующие действия

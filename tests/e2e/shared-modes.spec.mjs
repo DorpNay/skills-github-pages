@@ -140,6 +140,7 @@ test('Coding Projects persist in the canonical project store and hand off to the
   await page.reload();await expect(page.locator('#codingProjectEditName')).toHaveValue('aLandi coding workspace v2');
   await workspaceLink.click();await expect(page).toHaveURL(/workspace\/\?projectId=/);
   await expect(page.locator('#codingProjectContext')).toBeVisible();await expect(page.locator('#codingProjectName')).toHaveText('aLandi coding workspace v2');
+  await expect(page.locator('#workspaceActivityList')).toContainText(/Рабочее пространство открыто|Workspace opened/);
   await expect(page.locator('#codingProjectInstructions')).toContainText('Keep changes scoped to this project');await expect(page.locator('#chooseFolder')).toBeEnabled();
   await page.goBack();await page.locator('#codingProjectOpenChat').click();await expect(page.locator('body')).toHaveAttribute('data-app-mode','alandi');
   await expect(page.locator('#activeProjectTitle')).toContainText('aLandi coding workspace v2');

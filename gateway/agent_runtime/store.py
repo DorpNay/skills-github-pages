@@ -248,6 +248,9 @@ class AgentRunStore:
         if self.path != ":memory:":
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with closing(self._connect()) as db:
+            # WAL allows readers to inspect durable run/event state while a worker commits.
+            # Keep SQLite's default FULL synchronous durability; do not weaken crash guarantees.
+            db.execute("PRAGMA journal_mode=WAL")
             existing = db.execute(
                 "SELECT 1 FROM sqlite_master WHERE type='table' AND name='agent_runs'"
             ).fetchone()

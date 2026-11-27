@@ -26,6 +26,26 @@
     el.textContent = message;
     el.className = 'status' + (kind ? ' ' + kind : '');
   }
+  async function renderWorkspaceActivity(){
+    const host=$('workspaceActivityList');if(!host||!codingProjectId||!codingStore)return;
+    host.replaceChildren();
+    try{
+      const events=await codingStore.listEvents(codingProjectId);
+      const labels={workspace_opened:tr('Рабочее пространство открыто','Workspace opened'),project_selected:tr('Проект выбран','Project selected'),root_selected:tr('Папка привязана','Folder linked'),root_reauthorized:tr('Доступ к папке подтверждён','Folder access re-authorized'),files_loaded:tr('Файлы открыты','Files loaded'),diff_prepared:tr('Diff подготовлен','Diff prepared'),files_written:tr('Файлы записаны','Files written'),files_restored:tr('Файлы восстановлены','Files restored'),workspace_exported:tr('Метаданные экспортированы','Metadata exported'),root_removed:tr('Привязка папки удалена','Folder link removed')};
+      for(const event of events.slice(-20).reverse()){
+        const item=document.createElement('li'),title=document.createElement('span'),meta=document.createElement('small');
+        const detail=event.details||{},label=labels[event.type]||tr('Событие workspace','Workspace event');
+        const suffix=typeof detail.rootLabel==='string'&&detail.rootLabel?' · '+detail.rootLabel:Number.isInteger(detail.count)?' · '+detail.count:'';
+        title.textContent=label+suffix;meta.textContent=new Date(event.createdAt).toLocaleString();item.append(title,meta);host.append(item);
+      }
+      if(!events.length){const empty=document.createElement('li');empty.textContent=tr('Пока нет событий.','No activity yet.');host.append(empty);}
+    }catch(error){const item=document.createElement('li');item.textContent=tr('История недоступна: ','Activity unavailable: ')+error.message;host.append(item);}
+  }
+  async function recordWorkspaceEvent(type,details={}){
+    if(!codingProjectId||!codingStore)return;
+    try{await codingStore.recordEvent(codingProjectId,type,details);await renderWorkspaceActivity();}
+    catch(error){status(tr('Не удалось сохранить событие workspace: ','Could not save workspace activity: ')+error.message,'error');}
+  }
   function renderCodingProjectContext(){const panel=$('codingProjectContext');if(!panel||!requestedCodingProjectId)return;panel.hidden=false;if(!codingProject){$('codingProjectName').textContent=tr('Проект недоступен','Coding Project unavailable');$('codingProjectInstructions').textContent=codingProjectError;$('chooseFolder').disabled=true;$('chooseFiles').disabled=true;$('exportWorkspaceMetadata').hidden=true;status(codingProjectError,'error');return;}$('codingProjectName').textContent=String(codingProject.name||'Coding Project').slice(0,100);$('codingProjectInstructions').textContent=String(codingProject.instructions||'').slice(0,6000);const rootLabel=typeof codingProject.codingWorkspace?.rootLabel==='string'?codingProject.codingWorkspace.rootLabel:'';$('codingProjectFolderBinding').textContent=rootLabel?tr('Последняя выбранная папка: ','Last selected folder: ')+rootLabel+tr('. Это подсказка; проверь содержимое.','. This is a reminder; inspect the contents.') : tr('Папка ещё не выбрана для этого проекта.','No folder selected for this project.');}
   async function saveCodingProjectFolderLabel(rootName,rootHandle){
     if(!codingProjectId||!codingProject)return true;
@@ -40,7 +60,7 @@
     if(changedHandle&&!confirm(tr('Для этого Coding Project уже привязана другая папка. Заменить её на «'+rootName+'»? Содержимое новой папки нужно проверить отдельно.','This Coding Project already has a different folder linked. Replace it with "'+rootName+'"? Review the new folder contents separately.')))return false;
     const updated=current.slice();updated[index]={...current[index],codingWorkspace:{schemaVersion:1,rootLabel:String(rootName).slice(0,128),lastOpenedAt:new Date().toISOString()},updatedAt:new Date().toISOString()};
     localStorage.setItem('ai_projects_v1',JSON.stringify(updated));codingProject=updated[index];renderCodingProjectContext();
-    if(codingStore){try{await codingStore.saveRootHandle(codingProjectId,rootHandle);codingHandlePersistenceWarning='';}catch(error){codingHandlePersistenceWarning=tr('Папка доступна только в этой вкладке; IndexedDB не сохранил дескриптор: ','Folder access is available only in this tab; IndexedDB did not persist the handle: ')+error.message;}}
+    if(codingStore){try{await codingStore.saveRootHandle(codingProjectId,rootHandle);codingHandlePersistenceWarning='';await renderWorkspaceActivity();}catch(error){codingHandlePersistenceWarning=tr('Папка доступна только в этой вкладке; IndexedDB не сохранил дескриптор: ','Folder access is available only in this tab; IndexedDB did not persist the handle: ')+error.message;}}
     return true;
   }
   async function restoreCodingProjectFolder(){
@@ -50,7 +70,7 @@
       const permission=await savedDirectoryHandle.queryPermission({mode:'readwrite'});
       if(permission==='granted'){
         provider.rootHandle=savedDirectoryHandle;await refreshFolder();
-        await codingStore.recordEvent(codingProjectId,'root_reauthorized',{rootLabel:savedDirectoryHandle.name||''});
+        await recordWorkspaceEvent('root_reauthorized',{rootLabel:savedDirectoryHandle.name||''});
         status(tr('Сохранённая папка восстановлена; разрешение браузера проверено.','Saved folder restored; browser permission was re-checked.'),'success');
       }else{
         $('reauthorizeFolder').hidden=false;
@@ -61,7 +81,7 @@
   async function initializeWorkspace(){
     localizeWorkspace();renderCodingProjectContext();
     if(codingProjectId&&codingProject&&codingStore){
-      try{await codingStore.ensureWorkspace(codingProjectId);await codingStore.recordEvent(codingProjectId,'workspace_opened');await restoreCodingProjectFolder();}
+      try{await codingStore.ensureWorkspace(codingProjectId);await recordWorkspaceEvent('workspace_opened');await restoreCodingProjectFolder();}
       catch(error){status(tr('Локальное хранилище workspace недоступно: ','Local workspace storage is unavailable: ')+error.message,'error');}
       $('exportWorkspaceMetadata').hidden=false;
     }
@@ -230,7 +250,7 @@
             )
           });
           status(tr('Восстановлено файлов: ','Files restored: ') + result.filesRestored + tr('. Конфликтов подтверждено: ','. Confirmed conflicts: ') + result.conflicts, 'success');
-          if(codingProjectId&&codingStore)await codingStore.recordEvent(codingProjectId,'files_restored',{count:result.filesRestored});
+          if(codingProjectId&&codingStore)await recordWorkspaceEvent('files_restored',{count:result.filesRestored});
           await refreshFolderIfSelected();
           await renderRecovery();
         } catch (error) { status(error.message, 'error'); }
@@ -292,7 +312,7 @@
         handle: provider.fileHandles.get(file.path)
       }));
       renderEditors();
-      status(tr('Открыто файлов: ','Files opened: ') + editors.length + tr('. Изменения пока не записаны.','. No changes have been written.'), 'success');if(codingProjectId&&codingStore)await codingStore.recordEvent(codingProjectId,'files_loaded',{count:editors.length});
+      status(tr('Открыто файлов: ','Files opened: ') + editors.length + tr('. Изменения пока не записаны.','. No changes have been written.'), 'success');if(codingProjectId&&codingStore)await recordWorkspaceEvent('files_loaded',{count:editors.length});
     } catch (error) { status(error.message, 'error'); }
   });
   $('previewChanges').addEventListener('click', async () => {
@@ -303,7 +323,7 @@
       $('diffPanel').hidden = false;
       $('recoveryConsent').checked = false;
       updateControls();
-      status(tr('Diff готов. Файлы на диске ещё не изменены.','Diff is ready. Disk files have not been changed.'), 'success');if(codingProjectId&&codingStore)await codingStore.recordEvent(codingProjectId,'diff_prepared',{count:prepared.files.length});
+      status(tr('Diff готов. Файлы на диске ещё не изменены.','Diff is ready. Disk files have not been changed.'), 'success');if(codingProjectId&&codingStore)await recordWorkspaceEvent('diff_prepared',{count:prepared.files.length});
       $('diffPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (error) { status(error.message, 'error'); }
   });
@@ -337,7 +357,7 @@
       prepared = null;
       $('diffPanel').hidden = true;
       renderEditors();
-      status(tr('Записано файлов: ','Files written: ') + result.filesWritten + tr('. Recovery-снимок сохранён локально.','. Recovery snapshot saved locally.'), 'success');if(codingProjectId&&codingStore)await codingStore.recordEvent(codingProjectId,'files_written',{count:result.filesWritten});
+      status(tr('Записано файлов: ','Files written: ') + result.filesWritten + tr('. Recovery-снимок сохранён локально.','. Recovery snapshot saved locally.'), 'success');if(codingProjectId&&codingStore)await recordWorkspaceEvent('files_written',{count:result.filesWritten});
       await renderRecovery();
     } catch (error) {
       status(error.message, 'error');
@@ -346,10 +366,10 @@
   });
 
   $('reauthorizeFolder').addEventListener('click',async()=>{
-    try{if(!savedDirectoryHandle)savedDirectoryHandle=await codingStore?.getRootHandle(codingProjectId);if(!savedDirectoryHandle)throw new Error(tr('Сохранённая папка не найдена. Выбери её заново.','Saved folder handle not found. Choose it again.'));await provider.ensurePermission(savedDirectoryHandle,'readwrite',true);provider.rootHandle=savedDirectoryHandle;await refreshFolder();$('reauthorizeFolder').hidden=true;status(tr('Доступ к папке восстановлен.','Folder access restored.'),'success');await codingStore?.recordEvent(codingProjectId,'root_reauthorized',{rootLabel:savedDirectoryHandle.name||''});}catch(error){status(error.message,'error');}
+    try{if(!savedDirectoryHandle)savedDirectoryHandle=await codingStore?.getRootHandle(codingProjectId);if(!savedDirectoryHandle)throw new Error(tr('Сохранённая папка не найдена. Выбери её заново.','Saved folder handle not found. Choose it again.'));await provider.ensurePermission(savedDirectoryHandle,'readwrite',true);provider.rootHandle=savedDirectoryHandle;await refreshFolder();$('reauthorizeFolder').hidden=true;status(tr('Доступ к папке восстановлен.','Folder access restored.'),'success');await recordWorkspaceEvent('root_reauthorized',{rootLabel:savedDirectoryHandle.name||''});}catch(error){status(error.message,'error');}
   });
   $('exportWorkspaceMetadata').addEventListener('click',async()=>{
-    try{const data=await codingStore.exportMetadata(codingProjectId);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download='alandi-coding-workspace-'+codingProjectId+'.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);status(tr('Метаданные workspace экспортированы. Дескриптор папки и содержимое файлов не включены.','Workspace metadata exported. The folder handle and file contents are not included.'),'success');}catch(error){status(error.message,'error');}
+    try{const data=await codingStore.exportMetadata(codingProjectId);const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download='alandi-coding-workspace-'+codingProjectId+'.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);status(tr('Метаданные workspace экспортированы. Дескриптор папки и содержимое файлов не включены.','Workspace metadata exported. The folder handle and file contents are not included.'),'success');await renderWorkspaceActivity();}catch(error){status(error.message,'error');}
   });
   if (!provider.capabilities.openDirectory) $('chooseFolder').disabled = true;
   if (!provider.capabilities.openFiles) $('chooseFiles').disabled = true;
