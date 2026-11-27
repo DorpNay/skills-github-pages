@@ -204,3 +204,59 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   await expect(page.locator('#sharedNotebookStatus')).toContainText('Could not save source selection');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('ai_shared_notebook_sources_v1'))).toBe(persistedBeforeFailure);
 });
+
+
+test('Coding Workspace metadata is scoped by project and export omits directory handles and file contents', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await expect.poll(() => page.evaluate(() => Boolean(window.AlandiCodingWorkspaceStore))).toBe(true);
+  const result = await page.evaluate(async () => {
+    const store = window.AlandiCodingWorkspaceStore;
+    await store.ensureWorkspace('coding-project-a');
+    await store.ensureWorkspace('coding-project-b');
+    await store.saveRootHandle('coding-project-a', {kind:'directory',name:'project-a-root'});
+    await store.saveRootHandle('coding-project-b', {kind:'directory',name:'project-b-root'});
+    await store.recordEvent('coding-project-a','project_selected');
+    await store.recordEvent('coding-project-a','workspace_opened');
+    await store.recordEvent('coding-project-a','files_loaded',{count:3});
+    const exported = await store.exportMetadata('coding-project-a');
+    const a = await store.getWorkspace('coding-project-a');
+    const b = await store.getWorkspace('coding-project-b');
+    const handleA = await store.getRootHandle('coding-project-a');
+    const handleB = await store.getRootHandle('coding-project-b');
+    const events = await store.listEvents('coding-project-a');
+    let rejectedUnknownEvent = false;
+    try { await store.recordEvent('coding-project-a','private_prompt',{prompt:'never store this'}); }
+    catch (_) { rejectedUnknownEvent = true; }
+    await store.forgetWorkspace('coding-project-a');
+    return {a,b,handleA,handleB,events,exported,rejectedUnknownEvent,removed:await store.getWorkspace('coding-project-a')};
+  });
+  expect(result.a.lastEventSeq).toBe(5);
+  expect(result.b.lastEventSeq).toBe(1);
+  expect(result.handleA.name).toBe('project-a-root');
+  expect(result.handleB.name).toBe('project-b-root');
+  expect(result.events.map(event => event.seq)).toEqual([1,2,3,4,5]);
+  expect(result.events.map(event => event.type)).toEqual(['root_selected','project_selected','workspace_opened','files_loaded','workspace_exported']);
+  expect(result.events[3].details).toEqual({count:3});
+  expect(result.exported.workspace.hasRootHandle).toBe(true);
+  expect(result.exported.workspace.rootLabel).toBe('project-a-root');
+  expect(JSON.stringify(result.exported)).not.toContain('rootHandle');
+  expect(JSON.stringify(result.exported)).not.toContain('never store this');
+  expect(result.rejectedUnknownEvent).toBe(true);
+  expect(result.removed).toBeNull();
+});
+
+test('Coding Workspace controls and status copy follow the selected RU/EN locale', async ({ page }) => {
+  await page.goto(APP_PATH);
+  await page.evaluate(() => {
+    localStorage.setItem('ai_ui_language_v1','en');
+    localStorage.setItem('ai_projects_v1',JSON.stringify([{id:'coding-locale-fixture',kind:'coding',name:'English project',instructions:'Use local files only.',codingWorkspace:{schemaVersion:1,rootLabel:'',lastOpenedAt:''}}]));
+  });
+  await page.goto('/workspace/?projectId=coding-locale-fixture');
+  await expect(page.locator('html')).toHaveAttribute('lang','en');
+  await expect(page.locator('h1')).toHaveText('aCodingi — coding workspace');
+  await expect(page.locator('#chooseFolder')).toHaveText('Choose folder');
+  await expect(page.locator('#chooseFiles')).toHaveText('Choose files');
+  await expect(page.locator('#fileList .empty')).toHaveText('Choose a folder or files first.');
+  await expect(page.locator('#codingProjectName')).toHaveText('English project');
+  await expect(page.locator('#codingProjectInstructions')).toHaveText('Use local files only.');
+});

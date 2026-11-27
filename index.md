@@ -22,6 +22,7 @@ permalink: /
   <link rel="stylesheet" href="assets/css/tailwind.generated.css">
   <script src="assets/js/offline-shell.js" defer></script>
   <script src="assets/js/anotebooki-store.js" defer></script>
+  <script src="assets/js/coding-workspace-store.js" defer></script>
   <script src="assets/js/shared-modes.js" defer></script>
   <script id="markedRuntime" async src="assets/js/vendor/marked-18.0.14.min.js"></script>
   <script async src="assets/js/vendor/purify-3.4.16.min.js"></script>
@@ -3238,6 +3239,7 @@ permalink: /
         setProjectChatScope(selectedChat?.projectId||'',{expand:true});
       }
       if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;currentChatId=previousCurrentId;setProjectChatScope(previousScope,{expand:false});renderProjectUI();renderChatList();renderActiveChat();return;}
+      if(project.kind==='coding'&&window.AlandiCodingWorkspaceStore){void window.AlandiCodingWorkspaceStore.forgetWorkspace(project.id).catch(error=>console.warn('Coding Workspace metadata cleanup failed:',error));}
       renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();
       showToast(getUiLanguage()==='en'?'Project and its chats deleted.':'Проект и его чаты удалены.');
     }
