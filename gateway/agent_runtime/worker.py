@@ -684,10 +684,12 @@ class AgentRunWorker:
         self._wake.set()
         return cancelled
 
-    def snapshot(self, run_id: str, *, after_event_id: int = 0, limit: int = 100) -> dict[str, Any]:
+    def snapshot(self, run_id: str, *, after_event_id: int | None = None,
+                 after_event_seq: int | None = None, limit: int = 100) -> dict[str, Any]:
         run = self.store.get_run(run_id)
         tasks = self.store.list_tasks(run_id=run_id)
-        events = self.store.list_events(run_id=run_id, after_event_id=after_event_id, limit=limit)
+        events = self.store.list_events(run_id=run_id, after_event_id=after_event_id,
+                                        after_event_seq=after_event_seq, limit=limit)
         output = None
         output_available = False
         output_expired = False
@@ -703,6 +705,7 @@ class AgentRunWorker:
             "run": run,
             "tasks": tasks,
             "events": events,
+            "last_event_seq": run["last_event_seq"],
             "output": output,
             "output_available": output_available,
             "output_expired": output_expired,

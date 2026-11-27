@@ -321,6 +321,7 @@ class AgentRunStore:
                 END;
                 CREATE TABLE IF NOT EXISTS agent_run_events (
                     event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    event_seq INTEGER NOT NULL CHECK(event_seq > 0),
                     run_id TEXT NOT NULL REFERENCES agent_runs(run_id) ON DELETE CASCADE,
                     task_id TEXT REFERENCES agent_tasks(task_id) ON DELETE CASCADE,
                     event_type TEXT NOT NULL,
@@ -332,6 +333,20 @@ class AgentRunStore:
                 CREATE INDEX IF NOT EXISTS idx_agent_events_run
                     ON agent_run_events(run_id, event_id);
             """)
+            event_columns = {row["name"] for row in db.execute("PRAGMA table_info(agent_run_events)").fetchall()}
+            if "event_seq" not in event_columns:
+                db.execute("ALTER TABLE agent_run_events ADD COLUMN event_seq INTEGER")
+            legacy_events = db.execute("SELECT event_id,run_id,event_seq FROM agent_run_events ORDER BY run_id,event_id").fetchall()
+            next_sequences: dict[str, int] = {}
+            for event in legacy_events:
+                current = next_sequences.get(event["run_id"], 0)
+                sequence = int(event["event_seq"]) if event["event_seq"] is not None else current + 1
+                if sequence <= current:
+                    raise AgentRunError("legacy AgentRun event sequence is not monotonic")
+                next_sequences[event["run_id"]] = sequence
+                if event["event_seq"] is None:
+                    db.execute("UPDATE agent_run_events SET event_seq=? WHERE event_id=?", (sequence, event["event_id"]))
+            db.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_agent_events_run_seq ON agent_run_events(run_id,event_seq)")
             columns = {row["name"] for row in db.execute("PRAGMA table_info(agent_runs)").fetchall()}
             if "goal_ref" not in columns or "goal" in columns:
                 raise AgentRunError(
@@ -359,14 +374,15 @@ class AgentRunStore:
         count = db.execute(
             "SELECT COUNT(*) FROM agent_run_events WHERE run_id=?", (run_id,)
         ).fetchone()[0]
+        event_seq = int(db.execute("SELECT COALESCE(MAX(event_seq),0)+1 FROM agent_run_events WHERE run_id=?", (run_id,)).fetchone()[0])
         normal_event_limit = self.max_events_per_run - self.max_tasks_per_run - 1
         event_limit = self.max_events_per_run if terminal_fence else normal_event_limit
         if count >= event_limit:
             raise AgentRunError("AgentRun event limit reached; terminal-fence capacity is reserved")
         db.execute("""INSERT INTO agent_run_events
-            (run_id, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (run_id, task_id, event_type, from_state, to_state, meta, now))
+            (run_id, event_seq, task_id, event_type, from_state, to_state, metadata_json, occurred_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (run_id, event_seq, task_id, event_type, from_state, to_state, meta, now))
 
     def create_run(self, *, idempotency_key: str, scope_kind: str, scope_id: str,
                    goal_ref: str, metadata: dict[str, Any] | None = None,
@@ -429,7 +445,9 @@ class AgentRunStore:
     def get_run(self, run_id: str) -> dict[str, Any]:
         _bounded_text(run_id, field="run_id", max_chars=128)
         with closing(self._connect()) as db:
-            row = db.execute("SELECT * FROM agent_runs WHERE run_id=?", (run_id,)).fetchone()
+            row = db.execute("""SELECT r.*,
+                COALESCE((SELECT MAX(e.event_seq) FROM agent_run_events e WHERE e.run_id=r.run_id),0) AS last_event_seq
+                FROM agent_runs r WHERE r.run_id=?""", (run_id,)).fetchone()
         if row is None:
             raise AgentRunError("run not found")
         return self._run_dict(row)
@@ -740,13 +758,27 @@ class AgentRunStore:
             db.commit()
         return self.get_run(run_id)
 
-    def list_events(self, *, run_id: str, after_event_id: int = 0, limit: int = 100) -> list[dict[str, Any]]:
-        if isinstance(after_event_id, bool) or not isinstance(after_event_id, int) or after_event_id < 0:
+    def list_events(self, *, run_id: str, after_event_id: int | None = None,
+                    after_event_seq: int | None = None, limit: int = 100) -> list[dict[str, Any]]:
+        if after_event_id is not None and (
+            isinstance(after_event_id, bool) or not isinstance(after_event_id, int) or after_event_id < 0
+        ):
             raise AgentRunError("after_event_id must be a non-negative integer")
+        if after_event_seq is not None and (
+            isinstance(after_event_seq, bool) or not isinstance(after_event_seq, int) or after_event_seq < 0
+        ):
+            raise AgentRunError("after_event_seq must be a non-negative integer")
+        if after_event_id is not None and after_event_seq is not None:
+            raise AgentRunError("Use only one AgentRun event cursor at a time")
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 500:
             raise AgentRunError("limit must be between 1 and 500")
-        self.get_run(run_id)  # Scope existence before event retrieval.
+        self.get_run(run_id)
         with closing(self._connect()) as db:
-            rows = db.execute("""SELECT * FROM agent_run_events WHERE run_id=? AND event_id>?
-                ORDER BY event_id LIMIT ?""", (run_id, after_event_id, limit)).fetchall()
+            if after_event_seq is not None:
+                rows = db.execute("""SELECT * FROM agent_run_events WHERE run_id=? AND event_seq>?
+                    ORDER BY event_seq LIMIT ?""", (run_id, after_event_seq, limit)).fetchall()
+            else:
+                cursor = after_event_id if after_event_id is not None else 0
+                rows = db.execute("""SELECT * FROM agent_run_events WHERE run_id=? AND event_id>?
+                    ORDER BY event_id LIMIT ?""", (run_id, cursor, limit)).fetchall()
         return [{**dict(row), "metadata": json.loads(row["metadata_json"])} for row in rows]

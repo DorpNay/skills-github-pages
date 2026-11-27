@@ -1446,21 +1446,26 @@ def create_app(settings: Settings | None = None, transport: httpx.AsyncBaseTrans
 
     @app.get("/v1/agent-runs/{run_id}/events")
     async def get_agent_run_events(run_id: str, request: Request,
-                                   after_event_id: int = Query(default=0, ge=0),
+                                   after_event_id: int | None = Query(default=None, ge=0),
+                                   after_event_seq: int | None = Query(default=None, ge=0),
                                    limit: int = Query(default=100, ge=1, le=500),
                                    authorization: str | None = Header(default=None)) -> JSONResponse:
         authorize(config, authorization)
         worker = request.app.state.agent_run_worker
         if worker is None:
             raise HTTPException(503, "AgentRun is disabled")
+        if after_event_id is not None and after_event_seq is not None:
+            raise HTTPException(400, "Use only one AgentRun event cursor at a time")
         try:
-            snapshot = worker.snapshot(run_id, after_event_id=after_event_id, limit=limit)
+            snapshot = worker.snapshot(run_id, after_event_id=after_event_id,
+                                       after_event_seq=after_event_seq, limit=limit)
         except AgentRunError:
             raise HTTPException(404, "AgentRun was not found") from None
         events = snapshot["events"]
         return JSONResponse(
-            {"run_id": run_id, "events": events,
-             "next_after_event_id": events[-1]["event_id"] if events else after_event_id,
+            {"run_id": run_id, "events": events, "last_event_seq": snapshot["last_event_seq"],
+             "next_after_event_seq": events[-1]["event_seq"] if events else (after_event_seq or 0),
+             "next_after_event_id": events[-1]["event_id"] if events else (after_event_id or 0),
              "state": snapshot["run"]["state"]},
             headers={"Cache-Control": "no-store"},
         )

@@ -645,3 +645,33 @@ def test_file_backed_agent_run_store_uses_wal_without_weakening_sync(tmp_path):
         synchronous = db.execute("PRAGMA synchronous").fetchone()[0]
     assert journal_mode.lower() == "wal"
     assert synchronous == 2  # FULL remains enabled for durable run/event commits.
+
+
+def test_event_seq_is_monotonic_per_run_and_migrates_legacy_event_id_journal(tmp_path):
+    store = AgentRunStore(tmp_path / "event-seq.sqlite3")
+    store.initialize()
+    run_a = store.create_run(idempotency_key="event-seq-a", scope_kind="project", scope_id="alpha",
+                             goal_ref="task:event-seq-a", now=1)
+    run_b = store.create_run(idempotency_key="event-seq-b", scope_kind="project", scope_id="beta",
+                             goal_ref="task:event-seq-b", now=2)
+    store.transition_run(run_id=run_a["run_id"], expected_state="queued", new_state="running",
+                         event_type="run_started", now=3)
+    before_a = store.list_events(run_id=run_a["run_id"])
+    before_b = store.list_events(run_id=run_b["run_id"])
+    assert [event["event_seq"] for event in before_a] == [1, 2]
+    assert [event["event_seq"] for event in before_b] == [1]
+    assert store.get_run(run_a["run_id"])["last_event_seq"] == 2
+
+    with sqlite3.connect(store.path) as db:
+        db.execute("DROP INDEX idx_agent_events_run_seq")
+        db.execute("ALTER TABLE agent_run_events DROP COLUMN event_seq")
+
+    store.initialize()
+    migrated_a = store.list_events(run_id=run_a["run_id"])
+    migrated_b = store.list_events(run_id=run_b["run_id"])
+    assert [event["event_seq"] for event in migrated_a] == [1, 2]
+    assert [event["event_seq"] for event in migrated_b] == [1]
+    assert store.list_events(run_id=run_a["run_id"], after_event_seq=1)[0]["event_seq"] == 2
+    assert store.list_events(run_id=run_a["run_id"], after_event_id=1)[0]["event_id"] == migrated_a[1]["event_id"]
+    with pytest.raises(AgentRunError, match="one AgentRun event cursor"):
+        store.list_events(run_id=run_a["run_id"], after_event_id=1, after_event_seq=1)

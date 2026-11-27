@@ -822,6 +822,18 @@ def test_agent_run_api_executes_durable_model_worker_and_returns_status(tmp_path
         events = client.get(f"/v1/agent-runs/{run_id}/events", headers=headers)
         assert events.status_code == 200
         assert events.json()["state"] == "succeeded"
+        event_rows = events.json()["events"]
+        assert [event["event_seq"] for event in event_rows] == sorted(event["event_seq"] for event in event_rows)
+        assert events.json()["last_event_seq"] == snapshot["run"]["last_event_seq"]
+        assert events.json()["next_after_event_seq"] == event_rows[-1]["event_seq"]
+        resumed = client.get(f"/v1/agent-runs/{run_id}/events?after_event_seq=1", headers=headers)
+        assert resumed.status_code == 200
+        assert all(event["event_seq"] > 1 for event in resumed.json()["events"])
+        legacy = client.get(f"/v1/agent-runs/{run_id}/events?after_event_id=1", headers=headers)
+        assert legacy.status_code == 200
+        assert all(event["event_id"] > 1 for event in legacy.json()["events"])
+        ambiguous = client.get(f"/v1/agent-runs/{run_id}/events?after_event_id=1&after_event_seq=1", headers=headers)
+        assert ambiguous.status_code == 400
         assert len(calls) == 1
         assert calls[0]["model"] == MODEL
         assert calls[0]["stream"] is False
