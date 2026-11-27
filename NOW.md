@@ -18,7 +18,7 @@
 - **aCodingi:** реальный sandbox, shell/test runner, agent-driven file edits, Git worktrees/branches, durable run/approval lifecycle ещё не реализованы. Browser File System Access не является process isolation.
 - **aNoteBooki:** общий shell и IndexedDB Notebook; source-grounded chat использует только явно отмеченные источники. Нереализованные Studio jobs остаются unavailable.
 - **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; client event replay, approvals и настоящий изолированный runtime остаются открыты.
-- **P5:** Service Worker кэширует публичный shell/static assets, не чувствительные API. Offline package closure, integrity-checked installer, no-network proof и rollback ещё не закрыты.
+- **P5:** Service Worker кэширует только публичный shell/static assets и сохраняет предыдущий revision cache на один релиз; чувствительные API исключены. Offline package closure, integrity-checked installer, no-network proof и rollback ещё не закрыты.
 - **P6–P8:** продолжать только по активным acceptance; не создавать дублирующий backlog.
 - **Открытые очереди:** PR #195, PR #187 и issue #111 остаются открытыми; без merge/close.
 
@@ -30,6 +30,8 @@
 - SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED. CI, published Pages browser, owner host/model/VPS, and native browser/device permission proof are separate environments.
 
 - **P1.5 scope safety:** recovery snapshots are project-scoped; cross-project restore is rejected before touching files.
+
+- **P5.7 cache continuity:** activation сохраняет текущий и один предыдущий shell cache, удаляя более старые; upgrade regression добавлена в Offline Core E2E.
 
 ## Следующие действия
 1. Проверить точный итог run #46077143068 и Pages/Graphify exact-head evidence; исправлять реальные Chromium/product defects по первопричинам без ослабления tests.

@@ -32,4 +32,18 @@ test('app shell is available offline after its first successful visit', async ({
   expect(offlineState.controlled).toBe(true);
   expect(rootRevision).toMatch(/^[0-9a-f]{40}$/);
   await context.setOffline(false);
+
+  const cacheUpgrade = await page.evaluate(async () => {
+    const activeUrl = new URL(navigator.serviceWorker.controller.scriptURL);
+    const oldRevision = activeUrl.searchParams.get('v') || 'dev';
+    const oldCache = 'alandi-shell-' + oldRevision.slice(0, 16);
+    const nextRevision = 'offline-upgrade-test';
+    activeUrl.searchParams.set('v', nextRevision);
+    await navigator.serviceWorker.register(activeUrl.href, { updateViaCache: 'none' });
+    return { oldCache, nextCache: 'alandi-shell-' + nextRevision.slice(0, 16) };
+  });
+  await page.waitForFunction(() => new URL(navigator.serviceWorker.controller.scriptURL).searchParams.get('v') === 'offline-upgrade-test');
+  const cacheNames = await page.evaluate(() => caches.keys());
+  expect(cacheNames).toContain(cacheUpgrade.oldCache);
+  expect(cacheNames).toContain(cacheUpgrade.nextCache);
 });

@@ -3,6 +3,7 @@
 const scopeUrl = new URL(self.registration.scope);
 const revision = new URL(self.location.href).searchParams.get('v') || 'dev';
 const CACHE_NAME = 'alandi-shell-' + revision.slice(0, 16);
+const CACHE_META_URL = new URL('__al_cache_meta__', scopeUrl).href;
 const SHELL_PATHS = [
   './', 'notebook/', 'workspace/',
   'assets/js/offline-shell.js',
@@ -28,6 +29,9 @@ function isSensitivePath(url) {
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
+    await cache.put(CACHE_META_URL, new Response(JSON.stringify({ revision, installedAt: Date.now() }), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+    }));
     await Promise.all(SHELL_PATHS.map(async path => {
       const url = new URL(path, scopeUrl);
       try {
@@ -45,7 +49,18 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const names = await caches.keys();
-    await Promise.all(names.filter(name => name.startsWith('alandi-shell-') && name !== CACHE_NAME).map(name => caches.delete(name)));
+    const previous = await Promise.all(names.filter(name => name.startsWith('alandi-shell-') && name !== CACHE_NAME).map(async (name, order) => {
+      const cache = await caches.open(name);
+      const marker = await cache.match(CACHE_META_URL);
+      let installedAt = 0;
+      if (marker) {
+        try { installedAt = Number((await marker.json()).installedAt) || 0; } catch (_) {}
+      }
+      return { name, installedAt, order };
+    }));
+    previous.sort((a, b) => b.installedAt - a.installedAt || b.order - a.order);
+    const keep = new Set([CACHE_NAME, ...(previous[0] ? [previous[0].name] : [])]);
+    await Promise.all(names.filter(name => name.startsWith('alandi-shell-') && !keep.has(name)).map(name => caches.delete(name)));
     await self.clients.claim();
   })());
 });
