@@ -228,6 +228,7 @@
 
       const snapshot = {
         id: crypto.randomUUID(), createdAt: new Date().toISOString(),
+        workspaceId: typeof options.workspaceId === 'string' && options.workspaceId.length <= 128 ? options.workspaceId : null,
         rootName: this.rootHandle ? this.rootHandle.name : null,
         files: prepared.files.map(({ path, before, beforeHash, afterHash }) => ({ path, before, beforeHash, afterHash }))
       };
@@ -265,11 +266,18 @@
       this.prepared.delete(preparedId);
       return { snapshotId: snapshot.id, filesWritten: attempted.length, createdAt: snapshot.createdAt };
     }
-    async listRecoverySnapshots() { return dbRequest('readonly', 'getAll'); }
+    async listRecoverySnapshots(workspaceId = null) {
+      const snapshots = await dbRequest('readonly', 'getAll');
+      return typeof workspaceId === 'string' && workspaceId.length > 0
+        ? snapshots.filter(snapshot => snapshot.workspaceId === workspaceId)
+        : snapshots;
+    }
     async restoreBatch(snapshotId, options = {}) {
       assert(typeof options.confirm === 'function', 'An explicit restore confirmation callback is required.');
       const snapshot = await dbRequest('readonly', 'get', snapshotId);
       assert(snapshot, 'Recovery snapshot was not found.');
+      if (typeof options.workspaceId === 'string' && options.workspaceId.length > 0)
+        assert(snapshot.workspaceId === options.workspaceId, 'Recovery snapshot belongs to a different Coding Project.');
       assert(Array.isArray(snapshot.files) && snapshot.files.length > 0
         && snapshot.files.length <= this.limits.maxFiles, 'Recovery snapshot has an invalid file list.');
       const root = options.rootHandle || this.rootHandle;

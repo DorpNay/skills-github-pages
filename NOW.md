@@ -29,6 +29,8 @@
 - **Graphify:** run [#46077143110](https://github.com/DorpNay/skills-github-pages/actions/runs/46077143110) был `in_progress` при последней проверке.
 - SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED. CI, published Pages browser, owner host/model/VPS, and native browser/device permission proof are separate environments.
 
+- **P1.5 scope safety:** recovery snapshots are project-scoped; cross-project restore is rejected before touching files.
+
 ## Следующие действия
 1. Проверить точный итог run #46077143068 и Pages/Graphify exact-head evidence; исправлять реальные Chromium/product defects по первопричинам без ослабления tests.
 2. Продолжить крупный P1 срез: durable project/chat/session continuity, file snapshots/recovery, Git worktree contract and RU/EN/mobile accessibility.

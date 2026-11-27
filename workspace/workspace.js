@@ -185,7 +185,7 @@
     const host = $('recoveryList');
     host.replaceChildren();
     let snapshots;
-    try { snapshots = await provider.listRecoverySnapshots(); }
+    try { snapshots = await provider.listRecoverySnapshots(codingProjectId || null); }
     catch (error) {
       const empty = document.createElement('div');
       empty.className = 'empty';
@@ -219,6 +219,7 @@
         try {
           const result = await provider.restoreBatch(snapshot.id, {
             rootHandle: provider.rootHandle,
+            workspaceId: codingProjectId || undefined,
             confirm: preview => askApproval(
               tr('Восстановить исходные версии?','Restore original versions?'),
               preview.conflicts.length
@@ -324,6 +325,7 @@
     try {
       const result = await provider.commitBatch(prepared.id, {
         createRecoverySnapshot: true,
+        workspaceId: codingProjectId || undefined,
         confirm: preview => askApproval(
           tr('Подтвердить запись нескольких файлов?','Approve writing multiple files?'),
           tr('Точный diff показан ниже. До записи будет сохранена локальная recovery-копия исходного содержимого в этом браузере. Никакая передача в сеть не выполняется.','The exact diff is shown below. A local recovery copy of original contents will be saved before writing. No network transfer is performed.'),

@@ -435,3 +435,44 @@ test('Browser Local restores legacy recovery snapshots without beforeHash metada
   expect(result.restored.filesRestored).toBe(1);
   expect(result.content).toBe('original');
 });
+
+
+test('Browser Local scopes recovery snapshots to their Coding Project and rejects cross-project restore', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.addScriptTag({ url: '/assets/js/browser-local-provider.js' });
+  const result = await page.evaluate(async () => {
+    const { BrowserLocalProvider } = window.AlandiBrowserLocalProvider;
+    const file = {
+      kind: 'file', name: 'project.txt', content: 'original',
+      async queryPermission() { return 'granted'; },
+      async getFile() { return new File([this.content], this.name, { type: 'text/plain' }); },
+      async createWritable() {
+        let staged = '';
+        return { write: async value => { staged = String(value); }, close: async () => { this.content = staged; } };
+      }
+    };
+    const root = {
+      kind: 'directory', name: 'same-folder-name',
+      async queryPermission() { return 'granted'; },
+      async getFileHandle() { return file; }
+    };
+    const provider = new BrowserLocalProvider(); provider.rootHandle = root;
+    const prepared = await provider.prepareBatch([{ path: 'project.txt', handle: file, content: 'updated' }]);
+    const committed = await provider.commitBatch(prepared.id, {
+      workspaceId: 'coding-project-alpha', createRecoverySnapshot: true, confirm: async () => true
+    });
+    const alpha = await provider.listRecoverySnapshots('coding-project-alpha');
+    const beta = await provider.listRecoverySnapshots('coding-project-beta');
+    let crossProjectError = '';
+    try {
+      await provider.restoreBatch(committed.snapshotId, {
+        workspaceId: 'coding-project-beta', rootHandle: root, confirm: async () => true
+      });
+    } catch (error) { crossProjectError = error.message; }
+    return { alphaCount: alpha.length, betaCount: beta.length, crossProjectError, fileContent: file.content };
+  });
+  expect(result.alphaCount).toBe(1);
+  expect(result.betaCount).toBe(0);
+  expect(result.crossProjectError).toContain('different Coding Project');
+  expect(result.fileContent).toBe('updated');
+});
