@@ -6,7 +6,7 @@ const CACHE_NAME = 'alandi-shell-' + revision.slice(0, 16);
 const CACHE_META_URL = new URL('__al_cache_meta__', scopeUrl).href;
 const SHELL_PATHS = [
   './', 'notebook/', 'workspace/',
-  'assets/js/offline-shell.js',
+  'assets/js/offline-shell.js', 'assets/js/offline-core-ui.js',
   'assets/css/tailwind.generated.css',
   'assets/js/vendor/marked-18.0.14.min.js',
   'assets/js/vendor/purify-3.4.16.min.js',

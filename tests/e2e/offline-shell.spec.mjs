@@ -54,3 +54,33 @@ test('app shell is available offline after its first successful visit', async ({
   expect(legacyBody).toBe('legacy-asset-from-previous-shell');
   await context.setOffline(false);
 });
+
+
+test('Offline Core displays browser storage state and requests persistence only after an explicit click', async ({ page }) => {
+  await page.addInitScript(() => {
+    const storage = navigator.storage;
+    if (!storage) return;
+    window.__persistRequests = 0;
+    window.__persistentGranted = false;
+    Object.defineProperty(storage, 'persist', {
+      configurable: true,
+      value: async () => { window.__persistRequests += 1; window.__persistentGranted = true; return true; }
+    });
+    Object.defineProperty(storage, 'persisted', {
+      configurable: true,
+      value: async () => window.__persistentGranted
+    });
+  });
+  await page.goto(APP_PATH, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#offlineCoreSettings')).toBeAttached();
+  await expect(page.locator('#offlineNetworkValue')).not.toHaveText('');
+  await expect(page.locator('#offlineStorageValue')).not.toHaveText('');
+  expect(await page.evaluate(() => window.__persistRequests)).toBe(0);
+  await page.locator('#uiLanguage').selectOption('en');
+  await expect(page.locator('#offlineCoreSettings h3')).toHaveText('Offline Core · on-device storage');
+  await expect(page.locator('#offlineCorePersistButton')).toHaveText('Request persistent storage on this device');
+  await page.locator('#offlineCorePersistButton').click();
+  await expect(page.locator('#offlineCoreStatus')).toContainText('The browser granted persistent storage.');
+  expect(await page.evaluate(() => window.__persistRequests)).toBe(1);
+  await expect(page.locator('#offlineCorePersistButton')).toBeHidden();
+});
