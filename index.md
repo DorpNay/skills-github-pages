@@ -3291,7 +3291,7 @@ permalink: /
           importedName=baseName.slice(0,100-numbered.length)+numbered;serial++;
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
-        const target={id:projectIdNew(),kind:bundle.project.kind==='coding'?'coding':'general',codingWorkspace:bundle.project.kind==='coding'?{schemaVersion:1,rootLabel:'',lastOpenedAt:''}:null,name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
+        const target={id:projectIdNew(),name:importedName,kind:bundle.project.kind==='coding'?'coding':'general',codingWorkspace:bundle.project.kind==='coding'?{schemaVersion:1,rootLabel:'',lastOpenedAt:''}:null,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
         const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId;
         projects=[target,...projects];selectedProjectForSettingsId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
