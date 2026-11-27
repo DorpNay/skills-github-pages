@@ -1,7 +1,7 @@
 # aLandi — NOW / единственный ориентир
 
 **Срез:** 2026-11-28 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
-**Последний функциональный HEAD:** `eca91fc013bf8664957a83a18bb0fee09d1cf532`. Следующий функциональный срез — fast-forward child после exact-head CI.
+**Последний функциональный HEAD:** `9ef5177085d6a860537a237299faa23909fe604d`. Следующий checkpoint — docs-only child; новые функциональные изменения только fast-forward от него.
 **Канонический контракт:** root `AGENTS.md` v4.0; P0–P8 acceptance — `docs/ALANDI_MASTER_PLAN_RU.md`; источники/лицензии/verdicts — `INTEL.md`.
 
 ## Governance
@@ -17,20 +17,21 @@
 - **P1.5 — PARTIAL:** Coding Projects в canonical `ai_projects_v1`; dedicated chat, instructions, reload persistence, typed bundle import/export, scoped workspace handoff. Per-project directory handles и event metadata хранятся в IndexedDB; permission проверяется повторно и запрашивается только по user gesture. Recovery snapshots привязаны к project ID; чужой snapshot нельзя восстановить даже при одинаковом имени папки. Activity timeline показывает последние allowlisted события. Metadata export исключает handle и file contents.
 - **aCodingi:** браузерный редактор поддерживает выбранные файлы, diff, explicit approval и local recovery. Реальный sandbox, shell/test runner, agent edits, Git worktrees/branches и durable run approvals не реализованы.
 - **aNoteBooki:** shared shell, IndexedDB Notebook, source-grounded chat только по явно выбранным источникам. Studio jobs без runtime честно unavailable.
-- **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; WAL включён без ослабления FULL synchronous durability. Per-run `event_seq`/`last_event_seq` replay cursor и legacy `event_id` compatibility добавлены; generated typed client, approvals and real isolated runtime остаются открыты.
+- **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; WAL включён без ослабления FULL synchronous durability. Per-run `event_seq`/`last_event_seq` replay cursor, migration from legacy `event_id`, and compatibility cursor добавлены и проходят Gateway Tests на Python 3.12–3.14; generated typed client, reconnect UI, approvals and real isolated runtime остаются открыты.
 - **P5.7 — PARTIAL:** SW кэширует public shell/static assets, исключает sensitive API/auth; сохраняет предыдущий revision cache и использует его как fallback для отсутствующих legacy assets при HTTP-ошибках и сетевых сбоях. Offline Core показывает browser storage/quota и запрашивает persistent storage только по клику. Offline dependency closure, integrity installer, quota/eviction and network-disabled proof открыты.
 - **P6–P8:** продолжать по существующим acceptance criteria, не плодить backlog.
 - **Открытые очереди:** PR #195, PR #187, issue #111 — не merge/close без отдельного решения.
 
 ## Exact-head evidence
-- **Current code parent:** `eca91fc013bf8664957a83a18bb0fee09d1cf532`.
-- **Quality Sentinels:** run [#46078010104](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010104) in progress at checkpoint.
-- **Pages build/deployment:** run [#46078010031](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010031) completed successfully.
-- **Graphify:** run [#46078010063](https://github.com/DorpNay/skills-github-pages/actions/runs/46078010063) completed successfully.
+- **Functional HEAD:** `9ef5177085d6a860537a237299faa23909fe604d`.
+- **Lite Gateway Tests:** run [#46078897464](https://github.com/DorpNay/skills-github-pages/actions/runs/46078897464) completed successfully on Python 3.12, 3.13 and 3.14, including WAL and event-sequence migration/cursor tests.
+- **Pages build/deployment:** run [#46078896438](https://github.com/DorpNay/skills-github-pages/actions/runs/46078896438) completed successfully.
+- **Graphify:** run [#46078897527](https://github.com/DorpNay/skills-github-pages/actions/runs/46078897527) completed successfully.
+- **Quality Sentinels:** run [#46078463308](https://github.com/DorpNay/skills-github-pages/actions/runs/46078463308) on parent `5c5f82d…` is still running Chromium. Jekyll, Integrity, Security and root-app smoke passed there; exact-head `9ef` Quality has not completed yet.
 - CI, published Pages browser, owner host/model/VPS and native-device permission evidence are separate environments.
 
 ## Следующие действия
-1. Проверить Quality/Pages/Graphify exact-head; исправить реальные P0 regressions без удаления/ослабления тестов.
+1. Дождаться Quality Sentinels on `9ef` (including built-app Chromium and live Pages browser); correct any real regressions without weakening assertions.
 2. P1: finish chat/project/session continuity, workspace file snapshots/recovery, Git worktree design and RU/EN/mobile accessibility.
 3. P3: explicit AgentRun command/task contract, replayable events, approvals and cancel/retry; sandbox default-off until isolation/escape acceptance.
 4. P5: pinned offline dependency closure, manifest/hashes, installer/update/rollback and true network-disabled proof; main model не скачивать.
