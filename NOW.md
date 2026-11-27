@@ -31,7 +31,7 @@
 
 - **P1.5 scope safety:** recovery snapshots are project-scoped; cross-project restore is rejected before touching files.
 
-- **P5.7 cache continuity:** activation сохраняет текущий и один предыдущий shell cache, удаляя более старые; upgrade regression добавлена в Offline Core E2E.
+- **P5.7 cache continuity:** activation сохраняет текущий и один предыдущий shell cache, отдаёт отсутствующие legacy static assets из предыдущего cache и удаляет более старые; upgrade regression добавлена в Offline Core E2E.
 
 ## Следующие действия
 1. Проверить точный итог run #46077143068 и Pages/Graphify exact-head evidence; исправлять реальные Chromium/product defects по первопричинам без ослабления tests.

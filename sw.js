@@ -26,6 +26,15 @@ function isSensitivePath(url) {
   return /\/(?:v1|api|oauth|auth)(?:\/|$)/i.test(url.pathname);
 }
 
+async function matchPreviousCache(key) {
+  const names = await caches.keys();
+  for (const name of names.filter(item => item.startsWith('alandi-shell-') && item !== CACHE_NAME)) {
+    const response = await (await caches.open(name)).match(key);
+    if (response) return response;
+  }
+  return null;
+}
+
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
@@ -83,6 +92,10 @@ self.addEventListener('fetch', event => {
       if (cached) return cached;
       const response = await fetch(request);
       if (response.ok && response.type === 'basic') await cache.put(key, response.clone());
+      if (!response.ok) {
+        const previous = await matchPreviousCache(key);
+        if (previous) return previous;
+      }
       return response;
     }
     try {
@@ -90,7 +103,7 @@ self.addEventListener('fetch', event => {
       if (response.ok && response.type === 'basic') await cache.put(key, response.clone());
       return response;
     } catch (_) {
-      const cached = await cache.match(key);
+      const cached = await cache.match(key) || await matchPreviousCache(key);
       return cached || new Response('aLandi offline shell is not cached yet. Reconnect and open this page once.', {
         status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
       });
