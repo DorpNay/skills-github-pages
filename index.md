@@ -2775,6 +2775,8 @@ permalink: /
           id:project.id.slice(0,128),name:project.name.slice(0,100),description:typeof project.description==='string'?project.description.slice(0,1000):'',
           instructions:typeof project.instructions==='string'?project.instructions.slice(0,6000):'',
           memoryScope:project.memoryScope==='project-and-global'?'project-and-global':'project-only',
+          kind:project.kind==='coding'?'coding':'general',
+          codingWorkspace:project.kind==='coding'?{schemaVersion:1,rootLabel:typeof project.codingWorkspace?.rootLabel==='string'?project.codingWorkspace.rootLabel.slice(0,128):'',lastOpenedAt:typeof project.codingWorkspace?.lastOpenedAt==='string'?project.codingWorkspace.lastOpenedAt.slice(0,40):''}:null,
           memory:Array.isArray(project.memory)?project.memory.filter(item=>item&&typeof item.id==='string'&&typeof item.text==='string').slice(0,500).map(item=>({id:item.id.slice(0,128),text:item.text.slice(0,600),createdAt:String(item.createdAt||'')})):[],
           createdAt:String(project.createdAt||''),updatedAt:String(project.updatedAt||'')
         }));
@@ -3128,7 +3130,7 @@ permalink: /
       setProjectNameError('projectCreateNameInput');
       if(projects.length>=200){showToast(english?'The local project limit (200) has been reached.':'Достигнут предел локальных проектов (200).','error');return;}
       const previousProjects=projects.slice(),previousChats=chats.slice(),previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId,previousFilter=selectedProjectFilterId,previousCreating=creatingProject;
-      const now=new Date().toISOString(),project={id:projectIdNew(),name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
+      const now=new Date().toISOString(),project={id:projectIdNew(),kind:'general',codingWorkspace:null,name,description:'',instructions:$('projectCreateInstructionsInput').value.trim().slice(0,6000),memoryScope:$('projectCreateMemoryScopeSelect').value==='project-and-global'?'project-and-global':'project-only',memory:[],createdAt:now,updatedAt:now};
       const projectChat=createChat((getUiLanguage()==='en'?'New chat · ':'Новый чат · ')+project.name,[],project.id);
       creatingProject=false;projects=[project,...projects];chats=[projectChat,...chats];currentChatId=projectChat.id;selectedProjectForSettingsId=project.id;setProjectChatScope(project.id,{expand:true});
       if(!persistProjectsAndChats()){
@@ -3139,6 +3141,45 @@ permalink: /
       $('appSidebarToggle')?.focus({preventScroll:true});
       renderProjectUI();renderProjectNavigation();renderChatList();renderActiveChat();
       showToast((getUiLanguage()==='en'?'Project created: ':'Создан проект: ')+name);
+    }
+    function codingProjectSnapshot(project){
+      const workspace=project.codingWorkspace&&typeof project.codingWorkspace==='object'?project.codingWorkspace:{};
+      return {id:project.id,name:project.name,instructions:project.instructions||'',createdAt:project.createdAt,updatedAt:project.updatedAt,workspace:{schemaVersion:1,rootLabel:String(workspace.rootLabel||'').slice(0,128),lastOpenedAt:String(workspace.lastOpenedAt||'').slice(0,40)},chatCount:chats.filter(chat=>chat.projectId===project.id).length};
+    }
+    function listCodingProjects(){return projects.filter(project=>project.kind==='coding').sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))).map(codingProjectSnapshot);}
+    function createCodingProject(input={}){
+      const english=getUiLanguage()==='en',name=typeof input.name==='string'?input.name.trim().slice(0,100):'',instructions=typeof input.instructions==='string'?input.instructions.trim().slice(0,6000):'';
+      if(!name)throw new Error(english?'Enter a coding project name.':'Укажи название Coding Project.');
+      if(projects.length>=200)throw new Error(english?'The 200-project limit has been reached.':'Достигнут предел локальных проектов (200).');
+      if(chats.length>=1000)throw new Error(english?'The 1,000-chat limit has been reached.':'Достигнут предел локальных чатов (1000).');
+      const previousProjects=projects.slice(),previousChats=chats.slice(),now=new Date().toISOString();
+      const project={id:projectIdNew(),kind:'coding',name,description:'aCodingi Coding Project',instructions,memoryScope:'project-only',memory:[],codingWorkspace:{schemaVersion:1,rootLabel:'',lastOpenedAt:''},createdAt:now,updatedAt:now};
+      const projectChat=createChat((english?'Coding · ':'Код · ')+name,[],project.id);
+      projects=[project,...projects];chats=[projectChat,...chats];
+      if(!persistProjectsAndChats()){projects=previousProjects;chats=previousChats;throw new Error(english?'The coding project could not be saved. Existing projects and chats were preserved.':'Не удалось сохранить Coding Project. Существующие проекты и чаты сохранены.');}
+      renderProjectNavigation();renderChatList();return codingProjectSnapshot(project);
+    }
+    function updateCodingProject(projectId,changes={}){
+      const project=projects.find(item=>item.id===projectId&&item.kind==='coding');
+      if(!project)throw new Error(getUiLanguage()==='en'?'Coding Project not found.':'Coding Project не найден.');
+      const previous={name:project.name,instructions:project.instructions,updatedAt:project.updatedAt};
+      if(Object.prototype.hasOwnProperty.call(changes,'name')){const name=typeof changes.name==='string'?changes.name.trim().slice(0,100):'';if(!name)throw new Error(getUiLanguage()==='en'?'Project name cannot be empty.':'Название проекта не может быть пустым.');project.name=name;}
+      if(Object.prototype.hasOwnProperty.call(changes,'instructions'))project.instructions=typeof changes.instructions==='string'?changes.instructions.trim().slice(0,6000):'';
+      project.updatedAt=new Date().toISOString();
+      if(!persistProjects()){safeAssignOwn(project,previous);throw new Error(getUiLanguage()==='en'?'Project changes could not be saved.':'Не удалось сохранить изменения проекта.');}
+      renderProjectNavigation();renderProjectUI();renderChatList();return codingProjectSnapshot(project);
+    }
+    function openCodingProject(projectId){
+      const project=projects.find(item=>item.id===projectId&&item.kind==='coding');
+      if(!project)throw new Error(getUiLanguage()==='en'?'Coding Project not found.':'Coding Project не найден.');
+      const chat=chats.find(item=>item.projectId===projectId);
+      if(!chat)throw new Error(getUiLanguage()==='en'?'The project chat is missing.':'Чат Coding Project не найден.');
+      switchChat(chat.id);return codingProjectSnapshot(project);
+    }
+    function exportCodingProject(projectId){
+      const project=projects.find(item=>item.id===projectId&&item.kind==='coding');
+      if(!project)throw new Error(getUiLanguage()==='en'?'Coding Project not found.':'Coding Project не найден.');
+      exportProjectBundle(projectId);return true;
     }
     function saveProject(){
       const project=getProjectForChat();
@@ -3202,7 +3243,7 @@ permalink: /
     }
     function exportProjectBundle(projectId=null){
       const project=projectId?projects.find(item=>item.id===projectId):getProjectForChat();if(!project){showToast(getUiLanguage()==='en'?'Choose a project first.':'Сначала выбери проект.','error');return;}
-      const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,name:project.name,description:project.description,instructions:project.instructions,memoryScope:project.memoryScope||'project-only',memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
+      const bundle={format:'alandi-project-bundle',version:1,exportedAt:new Date().toISOString(),project:{id:project.id,kind:project.kind==='coding'?'coding':'general',codingWorkspace:project.kind==='coding'?{schemaVersion:1,rootLabel:String(project.codingWorkspace?.rootLabel||'').slice(0,128),lastOpenedAt:String(project.codingWorkspace?.lastOpenedAt||'').slice(0,40)}:null,name:project.name,description:project.description,instructions:project.instructions,memoryScope:project.memoryScope||'project-only',memory:project.memory,createdAt:project.createdAt,updatedAt:project.updatedAt},chats:chats.filter(chat=>chat.projectId===project.id)};
       const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),anchor=document.createElement('a');
       anchor.href=url;anchor.download='alandi-project-'+project.name.toLowerCase().replace(/[^a-z0-9а-яё_-]+/gi,'-').slice(0,48)+'.json';document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       showToast(getUiLanguage()==='en'?'Project bundle exported.':'Пакет проекта экспортирован.');
@@ -3250,7 +3291,7 @@ permalink: /
           importedName=baseName.slice(0,100-numbered.length)+numbered;serial++;
         }
         const memory=Array.isArray(bundle.project.memory)?bundle.project.memory.filter(v=>v&&typeof v.text==='string').slice(0,500).map(v=>({id:projectIdNew(),text:v.text.slice(0,600),createdAt:String(v.createdAt||now)})):[];
-        const target={id:projectIdNew(),name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
+        const target={id:projectIdNew(),kind:bundle.project.kind==='coding'?'coding':'general',codingWorkspace:bundle.project.kind==='coding'?{schemaVersion:1,rootLabel:'',lastOpenedAt:''}:null,name:importedName,description:typeof bundle.project.description==='string'?bundle.project.description.slice(0,1000):'',instructions:typeof bundle.project.instructions==='string'?bundle.project.instructions.slice(0,6000):'',memoryScope:bundle.project.memoryScope==='project-and-global'?'project-and-global':'project-only',memory,createdAt:now,updatedAt:now};
         const previousProjects=projects,previousChats=chats,previousCurrentId=currentChatId,previousSelected=selectedProjectForSettingsId;
         projects=[target,...projects];selectedProjectForSettingsId=target.id;
         const seen=new Set(chats.map(chat=>chat.id));
@@ -8518,6 +8559,7 @@ function buildAgentRunContextPacket(chat, requestProjectIds=[], maxChars=8000, e
       await renderSharedMemory();
       updateState(null, currentChatId);
       scheduleStorageHealthCheck();
+      window.AlandiProjectStore=Object.freeze({listCodingProjects,createCodingProject,updateCodingProject,openCodingProject,exportCodingProject});
       window.dispatchEvent(new Event('alandi:ready'));
       // Pyodide loads only when the user explicitly runs a Python code block.
     }

@@ -21,8 +21,12 @@ test('app shell is available offline after its first successful visit', async ({
   await page.goto(NOTEBOOK_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: 'aNoteBooki' })).toBeVisible();
   await page.waitForFunction(() => Boolean(window.AlandiNotebookStore));
-  await page.goto(CODER_PATH, { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => localStorage.setItem('ai_projects_v1', JSON.stringify([{id:'offline-coding-project',kind:'coding',name:'Offline Coding Project',instructions:'Work only in the explicitly selected folder.',codingWorkspace:{schemaVersion:1,rootLabel:'',lastOpenedAt:''}}])));
+  await page.goto(CODER_PATH + '?projectId=offline-coding-project', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: /aCodingi/ })).toBeVisible();
+  await expect(page.locator('#codingProjectContext')).toBeVisible();
+  await expect(page.locator('#codingProjectName')).toHaveText('Offline Coding Project');
+  await expect(page.locator('#codingProjectInstructions')).toContainText('explicitly selected folder');
   await page.waitForFunction(() => Boolean(window.AlandiBrowserLocalProvider));
   const offlineState = await page.evaluate(() => ({ controlled: Boolean(navigator.serviceWorker.controller) }));
   expect(offlineState.controlled).toBe(true);

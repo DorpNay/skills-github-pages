@@ -54,8 +54,9 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET' || request.mode === 'navigate' && request.headers.has('authorization')) return;
   const url = new URL(request.url);
-  if (!isInScope(url) || isSensitivePath(url) || url.search || url.hash) return;
-  const navigation = request.mode === 'navigate';
+  const navigation=request.mode==='navigate';
+  const projectWorkspaceNavigation=navigation&&url.pathname.endsWith('/workspace/');
+  if(!isInScope(url)||isSensitivePath(url)||url.hash||(url.search&&!projectWorkspaceNavigation))return;
   const staticAsset = ['script', 'style', 'font', 'image'].includes(request.destination) || url.pathname.includes('/assets/');
   if (!navigation && !staticAsset) return;
 

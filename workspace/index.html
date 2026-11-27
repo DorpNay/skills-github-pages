@@ -36,7 +36,7 @@ permalink: /workspace/
 </head>
 <body>
   <header>
-    <a href="../" aria-label="Вернуться в aLandi">← aLandi</a>
+    <a href="../#mode=coding" aria-label="Вернуться в aLandi">← aLandi</a>
     <strong>aCodingi</strong>
     <span>Coder Workspace · Browser Local · доступ только к выбранным файлам</span>
   </header>
@@ -44,6 +44,7 @@ permalink: /workspace/
     <section class="panel">
       <h1>aCodingi — рабочее пространство кода</h1>
       <p>Выберите папку или отдельные файлы в системном диалоге браузера. Coder не может читать произвольные пути и не отправляет файлы в сеть.</p>
+      <section class="panel" id="codingProjectContext" hidden aria-labelledby="codingProjectContextTitle"><h2 id="codingProjectContextTitle">Coding Project / Проект</h2><strong id="codingProjectName"></strong><p id="codingProjectInstructions"></p><p id="codingProjectFolderBinding">Папка ещё не выбрана для этого проекта. / No folder selected for this project.</p><p>Разрешение браузера не сохраняется между сессиями: выбери папку заново. Имя папки — напоминание, не постоянное разрешение и не доказательство идентичности. / Browser permission is not persisted; reselect the folder next time. The folder name is a reminder, not an identity proof.</p></section>
       <div class="toolbar" style="margin-top:.8rem">
         <button class="primary" id="chooseFolder">Выбрать папку</button>
         <button id="chooseFiles">Выбрать файлы</button>

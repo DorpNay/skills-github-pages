@@ -5,12 +5,17 @@
   let availableFiles = [];
   let editors = [];
   let prepared = null;
+  const codingProjectId=new URLSearchParams(location.search).get('projectId')||'';
+  let codingProject=null,codingProjectError='';
+  if(codingProjectId){try{if(codingProjectId.length>128)throw new Error('Invalid Coding Project reference.');const raw=localStorage.getItem('ai_projects_v1'),projects=raw?JSON.parse(raw):[];codingProject=Array.isArray(projects)?projects.find(item=>item&&item.id===codingProjectId&&item.kind==='coding')||null:null;if(!codingProject)throw new Error('Coding Project was not found in this browser profile. Open it again from aLandi.');}catch(error){codingProject=null;codingProjectError=error.message||'Coding Project data could not be read.';}}
 
   function status(message, kind) {
     const el = $('workspaceStatus');
     el.textContent = message;
     el.className = 'status' + (kind ? ' ' + kind : '');
   }
+  function renderCodingProjectContext(){const panel=$('codingProjectContext');if(!panel||!codingProjectId)return;panel.hidden=false;if(!codingProject){$('codingProjectName').textContent='Coding Project unavailable';$('codingProjectInstructions').textContent=codingProjectError;$('chooseFolder').disabled=true;$('chooseFiles').disabled=true;status(codingProjectError,'error');return;}$('codingProjectName').textContent=String(codingProject.name||'Coding Project').slice(0,100);$('codingProjectInstructions').textContent=String(codingProject.instructions||'').slice(0,6000);const rootLabel=typeof codingProject.codingWorkspace?.rootLabel==='string'?codingProject.codingWorkspace.rootLabel:'';$('codingProjectFolderBinding').textContent=rootLabel?'Последняя выбранная папка: '+rootLabel+'. Это напоминание; выбери папку заново и проверь содержимое. / Last selected folder: '+rootLabel+'. This is a reminder; reselect the folder and inspect its contents.':'Папка ещё не выбрана для этого проекта. / No folder selected for this project.';}
+  function saveCodingProjectFolderLabel(rootName){if(!codingProjectId||!codingProject)return true;const raw=localStorage.getItem('ai_projects_v1'),current=raw?JSON.parse(raw):[];if(!Array.isArray(current))throw new Error('Project storage is invalid; folder selection was not bound.');const index=current.findIndex(item=>item&&item.id===codingProjectId&&item.kind==='coding');if(index<0)throw new Error('Coding Project changed or was removed; folder selection was not bound.');const previous=String(current[index].codingWorkspace?.rootLabel||'');if(previous&&previous!==rootName&&!confirm('Для этого Coding Project ранее выбиралась папка «'+previous+'». Привязать новую папку «'+rootName+'»? Имя — только напоминание; проверь содержимое самостоятельно.'))return false;const updated=current.slice();updated[index]={...current[index],codingWorkspace:{schemaVersion:1,rootLabel:String(rootName).slice(0,128),lastOpenedAt:new Date().toISOString()},updatedAt:new Date().toISOString()};localStorage.setItem('ai_projects_v1',JSON.stringify(updated));codingProject=updated[index];renderCodingProjectContext();return true;}
   function formatBytes(value) {
     if (value < 1024) return value + ' B';
     if (value < 1048576) return (value / 1024).toFixed(1) + ' KB';
@@ -188,7 +193,9 @@
 
   $('chooseFolder').addEventListener('click', async () => {
     try {
-      const selected = await provider.selectDirectory();
+      if(codingProjectId&&!codingProject)throw new Error(codingProjectError);
+      const selected=await provider.selectDirectory();
+      if(!saveCodingProjectFolderLabel(selected.name)){provider.rootHandle=null;provider.fileHandles.clear();availableFiles=[];renderFiles();status('Привязка папки отменена. / Folder binding was cancelled.');return;}
       await refreshFolder();
       editors = [];
       renderEditors();
@@ -284,6 +291,7 @@
     }
   });
 
+  renderCodingProjectContext();
   if (!provider.capabilities.openDirectory) $('chooseFolder').disabled = true;
   if (!provider.capabilities.openFiles) $('chooseFiles').disabled = true;
   if (!provider.capabilities.openDirectory && !provider.capabilities.openFiles) {

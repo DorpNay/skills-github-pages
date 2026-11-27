@@ -122,6 +122,29 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   await expect(input).toHaveValue('keep personal draft');
 });
 
+test('Coding Projects persist in the canonical project store and hand off to the scoped browser workspace', async ({ page }) => {
+  await page.goto(APP_PATH);const originalTitle=await page.locator('#activeChatTitle').innerText();
+  await page.locator('[data-shared-mode="coding"]').click();await expect(page.locator('#codingProjectCreate')).toBeVisible();
+  await page.locator('#codingProjectCreateName').fill('aLandi coding workspace');
+  await page.locator('#codingProjectCreateInstructions').fill('Keep changes scoped to this project. Preserve a reviewable diff.');
+  await page.locator('#codingProjectCreate button[type="submit"]').click();
+  await expect(page.locator('#sharedCodingProjectList')).toContainText('aLandi coding workspace');
+  await expect(page.locator('#codingProjectEditInstructions')).toHaveValue('Keep changes scoped to this project. Preserve a reviewable diff.');
+  await expect(page.locator('#activeChatTitle')).toHaveText(originalTitle);
+  const workspaceLink=page.locator('#sharedCodingWorkspaceLink');await expect(workspaceLink).toBeVisible();
+  const workspaceUrl=new URL(await workspaceLink.getAttribute('href')),projectId=workspaceUrl.searchParams.get('projectId');expect(projectId).toBeTruthy();
+  const stored=await page.evaluate(id=>JSON.parse(localStorage.getItem('ai_projects_v1')).find(item=>item.id===id),projectId);
+  expect(stored.kind).toBe('coding');expect(stored.codingWorkspace.schemaVersion).toBe(1);
+  await page.locator('#codingProjectEditName').fill('aLandi coding workspace v2');await page.locator('#codingProjectEdit button[type="submit"]').click();
+  await expect(page.locator('#sharedCodingProjectList')).toContainText('aLandi coding workspace v2');
+  await page.reload();await expect(page.locator('#codingProjectEditName')).toHaveValue('aLandi coding workspace v2');
+  await workspaceLink.click();await expect(page).toHaveURL(/workspace\/\?projectId=/);
+  await expect(page.locator('#codingProjectContext')).toBeVisible();await expect(page.locator('#codingProjectName')).toHaveText('aLandi coding workspace v2');
+  await expect(page.locator('#codingProjectInstructions')).toContainText('Keep changes scoped to this project');await expect(page.locator('#chooseFolder')).toBeEnabled();
+  await page.goBack();await page.locator('#codingProjectOpenChat').click();await expect(page.locator('body')).toHaveAttribute('data-app-mode','alandi');
+  await expect(page.locator('#activeProjectTitle')).toContainText('aLandi coding workspace v2');
+});
+
 test('aCodingi keeps the shared frame but does not claim an unavailable sandbox', async ({ page }) => {
   await page.goto(APP_PATH);
   await expect(page.locator('#sharedModeSwitcher')).toBeVisible();
@@ -134,6 +157,7 @@ test('aCodingi keeps the shared frame but does not claim an unavailable sandbox'
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'coding');
   await expect(page.locator('#codingModePanel')).toBeVisible();
   await expect(page.locator('#codingModePanel')).toContainText('sandbox');
+  await expect(page.locator('#codingProjectCreate')).toBeVisible();
   await expect(page.locator('#userInput')).toBeDisabled();
   await expect(page.locator('#sendBtn')).toBeDisabled();
 
