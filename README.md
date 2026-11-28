@@ -4,14 +4,19 @@
 ## Публичное приложение и запуск
 
 - [Открыть aLandi](https://dorpnay.github.io/skills-github-pages/) — единственный публичный интерфейс проекта. GitHub Pages автоматически публикует актуальный корневой клиент после изменений в `main`; revision и browser smoke проверяются CI.
-- [Первый стек и предпусковой чек-лист](docs/PRE_LAUNCH_STACK_RU.md) — рекомендуемая конфигурация и пошаговые gates владельца перед VPS/Tunnel и закрытым пилотом.
+- [Пошаговое руководство владельца](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md) — self-hosted запуск, текущие ограничения free-first hosting и owner-only gates. Сверяйся с NOW.md перед действиями.
 - [Карта потоков данных и вводные для Privacy Notice](docs/LAUNCH_PRIVACY_REVIEW_RU.md) — внутренний checklist перед публикацией политики; это ещё не готовый юридический документ.
 
 **Статус:** корневой `index.md` — единственный публичный клиент. GitHub Pages публикует только статический frontend; inference, gateway, модели и приватные данные на Pages не размещаются. Автопубликация Pages защищена и не меняется в рамках обычной разработки. Отдельный `/landing/` выведен из публикации; исторические решения и CI-свидетельства о нём остаются в журнале, но не являются активным маршрутом. Каждый push в `main` запускает Pages deployment; актуальность проверяется по `alandi-build-revision` и опубликованному Chromium smoke.
 
-## Объединённый backlog первого бесплатного релиза
+## Канонические ориентиры разработки
 
-Единый список P0/P1/P2, решений по стеку, release gates и owner-only зависимостей: [docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md](docs/FIRST_FREE_LAUNCH_BACKLOG_RU.md).
+- [NOW.md](NOW.md) — краткий checkpoint (не более 100 строк), приоритеты и следующее действие.
+- [docs/ALANDI_MASTER_PLAN_RU.md](docs/ALANDI_MASTER_PLAN_RU.md) — единственный реестр требований и acceptance P0–P8, включая все 26 пунктов владельца.
+- [INTEL.md](INTEL.md) — внешние источники, версии, лицензии, риски и verdicts COPY / ADAPT / INSPIRE / DEFER / REJECT.
+- [AGENTS.md](AGENTS.md) v4.0 — инженерные правила, authority и owner gates.
+
+Архивные FIRST_FREE_LAUNCH_BACKLOG, PRE_LAUNCH_STACK и START_HERE не являются активным backlog или ориентиром; не начинать работу с их старых checkbox.
 
 ## Финализация UI первой бесплатной версии
 
@@ -31,13 +36,13 @@
 
 ## Полный инженерный пакет aLandi
 
-Единый пакет для кодера и агента @Поиск: [docs/CODER_PACKET.md](docs/CODER_PACKET.md). Статус каждого изменения: [docs/PROJECT_STATE.yaml](docs/PROJECT_STATE.yaml), eval-гейты: [EVALS.md](EVALS.md), цикл и откат: [LOOP.md](LOOP.md), источники и лицензии: [INTEL.md](INTEL.md), latency-контракт: [docs/LATENCY_CONTRACT.md](docs/LATENCY_CONTRACT.md), реестр улучшений: [docs/ACCEPTED_IMPROVEMENTS.md](docs/ACCEPTED_IMPROVEMENTS.md).
+Единый пакет для кодера и агента @Поиск: [docs/CODER_PACKET.md](docs/CODER_PACKET.md). Статус каждого изменения: [docs/PROJECT_STATE.yaml](docs/PROJECT_STATE.yaml), eval-гейты: [EVALS.md](EVALS.md), инженерный контракт и безопасный порядок работ: [AGENTS.md](AGENTS.md) v4.0, источники и лицензии: [INTEL.md](INTEL.md), latency-контракт: [docs/LATENCY_CONTRACT.md](docs/LATENCY_CONTRACT.md), реестр улучшений: [docs/ACCEPTED_IMPROVEMENTS.md](docs/ACCEPTED_IMPROVEMENTS.md).
 
 **Поправка владельца от 2026-11-07:** экспериментальная серверная графовая память и ручной browser-to-server bridge выведены из продукта; gateway API, flags, UI и opt-in состояния удалены. Обычная локальная память браузера, независимый conversation delta sync и RAG не удаляются. Код не удаляет существующий `memory-graph.sqlite3` на сервере; live host не проверен, файл/резервные копии сохраняются до отдельного решения владельца. В main есть локальные whisper.cpp ASR, Piper TTS, UI записи/транскрипции и half-duplex voice prototype, но runtime остаётся выключенным без установленных и проверенных моделей/флагов; streaming, AEC, barge-in, multi-message queue и target-device quality остаются незавершёнными. Tool DAG и evidence ledger — прототипы/контракты; native ONNX/Rust hotpath и 8GB hardware benchmark не подтверждены. Не включайте экспериментальные функции на VPS по одному только факту merge.
 
 ## Главная инструкция: установка aLandi
 
-**Начни с короткого чек-листа владельца:** [docs/START_HERE_RU.md](docs/START_HERE_RU.md). Он задаёт порядок действий с GitHub Pages, VPS, Cloudflare, Ollama и gateway.
+**Начни с актуального статуса:** [NOW.md](NOW.md). Полные шаги владельца по self-hosted запуску: [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
 
 **Полное пошаговое руководство с командами и проверками:** [docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md).
 
@@ -60,7 +65,7 @@ GitHub Actions выполняет статические quality sentinels, сб
 
 1. Откройте [aLandi](https://dorpnay.github.io/skills-github-pages/) — это единственный публичный клиент проекта.
 2. В настройках явно выберите маршрут и модель. Статический сайт не содержит общего hosted AI endpoint и не выдаёт бесплатные токены: для внешнего API нужны собственные credentials и соблюдение тарифов/лимитов выбранного поставщика.
-3. Для личного self-hosted маршрута сначала пройдите [START_HERE_RU.md](docs/START_HERE_RU.md) и [PRE_LAUNCH_STACK_RU.md](docs/PRE_LAUNCH_STACK_RU.md). Не вводите gateway key, пока локальный FastAPI/Ollama и HTTPS Tunnel не проверены владельцем.
+3. Для личного self-hosted маршрута сначала сверьте [NOW.md](NOW.md), затем откройте [ALANDI_IMPLEMENTATION_GUIDE_RU.md](docs/ALANDI_IMPLEMENTATION_GUIDE_RU.md). Не вводите gateway key, пока локальный FastAPI/Ollama и HTTPS Tunnel не проверены владельцем.
 4. Для первой проверки используйте короткий несекретный prompt. Проверьте выбранный маршрут, модель и ответ; не используйте персональные или рабочие данные в непроверенном endpoint.
 5. Веб-поиск настраивается независимо от объёма работы. Отсутствие ключа Tavily не отключает клиент: часть открытых источников может работать без него, но CORS, квоты и доступность конкретных API не гарантируются.
 6. Быстрый/Тщательный режим управляет бюджетом выполнения; Обычный/Расширенный/Выключенный — доступом и шириной веб-поиска. Direct chat — режим по умолчанию. Структурированный многошаговый разбор доступен как отдельный опциональный workflow только там, где он полезен; обязательной четырёхступенчатой схемы для всех задач нет. Профиль задачи добавляет инструкции, но сам по себе не выдаёт инструменты или разрешения.
