@@ -27,6 +27,39 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+test('mode selector expands, selects in two steps, collapses and signals on return', async ({ page }) => {
+  await page.goto(APP_PATH);
+  const nav = page.locator('#sharedModeSwitcher');
+  const strip = page.locator('#sharedModeStrip');
+  const choices = page.locator('#sharedModeChoices');
+  await expect(strip).toBeVisible();
+  await expect(strip).toHaveAttribute('aria-expanded', 'false');
+  await expect(strip).toContainText('aLandi');
+  await expect(choices).toBeHidden();
+
+  await strip.click();
+  await expect(strip).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('[data-shared-mode]')).toHaveCount(3);
+  await page.locator('[data-shared-mode="notebook"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
+  await expect(strip).toHaveAttribute('aria-expanded', 'true');
+  await expect(strip).toContainText('aNoteBooki');
+  await page.locator('[data-shared-mode="notebook"]').click();
+  await expect(strip).toHaveAttribute('aria-expanded', 'false');
+
+  await strip.click();
+  await page.locator('[data-shared-mode="alandi"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
+  await expect(strip).toHaveAttribute('aria-expanded', 'true');
+  await page.locator('[data-shared-mode="alandi"]').click();
+  await expect(strip).toHaveAttribute('aria-expanded', 'false');
+
+  await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
+  await expect(strip).toHaveAttribute('aria-expanded', 'true');
+  await expect.poll(() => strip.getAttribute('aria-expanded'), { timeout: 2000 }).toBe('false');
+  await expect(nav).toHaveAttribute('data-mode', 'alandi');
+});
+
 test('Notebook sidebar shortcut stays inside the shared root application', async ({ page }) => {
   await page.goto(APP_PATH);
   await openSidebar(page);
