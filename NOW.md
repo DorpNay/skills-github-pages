@@ -10,8 +10,8 @@
 5. Не пересказывай владельцу этот файл; сразу продолжай следующий открытый engineering step. Не повторяй закрытые проверки и не задавай вопросов, на которые уже есть ответ в каноне.
 
 Срез: 2026-11-28 · Repo: DorpNay/skills-github-pages · Branch: main
-Live main: 068cda6a129ec863544f30d78b29b6a45c194c40
-Current code parent: fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f
+Last observed main before this final checkpoint edit: 372b76cf3838001878aa74796915b58a02bd4f57
+Current tested code parent: fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f
 Known functional base: 9ef5177085d6a860537a237299faa23909fe604d
 Canon: root AGENTS.md v4.0 · P0–P8: docs/ALANDI_MASTER_PLAN_RU.md · sources/licenses: INTEL.md.
 
@@ -44,7 +44,7 @@ Canon: root AGENTS.md v4.0 · P0–P8: docs/ALANDI_MASTER_PLAN_RU.md · sources/
 - Open PRs: #195 (Chromium release gate/provider safety), #187 (provider diagnostics/i18n). Не merge/close без отдельного разрешения.
 - Open issue: #111 (free-first release gates).
 - Quality: #46113683061 FAILURE на code SHA fd5309a; Chromium 230/36/3.
-- Pages: #46113740945 SUCCESS на exact current main 068cda6.
+- Pages: #46120495553 IN PROGRESS на documentation parent 372b76c; check the run triggered by the final checkpoint commit on next exact-head orientation.
 - Graphify: #46113683020 SUCCESS на code SHA fd5309a.
 - Gateway: #46078897464 SUCCESS на functional base 9ef5177, Python 3.12/3.13/3.14; это не проверка VPS/live host.
 - PR queues/open issue нужно прочитать заново по live HEAD при следующем oledue.

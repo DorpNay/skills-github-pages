@@ -275,11 +275,11 @@ This is the owner's repeated, explicit confirmation. It resolves any ambiguity i
 
 ### 0.6 Owner directive — 26-point product and source reconciliation (2026-11-28; SPECIFIED / implementation audit)
 
-Эта секция переводит последний запрос владельца (26 пунктов) в проверяемую карту. Она **не создаёт второй backlog**: каждая строка указывает на существующие P0–P8 и owning spec. Статусы ниже — срез по `main` на `068cda6a129ec863544f30d78b29b6a45c194c40`; изменения после этого SHA требуют повторной проверки.
+Эта секция переводит последний запрос владельца (26 пунктов) в проверяемую карту. Она **не создаёт второй backlog**: каждая строка указывает на существующие P0–P8 и owning spec. Статусы ниже — implementation snapshot по functional code SHA `fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f`; docs-only reconciliation is committed on main after that code SHA. При изменении code HEAD или owning sources соответствующие статусы перепроверяются.
 
 **Статусная семантика:** `CAPTURED` — требование отражено в канонических документах; `PARTIAL` — часть механизма есть, но acceptance не закрыт; `NOT IMPLEMENTED` — есть только спецификация/исследование; `OWNER GATE` — действие требует участия или отдельного разрешения владельца. Наличие документа или прототипа не означает доступный production runtime.
 
-| # | Требование владельца | Канонический маршрут | Срез состояния на `a683c440` |
+| # | Требование владельца | Канонический маршрут | Состояние implementation snapshot `fd5309a` |
 |---:|---|---|---|
 | 1 | Свернутый цветной режим-индикатор, раскрытие в 3 кнопки, клеточная анимация, двухчастное поведение кликов, сигнал при возврате | P0.35.1; P1; `assets/js/shared-modes.js` | IMPLEMENTED in `05b50fc`, but NOT VERIFIED: Chromium run `#46113683061` failed; the return-signal E2E expected `return-signal` but no class was present when asserted. Inspect trace/lifecycle; do not weaken the test. |
 | 2 | Фирменный turquoise из реальной эмблемы; графит/серебро dark и pearl/silver light; читаемость, glow, reduced motion | P0.35.2–.3; `INTEL.md` § 2026-11-28 | PARTIAL / IMPLEMENTED token base `fd5309a`: Graphite + Tiffany dark, Pearl + Deep Teal light. Exact emblem sampling, full WCAG state matrix and visual/device acceptance remain open. |
@@ -2797,7 +2797,7 @@ Requirements crosswalk from docs/ALANDI_REQUIREMENTS_REGISTER_RU.md: preserve ma
 
 
 
-**Live implementation evidence — 2026-11-28 (main docs HEAD 068cda6a129ec863544f30d78b29b6a45c194c40; functional/code parent fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f):**
+**Live implementation evidence — 2026-11-28 (tested code SHA fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f; documentation evidence was recorded against main docs parent 068cda6a129ec863544f30d78b29b6a45c194c40):**
 
 - **P0.35.1 selector:** code and a dedicated E2E scenario exist. In Quality run #46113683061, the test failed because the page did not have the expected return-signal class when checked. The return signal is therefore NOT VERIFIED. A separate Coding Projects scoped-workspace handoff test also timed out; inspect its trace and actual project lifecycle before changing code.
 - **Full Chromium:** 230 passed, 36 failed, 3 flaky on code SHA fd5309a. The failures span provider catalog, historical localization, project scope, voice lifecycle, toast semantics, AgentRun event UI, mobile 44px hit targets, menus/dialog focus, settings rollback, Agent/Skill persistence, project filters, RU/EN rerender/focus, reduced motion, accessible names, Offline Core storage, memory scope, backups and Coding Workspace. This remains an open P0 release blocker. Use trace/screenshot/network evidence to classify each unique failure; preserve meaningful assertions.
