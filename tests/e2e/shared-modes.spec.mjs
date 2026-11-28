@@ -42,10 +42,13 @@ test('mode selector expands, selects in two steps, collapses and signals on retu
   await expect(nav).toHaveClass(/return-signal/);
   await expect.poll(() => strip.getAttribute('aria-expanded'), { timeout: 2000 }).toBe('false');
   await expect(strip).toContainText('aLandi');
+  const collapsedHeight = (await nav.boundingBox()).height;
   await expect(choices).toBeHidden();
 
   await strip.click();
   await expect(strip).toHaveAttribute('aria-expanded', 'true');
+  expect(Math.abs((await nav.boundingBox()).height - collapsedHeight)).toBeLessThanOrEqual(1);
+  await expect(strip).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('[data-shared-mode]')).toHaveCount(3);
   await page.locator('[data-shared-mode="notebook"]').click();
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
