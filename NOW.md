@@ -10,8 +10,8 @@
 5. Не пересказывай владельцу этот файл; сразу продолжай следующий открытый engineering step. Не повторяй закрытые проверки и не задавай вопросов, на которые уже есть ответ в каноне.
 
 Срез: 2026-11-28 · Repo: DorpNay/skills-github-pages · Branch: main
-Last verified main before this evidence refresh: a4ca42fce37545b347a18685f66c35a2445deb99
-Current tested code parent: fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f
+Current functional HEAD: 5c7e50b843888d13ffff2f74054972d2056218d7
+Previous failed Quality code SHA: fd5309a7ff5e978e2749e255210fc8cd8e3a1b6f
 Known functional base: 9ef5177085d6a860537a237299faa23909fe604d
 Canon: root AGENTS.md v4.0 · P0–P8: docs/ALANDI_MASTER_PLAN_RU.md · sources/licenses: INTEL.md.
 
@@ -24,10 +24,9 @@ Canon: root AGENTS.md v4.0 · P0–P8: docs/ALANDI_MASTER_PLAN_RU.md · sources/
 - SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED. Любое VERIFIED содержит exact SHA + environment.
 
 ## Состояние и приоритеты
-- P0 blocker: полный Chromium на code SHA fd5309a — 230 passed / 36 failed / 3 flaky (Quality #46113683061). Jekyll, context, integrity, root boot smoke и security jobs прошли; Chromium упал. Сначала разбирать traces, исправлять реальные дефекты и неверные ожидания с доказательством; не ослаблять тесты.
-- P0.35.1 mode strip: реализован commit 05b50fc; но E2E mode-selector test падает — проверка не увидела return-signal. Причину установить по trace/lifecycle; функция не VERIFIED.
-- P0.35.2 palette: token base Graphite + Tiffany dark / Pearl + Deep Teal light внесён в fd5309a; точный цвет эмблемы не снят, WCAG/все состояния и visual/device acceptance открыты.
-- P1 aCodingi — PARTIAL: Coding Projects, dedicated project chat, browser-selected folder handles, diff/approval, recovery metadata/timeline есть. Это не sandbox/shell/agentic full IDE; arbitrary command execution unavailable. Coding Project handoff E2E также timed out в Quality #46113683061.
+- P0.35.1 follow-up fix in functional HEAD `5c7e50b`: initial return signal now fires after `alandi:ready` init; choosing/restoring Notebook or Coding opens the off-canvas sidebar containing that mode. Coding handoff regression now asserts the submit control is in viewport. IMPLEMENTED; exact-head Chromium pending.
+- P0.35.2 palette: Graphite + Tiffany dark / Pearl + Deep Teal light tokens exist in `fd5309a`; actual emblem hue remains provisional, full WCAG/device acceptance open.
+- P1 aCodingi — PARTIAL: Coding Projects, dedicated project chat, browser-selected folder handles, diff/approval, recovery metadata/timeline exist. This remains a browser-local file editor, not a sandbox/shell/agentic full IDE; arbitrary command execution unavailable. The formerly timed-out handoff now has an explicit viewport regression; the new full browser run is the acceptance gate.
 - aNoteBooki: полезная IndexedDB/source-grounded база есть; Studio expansion заморожен до P0/P1/P5.
 - P2 direct chat — OPEN: direct chat является целевым default, но docs/CHAT_SETTINGS_INFORMATION_ARCHITECTURE_RU.md фиксирует риск: new chat may start with web search/tool schemas enabled. Проверить request payload + legacy migration до закрытия.
 - P3 — PARTIAL: AgentRun SQLite/WAL, event sequence и migrations есть; Gateway Tests #46078897464 прошли на Python 3.12–3.14 для base 9ef5177. Generated typed client, reconnect/replay UI, approvals, independent production subagents и isolation открыты.
@@ -43,14 +42,16 @@ Canon: root AGENTS.md v4.0 · P0–P8: docs/ALANDI_MASTER_PLAN_RU.md · sources/
 ## GitHub queues и evidence
 - Open PRs: #195 (Chromium release gate/provider safety), #187 (provider diagnostics/i18n). Не merge/close без отдельного разрешения.
 - Open issue: #111 (free-first release gates).
-- Quality: #46113683061 FAILURE на code SHA fd5309a; Chromium 230/36/3.
-- Pages: #46120612916 SUCCESS на exact main HEAD a4ca42f; static build/deployment check passed. This does not replace Quality/Chromium.
-- Graphify: #46113683020 SUCCESS на code SHA fd5309a.
-- Gateway: #46078897464 SUCCESS на functional base 9ef5177, Python 3.12/3.13/3.14; это не проверка VPS/live host.
+- **Current exact functional main:** `5c7e50b843888d13ffff2f74054972d2056218d7`.
+- **Quality Sentinels:** run [#46151291599](https://github.com/DorpNay/skills-github-pages/actions/runs/46151291599) on exact functional HEAD `5c7e50b` IN PROGRESS. Context, Security, Integrity, Jekyll and root-app boot/interaction smoke have passed; full built-app Chromium is still running.
+- **Pages:** run [#46151291048](https://github.com/DorpNay/skills-github-pages/actions/runs/46151291048) SUCCESS on `5c7e50b`.
+- **Graphify:** run [#46151291618](https://github.com/DorpNay/skills-github-pages/actions/runs/46151291618) SUCCESS on `5c7e50b`.
+- Previous failed Quality `#46113683061` was on `fd5309a` (230 passed / 36 failed / 3 flaky); this is now a triage baseline, not evidence for current code.
+- **Gateway:** #46078897464 SUCCESS on functional base `9ef5177`, Python 3.12/3.13/3.14; not VPS/live-host verification.
 - PR queues/open issue нужно прочитать заново по live HEAD при следующем oledue.
 
 ## Следующий шаг
-1. Разобрать Quality #46113683061: сначала selector return signal и Coding Project handoff trace, затем remaining unique Chromium failures по scope/privacy/focus/mobile/settings/Offline Core; сохранить assertions.
+1. Read Quality #46151291599 exact `5c7e50b` to confirm selector entry signal + Coding viewport handoff. If either fails, inspect current trace and fix product behavior; then triage remaining unique Chromium failures without weakening assertions.
 2. После реального P0 browser gate завершить палитру/лого/header/sidebar/settings/voice overlay/picker; RU/EN, reduced motion и responsive.
 3. P1 + P5: полноценный scoped Coding runtime и installable portable Offline Core.
 4. P3 + P4: typed AgentRun client/replay/approval/real subagents; затем pre-upload converter + File Library.
