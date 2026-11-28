@@ -152,3 +152,5 @@ node scripts/quality-agents.mjs context
 - [Аудит новых open-source проектов и решение по каждому](docs/TECHNOLOGY_AUDIT_2026-10-21_RU.md)
 
 Это архитектурные документы и on-demand skill; они не означают, что отдельные агенты, Google Drive OAuth или media workers уже развернуты.
+
+**Hosting boundary:** this GitHub Pages deployment is the repository's protected development/preview client, not the final commercial SaaS hosting decision. GitHub Pages policy excludes free hosting for an online business or commercial SaaS; the owner runbook in the Master Plan tracks a separate free-first static-host candidate. Do not alter this protected Pages workflow as part of routine implementation.
