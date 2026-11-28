@@ -12,6 +12,12 @@ async function openSidebar(page) {
   await expect(sidebar).not.toHaveClass(/-translate-x-full/);
 }
 
+async function chooseMode(page, mode) {
+  const strip = page.locator('#sharedModeStrip');
+  if (await strip.getAttribute('aria-expanded') !== 'true') await strip.click();
+  await page.locator(`[data-shared-mode="${mode}"]`).click();
+}
+
 async function closeSidebar(page) {
   const sidebar = page.locator('#sidebar');
   if (!(await sidebar.evaluate(el => el.classList.contains('-translate-x-full')))) {
