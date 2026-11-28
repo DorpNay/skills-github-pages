@@ -1,8 +1,9 @@
 # aLandi — NOW / единственный ориентир
 
-**Срез:** 2026-11-28 · **Репозиторий:** `DorpNay/skills-github-pages` · **Ветка:** `main`
-**Последний функциональный HEAD:** `9ef5177085d6a860537a237299faa23909fe604d`. Следующий checkpoint — docs-only child; новые функциональные изменения только fast-forward от него.
-**Канонический контракт:** root `AGENTS.md` v4.0; P0–P8 acceptance — `docs/ALANDI_MASTER_PLAN_RU.md`; источники/лицензии/verdicts — `INTEL.md`.
+**Срез:** 2026-11-28 · **Репозиторий:** DorpNay/skills-github-pages · **Ветка:** main
+**Последний функциональный HEAD:** 9ef5177085d6a860537a237299faa23909fe604d.
+**Последний docs checkpoint (parent этого NOW):** a25857920819abc3e7f826506871554af2e35a96.
+**Канонический контракт:** root AGENTS.md v4.0; P0–P8 acceptance — docs/ALANDI_MASTER_PLAN_RU.md; sources/licenses/verdicts — INTEL.md.
 
 ## Governance
 1. Сначала этот файл (≤100 строк), затем batch live main SHA, PR/issues и Actions exact HEAD.
@@ -13,32 +14,35 @@
 6. Приоритет — реальные продуктовые срезы; тесты подтверждают работу, но не заменяют её. Не ослаблять assertions.
 
 ## Текущее состояние
-- **P0:** root app — единственный публичный клиент. Старый baseline SHA `65564d1…` имел 230 passed / 32 failed Chromium; не переносить автоматически на новые HEAD.
-- **P1.5 — PARTIAL:** Coding Projects в canonical `ai_projects_v1`; dedicated chat, instructions, reload persistence, typed bundle import/export, scoped workspace handoff. Per-project directory handles и event metadata хранятся в IndexedDB; permission проверяется повторно и запрашивается только по user gesture. Recovery snapshots привязаны к project ID; чужой snapshot нельзя восстановить даже при одинаковом имени папки. Activity timeline показывает последние allowlisted события. Metadata export исключает handle и file contents.
-- **aCodingi:** браузерный редактор поддерживает выбранные файлы, diff, explicit approval и local recovery. Реальный sandbox, shell/test runner, agent edits, Git worktrees/branches и durable run approvals не реализованы.
-- **aNoteBooki:** shared shell, IndexedDB Notebook, source-grounded chat только по явно выбранным источникам. Studio jobs без runtime честно unavailable.
-- **P3:** AgentRun SQLite lifecycle/worker/context/skills существуют; WAL включён без ослабления FULL synchronous durability. Per-run `event_seq`/`last_event_seq` replay cursor, migration from legacy `event_id`, and compatibility cursor добавлены и проходят Gateway Tests на Python 3.12–3.14; generated typed client, reconnect UI, approvals and real isolated runtime остаются открыты.
-- **P5.7 — PARTIAL:** SW кэширует public shell/static assets, исключает sensitive API/auth; сохраняет предыдущий revision cache и использует его как fallback для отсутствующих legacy assets при HTTP-ошибках и сетевых сбоях. Offline Core показывает browser storage/quota и запрашивает persistent storage только по клику. Offline dependency closure, integrity installer, quota/eviction and network-disabled proof открыты.
-- **P6–P8:** продолжать по существующим acceptance criteria, не плодить backlog.
-- **Открытые очереди:** PR #195, PR #187, issue #111 — не merge/close без отдельного решения.
+- **P0:** root app — единственный публичный клиент. Full Chromium Quality on 5c5f82d: **232 passed / 35 failed**; failures include provider catalog, locale/focus, dialogs, mobile geometry, settings rollback, memory/privacy scope, Offline Core and Coding Workspace. Treat as open release blocker; inspect traces and fix product behavior, not assertions.
+- **P1.5 — PARTIAL:** Coding Projects in canonical ai_projects_v1; dedicated chat, instructions, reload persistence, typed bundle import/export, scoped workspace handoff. Per-project directory handles/event metadata in IndexedDB; permission rechecked and requested only on user gesture. Recovery snapshots tied to project ID; activity timeline has allowlisted events. Metadata export excludes handles and file contents.
+- **aCodingi:** browser editor supports selected files, diff, explicit approval and local recovery. Real sandbox, shell/test runner, agent edits, Git worktrees/branches and durable run approvals are not implemented.
+- **aNoteBooki:** shared shell, IndexedDB Notebook and source-grounded chat over explicitly selected sources. Studio jobs without runtime honestly unavailable; keep Notebook Studio frozen behind core work.
+- **P3:** AgentRun SQLite lifecycle/worker/context/skills; WAL with FULL synchronous durability; per-run event_seq/last_event_seq and legacy migration. Gateway tests pass on Python 3.12–3.14 at functional HEAD 9ef5177; generated typed client, reconnect UI, approvals and isolated production runtime remain open.
+- **P5.7 — PARTIAL:** SW caches public shell/static assets, excludes sensitive API/auth, preserves previous revision cache. Offline Core reports browser storage/quota and requests persistent storage only after click. Offline dependency closure, integrity installer, quota/eviction and network-disabled proof remain open.
+- **26-point owner audit:** mapped in Master Plan §0.6; most requirements were already captured, but many are specified only. See per-item status and canonical owner sections; no second backlog created.
+- **Source bundle:** owner list deduplicated in INTEL.md; ambiguous names remain unresolved. No bulk downloads or blanket adoption.
+- **Open queues:** PR #195, PR #187, issue #111 — inspect/retain; do not merge/close without separate decision.
+- **Repository About description:** stale (“Exercise: Create a site or blog…”); suggested replacement recorded in Master Plan §0.6 / INTEL. Owner must update in GitHub UI; no metadata-write action exposed here.
 
 ## Exact-head evidence
-- **Functional HEAD:** `9ef5177085d6a860537a237299faa23909fe604d`.
-- **Lite Gateway Tests:** run [#46078897464](https://github.com/DorpNay/skills-github-pages/actions/runs/46078897464) completed successfully on Python 3.12, 3.13 and 3.14, including WAL and event-sequence migration/cursor tests.
-- **Pages build/deployment:** run [#46078896438](https://github.com/DorpNay/skills-github-pages/actions/runs/46078896438) completed successfully.
-- **Graphify:** run [#46078897527](https://github.com/DorpNay/skills-github-pages/actions/runs/46078897527) completed successfully.
-- **Quality Sentinels:** run [#46078463308](https://github.com/DorpNay/skills-github-pages/actions/runs/46078463308) on parent `5c5f82d…` is still running Chromium. Jekyll, Integrity, Security and root-app smoke passed there; exact-head `9ef` Quality has not completed yet.
+- **Functional HEAD:** 9ef5177085d6a860537a237299faa23909fe604d.
+- **Lite Gateway Tests:** run #46078897464 SUCCESS on Python 3.12, 3.13 and 3.14; includes WAL and event-sequence migration/cursor tests.
+- **Pages:** run #46079180120 SUCCESS on docs parent a683c44; new docs checkpoint Pages run #46112186649 was QUEUED at last observation.
+- **Graphify:** run #46078897527 SUCCESS on functional HEAD 9ef5177.
+- **Quality Sentinels:** run #46078463308 FAILURE on 5c5f82d: Chromium 232 passed / 35 failed; Jekyll, integrity, security, context and root-app smoke passed. Failure is not evidence against exact newer 9ef; a fresh full suite on current code remains required.
 - CI, published Pages browser, owner host/model/VPS and native-device permission evidence are separate environments.
 
 ## Следующие действия
-1. Дождаться Quality Sentinels on `9ef` (including built-app Chromium and live Pages browser); correct any real regressions without weakening assertions.
-2. P1: finish chat/project/session continuity, workspace file snapshots/recovery, Git worktree design and RU/EN/mobile accessibility.
-3. P3: explicit AgentRun command/task contract, replayable events, approvals and cancel/retry; sandbox default-off until isolation/escape acceptance.
-4. P5: pinned offline dependency closure, manifest/hashes, installer/update/rollback and true network-disabled proof; main model не скачивать.
-5. Подготовить owner launch sequence для host/model/domain/Tunnel/data grants/native device; не выполнять owner-only действия.
+1. Fix P0 browser/runtime failures against current code; do not weaken tests. Run full Chromium on exact new functional HEAD.
+2. Implement P0.35.1 mode selector + P0.35.2–.8 visual/header/sidebar/settings package as user-visible work, then RU/EN/mobile/reduced-motion acceptance.
+3. P1/P3: finish workspace continuity, isolated Coding execution, typed AgentRun orchestration, subagents, approvals and reconnect/replay.
+4. P4/P5: pre-upload conversion, stable-ID Library, local folder/export/backup and portable Offline Core with network-disabled proof.
+5. P2/P7/P6: transparent provider switching/retries; local voice and authorized voice profile after device/artifact gates.
+6. Refresh free-first hosting/owner runbook; do not perform owner-only infrastructure actions.
 
 ## Ограничения
-- Directory handle локален для browser profile; browser permission может потребовать повторного user gesture.
-- Metadata export содержит только allowlisted lifecycle/count metadata; не содержит handles или file contents.
-- Удаление workspace metadata не удаляет пользовательские файлы.
-- SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED. Не заявлять live browser, VPS/model, native-device или полный P1.5/P3/P5 acceptance без отдельного exact evidence.
+- Browser directory handles are profile-local; permissions may require a fresh user gesture.
+- Metadata export contains allowlisted lifecycle/count metadata only; no handles or file contents.
+- Deleting workspace metadata does not delete user files.
+- SPECIFIED ≠ IMPLEMENTED ≠ VERIFIED. Do not claim live browser, VPS/model, native-device or full P1.5/P3/P5 acceptance without separate exact evidence.
