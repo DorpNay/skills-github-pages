@@ -39,7 +39,8 @@ test('mode selector expands, selects in two steps, collapses and signals on retu
   const strip = page.locator('#sharedModeStrip');
   const choices = page.locator('#sharedModeChoices');
   await expect(strip).toBeVisible();
-  await expect(strip).toHaveAttribute('aria-expanded', 'false');
+  await expect(nav).toHaveClass(/return-signal/);
+  await expect.poll(() => strip.getAttribute('aria-expanded'), { timeout: 2000 }).toBe('false');
   await expect(strip).toContainText('aLandi');
   await expect(choices).toBeHidden();
 
@@ -94,7 +95,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
   const composerBefore = await composer.boundingBox();
   const normalChatText = await chatBox.innerText();
 
-  await page.locator('[data-shared-mode="notebook"]').click();
+  await chooseMode(page, 'notebook');
   await expect(page).toHaveURL(/#mode=notebook$/);
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'notebook');
   await expect(page.locator('#notebookModePanel')).toBeVisible();
@@ -148,7 +149,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
     expect(Math.abs(composerAfter[key] - composerBefore[key])).toBeLessThanOrEqual(1);
   }
 
-  await page.locator('[data-shared-mode="alandi"]').click();
+  await chooseMode(page, 'alandi');
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'alandi');
   await expect(chatBox).toHaveText(normalChatText);
   await expect(page.locator('#projectPanel')).toBeVisible();
@@ -163,7 +164,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
 
 test('Coding Projects persist in the canonical project store and hand off to the scoped browser workspace', async ({ page }) => {
   await page.goto(APP_PATH);const originalTitle=await page.locator('#activeChatTitle').innerText();
-  await page.locator('[data-shared-mode="coding"]').click();await expect(page.locator('#codingProjectCreate')).toBeVisible();
+  await chooseMode(page, 'coding');await expect(page.locator('#codingProjectCreate')).toBeVisible();
   await page.locator('#codingProjectCreateName').fill('aLandi coding workspace');
   await page.locator('#codingProjectCreateInstructions').fill('Keep changes scoped to this project. Preserve a reviewable diff.');
   await page.locator('#codingProjectCreate button[type="submit"]').click();
@@ -193,7 +194,7 @@ test('aCodingi keeps the shared frame but does not claim an unavailable sandbox'
   const chatBefore = await chatBox.boundingBox();
   const composerBefore = await composer.boundingBox();
 
-  await page.locator('[data-shared-mode="coding"]').click();
+  await chooseMode(page, 'coding');
   await expect(page.locator('body')).toHaveAttribute('data-app-mode', 'coding');
   await expect(page.locator('#codingModePanel')).toBeVisible();
   await expect(page.locator('#codingModePanel')).toContainText('sandbox');
@@ -216,7 +217,7 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
     document.documentElement.lang = 'en';
     localStorage.setItem('ai_ui_language_v1', 'en');
   });
-  await page.locator('[data-shared-mode="notebook"]').click();
+  await chooseMode(page, 'notebook');
   await expect(page.locator('#notebookModePanel')).toBeVisible();
   await openSidebar(page);
   await page.locator('#sharedNotebookName').fill('Storage failure notebook');
