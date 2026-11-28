@@ -168,6 +168,8 @@ test('shared modes preserve the root frame and scope Notebook chat to checked so
 test('Coding Projects persist in the canonical project store and hand off to the scoped browser workspace', async ({ page }) => {
   await page.goto(APP_PATH);const originalTitle=await page.locator('#activeChatTitle').innerText();
   await chooseMode(page, 'coding');await expect(page.locator('#codingProjectCreate')).toBeVisible();
+  await expect(page.locator('#appSidebarToggle')).toHaveAttribute('aria-expanded','true');
+  await expect(page.locator('#codingProjectCreate button[type="submit"]')).toBeInViewport();
   await page.locator('#codingProjectCreateName').fill('aLandi coding workspace');
   await page.locator('#codingProjectCreateInstructions').fill('Keep changes scoped to this project. Preserve a reviewable diff.');
   await page.locator('#codingProjectCreate button[type="submit"]').click();
