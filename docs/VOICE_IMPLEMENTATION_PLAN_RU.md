@@ -96,3 +96,13 @@
 ## 2026-11-02 — Voice UI and audio generation
 
 Existing local transcription and local speech playback are foundations, not full-duplex conversation, selected-text TTS, multi-message queue or general sound/music generation. Keep each user intent separate in UI and acceptance tests. See `VOICE-011…018` and [LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md](LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md). No dependencies or model weights are added by this research update.
+
+
+## Owner update — 2026-11-28: provider independence and voice identity
+
+- Opening/closing voice controls, capture, playback or selecting a local voice capability must not change external provider, model, Base URL or key. Add regression: connect external provider → open voice menu → invoke missing-server path → cancel/outside click/Escape → assert provider/model/key fingerprint unchanged.
+- Browser speech is available without aServi only when the corresponding browser API is actually present; local TTS/ASR needs an installed, enabled and verified runtime. Otherwise show unavailable instead of simulating functionality.
+- Personal voice profile follows the local-first consent/scope/export/revoke/delete contract in LOCAL_AUDIO_GENERATION_AND_MEDIA_SKILLS_RU.md. Remote cloning/inference requires separate explicit consent at point of transfer.
+- Existing Whisper.cpp ASR and Piper TTS do not satisfy voice-cloning acceptance. VoxCPM2/MOSS-TTS v1.5 are candidates, not installed models.
+
+**Состояние:** SPECIFIED / EXPERIMENTAL. Native mic/audio lifecycle, saved voice identity, cloning quality and real-device RU/EN/TH evidence remain open. Master Plan P0.35.9/P6; owner points 15/24.

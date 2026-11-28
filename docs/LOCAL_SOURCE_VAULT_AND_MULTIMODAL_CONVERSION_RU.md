@@ -219,3 +219,18 @@ ComfyUI остаётся кандидатом для локального GPU ad
 **Не проверялось:** физические устройства владельца, iOS/Android native prototype, browser permission persistence на реальных профилях, companion threat-model tests, sandbox escape, target GPU/VRAM, media quality/latency и актуальные цены hosted providers. Upstream README/metadata не заменяют юридическое заключение; противоречие Co-do license оставлено открытым.
 
 **Next (2026-11-13):** сохранить Browser Local как единственный реализованный browser provider; следующий Coder slice — отдельный evidence-backed sandbox/companion design и GitHub repository connector. Monaco остаётся кандидатом, не установленной зависимостью.
+
+## Owner addendum — 2026-11-28: staging перед импортом и единая File Library
+
+Это acceptance-контракт P4/P5; он не объявляет полный converter или Library уже реализованными.
+
+- До загрузки показывать очередь файлов: исходное имя/MIME/размер/hash, выбранный scope/destination, целевой путь/имя, доступные conversion candidates, оценку размера результата, fidelity/loss/security warnings и реальную доступность runtime на устройстве.
+- Конвертация создаёт отдельный derived Artifact ID с source Artifact ID, converter/version/hash, настройками и lineage. Оригинал остаётся неизменным; замена оригинала — отдельное подтверждённое действие.
+- Кнопка «Загрузить/Импортировать» запускает job только после подтверждения всей очереди, destination, имён и выбранных конвертаций. Каждый job cancellable/retryable/removable; отмена или ошибка очищает staging и не создаёт ложный accepted artifact.
+- File Library — общий индекс оригиналов и outputs: date, chat, project, format/MIME, size, source type и provenance status (original, edited, generated, generated-from, downloaded, manually created). Stable IDs + idempotency исключают дубли; изменения добавляют версии/lineage, а не незаметно перезаписывают файл.
+- Возможности конвертации показываются только из fixture-backed registry; unavailable state объясняет причину. Не обещать «любой формат в любой» до проверки каждого edge по fidelity, resource limits и sandbox.
+- LibreOffice — только optional local/owner-controlled companion/service после license, isolation, privacy, resource и mobile support проверки; не обязательная browser dependency.
+- Backup/export разделяет index metadata и file bytes, содержит versioned manifest/checksums и restore conflict preview. Никогда не экспортирует credentials, directory handles или невыбранные private workspace files.
+- File scope выбирается явно: папка проекта, папка aLandi-managed storage или выбранные внешние директории. Grant read/write/delete показывается отдельно и может быть отозван. Browser handles не дают произвольного доступа к диску.
+
+**Состояние:** SPECIFIED / PARTIAL. Extraction registry и browser file selection существуют; staging queue, full converter jobs, global Library UI/index, native iOS/Android parity, portable backup/restore и lineage lifecycle открыты. Owner points 8/17/18; Master Plan P4.1/P4.6/P5.

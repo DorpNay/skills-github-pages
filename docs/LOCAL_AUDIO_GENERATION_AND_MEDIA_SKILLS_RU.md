@@ -70,3 +70,15 @@ Skill package может описывать pipeline:
 - [Open-source TTS/ASR catalog](https://openvoiceindex.com/) — discovery only, not license authority.
 
 **Status:** research only. No model was downloaded, no inference benchmark was run, no runtime/default changed.
+
+
+## Owner addendum — 2026-11-28: personal voice profile and multilingual speech
+
+- A voice profile may use only the owner's own recordings or samples with explicit documented authorization. Before capture, show intended use, sample requirements and whether processing is local/server/remote.
+- Voice recordings, transcripts, speaker embeddings and generated references are sensitive. Local-only is default. No automatic external upload, hosted cloning or training. Remote processing needs separate explicit consent naming provider, data scope, retention and deletion path before transfer.
+- Save a stable VoiceProfile ID/version, source audio hashes, language/sample provenance, runtime/model/hash/license, supported styles, evaluation metrics, pronunciation limitations and resource requirements. Provide preview, export, revoke and delete.
+- Evaluate RU/EN/TH separately for naturalness, intelligibility, similarity, pronunciation, latency and peak RAM. A model's advertised language count does not prove per-language quality.
+- Separate cloning, ordinary TTS, ASR, VAD/diarization, non-speech sound/music generation and post-processing in the capability registry. Piper TTS and Whisper ASR are not voice cloning.
+- Label synthetic speech where it could be mistaken for live audio; reject impersonation, deception and non-consensual voice use.
+
+**Candidates only:** VoxCPM2 and MOSS-TTS v1.5 remain uninstalled. Full code/weight/data/voice terms, hashes, hardware and owner-device RU/EN/TH quality remain open. See INTEL.md 2026-11-28.

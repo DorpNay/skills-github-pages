@@ -140,3 +140,12 @@ This section records the current code behavior and supersedes the historical def
 - **Target, not yet implemented:** ordinary chat defaults to direct model execution with no web/tool schema; search is explicitly enabled per chat/request; missing legacy flags do not opt users into web access; existing intentional choices are migrated safely; AgentRun becomes the sole supported specialist orchestration contract after equivalent chat-context and result-return behavior is verified.
 - processingMode remains independent from web access and from Deep Research method selection. Deep Research methods must represent distinct research procedures, not repeat Thorough/effort.
 - Required regression coverage: new chat default request body, legacy chat migration, imported chat profiles, explicit web opt-in/offline, per-chat persistence, tool-call absence/presence, and AgentRun versus direct execution routing.
+
+
+## Owner update — 2026-11-28: default workflow and settings order
+
+The older four-stage planner/researcher/critic/synthesizer pipeline in this historical document is optional, not a universal default. Direct chat must be the baseline. Research/orchestration is enabled only when useful and only if real events/status exist; same-model serial prompts must never be presented as independent agents. Raw hidden chain-of-thought is not displayed or stored.
+
+Target Additional Settings order: (1) layout and feature switches; (2) system prompt; (3) Offline Core + storage/export/backup; (4) technical essentials; (5) collapsed appearance, typography, contrast and animation. Every group starts closed except layout and system prompt. Provider switching belongs to the separate external-provider area and requires visible impact, confirmation and rollback; aServi and third-party keys stay separate.
+
+**Code audit to resolve before P2 acceptance:** the 2026-11-16 implementation audit records a new-chat path that may start with web search enabled and attach web tools by default. Verify the current request payload and legacy migration; do not mark direct-chat/no-tools default implemented from documentation alone.

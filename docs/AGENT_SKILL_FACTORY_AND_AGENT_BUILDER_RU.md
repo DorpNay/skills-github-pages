@@ -116,3 +116,15 @@ If no runtime exists, show `1ИÆИT10И` and label the item “Blueprint only�
 ## 2026-11-08 — main integration boundary
 
 This specification is preserved as a canonical design artifact. Skill Factory and Agent Builder runtime remain DEFERRED: no generated skill package, independent worker, scheduler, approval engine, durable recovery or tool capability is implied by this document or the current Functions menu. Current Skills UI is a chat-scoped task profile that adds instructions only. Use the worker capability contract in `docs/AGENT_WORKER_CAPABILITY_AND_SKILL_SAFETY_RU.md` for permission, provenance, inert-import and evaluation gates.
+
+
+## Owner addendum — 2026-11-28: Skills Library, durable agents and model adaptation
+
+- Distinguish four artifacts: reusable versioned Skill, Agent Profile (role, model policy, scoped memory, tools, permissions, budget and approval policy), Task Template, and trained model/adapter artifact. A Skill or role never grants authority.
+- Agent memory has a stable owner/project/agent scope, schema version, provenance, retention, export and delete/revoke. It differs from chat history, general user memory and a training dataset.
+- User training wizard is a separate opt-in path: choose base model and exactly one private chat or explicit source set; preview/exclude records; verify rights/consent; estimate hardware/storage; create a versioned dataset manifest/hash; train in an isolated local/owner-controlled runtime; evaluate held-out data and regression cases; show metrics/diff; require approval before adding the adapter to the chat catalog.
+- “Train only on these materials” means source IDs and manifest enforce the scope at the runtime boundary. Exclude unselected chat history, RAG, web search and unrelated memory.
+- Provenance includes base model/version/license, adapter hash, dataset digest/license, code/runtime, hardware/quantization, evaluation set/results and rollback. Do not upload chat/voice datasets or invoke cloud fine-tuning without separate owner consent.
+- Subagents count as real only when independently executed with distinct run IDs, parent-child lineage, event sequences, model/tool attribution, scoped memory, budgets, cancellation, retry and approval. Four serial prompts are not a multi-agent team.
+
+**Состояние:** SPECIFIED / OPEN. Skills and AgentRun are foundations, not a live self-service training runtime or independently isolated production swarm. Owner points 7/20; Master Plan P3.4–P3.8/P3.11/P3.12.

@@ -131,3 +131,19 @@ Actions Secrets доступны workflow на стороне GitHub, но **н�
 - Кнопка **«Оффлайн»** выключает веб-поиск и внешние источники. Она не отключает интернет для облачной модели: любой удалённый API всё равно требует сеть.
 
 Большинство обычных ключей приложения хранится в `localStorage` текущего браузера; это не серверное хранилище секретов. Любой скрипт, работающий в контексте страницы, теоретически может их прочитать. Для более сильной защиты нужен серверный proxy/backend. Pollinations OAuth access token хранится только в `sessionStorage` текущей вкладки и истекает.
+
+
+## Owner update 2026-11-28 — explicit route recovery (target contract; implementation gap)
+
+This target supersedes the broad persistent cross-provider fallback behavior described in earlier catalog documentation.
+
+1. **Retry the selected route first.** Retry transient network/timeout/5xx failures a bounded number of times on the exact selected provider + model. Use short bounded backoff/jitter, show real-time status and allow cancel. Do not loop on 401/403. Respect Retry-After and quota signals on 429.
+2. **Same-provider model recovery.** Try another model only when the selected model is explicitly unavailable for a model-specific reason. Show the new model and reason in status, active route badge and trace; do not switch silently.
+3. **Alternate provider is a per-failure choice.** Only after eligible models on the selected provider fail, show one focused Yes/No prompt with proposed provider, reason, data scope and free/paid/unknown label. No prompt, context or file is sent to the alternate provider before Yes. No keeps the selected route and unsent draft and returns a typed failure.
+4. **Remove broad saved opt-in.** The existing “Allow fallback to another provider” checkbox is not equivalent to per-failure consent. Current code uses it to append other providers to the candidate list; keep it disabled and replace it with failure-scoped consent. Private memory remains first-party-only.
+5. **aServi and third-party settings stay isolated.** Enter/leave provider areas with impact warning, confirmation, state snapshot and rollback. Never mix first-party server key/model with external provider credentials/catalogs.
+6. **Catalog honesty.** Catalog membership does not prove zero-cost account access. Report “Free as reported”, “Account check required”, “Paid” or “Unknown” from a source/probe.
+
+**Code audit at fd5309a:** getApiCandidates adds alternate providers when ai_cross_provider_fallback_v1=true, then requestChatCompletion may POST to them in sequence. Same-provider model fallback currently occurs only after a recognized model-specific 400/404. Network/CORS, 429 and other errors stop without a bounded transient retry budget. A toast after alternate-route success is too late to satisfy consent before transfer. This is an implementation gap, not accepted behavior.
+
+Required regression: zero alternate-provider POSTs before Yes; explicit destination/data disclosure; No preserves route/draft; same-route retry count/status/cancel; private-memory first-party isolation; aServi state and key fingerprint remain unchanged through voice/route UI.
