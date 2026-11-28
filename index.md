@@ -109,20 +109,20 @@ permalink: /
     #settingsModal, #sidebar { overscroll-behavior: contain; }
     button, a, input, textarea, select { transition: background-color .14s ease, border-color .14s ease, box-shadow .14s ease, color .14s ease; }
     button:hover:not(:disabled) { filter: brightness(1.06); }
-    input:focus, textarea:focus, select:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgb(96 165 250 / 12%); }
+    input:focus, textarea:focus, select:focus { border-color: var(--ui-tiffany); box-shadow: 0 0 0 2px var(--ui-tiffany-soft); }
     .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 5.4rem); z-index: 100; max-width: min(92vw, 30rem); padding: var(--ui-space-3) var(--ui-space-4); border: var(--ui-border-width) solid var(--ui-border); border-radius: var(--ui-radius-md); background: color-mix(in srgb,var(--ui-surface-raised) 96%,transparent); color: var(--ui-text); font-size: var(--ui-font-size-sm); line-height: var(--ui-line-normal); text-align: center; box-shadow: var(--ui-shadow-card); opacity: 0; transform: translate(-50%, .5rem); pointer-events: none; transition: opacity var(--motion-fast) var(--motion-ease), transform var(--motion-fast) var(--motion-ease); backdrop-filter: blur(8px); }
     .toast.toast-visible { opacity: 1; transform: translate(-50%, 0); }
     .toast.toast-error { border-color:color-mix(in srgb,var(--ui-danger) 55%,var(--ui-border));color:var(--ui-danger); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 
-    /* aLandi AI — Obsidian Studio / Clean Light + restrained Tiffany Motion. */
+    /* aLandi AI — Graphite + Tiffany dark / Pearl + Deep Teal light. */
     :root, html[data-theme="dark"] {
       color-scheme: dark;
-      --ui-bg:#08111d; --ui-surface:#0f1b2b; --ui-surface-raised:#142438;
-      --ui-border:#26384b; --ui-text:#f1f6fa; --ui-text-muted:#a4b5c7;
-      --ui-primary:#3b82f6; --ui-success:#35d39a; --ui-danger:#ff737a;
-      --ui-info:#93c5fd; --ui-warning:#fbbf24; --ui-link:#93c5fd;
-      --ui-tiffany:#68e8d0; --ui-tiffany-bright:#a3fff0; --ui-tiffany-soft:rgba(104,232,208,.13);
+      --ui-bg:#0e1114; --ui-surface:#171c21; --ui-surface-raised:#20272e;
+      --ui-border:#39434d; --ui-text:#f2f5f7; --ui-text-muted:#b2bcc5;
+      --ui-primary:#0f766e; --ui-success:#35d39a; --ui-danger:#ff737a;
+      --ui-info:#93c5fd; --ui-warning:#fbbf24; --ui-link:#a8d5ff;
+      --ui-tiffany:#68e8d0; --ui-tiffany-bright:#a3fff0; --ui-tiffany-soft:rgba(104,232,208,.18);
       --ui-font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Roboto,Arial,sans-serif;
       --ui-font-size-xs:.75rem; --ui-font-size-sm:.875rem; --ui-font-size-md:1rem; --ui-font-size-lg:1.125rem;
       --ui-line-tight:1.25; --ui-line-normal:1.5; --ui-line-relaxed:1.65;
@@ -135,11 +135,11 @@ permalink: /
     }
     html[data-theme="light"] {
       color-scheme: light;
-      --ui-bg:#f4f7f8; --ui-surface:#ffffff; --ui-surface-raised:#f8fbfc;
-      --ui-border:#d9e4e8; --ui-text:#152633; --ui-text-muted:#526775;
-      --ui-primary:#2563eb; --ui-success:#087f72; --ui-danger:#c83244;
-      --ui-info:#1d4ed8; --ui-warning:#92400e; --ui-link:#1d4ed8;
-      --ui-tiffany:#087f72; --ui-tiffany-bright:#25a995; --ui-tiffany-soft:rgba(8,127,114,.10);
+      --ui-bg:#f3f5f5; --ui-surface:#ffffff; --ui-surface-raised:#eaeff1;
+      --ui-border:#c9d3d8; --ui-text:#172126; --ui-text-muted:#52616a;
+      --ui-primary:#067568; --ui-success:#067568; --ui-danger:#b42336;
+      --ui-info:#1d4ed8; --ui-warning:#854d0e; --ui-link:#1d4ed8;
+      --ui-tiffany:#067568; --ui-tiffany-bright:#006f65; --ui-tiffany-soft:rgba(6,117,104,.14);
       --ui-shadow-card:0 12px 32px rgb(21 38 51 / 9%); --ui-shadow-overlay:0 18px 48px rgb(21 38 51 / 16%); --ui-shadow-dialog:0 24px 80px rgb(21 38 51 / 20%);
     }
     html[data-theme="dark"][data-reading-contrast="high"] { --ui-text:#ffffff; --ui-text-muted:#d5e2ef; --ui-success:#72f0be; --ui-danger:#ff9da2; --ui-info:#b7d8ff; --ui-warning:#ffdf80; --ui-link:#b7d8ff; }
@@ -363,7 +363,7 @@ permalink: /
       #chatList .chat-row .chat-row-menu summary { width:44px;height:44px; }
     }
     .project-create-row { color:#b8f5ec;background:color-mix(in srgb,#0d9488 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#0d9488 45%,var(--ui-border)); }
-    .chat-create-row { color:#cfe2ff;background:color-mix(in srgb,#2563eb 13%,var(--ui-surface));border:1px solid color-mix(in srgb,#3b82f6 35%,var(--ui-border)); }
+    .chat-create-row { color:var(--ui-tiffany);background:color-mix(in srgb,var(--ui-tiffany) 13%,var(--ui-surface));border:1px solid color-mix(in srgb,var(--ui-tiffany) 35%,var(--ui-border)); }
     .chat-scope-back { min-height:36px;padding:0 10px;border-radius:9px;color:var(--ui-text-muted);font-size:11px;text-align:left; }
     .project-nav-item { display:flex;align-items:center;gap:4px;padding:1px;border:1px solid var(--ui-border);border-radius:9px;background:color-mix(in srgb,var(--ui-surface) 86%,transparent); }
     .project-nav-item.is-active { border-color:var(--ui-tiffany);background:var(--ui-tiffany-soft); }
